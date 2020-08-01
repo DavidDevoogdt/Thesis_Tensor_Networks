@@ -1,7 +1,7 @@
 global d 
 d = 2; % d
 
-maxIndex = 2;
+
 delta = 1/2; % from xxz model
 
 timestep = 1;
@@ -16,70 +16,103 @@ Hij = [delta/4   0           0           0
 H_tensor = reshape(Hij, dimension_vector(d,4));
 I_tensor = eye(d);
 
+O_1 = generate_MPO_01( H_tensor,I_tensor);
+
 % Make a cell from O. It holds the tensor elements
 % every entry is 4d nxdxdxm with n and m the bond dimension for the
 % corresponding bond. Dimension x1 at the end not shown by matlab
-O = cell(maxIndex,maxIndex);
+%this type generates 1--|--1 and 2--|--2 blocks during the expansion
+function O = generate_MPO_01( H_tensor,I_tensor)
+    global d
 
-O{1,1} = reshape(  I_tensor, [1,d,d,1] ) ;
+    maxIndex = 2;
+    O = cell(maxIndex,maxIndex);
 
-%step 1 -> exp(H)-(-O-O-)  (corresponds to O_01 and O_10)
-N = 1;                  %number of free bonds
-current_max_index = 0;  %used to contract the tensor 
+    O{1,1} = reshape(  I_tensor, [1,d,d,1] ) ;
 
-RHS_Tensor_01 = H_exp(N,H_tensor)- contract_O(N, O ,current_max_index);
-RHS_Matrix_01 = reshape( permute( RHS_Tensor_01 , site_ordering_permute(N+1) ),...
-                                            [d^2,d^2] ); %ready to svd
+    %step 1 -> exp(H)-(-O-O-)  (corresponds to O_01 and O_10)
+    N = 1;                  %number of free bonds
+    current_max_index = 0;  %used to contract the tensor 
 
-[U,S,V] = svd(RHS_Matrix_01);
-sqrt_S = sqrt(S); %for symmetric split, not really necesary
+    RHS_Tensor_01 = H_exp(N,H_tensor)- contract_O(N, O ,current_max_index);
+    RHS_Matrix_01 = reshape( permute( RHS_Tensor_01 , site_ordering_permute(N+1) ),...
+                                                [d^2,d^2] ); %ready to svd
 
-O{0+1,1+1} = reshape( U*sqrt_S, [1,d,d,d^2]);
-O{1+1,0+1} = reshape( sqrt_S* V', [d^2,d,d,1]);
+    [U,S,V] = svd(RHS_Matrix_01);
+    sqrt_S = sqrt(S); %for symmetric split, not really necesary
 
-%step 2 -> exp(H12+H23)- (-O-O-O-)  (corresponds to O_11), 2 free bonds
-N = 2;                  %number of free bonds
-current_max_index = 1;  %used to contract the tensor 
+    O{0+1,1+1} = reshape( U*sqrt_S, [1,d,d,d^2]);
+    O{1+1,0+1} = reshape( sqrt_S* V', [d^2,d,d,1]);
 
-RHS_Tensor_11 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
-RHS_Matrix_11 = reshape( permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
-                                       dimension_vector(d,2,[d^2,d^2])); 
+    %step 2 -> exp(H12+H23)- (-O-O-O-)  (corresponds to O_11), 2 free bonds
+    N = 2;                  %number of free bonds
+    current_max_index = 1;  %used to contract the tensor 
 
-%todo: this takes the inverse of the O_01 and O_10 matrices, could be done
-% by solving a linear problem or starting from SVD
+    RHS_Tensor_11 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
+    RHS_Matrix_11 = reshape( permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
+                                           dimension_vector(d,2,[d^2,d^2])); 
 
-O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1) ;
-O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1) ;
+    %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
+    % by solving a linear problem or starting from SVD
 
-O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
+    O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1) ;
+    O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1) ;
 
-%step 3 -> exp(H_12+H_23+H_34) - (-O-O-O-O)
-N = 3;                  %number of free bonds
-current_max_index = 1;  %used to contract the tensor 
+    O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
 
-RHS_Tensor_12 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
-RHS_Matrix_12 = reshape( permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
-                                       dimension_vector(d^2,4));%group per ij index
+    %step 3 -> exp(H_12+H_23+H_34) - (-O-O-O-O)
+    N = 3;                  %number of free bonds
+    current_max_index = 1;  %used to contract the tensor 
+
+    RHS_Tensor_12 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
+    RHS_Matrix_12 = reshape( permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
+                                           dimension_vector(d^2,4));%group per ij index
 
 
-O_12_21 = ncon( { O_01_inv, RHS_Matrix_12, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
-O_12_21_svd = reshape(O_12_21, [d^4,d^4]);
+    O_12_21 = ncon( { O_01_inv, RHS_Matrix_12, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
+    O_12_21_svd = reshape(O_12_21, [d^4,d^4]);
 
-[U,S,V] = svd(O_12_21_svd);
-sqrt_S = sqrt(S); %for symmetric split, not really necesary
+    [U,S,V] = svd(O_12_21_svd);
+    sqrt_S = sqrt(S); %for symmetric split, not really necesary
 
-O{1+1,2+1} = reshape( U*sqrt_S, [d^2,d,d,d^4]);
-O{2+1,1+1} = reshape( sqrt_S* V', [d^4,d,d,d^2]);
+    O{1+1,2+1} = reshape( U*sqrt_S, [d^2,d,d,d^4]);
+    O{2+1,1+1} = reshape( sqrt_S* V', [d^4,d,d,d^2]);
 
-%step 4 -> exp(H_12+H_23+H_34) - (-O-O-O-O-O)
-N = 4;                  %number of free bonds
-current_max_index = 2;  %used to contract the tensor 
+    %step 4 -> exp(H_12+H_23+H_34+H_45) - (-O-O-O-O-O)
+    N = 4;                  %number of free bonds
+    current_max_index = 2;  %used to contract the tensor 
 
-RHS_Tensor_22 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
-RHS_Matrix_22 = reshape( permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
-                                       dimension_vector(d^2,5));%group per ij index
+    RHS_Tensor_22 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
+    RHS_Tensor_22_site = reshape( permute(RHS_Tensor_22, site_ordering_permute(N+1)),...
+                            dimension_vector(d^2,5)); %group per ij index
 
-                                   
+    % first apply inverses of O_01 and O_02
+    RHS_Tensor_22_site_stripped = ncon( {O_01_inv, RHS_Tensor_22_site, O_10_inv}, { [-1,1],[1,-2,-3,-4,2],[2,-5]},[1,2]);
+
+
+    O_12_inv = (reshape( O{1+1,2+1}, [d^4,d^4]))^-1;  % (O_12, (alpha,i,j) beta)^-1
+    O_21_inv = (reshape( O{1+1,2+1}, [d^4,d^4]))^-1;
+
+    RHS_Tensor_22_site_stripped_reshaped = reshape( RHS_Tensor_22_site_stripped, [d^4,d^2,d^4]);
+
+    O_22_Tensor = ncon(  {O_12_inv,RHS_Tensor_22_site_stripped_reshaped,O_21_inv},{ [-1,1],[1,-2,2],[2,-3]});
+
+    O{2+1,2+1} = reshape(O_22_Tensor, [d^4, d,d,d^4]);
+
+end
+
+%same but does not use 1--|--1 blocks
+function O = generate_MPO_02( H_tensor,I_tensor)
+    global d
+
+    maxIndex = 2;
+    O = cell(maxIndex,maxIndex);
+
+    O{1,1} = reshape(  I_tensor, [1,d,d,1] ) ;
+   
+    %todo
+end
+
 
 %% all helper fucntions
 
@@ -125,7 +158,7 @@ function T = contract_O(N,O,maxIndex)
     T = zeros( dimension_vector(d,2*(N+1),[1,1]));
     %generate all combinations of internam indices
     for i= 0: (maxIndex+1)^N-1
-        full_vect = [0;encode_index_array(i,N,d);0];
+        full_vect = [0;encode_index_array(i,N,maxIndex+1);0];
         
         correct_index_set = 1;
         
