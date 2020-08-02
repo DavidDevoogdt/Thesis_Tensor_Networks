@@ -16,13 +16,16 @@ Hij = [delta/4   0           0           0
 H_tensor = reshape(Hij, dimension_vector(d,4));
 I_tensor = eye(d);
 
-O_1 = generate_MPO_01( H_tensor,I_tensor);
+O_1 = generate_MPO_01( H_tensor,I_tensor,1 );
+
+%some tests
+
 
 % Make a cell from O. It holds the tensor elements
 % every entry is 4d nxdxdxm with n and m the bond dimension for the
 % corresponding bond. Dimension x1 at the end not shown by matlab
 %this type generates 1--|--1 and 2--|--2 blocks during the expansion
-function O = generate_MPO_01( H_tensor,I_tensor)
+function O = generate_MPO_01( H_tensor,I_tensor, testing)
     global d
 
     maxIndex = 2;
@@ -30,7 +33,8 @@ function O = generate_MPO_01( H_tensor,I_tensor)
 
     O{1,1} = reshape(  I_tensor, [1,d,d,1] ) ;
 
-    %step 1 -> exp(H)-(-O-O-)  (corresponds to O_01 and O_10)
+    %step 1:
+    % 0--|--1--|--0 = exp(H_12) - (0--|--|--0 )  
     N = 1;                  %number of free bonds
     current_max_index = 0;  %used to contract the tensor 
 
@@ -44,23 +48,38 @@ function O = generate_MPO_01( H_tensor,I_tensor)
     O{0+1,1+1} = reshape( U*sqrt_S, [1,d,d,d^2]);
     O{1+1,0+1} = reshape( sqrt_S* V', [d^2,d,d,1]);
 
-    %step 2 -> exp(H12+H23)- (-O-O-O-)  (corresponds to O_11), 2 free bonds
+    if testing==1
+        err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor_01);
+        fprintf("err 01 = %d\n",err);
+    end
+    
+    %step 2 :
+    % 0--|--1--|--1--|--0 = exp(H12+H23)- (0--|--|--|--0) 
     N = 2;                  %number of free bonds
     current_max_index = 1;  %used to contract the tensor 
 
     RHS_Tensor_11 = H_exp(N,H_tensor) - contract_O(N,O,current_max_index);
-    RHS_Matrix_11 = reshape( permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
-                                           dimension_vector(d,2,[d^2,d^2])); 
+    RHS_Matrix_11 = reshape(permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
+                                                  dimension_vector(d,2,[d^2,d^2]) ); 
 
+        
     %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
     % by solving a linear problem or starting from SVD
 
-    O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1) ;
-    O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1) ;
+    O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1);
+    
+    O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1);
 
     O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
-
-    %step 3 -> exp(H_12+H_23+H_34) - (-O-O-O-O)
+    
+    if testing==1
+        err = tensor_norm( ncon( { O{1,2}, O{2,2}, O{2,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]}, [1,2])...
+            -RHS_Tensor_11);
+        fprintf("err 11 = %d\n",err);
+    end
+    
+    %step 3:
+    % 0--|--1--|--2--|--1--|--0 = exp(H_12+H_23+H_34) - (0--|--|--|--|--0)
     N = 3;                  %number of free bonds
     current_max_index = 1;  %used to contract the tensor 
 
@@ -78,7 +97,14 @@ function O = generate_MPO_01( H_tensor,I_tensor)
     O{1+1,2+1} = reshape( U*sqrt_S, [d^2,d,d,d^4]);
     O{2+1,1+1} = reshape( sqrt_S* V', [d^4,d,d,d^2]);
 
-    %step 4 -> exp(H_12+H_23+H_34+H_45) - (-O-O-O-O-O)
+    if testing==1
+        err = tensor_norm( ncon( {O{1,2},O{2,3},O{3,2},O{2,1}}, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3],[3,-5,-9,-10]}, [1,2,3])...
+            -RHS_Tensor_12);
+        fprintf("err 12 = %d\n",err);
+    end
+    
+    %step 4:
+    % 0--|--1--|--2--|--2--|--1--|--0 = exp(H_12+H_23+H_34+H_45) - (0--|--|--|--|--|--0)
     N = 4;                  %number of free bonds
     current_max_index = 2;  %used to contract the tensor 
 
@@ -91,14 +117,19 @@ function O = generate_MPO_01( H_tensor,I_tensor)
 
 
     O_12_inv = (reshape( O{1+1,2+1}, [d^4,d^4]))^-1;  % (O_12, (alpha,i,j) beta)^-1
-    O_21_inv = (reshape( O{1+1,2+1}, [d^4,d^4]))^-1;
+    O_21_inv = (reshape( O{2+1,1+1}, [d^4,d^4]))^-1;
 
-    RHS_Tensor_22_site_stripped_reshaped = reshape( RHS_Tensor_22_site_stripped, [d^4,d^2,d^4]);
+    RHS_Tensor_22_site_stripped_reshaped = reshape( RHS_Tensor_22_site_stripped, [d^4,d,d,d^4]);
 
-    O_22_Tensor = ncon(  {O_12_inv,RHS_Tensor_22_site_stripped_reshaped,O_21_inv},{ [-1,1],[1,-2,2],[2,-3]});
+    O{2+1,2+1} = ncon(  {O_12_inv,RHS_Tensor_22_site_stripped_reshaped,O_21_inv},{ [-1,1],[1,-2,-3,2],[2,-4]},[1,2]);
+   
 
-    O{2+1,2+1} = reshape(O_22_Tensor, [d^4, d,d,d^4]);
-
+    if testing==1
+        err = tensor_norm( ncon( {O{1,2},O{2,3},O{3,3},O{3,2},O{2,1}}, {[-1,-2,-7,1],[1,-3,-8,2],[2,-4,-9,3],[3,-5,-10,4],[4,-6,-11,-12]}, [1,2,3,4])...
+            -RHS_Tensor_22);
+        fprintf("err 12 = %d\n",err);
+    end
+    
 end
 
 %same but does not use 1--|--1 blocks
@@ -117,7 +148,7 @@ end
 %% all helper fucntions
 
 % return E(H_1_2+..+H_N-1_N) in normal ordering (dim d^N+1, basis first
-% upper legs, than lower legs
+% upper legs, then lower legs
 % so this makes first the tensor T = H x I x I  
 %                                  + I x H x I ...
 % then reorders, and exponentiates
@@ -152,6 +183,7 @@ function H_exp = H_exp(N,H_tensor  )
 end
 
 %N number of internal sites
+%first upper legs, then lower legs
 function T = contract_O(N,O,maxIndex)
     global d
     
@@ -248,18 +280,38 @@ function [s,r] = readOne(s,d)
     s = (s-r)/d;
 end
 
+% this logic was the other way around: define new place a location of old one; 
+% function p = site_ordering_permute_old(n)
+%         p = zeros(2*n+2,1);
+%         p(1)=1;
+%         p(2*n+2)=2*n+2;
+%         for i = 2:n+1
+%             p(i)=2*(i-1);
+%         end
+%         for i = n+2:2*n+1
+%            p(i) = (i-(n+1))*2+1 ;
+%         end
+% end
 
 % changes from |left i1 i2 ... j1 j2.. right> to |left i1 j1 i2 j2 ...
 % right>
+
 function p = site_ordering_permute(n)
         p = zeros(2*n+2,1);
         p(1)=1;
         p(2*n+2)=2*n+2;
-        for i = 2:n+1
-            p(i)=2*(i-1);
+        for i = 1:n
+            p(2*i)=i+1;
         end
-        for i = n+2:2*n+1
-           p(i) = (i-(n+1))*2+1 ;
+        for i = 1:n
+           p(2*i+1) = n+i+1 ;
         end
+end
+
+%just the element wise 2 norm
+function norm = tensor_norm(X)
+    v = reshape(X,[],1);
+    %N=length(v);
+    norm = sqrt(  sum(v.^2)  ); 
 end
 
