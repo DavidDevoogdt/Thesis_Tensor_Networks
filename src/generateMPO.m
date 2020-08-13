@@ -60,17 +60,25 @@ classdef generateMPO
 
             RHS_Tensor_11 =H_exp(obj,N) - contract_O(N,O,current_max_index,d);
             RHS_Matrix_11 = reshape(permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
-                                                          dimension_vector(d,2,[d^2,d^2]) ); 
+                                                          [d^2,d,d,d^2] ); 
 
 
             %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
             % by solving a linear problem or starting from SVD
 
             O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1);
-
             O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1);
+            O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  ); 
+%             
+%             O_01 = reshape( O{1,2}, [d^2,d^2]);
+% 
+%             O_10 = reshape( O{2,1}, [d^2,d^2]);
+%             
+%             temp =  O_01\RHS_Matrix_11;  %https://nl.mathworks.com/help/matlab/ref/mldivide.html
+%             O_11 = temp/O_10;
+            
 
-            O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
+            %O{2,2} = reshape( O_11, [d^2,d,d,d^2]);
 
             if testing==1
                 err = tensor_norm( ncon( { O{1,2}, O{2,2}, O{2,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]}, [1,2])...
@@ -132,7 +140,31 @@ classdef generateMPO
 
             %reshape such that the ruslting mpo is one matrix instead of several 
             %virtual levels
+            %each seperate element is in ordering  upper legs.. lower legs
+            
+            
+            
+           
+            
             MPO = mpo_cell_2_matrix(O,maxIndex,d);
+            
+            %seems to work
+            if testing==1
+                left =zeros(1,21);
+                left(1) = 1;
+                right =zeros(21,1);
+                right(1) = 1;
+                
+                err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
+                err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
+                err3 = tensor_norm( ncon( {left,MPO,MPO,MPO,right},{[-1,1],[1,-2,-5,2],[2,-3,-6,3],[3,-4,-7,4],[4,-8]})-contract_O(2,O,2,d));
+                fprintf("matrixconversion  err0 %d err1 %d err3 %d \n",err1,err2,err3);
+            end
+            
+
+            
+         
+            
         end
 
     end
@@ -182,7 +214,7 @@ end
 
 function T = contract_O(N,O,maxIndex,d)
     %N number of internal sites
-    %first upper legs, then lower legs
+    %returns first upper legs, then lower legs
     
     %global d
 
