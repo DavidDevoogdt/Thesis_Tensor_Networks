@@ -45,10 +45,12 @@ classdef generateMPO
                                                         [d^2,d^2] ); %ready to svd
 
             [U,S,V] = svd(RHS_Matrix_01);
-            sqrt_S = sqrt(S); %for symmetric split, not really necesary
+            %sqrt_S = sqrt(S); %for symmetric split, not really necesary
 
-            O{0+1,1+1} = reshape( U*sqrt_S, [1,d,d,d^2]);
-            O{1+1,0+1} = reshape( sqrt_S* V', [d^2,d,d,1]);
+            a_S = average(S);
+            
+            O{0+1,1+1} = reshape( U*a_S, [1,d,d,d^2]);
+            O{1+1,0+1} = reshape( S/a_S* V', [d^2,d,d,1]);
 
             if testing==1
                 err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor_01);
@@ -102,10 +104,11 @@ classdef generateMPO
             O_12_21_svd = reshape(O_12_21, [d^4,d^4]);
 
             [U,S,V] = svd(O_12_21_svd);
-            sqrt_S = sqrt(S); %for symmetric split, not really necesary
+            a_S = average(S);
+            
 
-            O{1+1,2+1} = reshape( U*sqrt_S, [d^2,d,d,d^4]);
-            O{2+1,1+1} = reshape( sqrt_S* V', [d^4,d,d,d^2]);
+            O{1+1,2+1} = reshape( U*a_S, [d^2,d,d,d^4]);
+            O{2+1,1+1} = reshape( S/a_S* V', [d^4,d,d,d^2]);
 
             if testing==1
                 err = tensor_norm( ncon( {O{1,2},O{2,3},O{3,2},O{2,1}}, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3],[3,-5,-9,-10]}, [1,2,3])...
@@ -174,7 +177,7 @@ classdef generateMPO
             %this type generates no 1--|--1 and 2--|--2 blocks
             d = obj.d;
 
-            maxIndex = 2;
+            maxIndex = 4;
             O = cell(maxIndex,maxIndex);
 
             O{1,1} = reshape(  obj.I_tensor, [1,d,d,1] ) ;
@@ -189,10 +192,11 @@ classdef generateMPO
                                                         [d^2,d^2] ); %ready to svd
 
             [U,S,V] = svd(RHS_Matrix_01);
-            sqrt_S = sqrt(S); %for symmetric split, not really necesary
-
-            O{0+1,1+1} = reshape( U*sqrt_S, [1,d,d,d^2]);
-            O{1+1,0+1} = reshape( sqrt_S* V', [d^2,d,d,1]);
+            
+            a_S = average(S);
+                       
+            O{0+1,1+1} = reshape( U* a_S , [1,d,d,d^2]);
+            O{1+1,0+1} = reshape( S/a_S * V', [d^2,d,d,1]);
 
             if testing==1
                 err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor_01);
@@ -205,7 +209,7 @@ classdef generateMPO
             current_max_index = 1;  %used to contract the tensor 
 
             RHS_Tensor_12 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_12 = reshape(permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
+            RHS_Matrix_123 = reshape(permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2] ); 
 
 
@@ -214,14 +218,15 @@ classdef generateMPO
 
             O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1);
             
-            RHS_Tensor_120 = reshape( ncon( { O_01_inv, RHS_Matrix_12 }, { [-1,1], [1,-2,-3,-4]}  ),...
+            RHS_Tensor_120 = reshape( ncon( { O_01_inv, RHS_Matrix_123 }, { [-1,1], [1,-2,-3,-4]}  ),...
                                        [d^4,d^2] );
                 
             [U,S,V] = svd(RHS_Tensor_120);
-            %sqrt_S = sqrt(S); %for symmetric split, not really necesary
 
-            O{1+1,2+1} = reshape( U, [d^2,d,d,d^4]);
-            O{2+1,0+1} = reshape( S*V', [d^4,d,d,1]);
+            a_S = average(S);
+            
+            O{1+1,2+1} = reshape( U*a_S, [d^2,d,d,d^4]);
+            O{2+1,0+1} = reshape( S/a_S*V', [d^4,d,d,1]);
                                    
             if testing==1
                 err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]}, [1,2])...
@@ -229,46 +234,84 @@ classdef generateMPO
                 fprintf("err 0120 = %d\n",err);
             end
            
-            %step 2 :
-            % 0--|--1--|--2--|--1--|--0 = exp(H12+H23+h34)- (0--|--|--|--|--0) 
+            %step 3 :
+            % 0--|--1--|--2--|--3--|--0 = exp(H12+H23+h34)- (0--|--|--|--|--0) 
             N = 3;                  %number of free bonds
-            current_max_index = 1;  %used to contract the tensor 
+            current_max_index = 2;  %used to contract the tensor 
 
-            RHS_Tensor_121 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_121 = reshape(permute(RHS_Tensor_121, site_ordering_permute(N+1) ),...
+            RHS_Tensor_123 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix_123 = reshape(permute(RHS_Tensor_123, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2] ); 
 
 
-            %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
-            % by solving a linear problem or starting from SVD
-
-            
+                      
             O_12_inv = reshape( O{2,3}, [d^4,d^4])^(-1);
             O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1);
             
-            temp = reshape(ncon( {O_01_inv, RHS_Matrix_121, O_10_inv }, { [-1,2] [2,-2,-3,3],[3,-4]}  ) ,...
+            RHS_matrix_1234 = reshape( ncon( {O_01_inv, RHS_Matrix_123 }, { [-1,2] [2,-2,-3,-4]}  ) ,...
                                        [d^4,d,d,d^2 ] );
                                    
-            O{3,2} =  ncon( {O_12_inv,temp}, {[-1,1],[1,-2,-3,-4]}  ) ;                    
-          
-                                   
+            RHS_matrix_230 =  reshape( ncon( {O_12_inv,RHS_matrix_1234}, {[-1,1],[1,-2,-3,-4]}  ),...
+                                         [d^6,d^2] );
+
+            [U,S,V] = svd( RHS_matrix_230);     
+            
+             a_S = average(S);
+            
+            O{2+1,3+1} = reshape( U*a_S, [d^4,d,d,d^6]);
+            O{3+1,0+1} = reshape( S/a_S*V', [d^6,d,d,1]);
+            
             if testing==1
-                err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,2},O{2,1} }, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3] ,[3,-5,-9 ,-10 ]} )...
-                    -RHS_Tensor_121);
-                fprintf("err 01210 = %d\n",err);
+                err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,4},O{4,1} }, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3] ,[3,-5,-9 ,-10 ]} )...
+                    -RHS_Tensor_123);
+                fprintf("err 01230 = %d\n",err);
             end
             
+             %step 3 :
+            % 0--|--1--|--2--|--3--|--4--|--0 = exp(H12+H23+h34)- (0--|--|--|--|--|--0) 
+            N = 4;                  %number of free bonds
+            current_max_index = 3;  %used to contract the tensor 
+
+            RHS_Tensor_01234 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix_01234 = reshape(permute(RHS_Tensor_01234, site_ordering_permute(N+1) ),...
+                                                          [d^2,d^2,d^2,d^2,d^2] ); 
+
+
+                      
+            O_23_inv = reshape( O{3,4}, [d^6,d^6])^(-1);
+
             
+            RHS_matrix_1234 = reshape( ncon( {O_01_inv, RHS_Matrix_01234 }, { [-1,2] [2,-2,-3,-4,-5]}  ) ,...
+                                       [d^4,d^2,d^2,d^2 ] );                   
+            RHS_matrix_234 =  reshape( ncon( {O_12_inv,RHS_matrix_1234}, {[-1,1],[1,-2,-3,-4]}  ),...
+                                         [d^6,d^2,d^2] );
+            RHS_matrix_34 =  reshape( ncon( {O_23_inv,RHS_matrix_234}, {[-1,1],[1,-2,-3]}  ),...
+                                         [d^8,d^2] );
+
+            [U,S,V] = svd( RHS_matrix_34);     
             
+            a_S = average(S);
+             
+            O{3+1,4+1} = reshape( U*a_S, [d^6,d,d,d^8]);
+            O{4+1,0+1} = reshape( S/a_S*V', [d^8,d,d,1]);
             
+            if testing==1
+                err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,4},O{4,5},O{5,1} }, {[-1,-2,-7,1],[1,-3,-8,2],[2,-4,-9,3] ,[3,-5,-10 ,4 ],[4,-6,-11,-12]} )...
+                    -RHS_Tensor_01234);
+                fprintf("err 012340 = %d\n",err);
+            end
+            
+
             MPO = mpo_cell_2_matrix(O,maxIndex,d);
+            
+            
+            
             
             %seems to work
             if testing==1
-                left =zeros(1,21);
+                left =zeros(1,geomSum(d^2,maxIndex));
                 left(1) = 1;
-                right =zeros(21,1);
-                right(1) = 1;
+                right = left';
                 
                 err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
                 err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
@@ -500,10 +543,21 @@ function T = mpo_cell_2_matrix(O,maxIndex,d)
         end
     end
 
-    function z =geomSum(x,n)
-       z= (x^(n+1)-1)/(x-1);
-    end
+
 
 
 end
 
+function z =geomSum(x,n)
+   z= (x^(n+1)-1)/(x-1);
+end
+
+%s diagonal
+function y = average(S)
+    d= min(size(S,1),size(S,2));
+    y=0;
+    for i = 1:d
+       y=y+S(i,i) ;
+    end
+
+end

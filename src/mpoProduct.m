@@ -1,7 +1,11 @@
 %makes chain of M mpo's next to each other, N layers deep with bond dim =
 %truncdim
 
-function mpo_list = mpoProduct(O,M,N,truncdim)
+function mpo_list = mpoProduct(O,M,N,truncdim,testing)
+    if nargin < 5
+       testing=0;
+    end
+
     d = size(O,2);
     chi = size(O,1);
     
@@ -12,23 +16,56 @@ function mpo_list = mpoProduct(O,M,N,truncdim)
     mpo_right = ncon(  {O,end_vector}, {[-1,-2,-3,1],[-4,1]});
     
     mpo_list = cell(1,M);
+    
+    
+    %contains O^n
     mpo_list(2:M-1) = {O};
     mpo_list{1} = mpo_left;
     mpo_list{M} = mpo_right;
+
+    
+    basis_mpo_list = mpo_list; %list of O to apply
+    
+    if chi > truncdim %pretruncate
+        right = mpo_list{1};
+        for i = 1:M-1
+            
+            con = ncon( {right,mpo_list{i+1}},{  [-1,-2,-3,1],[1,-4,-5,-6] });
+            size_vect =size(con);
+            con = reshape(con,  size_vect(1)*size_vect(2)*size_vect(3), []);
+
+            [U,S,V] = svds( con,truncdim);
+            %from this paper: scale S and U https://arxiv.org/pdf/1611.02498.pdf
+            [a_S,td] = average(S);
+          
+            left = reshape( U*a_S,  size_vect(1) , d,d, td);
+            right = reshape( S/a_S*V', td,d,d, []);
+            
+            basis_mpo_list{i} = left;
+        end
+        basis_mpo_list{M} = right;
+        
+        mpo_list = basis_mpo_list;
+    end
+    
+   
     
     for n = 2:N
         
-        [left, right] = mpo_product_4(mpo_list{1}, mpo_left,mpo_list{2},O,truncdim);
+        [left, right] = mpo_product_4(mpo_list{1}, basis_mpo_list{1} ,mpo_list{2},basis_mpo_list{2},truncdim);
         mpo_list{1} = left;
         
         for i = 2:M-2
-            [left,right] = mpo_product_3(right, mpo_list{i+1} ,O,truncdim);
+            [left,right] = mpo_product_3(right, mpo_list{i+1} ,basis_mpo_list{i+1},truncdim);
             mpo_list{i} = left;
         end
 
-        [left,right] = mpo_product_3(right,mpo_list{M},mpo_right,truncdim);
+        [left,right] = mpo_product_3(right,mpo_list{M},basis_mpo_list{M},truncdim);
         mpo_list{M-1} = left;
         mpo_list{M} = right;
+        if testing==1
+           fprintf("added layer %d\n",n); 
+        end
     end
     
 end
@@ -74,19 +111,24 @@ function [O_left,O_right] = mpo_product_3(mpo_1,mpo_3,mpo_4,truncdim)
     assert(size(mpo_1,5)==size(mpo_4,1));
     
     
-    sum = ncon( {mpo_1,mpo_3,mpo_4}, { [-1,-2,-3,2,4],[2,-4,3,-6],[4,3,-5,-7]});
+    sum = ncon( {mpo_1,mpo_3,mpo_4}, { [-1,-2,-3,1,2],[1,-4,3,-6],[2,3,-5,-7]});
      
     [U,S,V] = svds(  reshape( sum, [left_bond_dim* d^2,d^2*right_bond_dim]),truncdim);
     
+    [a_S,td] = average(S);
     
-    truncdim = size(S,1); % in case this is smaller than assigned trucndim
     
-    %from this paper: scale S and U https://arxiv.org/pdf/1611.02498.pdf
-    a_s = 1/truncdim * ncon( {S}, {[1,1]});
-    
-    O_left = reshape( U*a_s, [left_bond_dim, d,d, truncdim]);
-    O_right = reshape( S/a_s*V', [truncdim,d,d,d_bond_3_right,d_bond_4_right]);
+    O_left = reshape( U*a_S, [left_bond_dim, d,d, td]);
+    O_right = reshape( S/a_S*V', [td,d,d,d_bond_3_right,d_bond_4_right]);
     
 end
 
+%s diagonal
+function [y,d] = average(S)
+    d= min(size(S,1),size(S,2));
+    y=0;
+    for i = 1:d
+       y=y+S(i,i) ;
+    end
 
+end
