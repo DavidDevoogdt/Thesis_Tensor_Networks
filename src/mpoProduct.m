@@ -1,6 +1,13 @@
 
-function O_cell_N = mpoProduct(O_cell,N,truncdim,testing)
+function O_cell_N = mpoProduct(O_cell,N,truncdim,testing,type)
     
+    if nargin ==5
+       if type==2
+           O_cell_N = mpoProduct_assym(O_cell,N,truncdim,testing);
+           return
+       end
+    end
+
     if nargin < 4
        testing=0;
     end
