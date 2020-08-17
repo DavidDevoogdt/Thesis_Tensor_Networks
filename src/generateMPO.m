@@ -559,5 +559,5 @@ function y = average(S)
     for i = 1:d
        y=y+S(i,i) ;
     end
-
+     y=y/d;
 end
