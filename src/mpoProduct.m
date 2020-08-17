@@ -1,55 +1,182 @@
+
+function O_cell_N = mpoProduct(O_cell,N,truncdim,testing)
+    
+    if nargin < 4
+       testing=0;
+    end
+    
+    
+    
+    O_left = O_cell{1};
+    O_even= O_cell{2};
+    O_odd = O_cell{3};
+    O_right = O_cell{4};
+    
+    d = size(O_even,2);
+    
+    oe_dim = size(O_odd,4); %odd even dim
+    eo_dim = size(O_odd,1);%even odd dim
+    
+    %curre t is the running mpo O^N
+    O_left_C = O_cell{1};
+    O_even_C= O_cell{2};
+    O_odd_C = O_cell{3};
+    O_right_C = O_cell{4};
+    
+    for i = 2:N    
+        fprintf("adding layer");
+        
+        oe_dim_C = size(O_odd_C,4); %odd even dim
+        eo_dim_C = size(O_odd_C,1);%even odd dim
+
+
+        Oe_Oo = reshape( ncon( {O_even_C,O_even,O_odd_C,O_odd}, {[-1,-3,4,1],[-2,4,-4,3],[1,-5,2,-7],[3,2,-6,-8]}),...
+                                    [ oe_dim*oe_dim_C*d^2, eo_dim*eo_dim_C*d^2 ]);
+        [U,S,V] = svds( Oe_Oo, truncdim);
+        [a_S_1,td1]=normalisation(S);
+
+        Oe1 = reshape( U*a_S_1, [oe_dim*oe_dim_C,d,d,td1]);
+        Oo1 = reshape( S*V'/a_S_1, [td1,d,d,oe_dim*oe_dim_C]);
+
+        Oo1_Oe1 = reshape( ncon( {Oo1,Oe1},{[-1,-2,-3,1] ,[1,-4,-5,-6]}),...
+                                        [td1*d^2 ,d^2*td1]);
+
+        [U,S,V] = svds(Oo1_Oe1,truncdim); 
+        [a_S_2,td2] = normalisation(S);
+        Oo2 = reshape(U*a_S_2, [td1,d,d,td2]);
+        Oe2=  reshape(S/a_S_2*V', [td2,d,d,td1]);
+
+        fprintf('tussentijd %s \n', N, datestr(now,'HH:MM:SS.FFF'));
+
+        %fix edges
+%         O_left_double = reshape( ncon( {O_left_C,O_left}, {[-1,-3,1,-5],[-2,1,-4,-6]} ),...
+%                                     [ 1, d,d, oe_dim*oe_dim_C ]);
+% 
+%         O_even_1=reshape(Oe1, oe_dim*oe_dim_C,d^2*td1);
+%         O_even_2_inv = pinv(  reshape(Oe2, [td2,d^2*td1])  ) ;
+%         
+%         if testing ==1
+%             err= tensor_norm( ncon(  {O_even_1,Oe2 }, {[-1,-2,-4,1],[1,-3,-5,-6]} )-...
+%                  ncon(  {O_left_double,Oe1 }, {[-1,-2,-4,1],[1,-3,-5,-6]}  ));
+%             fprintf( "beginerr %e \n",err);
+%         end
+%         
+%         begin_O_2 = ncon( {O_left_double, O_even_1,O_even_2_inv}, {[-1,-2,-3,1],[1,2],[2,-4]}  );    
+% 
+%         if testing ==1
+%             err= tensor_norm( ncon(  {begin_O_2,Oe2 }, {[-1,-2,-4,1],[1,-3,-5,-6]} )-...
+%                  ncon(  {O_left_double,Oe1 }, {[-1,-2,-4,1],[1,-3,-5,-6]}  ));
+%             fprintf( "beginerr %e \n",err);
+%         end
+% 
+%         O_right_double = reshape( ncon( {O_right_C,O_right}, {[-1,-3,1,-5],[-2,1,-4,-6]} ),...
+%                                     [ eo_dim*eo_dim_C, d,d,1 ]);
+% 
+%         O_o=reshape(Oo1, [],eo_dim*eo_dim_C);
+%         O_odd_2_inv = pinv(  reshape(Oo2, [td2*d^2,td1])  ) ;
+%         end_O_2 = ncon( {O_odd_2_inv,O_o,O_right_double}, {[-1,1],[1,2],[2,-2,-3,-4]}  );    
+% 
+%         if testing ==1
+%             err= tensor_norm( ncon(  {Oo2, end_O_2 }, {[-1,-2,-4,1],[1,-3,-5,-6]} )-...
+%                  ncon(  {Oo1, O_right_double }, {[-1,-2,-4,1],[1,-3,-5,-6]}  ));
+%             fprintf( "enderr %e \n",err);
+%         end
+
+
+    %%%%%%%%%%%also not accurate
+    %search e_2 such that
+    % left  --O_odd_C              
+    %           |       -- Oe1-- = left_2--Oo2--Oe2--
+    % left_c--O_odd    
+       
+        orig_double = reshape(ncon(  {O_left_C, O_left} , {[-1,-3,1,-5],[-2,1,-4,-6]}),...
+                                        [d^2,oe_dim*oe_dim_C ]);
+    
+        %B
+        target_left = reshape( ncon( { orig_double,Oe1}, {[-1,1],[1,-2,-3,-4]}  ),...
+                                [d^2,d^2*td1]);
+        %A
+        target_right = reshape(Oe2 ,[ td1  , d^2* td1]);
+        
+        %does the same as next command
+%         t_left_2 = zeros( d^2, td1);
+%         
+%         for i = 1:d^2
+%             %x*A=B
+% 
+%             B=target_left(i,:);
+%             A=target_right;
+%             x = B  /A;
+%             t_left_2(i,:) = x;
+%             
+%         end
+        
+        %x*A = B
+        t_left_2 =  (target_left /target_right) ; %https://nl.mathworks.com/help/matlab/ref/mrdivide.html
+
+        left_2 = reshape(t_left_2, [1,d,d,td1]);
+        
+        %left_2*target_right-target_left should be about zero
+        
+        if testing ==1
+            err= tensor_norm( ncon( { orig_double,Oe1}, {[-1,1],[1,-2,-3,-4]}  )-...
+                 ncon( {t_left_2,Oe2}, {[-1, 1],[1,-2,-3,-4] }  ));
+            fprintf( "beginerr %e \n",err);
+        end
+        
+        % same for right
+        
+        orig_double = reshape(ncon(  {O_right_C, O_right} , {[-1,-3,1,-5],[-2,1,-4,-6]}),...
+                                        [eo_dim*eo_dim_C,d^2 ]);
+    
+        %B
+        target_left = reshape( ncon( { Oo1,orig_double}, {[-1,-2,-3,1],[1,-4]}  ),...
+                                [d^2*td1,d^2]);
+        %A
+        target_right = reshape(Oo2 ,[ td1*d^2  ,  td1]);
+        
+        %x*A = B
+        t_right_2 =  (target_right\target_left) ; %https://nl.mathworks.com/help/matlab/ref/mrdivide.html
+
+        right_2 = reshape(t_right_2, [td1,d,d,1]);
+        
+        %left_2*target_right-target_left should be about zero
+        
+        if testing ==1
+            err= tensor_norm( ncon( { Oo1,orig_double}, {[-1,-2,-3,1],[1,-4]}  )-...
+                 ncon( {Oo2,t_right_2}, {[-1,-2,-3, 1],[1,-4] }  ));
+            fprintf( "beginerr %e \n",err);
+        end
+        
+       %%%%%%%%%%%%%%%%%%%%%%%% 
+        
+        O_left_C = left_2;
+        O_even_C= Oe2;
+        O_odd_C = Oo2;
+        O_right_C = right_2;
+    
+    end
+    
+    O_cell_N = { O_left_C,O_even_C,O_odd_C,O_right_C};
+end
+
+
+
+
 %makes chain of M mpo's next to each other, N layers deep with bond dim =
 %truncdim
 
-function mpo_list = mpoProduct(O,M,N,truncdim,testing)
-    if nargin < 5
+function mpo_list = mpoProduct_assym(basis_mpo_list,N,truncdim,testing)
+    
+    if nargin < 6
        testing=0;
     end
 
-    d = size(O,2);
-    chi = size(O,1);
-    
-    end_vector = zeros(1,chi);
-    end_vector(1)=1;
-    
-    mpo_left = ncon(  {end_vector,O}, {[-1,1],[1,-2,-3,-4]});
-    mpo_right = ncon(  {O,end_vector}, {[-1,-2,-3,1],[-4,1]});
-    
-    mpo_list = cell(1,M);
-    
-    
-    %contains O^n
-    mpo_list(2:M-1) = {O};
-    mpo_list{1} = mpo_left;
-    mpo_list{M} = mpo_right;
-
-    
-    basis_mpo_list = mpo_list; %list of O to apply
-    
-    if chi > truncdim %pretruncate
-        right = mpo_list{1};
-        for i = 1:M-1
-            
-            con = ncon( {right,mpo_list{i+1}},{  [-1,-2,-3,1],[1,-4,-5,-6] });
-            size_vect =size(con);
-            con = reshape(con,  size_vect(1)*size_vect(2)*size_vect(3), []);
-
-            [U,S,V] = svds( con,truncdim);
-            %from this paper: scale S and U https://arxiv.org/pdf/1611.02498.pdf
-            [a_S,td] = average(S);
-          
-            left = reshape( U*a_S,  size_vect(1) , d,d, td);
-            right = reshape( S/a_S*V', td,d,d, []);
-            
-            basis_mpo_list{i} = left;
-        end
-        basis_mpo_list{M} = right;
-        
-        mpo_list = basis_mpo_list;
-    end
-    
    
+    mpo_list = basis_mpo_list;
     
+    M = size(mpo_list,2);
+
     for n = 2:N
         
         [left, right] = mpo_product_4(mpo_list{1}, basis_mpo_list{1} ,mpo_list{2},basis_mpo_list{2},truncdim);
@@ -115,7 +242,7 @@ function [O_left,O_right] = mpo_product_3(mpo_1,mpo_3,mpo_4,truncdim)
      
     [U,S,V] = svds(  reshape( sum, [left_bond_dim* d^2,d^2*right_bond_dim]),truncdim);
     
-    [a_S,td] = average(S);
+    [a_S,td] = normalisation(S);
     
     
     O_left = reshape( U*a_S, [left_bond_dim, d,d, td]);
@@ -124,11 +251,22 @@ function [O_left,O_right] = mpo_product_3(mpo_1,mpo_3,mpo_4,truncdim)
 end
 
 %s diagonal
-function [y,d] = average(S)
+function [y,d] = normalisation(S)
     d= min(size(S,1),size(S,2));
     y=0;
     for i = 1:d
-       y=y+S(i,i) ;
+       %if S(i,i)>y
+       %    y = S(i,i);
+       %end
+       y=y+S(i,i);
     end
+     y=y/d;
+end
 
+
+%just the element wise 2 norm
+function norm = tensor_norm(X)
+    v = reshape(X,[],1);
+    %N=length(v);
+    norm = sqrt(  sum(v.^2)  ); 
 end
