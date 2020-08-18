@@ -323,12 +323,16 @@ classdef generateMPO
         end
         
 
-    end
-    
-    methods (Access=private)
+    %end
+    %methods (Access=private)
         
 
-        function H_exp = H_exp(obj,N)
+        function H_exp = H_exp(obj,N,matrix)
+            if nargin <3
+                matrix = 0;
+            end
+            
+            
             % return E(H_1_2+..+H_N-1_N) in normal ordering (dimension d^N+1, basis first
             % upper legs, then lower legs
             % so this makes first the tensor T = H     x I x I  
@@ -387,7 +391,14 @@ classdef generateMPO
                 H = H + H_i;
             end
 
-            H_exp = reshape(  expm( reshape(H, [d^(N+1),d^(N+1)])), dimension_vector(d,2*(N+1),[1,1] ));
+            H_exp_matrix = expm( reshape(H, [d^(N+1),d^(N+1)]));
+            
+            if matrix == 1
+               H_exp =  H_exp_matrix;
+               return
+            end
+            
+            H_exp = reshape(  H_exp_matrix , dimension_vector(d,2*(N+1),[1,1] ));
 
 
         end
