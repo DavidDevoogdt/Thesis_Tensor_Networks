@@ -3,7 +3,7 @@ classdef generateMPO
     %   Detailed explanation goes here
     
     properties
-        d
+        dim
         H_1_tensor
         H_2_tensor
     end
@@ -16,7 +16,7 @@ classdef generateMPO
         function obj = generateMPO(d,H_1_tensor,H_2_tensor)
             %GENERATEMPO Construct an instance of this class
             %   Detailed explanation goes here
-            obj.d = d;
+            obj.dim = d;
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
             obj.I_tensor = eye(d);
@@ -28,23 +28,24 @@ classdef generateMPO
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
             % corresponding bond. dimension x1 at the end not shown by matlab
             %this type generates 1--|--1 and 2--|--2 blocks during the expansion
-            d = obj.d;
+            d = obj.dim;
 
             maxIndex = 2;
-            O = cell(maxIndex,maxIndex);
+            O = cell(maxIndex+1,maxIndex+1);
 
-            O{1,1} = reshape(  obj.I_tensor, [1,d,d,1] ) ;
+            O{1,1} = reshape(expm(obj.H_1_tensor), [1,d,d,1] ) ;
+            %O{1,1} = reshape(  obj.I_tensor, [1,d,d,1] ) ;
 
             %step 1:
             % 0--|--1--|--0 = exp(H_12) - (0--|--|--0 )  
             N = 1;                  %number of free bonds
             current_max_index = 0;  %used to contract the tensor 
 
-            RHS_Tensor_01 = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
-            RHS_Matrix_01 = reshape( permute( RHS_Tensor_01 , site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
+            RHS_Matrix = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
                                                         [d^2,d^2] ); %ready to svd
 
-            [U,S,V] = svd(RHS_Matrix_01);
+            [U,S,V] = svd(RHS_Matrix);
             %sqrt_S = sqrt(S); %for symmetric split, not really necesary
 
             a_S = average(S);
@@ -53,8 +54,8 @@ classdef generateMPO
             O{1+1,0+1} = reshape( S/a_S* V', [d^2,d,d,1]);
 
             if testing==1
-                err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor_01);
-                fprintf("err 01 = %d\n",err);
+                err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor);
+                fprintf("err 010 = %d\n",err);
             end
 
             %step 2 :
@@ -62,32 +63,30 @@ classdef generateMPO
             N = 2;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor_11 =H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_11 = reshape(permute(RHS_Tensor_11, site_ordering_permute(N+1) ),...
+            RHS_Tensor =H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d,d,d^2] ); 
 
 
-            %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
-            % by solving a linear problem or starting from SVD
-
-            O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1);
-            O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1);
-            O{2,2} = ncon( { O_01_inv, RHS_Matrix_11, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  ); 
-%             
-%             O_01 = reshape( O{1,2}, [d^2,d^2]);
-% 
-%             O_10 = reshape( O{2,1}, [d^2,d^2]);
-%             
-%             temp =  O_01\RHS_Matrix_11;  %https://nl.mathworks.com/help/matlab/ref/mldivide.html
-%             O_11 = temp/O_10;
+            %search x st 
+            % left*x = res
+            % y*right = x
+            left = reshape( O{1,2}, [d^2,d^2]);
+            right = reshape( O{2,1}, [d^2,d^2]);
+            res = reshape( RHS_Matrix, [d^2,d^4]);
             
+            x = left\res;
+            x = reshape(x, [d^4,d^2]);
+            y = x/right;
 
-            %O{2,2} = reshape( O_11, [d^2,d,d,d^2]);
+            
+            O{2,2} = reshape(y, [d^2,d,d,d^2 ]); 
+
 
             if testing==1
                 err = tensor_norm( ncon( { O{1,2}, O{2,2}, O{2,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]}, [1,2])...
-                    -RHS_Tensor_11);
-                fprintf("err 11 = %d\n",err);
+                    -RHS_Tensor);
+                fprintf("err 0110 = %d\n",err);
             end
 
             %step 3:
@@ -95,15 +94,24 @@ classdef generateMPO
             N = 3;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor_12 = H_exp(obj,N)- contract_O(N,O,current_max_index,d);
-            RHS_Matrix_12 = reshape( permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N)- contract_O(N,O,current_max_index,d);
+            RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                    dimension_vector(d^2,4));%group per ij index
+            
+            %search x st 
+            % left*x = res
+            % y*right = x
+            left = reshape( O{1,2}, [d^2,d^2]);
+            right = reshape( O{2,1}, [d^2,d^2]);
+            res = reshape( RHS_Matrix, [d^2,d^6]);
+            
+            x = left\res;
+            x = reshape(x, [d^6,d^2]);
+            y = x/right;                                   
+                                               
+            new_parts = reshape(y, [d^4,d^4]);
 
-
-            O_12_21 = ncon( { O_01_inv, RHS_Matrix_12, O_10_inv }, { [-1,1], [1,-2,-3,2],[2,-4]}, [1,2]  );
-            O_12_21_svd = reshape(O_12_21, [d^4,d^4]);
-
-            [U,S,V] = svd(O_12_21_svd);
+            [U,S,V] = svd(new_parts);
             a_S = average(S);
             
 
@@ -112,8 +120,8 @@ classdef generateMPO
 
             if testing==1
                 err = tensor_norm( ncon( {O{1,2},O{2,3},O{3,2},O{2,1}}, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3],[3,-5,-9,-10]}, [1,2,3])...
-                    -RHS_Tensor_12);
-                fprintf("err 12 = %d\n",err);
+                    -RHS_Tensor);
+                fprintf("err 01210 = %d\n",err);
             end
 
             %step 4:
@@ -121,26 +129,31 @@ classdef generateMPO
             N = 4;                  %number of free bonds
             current_max_index = 2;  %used to contract the tensor 
 
-            RHS_Tensor_22 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Tensor_22_site = reshape( permute(RHS_Tensor_22, site_ordering_permute(N+1)),...
+            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
                                     dimension_vector(d^2,5)); %group per ij index
-
-            % first apply inverses of O_01 and O_02
-            RHS_Tensor_22_site_stripped = ncon( {O_01_inv, RHS_Tensor_22_site, O_10_inv}, { [-1,1],[1,-2,-3,-4,2],[2,-5]},[1,2]);
-
-
-            O_12_inv = (reshape( O{1+1,2+1}, [d^4,d^4]))^-1;  % (O_12, (alpha,i,j) beta)^-1
-            O_21_inv = (reshape( O{2+1,1+1}, [d^4,d^4]))^-1;
-
-            RHS_Tensor_22_site_stripped_reshaped = reshape( RHS_Tensor_22_site_stripped, [d^4,d,d,d^4]);
-
-            O{2+1,2+1} = ncon(  {O_12_inv,RHS_Tensor_22_site_stripped_reshaped,O_21_inv},{ [-1,1],[1,-2,-3,2],[2,-4]},[1,2]);
+            
+            %search x st 
+            % left*x = res
+            % y*right = x
+            left = reshape( ncon( {O{1,2},O{2,3}},{[-1,-2,-3,1],[1,-4,-5,-6]}),...
+                            [d^4,d^4]);
+            right = reshape( ncon( {O{3,2},O{2,1} },{[-1,-2,-3,1],[1,-4,-5,-6]}),...
+                            [d^4,d^4]);
+            res = reshape( RHS_Matrix, [d^4,d^6]);
+            
+            x = left\res;
+            x = reshape(x, [d^6,d^4]);
+            y = x/right;                                   
+               
+                 
+            O{2+1,2+1} = reshape(y, [d^4,d,d,d^4]);  
 
 
             if testing==1
                 err = tensor_norm( ncon( {O{1,2},O{2,3},O{3,3},O{3,2},O{2,1}}, {[-1,-2,-7,1],[1,-3,-8,2],[2,-4,-9,3],[3,-5,-10,4],[4,-6,-11,-12]}, [1,2,3,4])...
-                    -RHS_Tensor_22);
-                fprintf("err 12 = %d\n",err);
+                    -RHS_Tensor);
+                fprintf("err 012210 = %d\n",err);
             end
 
             %reshape such that the ruslting mpo is one matrix instead of several 
@@ -151,18 +164,18 @@ classdef generateMPO
             MPO = mpo_cell_2_matrix(O,maxIndex,d);
             
             %seems to work
-            if testing==1
-                left =zeros(1,21);
-                left(1) = 1;
-                right =zeros(21,1);
-                right(1) = 1;
-                
-                err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
-                err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
-                err3 = tensor_norm( ncon( {left,MPO,MPO,MPO,right},{[-1,1],[1,-2,-5,2],[2,-3,-6,3],[3,-4,-7,4],[4,-8]})-contract_O(2,O,2,d));
-                fprintf("matrixconversion  err0 %d err1 %d err3 %d \n",err1,err2,err3);
-            end
-            
+%             if testing==1
+%                 left =zeros(1,21);
+%                 left(1) = 1;
+%                 right =zeros(21,1);
+%                 right(1) = 1;
+%                 
+%                 err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
+%                 err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
+%                 err3 = tensor_norm( ncon( {left,MPO,MPO,MPO,right},{[-1,1],[1,-2,-5,2],[2,-3,-6,3],[3,-4,-7,4],[4,-8]})-contract_O(2,O,2,d));
+%                 fprintf("matrixconversion  err0 %d err1 %d err3 %d \n",err1,err2,err3);
+%             end
+%             
 
             
          
@@ -175,23 +188,24 @@ classdef generateMPO
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
             % corresponding bond. dimension x1 at the end not shown by matlab
             %this type generates no 1--|--1 and 2--|--2 blocks
-            d = obj.d;
+            d = obj.dim;
 
             maxIndex = 4;
-            O = cell(maxIndex,maxIndex);
+            O = cell(maxIndex+1,maxIndex+1);
 
-            O{1,1} = reshape(  obj.I_tensor, [1,d,d,1] ) ;
-
+           
+            O{1,1} = reshape(  expm(obj.H_1_tensor), [1,d,d,1] ) ;
+           
             %step 1:
             % 0--|--1--|--0 = exp(H_12) - (0--|--|--0 )  
             N = 1;                  %number of free bonds
             current_max_index = 0;  %used to contract the tensor 
 
-            RHS_Tensor_01 = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
-            RHS_Matrix_01 = reshape( permute( RHS_Tensor_01 , site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
+            RHS_Matrix_site = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
                                                         [d^2,d^2] ); %ready to svd
 
-            [U,S,V] = svd(RHS_Matrix_01);
+            [U,S,V] = svd(RHS_Matrix_site);
             
             a_S = average(S);
                        
@@ -199,7 +213,7 @@ classdef generateMPO
             O{1+1,0+1} = reshape( S/a_S * V', [d^2,d,d,1]);
 
             if testing==1
-                err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor_01);
+                err = tensor_norm( ncon( {O{0+1,1+1},O{1+1,0+1}}, {[-1,-2,-4,1],[1,-3,-5,-6]}, [1])-RHS_Tensor);
                 fprintf("err 01 = %d\n",err);
             end
 
@@ -208,29 +222,27 @@ classdef generateMPO
             N = 2;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor_12 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_123 = reshape(permute(RHS_Tensor_12, site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2] ); 
 
-
-            %todo: this takes the inverse of the O_01 and O_10 matrices, could be done
-            % by solving a linear problem or starting from SVD
-
-            O_01_inv = reshape( O{1,2}, [d^2,d^2])^(-1);
+            left = reshape( O{1,2}, [d^2,d^2]);
+            right = reshape(RHS_Matrix_site, [d^2,d^4]);
             
-            RHS_Tensor_120 = reshape( ncon( { O_01_inv, RHS_Matrix_123 }, { [-1,1], [1,-2,-3,-4]}  ),...
-                                       [d^4,d^2] );
+            %https://nl.mathworks.com/help/matlab/ref/mldivide.html
+            x = left\right;
+            
+            new_part = reshape( x, [d^4,d^2] );
                 
-            [U,S,V] = svd(RHS_Tensor_120);
-
+            [U,S,V] = svd(new_part);
             a_S = average(S);
             
             O{1+1,2+1} = reshape( U*a_S, [d^2,d,d,d^4]);
             O{2+1,0+1} = reshape( S/a_S*V', [d^4,d,d,1]);
                                    
             if testing==1
-                err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]}, [1,2])...
-                    -RHS_Tensor_12);
+                err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,1} }, {[-1,-2,-5,1],[1,-3,-6,2],[2,-4,-7,-8]})...
+                    -RHS_Tensor);
                 fprintf("err 0120 = %d\n",err);
             end
            
@@ -239,57 +251,52 @@ classdef generateMPO
             N = 3;                  %number of free bonds
             current_max_index = 2;  %used to contract the tensor 
 
-            RHS_Tensor_123 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_123 = reshape(permute(RHS_Tensor_123, site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2] ); 
 
-
-                      
-            O_12_inv = reshape( O{2,3}, [d^4,d^4])^(-1);
-            O_10_inv = reshape( O{2,1}, [d^2,d^2])^(-1);
+            left = reshape( ncon( {O{1,2},O{2,3}},{[-1,-2,-3,1],[1,-4,-5,-6]} ),...
+                [d^4,d^4]);
+            right = reshape(RHS_Matrix_site, [d^4,d^4]);
             
-            RHS_matrix_1234 = reshape( ncon( {O_01_inv, RHS_Matrix_123 }, { [-1,2] [2,-2,-3,-4]}  ) ,...
-                                       [d^4,d,d,d^2 ] );
+            %https://nl.mathworks.com/help/matlab/ref/mldivide.html
+            x = left\right;                                          
                                    
-            RHS_matrix_230 =  reshape( ncon( {O_12_inv,RHS_matrix_1234}, {[-1,1],[1,-2,-3,-4]}  ),...
-                                         [d^6,d^2] );
+            new_part =  reshape( x, [d^6,d^2] );
 
-            [U,S,V] = svd( RHS_matrix_230);     
-            
-             a_S = average(S);
+            [U,S,V] = svd( new_part);     
+            a_S = average(S);
             
             O{2+1,3+1} = reshape( U*a_S, [d^4,d,d,d^6]);
             O{3+1,0+1} = reshape( S/a_S*V', [d^6,d,d,1]);
             
             if testing==1
                 err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,4},O{4,1} }, {[-1,-2,-6,1],[1,-3,-7,2],[2,-4,-8,3] ,[3,-5,-9 ,-10 ]} )...
-                    -RHS_Tensor_123);
+                    -RHS_Tensor);
                 fprintf("err 01230 = %d\n",err);
             end
             
-             %step 3 :
+            %step 4 :
             % 0--|--1--|--2--|--3--|--4--|--0 = exp(H12+H23+h34)- (0--|--|--|--|--|--0) 
             N = 4;                  %number of free bonds
             current_max_index = 3;  %used to contract the tensor 
 
-            RHS_Tensor_01234 = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
-            RHS_Matrix_01234 = reshape(permute(RHS_Tensor_01234, site_ordering_permute(N+1) ),...
+            RHS_Tensor = H_exp(obj,N) - ...
+                    contract_O(N,O,current_max_index,d);
+            RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2,d^2] ); 
 
-
+            left = reshape( ncon( {O{1,2},O{2,3},O{3,4}},{[-1,-2,-3,1],[1,-4,-5,2],[2,-6,-7,-8]} ),...
+                [d^6,d^6]);
+            right = reshape(RHS_Matrix_site, [d^6,d^4]);
+            
+            %https://nl.mathworks.com/help/matlab/ref/mldivide.html
+            x = left\right;              
+            
+            new_part =  reshape( x , [d^8,d^2] );
                       
-            O_23_inv = reshape( O{3,4}, [d^6,d^6])^(-1);
 
-            
-            RHS_matrix_1234 = reshape( ncon( {O_01_inv, RHS_Matrix_01234 }, { [-1,2] [2,-2,-3,-4,-5]}  ) ,...
-                                       [d^4,d^2,d^2,d^2 ] );                   
-            RHS_matrix_234 =  reshape( ncon( {O_12_inv,RHS_matrix_1234}, {[-1,1],[1,-2,-3,-4]}  ),...
-                                         [d^6,d^2,d^2] );
-            RHS_matrix_34 =  reshape( ncon( {O_23_inv,RHS_matrix_234}, {[-1,1],[1,-2,-3]}  ),...
-                                         [d^8,d^2] );
-
-            [U,S,V] = svd( RHS_matrix_34);     
-            
+            [U,S,V] = svd( new_part);     
             a_S = average(S);
              
             O{3+1,4+1} = reshape( U*a_S, [d^6,d,d,d^8]);
@@ -297,27 +304,25 @@ classdef generateMPO
             
             if testing==1
                 err = tensor_norm( ncon( { O{1,2}, O{2,3}, O{3,4},O{4,5},O{5,1} }, {[-1,-2,-7,1],[1,-3,-8,2],[2,-4,-9,3] ,[3,-5,-10 ,4 ],[4,-6,-11,-12]} )...
-                    -RHS_Tensor_01234);
+                    -RHS_Tensor);
                 fprintf("err 012340 = %d\n",err);
             end
             
 
             MPO = mpo_cell_2_matrix(O,maxIndex,d);
             
-            
-            
-            
+
             %seems to work
-            if testing==1
-                left =zeros(1,geomSum(d^2,maxIndex));
-                left(1) = 1;
-                right = left';
-                
-                err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
-                err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
-                err3 = tensor_norm( ncon( {left,MPO,MPO,MPO,right},{[-1,1],[1,-2,-5,2],[2,-3,-6,3],[3,-4,-7,4],[4,-8]})-contract_O(2,O,2,d));
-                fprintf("matrixconversion  err0 %d err1 %d err3 %d \n",err1,err2,err3);
-            end
+%             if testing==1
+%                 left =zeros(1,geomSum(d^2,maxIndex));
+%                 left(1) = 1;
+%                 right = left';
+%                 
+%                 err1 = tensor_norm( ncon( {left,MPO,right},{[-1,1],[1,-2,-3,2],[2,-4]})-contract_O(0,O,2,d));
+%                 err2 = tensor_norm( ncon( {left,MPO,MPO,right},{[-1,1],[1,-2,-4,2],[2,-3,-5,3],[3,-6]})-contract_O(1,O,2,d));
+%                 err3 = tensor_norm( ncon( {left,MPO,MPO,MPO,right},{[-1,1],[1,-2,-5,2],[2,-3,-6,3],[3,-4,-7,4],[4,-8]})-contract_O(2,O,2,d));
+%                 fprintf("matrixconversion  err0 %d err1 %d err3 %d \n",err1,err2,err3);
+%             end
             
             
         end
@@ -342,7 +347,7 @@ classdef generateMPO
             %                                  + I x S x I x I ... 
             % with S the single site operator and H the 2 site one
             % then reorders, and exponentiates
-            d = obj.d;
+            d = obj.dim;
             
             H = zeros( dimension_vector(d, 2*(N+1)) );
             
@@ -364,7 +369,7 @@ classdef generateMPO
                     leg_list{j} = [-(j) ,-(N+1+j)];
                 end
 
-                H_i = ncon( tensor_list, leg_list, []);
+                H_i = ncon( tensor_list, leg_list);
                 H = H + H_i;
             end
             
@@ -452,12 +457,8 @@ function T = contract_O(N,O,maxIndex,d)
                 legs{t}(3) = -(N+1 +t+1);
             end
 
-            seq = zeros(1,N);
-            for t=1:N %todo think harder about contraction order
-                seq(t)=t;
-            end
 
-            T_j = ncon (O_tensors,legs, seq);
+            T_j = ncon (O_tensors,legs);
             T = T + T_j;
         end
 
