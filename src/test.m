@@ -1,15 +1,87 @@
 function test
     
-%test_truncateO();
+    %test_trunc ateO();
     %test_mpo_prod_2
     %mpo_type_comparison();
     %mpo_type_comparison_asym
     %compare_with_exact_hamiltonian
     %compare_01_with_exact_hamiltonian_assym
     %%compare_01_with_exact_hamiltonian_sym
-    mpo_type_comparison_exact
+    %mpo_type_comparison_exact
+    mpo_type_comparison_exact_2
     %test_type_02_decomp
+    %H_exp_precision_test
 end
+
+
+%makes it worse
+function H_exp_precision_test
+    a=1;
+    m=0.4;
+    d = 2; % d
+    % pre setup
+    S_x = 0.5* [0,1;1,0];
+    S_y = 0.5* [0,-1i;1i,0];
+    S_z = 0.5* [1,0;0,-1];
+    I_tensor = eye(2);
+
+
+    J=1;
+    g=0.7;
+   
+    H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
+    H_1_tensor = -J*g*S_x;                                  %on every sing site
+
+    M_arr = 6:11;
+    
+    m_size = size(M_arr,2);
+
+
+    
+    for j = 1:m_size
+        M = M_arr(j);
+
+        beta_arr = [5.0,10,20,50];
+       
+        
+        len = size(beta_arr,2);
+        
+        N_array = 1:5;
+        n_len =  size(beta_arr,2);
+        
+        mpo_array = cell(n_len,1);
+
+        for i = 1:len
+            beta = beta_arr(i);
+
+            
+            
+            for n_index=1:n_len
+                N = N_array(n_index);
+                
+                mpo_N = generateMPO(d,-beta/N*H_1_tensor,-beta/N*H_2_tensor );
+                mpo_N_matrix = mpo_N.H_exp(M-1,1);
+                
+                prefact = trace(mpo_N_matrix);
+                mpo_matrix = prefact^N.*  (mpo_N_matrix./prefact)^N;
+                
+                mpo_array{n_index} = mpo_matrix;
+                %fprintf("N %d beta %f err %.4e\n",N,beta, eigs(Z,1));
+                
+            end
+            
+            for N = 1:n_len-1
+            
+                fprintf("beta %f err H_%d H_%d %.4e\n",beta,N,N+1, eigs( mpo_array{N}-  mpo_array{N+1} ,1));
+            end
+        end
+ 
+    end
+  
+
+end
+
+
 function test_type_02_decomp
      a=1;
     m=0.4;
@@ -189,7 +261,6 @@ function mpo_type_comparison
 
 end
 
-
 function mpo_type_comparison_asym
     a=1;
     m=0.4;
@@ -243,9 +314,6 @@ function mpo_type_comparison_asym
 
 end
 
-
-
-
 function mpo_type_comparison_exact
     a=1;
     m=0.4;
@@ -282,9 +350,15 @@ function mpo_type_comparison_exact
         M = M_arr(j);
         
         %beta_arr = 4:8;
-        beta_arr = [0.1,0.5,1,2,4,6,7,7.5,8.1,10];
-        fit_inidces = 5:10;
+        %beta_arr = [0.1,0.5,1,2,4,6,7,7.5,8.1,10];
+        %fit_inidces = 5:10;
+        %beta_arr = [0.01,0.05,0.1,0.2, 0.5,1];
+        %fit_inidces = 1:6;
 
+        %beta_arr = [0.001,0.002,0.005,0.01,0.02,05,0.1,0.2, 0.5,1.0];
+        beta_arr = 2:2:8
+        fit_inidces = 1:6;
+        
         len = size(beta_arr,2);
 
         plot_structure = cell( 3,len);
@@ -376,6 +450,104 @@ function mpo_type_comparison_exact
     
 end
 
+function mpo_type_comparison_exact_2
+    a=1;
+    m=0.4;
+    d = 2; % d
+    % pre setup
+    S_x = 0.5* [0,1;1,0];
+    S_y = 0.5* [0,-1i;1i,0];
+    S_z = 0.5* [1,0;0,-1];
+    I_tensor = eye(2);
+
+    J=1;
+    delta=0.5;
+
+%     H_2_tensor = ncon( {S_x,S_x}, {[-1,-3],[-2,-4]})...
+%              S  +ncon( {S_y,S_y}, {[-1,-3],[-2,-4]})...
+%           +delta*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});%2 site operator
+%     H_1_tensor = zeros(d,d);                                  %on every sing site
+
+     
+    J=1;
+    g=0.7;
+   
+    H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
+    H_1_tensor = -J*g*S_x;                                  %on every sing site
+
+    M_arr = 6:11;
+    
+    m_size = size(M_arr,2);
+    
+    m_struct = cell(m_size,2,2  );
+
+    
+    for j = 1:m_size
+        M = M_arr(j);
+        
+        %beta_arr = 4:8;
+        %beta_arr = [0.1,0.5,1,2,4,6,7,7.5,8.1,10];
+        %fit_inidces = 5:10;
+        %beta_arr = [0.01,0.05,0.1,0.2, 0.5,1];
+        %fit_inidces = 1:6;
+
+        %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
+        beta_arr = 10.^(  -4:0.3:1.5  );
+
+        
+        len = size(beta_arr,2);
+
+        plot_structure = cell( 3,len);
+
+        for i = 1:len
+            beta = beta_arr(i);
+
+            mpo_base = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor );
+            mpo_base_matrix = mpo_base.H_exp(M-1,1);
+
+            [N1,mpo_N_01] = mpo_base.type_01(0);
+            err_01 = error_eigenvalue( {N1,mpo_N_01},"O",mpo_base_matrix,"array",M,d,1);
+
+            [N2,mpo_N_02] = mpo_base.type_02(0);
+            err_02 = error_eigenvalue({N2,mpo_N_02},"O",mpo_base_matrix,"array",M,d,1);
+            
+            [N3,mpo_N_03] = mpo_base.type_03(0);
+            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,1);
+            
+            %err_04 = error_eigenvalue( mpo_N_02_M,mpo_N_03_M,d);
+
+            plot_structure{1,i} = err_01;
+            plot_structure{2,i} = err_02;
+            plot_structure{3,i} = err_03;
+
+            fprintf("M %d beta %.4e err_01 %.4e err_02 %.4e err_03 %.4e \n",M,beta,abs(err_01),abs(err_02),abs(err_03) );
+
+        end
+
+     
+        figure(1)
+      
+        loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
+          hold on
+        loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
+        loglog( beta_arr, abs(cell2mat(plot_structure(3,:))),"color","green" );
+
+        legend("type 01","type 02","type 03",'Location','northwest')
+        xlabel("beta")
+        ylabel("err")
+        %hold on
+        figure(gcf)
+        
+        
+
+    end
+  
+ 
+    
+    
+    
+end
+
 function check_convergence_between_mpo
         a=1;
     m=0.4;
@@ -401,7 +573,6 @@ function check_convergence_between_mpo
     exact_diag = mpo_base.H_exp(M-1,1);
 
 end
-
 
 function compare_01_with_exact_hamiltonian_assym
     a=1;

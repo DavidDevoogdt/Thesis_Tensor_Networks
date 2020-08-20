@@ -23,7 +23,7 @@ classdef generateMPO
         end
         
        
-        function MPO = type_01(obj, testing)
+        function [normalsation_factor,MPO] = type_01(obj, testing)
             % Make a cell from O. It holds the tensor elements
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
             % corresponding bond. dimension x1 at the end not shown by matlab
@@ -33,15 +33,19 @@ classdef generateMPO
             maxIndex = 2;
             O = cell(maxIndex+1,maxIndex+1);
 
+            O_11_unnormalised = expm( obj.H_1_tensor );
+            normalsation_factor = trace(O_11_unnormalised);
            
-            O{1,1} = reshape(  expm( obj.H_1_tensor ) , [1,d,d,1] ) ;
+            O{1,1} = reshape(  O_11_unnormalised/normalsation_factor , [1,d,d,1] ) ;
 
+             
+            
             %step 1:
             % 0--|--1--|--0 = exp(H_12) - (0--|--|--0 )  
             N = 1;                  %number of free bonds
             current_max_index = 0;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N, O ,current_max_index,d);
             RHS_Matrix = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
                                                         [d^2,d^2] ); %ready to svd
 
@@ -63,7 +67,7 @@ classdef generateMPO
             N = 2;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor =H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Tensor =H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
             RHS_Matrix = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d,d,d^2] ); 
 
@@ -94,7 +98,7 @@ classdef generateMPO
             N = 3;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N)- contract_O(N,O,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1))- contract_O(N,O,current_max_index,d);
             RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                    dimension_vector(d^2,4));%group per ij index
             
@@ -129,7 +133,7 @@ classdef generateMPO
             N = 4;                  %number of free bonds
             current_max_index = 2;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
             RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
                                     dimension_vector(d^2,5)); %group per ij index
             
@@ -183,7 +187,7 @@ classdef generateMPO
         end
         
         
-        function MPO = type_02(obj, testing)
+        function [normalsation_factor,MPO] = type_02(obj, testing)
             % Make a cell from O. It holds the tensor elements
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
             % corresponding bond. dimension x1 at the end not shown by matlab
@@ -193,15 +197,17 @@ classdef generateMPO
             maxIndex = 4;
             O = cell(maxIndex+1,maxIndex+1);
 
+            O_11_unnormalised = expm( obj.H_1_tensor );
+            normalsation_factor = trace(O_11_unnormalised);
            
-            O{1,1} = reshape(  expm(obj.H_1_tensor), [1,d,d,1] ) ;
+            O{1,1} = reshape(   O_11_unnormalised/normalsation_factor, [1,d,d,1] ) ;
            
             %step 1:
             % 0--|--1--|--0 = exp(H_12) - (0--|--|--0 )  
             N = 1;                  %number of free bonds
             current_max_index = 0;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N)- contract_O(N, O ,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1))- contract_O(N, O ,current_max_index,d);
             RHS_Matrix_site = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
                                                         [d^2,d^2] ); %ready to svd
 
@@ -222,7 +228,7 @@ classdef generateMPO
             N = 2;                  %number of free bonds
             current_max_index = 1;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2] ); 
 
@@ -251,7 +257,7 @@ classdef generateMPO
             N = 3;                  %number of free bonds
             current_max_index = 2;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N) - contract_O(N,O,current_max_index,d);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2] ); 
 
@@ -281,7 +287,7 @@ classdef generateMPO
             N = 4;                  %number of free bonds
             current_max_index = 3;  %used to contract the tensor 
 
-            RHS_Tensor = H_exp(obj,N) - ...
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - ...
                     contract_O(N,O,current_max_index,d);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2,d^2] ); 
@@ -331,7 +337,7 @@ classdef generateMPO
      
         
         
-       function MPO = type_03(obj, testing)
+       function [normalsation_factor,MPO] = type_03(obj, testing)
             % Make a cell from O. It holds the tensor elements
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
             % corresponding bond. dimension x1 at the end not shown by matlab
@@ -374,8 +380,10 @@ classdef generateMPO
             MPO = zeros(total_dim,d,d,total_dim);
            
             % 0
+            unnorm = expm(obj.H_1_tensor);
+            normalsation_factor = trace(unnorm);
 
-            O_00_0 = reshape(expm(obj.H_1_tensor), [1,d,d,1] );
+            O_00_0 = reshape(unnorm/normalsation_factor, [1,d,d,1] );
             
             MPO = add_block_to_tensor(MPO,0,0,0, O_00_0 ,d  );
             
@@ -386,7 +394,7 @@ classdef generateMPO
             N = 1;                  %number accents = number of free bonds
 
             
-            RHS_Tensor = H_exp(obj,N)- contract_MPO(MPO,N,left_vect,right_vect);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1))- contract_MPO(MPO,N,left_vect,right_vect);
             RHS_Matrix_site = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
                                                         [d^2,d^2] ); %ready to svd
             
@@ -407,7 +415,7 @@ classdef generateMPO
             N = 2;                  %number of free bonds
 
 
-            RHS_Tensor = H_exp(obj,N) - contract_MPO(MPO,N,left_vect,right_vect);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_MPO(MPO,N,left_vect,right_vect);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2] ); 
 
@@ -433,7 +441,7 @@ classdef generateMPO
             N = 3;                  %number of free bonds reshape(expm(obj.H_1_tensor)
          
 
-            RHS_Tensor = H_exp(obj,N) - contract_MPO(MPO,N,left_vect,right_vect);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_MPO(MPO,N,left_vect,right_vect);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^2,d^2,d^2,d^2] ); 
             %arbitrary choice
@@ -459,7 +467,7 @@ classdef generateMPO
             N = 4;                  %number of free bonds
          
 
-            RHS_Tensor = H_exp(obj,N) - contract_MPO(MPO,N,left_vect,right_vect);
+            RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_MPO(MPO,N,left_vect,right_vect);
             RHS_Matrix_site = reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),...
                                                           [d^4,d,d,d^4] ); 
                 
