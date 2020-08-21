@@ -8,7 +8,8 @@ function test
     %compare_01_with_exact_hamiltonian_assym
     %%compare_01_with_exact_hamiltonian_sym
     %mpo_type_comparison_exact
-    mpo_type_comparison_exact_2
+    %mpo_type_comparison_exact_2
+    mpo_type_comparison_exact_generic_order
     %test_type_02_decomp
     %H_exp_precision_test
 end
@@ -470,7 +471,7 @@ function mpo_type_comparison_exact_2
 
      
     J=1;
-    g=0.7;
+    g=2.1;
    
     H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
     H_1_tensor = -J*g*S_x;                                  %on every sing site
@@ -479,7 +480,15 @@ function mpo_type_comparison_exact_2
     
     m_size = size(M_arr,2);
     
-    m_struct = cell(m_size,2,2  );
+
+    opts.ref=2;
+  
+
+    
+    hold off
+
+    f1=figure(1);
+    
 
     
     for j = 1:m_size
@@ -492,12 +501,12 @@ function mpo_type_comparison_exact_2
         %fit_inidces = 1:6;
 
         %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
-        beta_arr = 10.^(  -4:0.3:1.5  );
+        beta_arr = 10.^(  -3:0.05:1.5  );
 
         
         len = size(beta_arr,2);
 
-        plot_structure = cell( 3,len);
+        plot_structure = cell( 4,len);
 
         for i = 1:len
             beta = beta_arr(i);
@@ -506,47 +515,160 @@ function mpo_type_comparison_exact_2
             mpo_base_matrix = mpo_base.H_exp(M-1,1);
 
             [N1,mpo_N_01] = mpo_base.type_01(0);
-            err_01 = error_eigenvalue( {N1,mpo_N_01},"O",mpo_base_matrix,"array",M,d,1);
+            err_01 = error_eigenvalue( {N1,mpo_N_01},"O",mpo_base_matrix,"array",M,d,opts);
 
             [N2,mpo_N_02] = mpo_base.type_02(0);
-            err_02 = error_eigenvalue({N2,mpo_N_02},"O",mpo_base_matrix,"array",M,d,1);
+            err_02 = error_eigenvalue({N2,mpo_N_02},"O",mpo_base_matrix,"array",M,d,opts);
             
             [N3,mpo_N_03] = mpo_base.type_03(0);
-            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,1);
+            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
             
-            %err_04 = error_eigenvalue( mpo_N_02_M,mpo_N_03_M,d);
-
+            [N4,mpo_N_04] = mpo_base.type_04(6,1);
+            err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
+            
+            
             plot_structure{1,i} = err_01;
             plot_structure{2,i} = err_02;
             plot_structure{3,i} = err_03;
+            plot_structure{4,i} = err_04;
 
-            fprintf("M %d beta %.4e err_01 %.4e err_02 %.4e err_03 %.4e \n",M,beta,abs(err_01),abs(err_02),abs(err_03) );
+
+            fprintf("M %d beta %.4e err_01 %.4e err_02 %.4e err_03 %.4e err_04 %.4e \n",M,beta,abs(err_01),abs(err_02),abs(err_03),abs(err_04) );
 
         end
 
-     
-        figure(1)
-      
+        
         loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
-          hold on
+        hold on
         loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
-        loglog( beta_arr, abs(cell2mat(plot_structure(3,:))),"color","green" );
+        
+        loglog( beta_arr, abs(cell2mat(plot_structure(3,:))),"color","green");
+        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))),"color","cyan");
+        
+        
+        legend("type 01","type 02","type 03","type 04",'Location','northwest')
+         xlabel("beta")
+         ylabel("err")
 
-        legend("type 01","type 02","type 03",'Location','northwest')
-        xlabel("beta")
-        ylabel("err")
-        %hold on
+  
         figure(gcf)
         
         
 
-    end
-  
- 
-    
-    
-    
+    end  
+    hold off
+             
 end
+
+
+
+function mpo_type_comparison_exact_generic_order
+    a=1;
+    m=0.4;
+    d = 2; % d
+    % pre setup
+    S_x = 0.5* [0,1;1,0];
+    S_y = 0.5* [0,-1i;1i,0];
+    S_z = 0.5* [1,0;0,-1];
+    I_tensor = eye(2);
+
+    J=1;
+    delta=0.5;
+
+%     H_2_tensor = ncon( {S_x,S_x}, {[-1,-3],[-2,-4]})...
+%              S  +ncon( {S_y,S_y}, {[-1,-3],[-2,-4]})...
+%           +delta*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});%2 site operator
+%     H_1_tensor = zeros(d,d);                                  %on every sing site
+
+     
+    J=1;
+    g=2.1;
+   
+    H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
+    H_1_tensor = -J*g*S_x;                                  %on every sing site
+
+    Order_arr = [2,4,6,8];
+    
+    order_size = size(Order_arr,2);
+    
+
+    opts.ref=2;
+  
+    legend_Arr = cell(order_size*2,1);
+    legend_Arr(:) = {"todo"};
+    
+    hold off
+
+    f1=figure(1);
+   
+    
+
+    
+    for j = 1:order_size
+        Order = Order_arr(j);
+        
+        M=10;
+        
+      
+        %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
+        beta_arr = 10.^(  -3:0.2:1.5  );
+
+        
+        len = size(beta_arr,2);
+
+        plot_structure = cell( 4,len);
+
+        for i = 1:len
+            beta = beta_arr(i);
+
+            mpo_base = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor );
+            mpo_base_matrix = mpo_base.H_exp(M-1,1);
+
+            [N3,mpo_N_03] = mpo_base.type_03(0);
+            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
+            
+            [N4,mpo_N_04] = mpo_base.type_04(Order,1);
+            err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
+            
+            
+            %plot_structure{1,i} = err_01;
+            %plot_structure{2,i} = err_02;
+            plot_structure{3,i} = err_03;
+            plot_structure{4,i} = err_04;
+
+
+            fprintf("M %d beta %.4e order %d err_03 %.4e err_04 %.4e \n",M,beta,Order,abs(err_03),abs(err_04) );
+
+        end
+
+        
+        %loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
+        
+        %loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
+        
+        loglog( beta_arr, abs(cell2mat(plot_structure(3,:)))  );
+        hold on
+        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))));
+        
+        legend_Arr{2*j-1}= sprintf("type 03" );
+        legend_Arr{2*j}= sprintf("type 01 Order %d",Order );
+        
+         xlabel("beta")
+         ylabel("err")
+        legend(legend_Arr,'Location','northwest')
+  
+        figure(gcf)
+        
+        
+
+    end  
+
+
+    hold off
+             
+end
+
+
 
 function check_convergence_between_mpo
         a=1;

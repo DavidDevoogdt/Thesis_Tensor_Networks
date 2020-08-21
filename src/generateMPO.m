@@ -185,7 +185,140 @@ classdef generateMPO
          
             
         end
-        
+     
+        function [normalsation_factor,MPO] = type_04(obj,order ,testing)
+            % this type generates n--|--n blocks during the expansion
+            %order n means explicit calculation op to order free bonds
+            d = obj.dim;
+
+            if mod(order,2)==1
+                maxIndex = (order-1)/2;
+            else
+                maxIndex = order/2;
+            end
+            
+            O = cell(maxIndex+1,maxIndex+1);
+
+            O_11_unnormalised = expm( obj.H_1_tensor );
+            normalsation_factor = trace(O_11_unnormalised);
+           
+            O{1,1} = reshape(  O_11_unnormalised/normalsation_factor , [1,d,d,1] ) ;
+
+            
+            
+            for N=1:order
+                if mod(N,2)==1
+                    current_max_index = (N-1)/2;  %used to contract the tensor 
+                    sym_update(N,current_max_index);
+
+                else
+                    current_max_index = N/2;
+                    assym_update(N,current_max_index)
+                end
+                
+            end
+            
+            
+
+            MPO = mpo_cell_2_matrix(O,maxIndex,d);
+            
+
+            function sym_update(N,current_max_index)
+                %step similar to
+                % 0--|--1--|--2--|--1--|--0 = exp(H_12+H_23+H_34) - (0--|--|--|--|--0)
+
+                RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1))- contract_O(N,O,current_max_index,d);
+                RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1) ),...
+                                                       dimension_vector(d^2,N+1));%group per ij index
+
+                %search x st 
+                % left*x = res
+                % y*right = x
+                
+                M=current_max_index;
+                
+                if M ~=0
+                
+                    left_list = cell( 1,M );
+                    right_list = cell( 1,M );
+                    contract_list = cell( 1,M );
+
+                    for i = 1:M
+                        left_list{i} = O{i,i+1};
+                        right_list{end-i+1} = O{i+1,i};
+
+                        contract_list{i} = [i,-(2*i),-(2*i+1),i+1];
+                    end
+
+                    contract_list{1}(1)=-1;
+                    contract_list{end}(4)=-(2*M+2);
+
+
+                    left = reshape( ncon(left_list,contract_list) , [d^(2*M),d^(2*M)]);
+                    right = reshape( ncon(right_list,contract_list) , [d^(2*M),d^(2*M)]);
+                    res = reshape( RHS_Matrix, [d^(2*M),d^(2* (N+1-M))]);
+
+                    x = left\res;
+                    x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
+                    y = x/right;                                   
+
+                    new_parts = reshape(y, [d^(2*(M+1)),d^(2*(M+1))]);
+                else
+                    new_parts = reshape(RHS_Matrix, [d^(2*(M+1)),d^(2*(M+1))]);
+                end
+
+                [U,S,V] = svd(new_parts);
+                sqrt_S = S.^(1/2);
+
+                O{M+1,M+2} = reshape( U*sqrt_S, [d^(2*M),d,d,d^(2*(M+1))]);
+                O{M+2,M+1} = reshape( sqrt_S* V', [d^(2*(M+1)),d,d,d^(2*M)]);
+                
+            end
+            
+            
+            function assym_update(N,current_max_index)
+                %             %step 4:
+                % 0--|--1--|--2--|--2--|--1--|--0 = exp(H_12+H_23+H_34+H_45) - (0--|--|--|--|--|--0)
+              
+                RHS_Tensor = H_exp(obj,N)/(normalsation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
+                RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
+                                        dimension_vector(d^2,N+1)); %group per ij index
+
+                %search x st 
+                % left*x = res
+                % y*right = x
+                 M=current_max_index;
+                
+                left_list = cell( 1,M );
+                right_list = cell( 1,M );
+                contract_list = cell( 1,M );
+                
+                for i = 1:M
+                    left_list{i} = O{i,i+1};
+                    right_list{end-i+1} = O{i+1,i};
+                    
+                    contract_list{i} = [i,-(2*i),-(2*i+1),i+1];
+                end
+                
+                contract_list{1}(1)=-1;
+                contract_list{end}(4)=-(2*M+2);
+                
+
+                left = reshape( ncon(left_list,contract_list) , [d^(2*M),d^(2*M)]);
+                right = reshape( ncon(right_list,contract_list) , [d^(2*M),d^(2*M)]);
+                res = reshape( RHS_Matrix, [d^(2*M),d^(2*M+2)]);
+
+                x = left\res;
+                x = reshape(x, [d^(2*M+2),d^(2*M)]);
+                y = x/right;                                   
+
+
+                O{M+1,M+1} = reshape(y, [d^(2*M),d,d,d^(2*M)]);  
+  
+            end
+
+            
+        end
         
         function [normalsation_factor,MPO] = type_02(obj, testing)
             % Make a cell from O. It holds the tensor elements
@@ -333,10 +466,7 @@ classdef generateMPO
             
         end
         
-        
-     
-        
-        
+
        function [normalsation_factor,MPO] = type_03(obj, testing)
             % Make a cell from O. It holds the tensor elements
             % every entry is 4d nxdxdxm with n and m the bond dimension for the
@@ -522,13 +652,7 @@ classdef generateMPO
 
            end
         end
-        
-        
-
-    %end
-    %methods (Access=private)
-        
-
+     
         function H_exp = H_exp(obj,N,matrix)
             if nargin <3
                 matrix = 0;
@@ -664,9 +788,6 @@ function T = contract_O(N,O,maxIndex,d)
 
 end
 
-
-
-
 function p = dimension_vector(d,n,leftright)
     %helper function to create a 1xn vector  [ left,d,d,..,d,right]
     %if left/right are not supplied/0, this is omitted
@@ -685,9 +806,6 @@ function p = dimension_vector(d,n,leftright)
     end
 
 end
-
-
-
 
 function y = encode_index_array(n,len,d)
     % this takes a single number and splits it into the composite indices. The
@@ -884,5 +1002,51 @@ function O = add_block_to_tensor(O,i,j,k,block,d  )
     function y=  internal_dim(i,k,d)
         y=d^( 2* min(i,k-i+1)  );
     end
+end
+
+%left bond, all upper legs, all lower legs, lower bond
+function T = symmetrise(T,d,tol)
+    s_T= size(T);
+    num_indices =  size( s_T,2);
+    
+    left_bond_dim = s_T(1);
+    
+    if mod(num_indices,2) == 1
+        num_indices = num_indices +1; % matlab omits last index if 1
+        right_bond_dim = 1;
+    else
+        right_bond_dim = s_T(num_indices);
+    end
+    
+    num_legs = (num_indices-2)/2;
+    
+    T_1 = reshape(T, [left_bond_dim, d^(num_legs),d^(num_legs),right_bond_dim]);
+    T_2 = permute(T_1, [1,3,2,4]);
+    T_herm= 0.5*(T_1+conj(T_2));
+    T_aherm = 0.5*( T_1-conj(T_2) );
+    
+    if tol ~= -1 &&  tensor_norm(T_aherm)>tol 
+       error("symmetrise not within norm");
+    end
+    
+    
+    T= reshape( T_herm, dimension_vector( d, num_legs*2 ,[left_bond_dim,right_bond_dim]));
+
+end
+
+%splits A in R'*R
+%eigenvalues of A can be slightly negative
+function R = symmetric_split(A,tol)
+    
+    [U, d] = eig(A, 'vector'); % A == U*diag(d)*U'
+    
+    index_set = d<0;
+    if max(  -d(index_set) > tol)
+        error( "symmetric split not possible with given tol" ) 
+    end
+    
+    d(index_set) = 10^-15; % not zero because invertibility is needed
+     [~, R] = qr(diag(sqrt(d))*U');
+
 end
 
