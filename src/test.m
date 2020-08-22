@@ -501,7 +501,7 @@ function mpo_type_comparison_exact_2
         %fit_inidces = 1:6;
 
         %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
-        beta_arr = 10.^(  -3:0.05:1.5  );
+        beta_arr = 10.^(  -1:0.5:2.0  );
 
         
         len = size(beta_arr,2);
@@ -587,31 +587,31 @@ function mpo_type_comparison_exact_generic_order
     H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
     H_1_tensor = -J*g*S_x;                                  %on every sing site
 
-    Order_arr = [2,4,6,8];
+    Order_arr = 3:7;% [4,6,8]; %keep lower than 8
+
     
     order_size = size(Order_arr,2);
     
 
     opts.ref=2;
   
-    legend_Arr = cell(order_size*2,1);
+    legend_Arr = cell(2*order_size,1);
     legend_Arr(:) = {"todo"};
+    
+    plot_counter = 1;
     
     hold off
 
     f1=figure(1);
    
     
-
-    
     for j = 1:order_size
         Order = Order_arr(j);
         
-        M=10;
-        
-      
+        M=11;
+
         %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
-        beta_arr = 10.^(  -3:0.2:1.5  );
+        beta_arr = 10.^(  -4:0.2:2.0  );
 
         
         len = size(beta_arr,2);
@@ -621,24 +621,46 @@ function mpo_type_comparison_exact_generic_order
         for i = 1:len
             beta = beta_arr(i);
 
+           
             mpo_base = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor );
             mpo_base_matrix = mpo_base.H_exp(M-1,1);
-
-            [N3,mpo_N_03] = mpo_base.type_03(0);
-            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
             
-            [N4,mpo_N_04] = mpo_base.type_04(Order,1);
-            err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
+            %try
             
+                [N4,mpo_N_04] = mpo_base.type_04(Order,1);
+                err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
+                plot_structure{4,i} = err_04;
+            
+%             catch
+%                 fprintf("errorwith 04")
+%                 err_04 = Inf;
+%                 plot_structure{4,i} = err_04;
+%             end
+            
+            if Order < 8
+                try
+                    [N3,mpo_N_03] = mpo_base.type_03(Order,0);
+                    err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
+                    plot_structure{3,i} = err_03;
+                catch
+                    err_03 =Inf;
+                    plot_structure{3,i} = err_03;
+                end
+            end
+           
+                
+          
             
             %plot_structure{1,i} = err_01;
             %plot_structure{2,i} = err_02;
-            plot_structure{3,i} = err_03;
-            plot_structure{4,i} = err_04;
-
-
+            
+           
+            
+            
             fprintf("M %d beta %.4e order %d err_03 %.4e err_04 %.4e \n",M,beta,Order,abs(err_03),abs(err_04) );
-
+            
+            
+            %fprintf("M %d beta %.4e order %d err_04 %.4e \n",M,beta,Order,abs(err_04) );
         end
 
         
@@ -646,12 +668,17 @@ function mpo_type_comparison_exact_generic_order
         
         %loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
         
-        loglog( beta_arr, abs(cell2mat(plot_structure(3,:)))  );
-        hold on
-        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))));
+        if Order < 8
+            loglog( beta_arr, abs(cell2mat(plot_structure(3,:)))  );
+            legend_Arr{plot_counter}= sprintf("type 03 Order %d",Order );
+            plot_counter = plot_counter+1;
+            hold on
+        end
+       
         
-        legend_Arr{2*j-1}= sprintf("type 03" );
-        legend_Arr{2*j}= sprintf("type 01 Order %d",Order );
+        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))));
+        legend_Arr{plot_counter}= sprintf("type 01 Order %d",Order );
+        plot_counter = plot_counter+1;
         
          xlabel("beta")
          ylabel("err")

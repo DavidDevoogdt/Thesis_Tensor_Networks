@@ -44,29 +44,50 @@ function err = error_eigenvalue(mpo_1,type_01, mpo_2,type_02,M,d,opts)
     end
     
 
+    p = inputParser;
+    addParameter(p,'ref',0)
+    parse(p,opts)
+    
 
     
     
-       tr_b = trace(b);
-       tr_a = trace(a);
-       
-       mag_2=tr_b*prefact_2;
-       mag_1=tr_a*prefact_1;
-       
-       if mag_2> mag_1
-           prefact = prefact_2*tr_b;
-           b = b/tr_b; %b normed to 1
-           a = a*(  prefact_1/ prefact);
-       else
-           prefact = prefact_2*tr_b;
-           a = a/tr_a; %b normed to 1
-           b = b*(  prefact_2/ prefact);
-       end
+    
+    
+    
+   tr_b = trace(b);
+   tr_a = trace(a);
+
+   mag_2=tr_b*prefact_2;
+   mag_1=tr_a*prefact_1;
+
+   
+   if mag_2 > mag_1 || p.Results.ref == 2
+       prefact = prefact_2*tr_b;
+       b = b/tr_b; %b normed to 1
+       a = a*(  prefact_1/ prefact);
+   else
+       prefact = prefact_2*tr_b;
+       a = a/tr_a; %b normed to 1
+       b = b*(  prefact_2/ prefact);
+   end
                        
     matrix= (a-b);
-    err = prefact*eigs(matrix,1);
-    %err = eigs(matrix,1);
     
+    try
+    	if p.Results.ref ~= 0
+            err = eigs(matrix,1);
+            return;
+        end
+
+        err = prefact*eigs(matrix,1);
+    catch
+        warning('error = inf');
+        err = Inf;
+    end
+    
+    
+   
+   
 end
 
 
