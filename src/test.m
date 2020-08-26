@@ -513,40 +513,40 @@ function mpo_type_comparison_exact_2
 
             mpo_base = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor );
             mpo_base_matrix = mpo_base.H_exp(M-1,1);
-
-            [N1,mpo_N_01] = mpo_base.type_01(0);
-            err_01 = error_eigenvalue( {N1,mpo_N_01},"O",mpo_base_matrix,"array",M,d,opts);
-
-            [N2,mpo_N_02] = mpo_base.type_02(0);
-            err_02 = error_eigenvalue({N2,mpo_N_02},"O",mpo_base_matrix,"array",M,d,opts);
+% 
+%             [N1,mpo_N_01] = mpo_base.type_01(0);
+%             err_01 = error_eigenvalue( {N1,mpo_N_01},"O",mpo_base_matrix,"array",M,d,opts);
+% 
+%             [N2,mpo_N_02] = mpo_base.type_02(0);
+%             err_02 = error_eigenvalue({N2,mpo_N_02},"O",mpo_base_matrix,"array",M,d,opts);
+%             
+%             [N3,mpo_N_03] = mpo_base.type_03(0);
+%             err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
             
-            [N3,mpo_N_03] = mpo_base.type_03(0);
-            err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",M,d,opts);
-            
-            [N4,mpo_N_04] = mpo_base.type_04(6,1);
+            [N4,mpo_N_04] = mpo_base.type_04(6);
             err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
             
             
-            plot_structure{1,i} = err_01;
-            plot_structure{2,i} = err_02;
-            plot_structure{3,i} = err_03;
+%             plot_structure{1,i} = err_01;
+%             plot_structure{2,i} = err_02;
+%             plot_structure{3,i} = err_03;
             plot_structure{4,i} = err_04;
 
 
-            fprintf("M %d beta %.4e err_01 %.4e err_02 %.4e err_03 %.4e err_04 %.4e \n",M,beta,abs(err_01),abs(err_02),abs(err_03),abs(err_04) );
+            %fprintf("M %d beta %.4e err_01 %.4e err_02 %.4e err_03 %.4e err_04 %.4e \n",M,beta,abs(err_01),abs(err_02),abs(err_03),abs(err_04) );
 
         end
 
         
-        loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
-        hold on
-        loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
-        
-        loglog( beta_arr, abs(cell2mat(plot_structure(3,:))),"color","green");
+%         loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
+%         hold on
+%         loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
+%         
+%         loglog( beta_arr, abs(cell2mat(plot_structure(3,:))),"color","green");
         loglog( beta_arr, abs(cell2mat(plot_structure(4,:))),"color","cyan");
+        hold on
         
-        
-        legend("type 01","type 02","type 03","type 04",'Location','northwest')
+        %legend("type 01","type 02","type 03","type 04",'Location','northwest')
          xlabel("beta")
          ylabel("err")
 
@@ -587,7 +587,7 @@ function mpo_type_comparison_exact_generic_order
     H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
     H_1_tensor = -J*g*S_x;                                  %on every sing site
 
-    Order_arr = 3:7;% [4,6,8]; %keep lower than 8
+    Order_arr = 2:7;% [4,6,8]; %keep lower than 8
 
     
     order_size = size(Order_arr,2);
@@ -595,7 +595,7 @@ function mpo_type_comparison_exact_generic_order
 
     opts.ref=2;
   
-    legend_Arr = cell(2*order_size,1);
+    legend_Arr = cell(3*order_size,1);
     legend_Arr(:) = {"todo"};
     
     plot_counter = 1;
@@ -608,7 +608,7 @@ function mpo_type_comparison_exact_generic_order
     for j = 1:order_size
         Order = Order_arr(j);
         
-        M=11;
+        M=9;
 
         %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
         beta_arr = 10.^(  -4:0.2:2.0  );
@@ -616,7 +616,7 @@ function mpo_type_comparison_exact_generic_order
         
         len = size(beta_arr,2);
 
-        plot_structure = cell( 4,len);
+        plot_structure = cell( 5,len);
 
         for i = 1:len
             beta = beta_arr(i);
@@ -627,9 +627,18 @@ function mpo_type_comparison_exact_generic_order
             
             %try
             
-                [N4,mpo_N_04] = mpo_base.type_04(Order,1);
-                err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
-                plot_structure{4,i} = err_04;
+            
+            [N5,mpo_N_05] = mpo_base.type_05(Order,0);
+            err_05 = error_eigenvalue({N5,mpo_N_05},"O",mpo_base_matrix,"array",M,d,opts);
+            plot_structure{5,i} = err_05;
+            
+            
+            opt.method = "svd";
+            opt.testing = 0;
+            
+            [N4,mpo_N_04] = mpo_base.type_04(Order,opt);
+            err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",M,d,opts);
+            plot_structure{4,i} = err_04;
             
 %             catch
 %                 fprintf("errorwith 04")
@@ -657,16 +666,14 @@ function mpo_type_comparison_exact_generic_order
            
             
             
-            fprintf("M %d beta %.4e order %d err_03 %.4e err_04 %.4e \n",M,beta,Order,abs(err_03),abs(err_04) );
+            fprintf("M %d beta %.4e order %d err_03 %.4e err_04 %.4e %.4e \n",M,beta,Order,abs(err_03),abs(err_04),abs(err_05) );
             
             
             %fprintf("M %d beta %.4e order %d err_04 %.4e \n",M,beta,Order,abs(err_04) );
         end
 
         
-        %loglog( beta_arr,abs(  cell2mat(plot_structure(1,:) )), "color","blue");
-        
-        %loglog( beta_arr, abs(cell2mat(plot_structure(2,:))),"color","red");
+       
         
         if Order < 8
             loglog( beta_arr, abs(cell2mat(plot_structure(3,:)))  );
@@ -675,6 +682,11 @@ function mpo_type_comparison_exact_generic_order
             hold on
         end
        
+        
+        loglog( beta_arr, abs(cell2mat(plot_structure(5,:)))  );
+        legend_Arr{plot_counter}= sprintf("type 05 Order %d",Order );
+        plot_counter = plot_counter+1;
+        
         
         loglog( beta_arr, abs(cell2mat(plot_structure(4,:))));
         legend_Arr{plot_counter}= sprintf("type 01 Order %d",Order );
