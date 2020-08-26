@@ -1006,9 +1006,9 @@ classdef generateMPO
                 
                 for i = 1:current_max_index
                      %apply one at a time
-                    U= U_cell{i}^-1;
-                    V= V_cell{i}^-1;
-                    res = ncon(  {U,  reshape(res, [ d^(2*i )  , d^(2*M-2*i+2) , d^(2*M-2*i+2) , d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});  
+                    U= U_cell{i};
+                    V= V_cell{i};
+                    res = ncon(  {U',  reshape(res, [ d^(2*i )  , d^(2*M-2*i+2) , d^(2*M-2*i+2) , d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});  
     
                 end
 
@@ -1020,26 +1020,20 @@ classdef generateMPO
               
                 sqrt_Dn = Dn.^(1/2);
                 
-                if current_max_index ==0
-                    U_new =reshape( U, [1,d,d,d^2]);
-                    V_new=reshape(V', [d^2,d,d,1]);
-                else
-                    U_prev = U_cell{current_max_index}^-1;
-                    V_prev = V_cell{current_max_index}^-1;
+                
+              
                     
-                    U_new = ncon(  {U_prev,reshape(U,[d^(2*M),d,d,d^(2*M+2)])} ,{[-1,1],[1,-2,-3,-4]});
-                    V_new = ncon(  { reshape(V',[d^(2*M+2),d,d,d^(2*M)]),V_prev }, { [-1,-2,-3,1],[1,-4]});
+                Sn = reshape(U,[d^(2*M),d,d,d^(2*M+2)]);
+                SnD =  reshape(V',[d^(2*M+2),d,d,d^(2*M)]);
                 
-                end
-                
+
                
-                U_cell{1+current_max_index}= reshape( U_new, [d^(2*M+2),d^(2*M+2)]);
-                V_cell{1+current_max_index}= reshape( V_new, [d^(2*M+2),d^(2*M+2)]);
+                U_cell{1+current_max_index}= reshape( U, [d^(2*M+2),d^(2*M+2)]);
+                V_cell{1+current_max_index}= reshape( V, [d^(2*M+2),d^(2*M+2)]);
                 
                 
                 %undo previous Sn
-                Sn = U_new;
-                SnD = V_new;
+   
 
                 MPO = add_block_05(MPO,current_max_index+1,Sn,SnD,sqrt_Dn,sqrt_Dnm,max_index,d );
                
@@ -1063,25 +1057,24 @@ classdef generateMPO
                 
               
                 res= RHS_Matrix;
+                
                 for i = 1:current_max_index
                      %apply one at a time
-                    U= U_cell{i}^-1;
-                    V= V_cell{i}^-1;
-                    res = ncon(  {U,  reshape(res, [ d^(2*i )  ,d^(2*M+1-2*i),d^(2*M+1-2*i), d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});  
+                    U= U_cell{i};
+                    V= V_cell{i};
+                    res = ncon(  {U',  reshape(res, [ d^(2*i )  ,d^(2*M+1-2*i),d^(2*M+1-2*i), d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});  
     
                 end
                 
 
-                %new_part = ncon( {U_prev', reshape( RHS_Matrix, [d^(2*M),d,d,d^(2*M)]), V_prev} , {[-1,1],[1,-2,-3,2],[2,-4]} );
-                %T = 0.5*( new_parts_sym+ permute(conj(new_part), [3,2,1])  );
-                
+                              
                 %add_block_Tn(MPO,n,Tn,max_index,d )
                 MPO = add_block_Tn(MPO,current_max_index,res,max_index,d );
                 
                 %for debugging purposes
                 Z=reshape(  MPO(:,1,1,:), [total_dim,total_dim ]);
                 
-            end                 
+            end                      
            
             
             

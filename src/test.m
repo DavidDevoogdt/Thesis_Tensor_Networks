@@ -586,17 +586,23 @@ function mpo_type_comparison_exact_generic_order
    
     H_2_tensor = -J*ncon( {S_z,S_z}, {[-1,-3],[-2,-4]});    %2 site operator
     H_1_tensor = -J*g*S_x;                                  %on every sing site
-
-    Order_arr = 2:7;% [4,6,8]; %keep lower than 8
-
     
+    
+    %change these parmas
+    
+    Order_arr = [2,4,6];% 2:2:6;% [4,6,8]; %keep lower than 8
     order_size = size(Order_arr,2);
-    
-
-    opts.ref=2;
-  
+    line_spec = ["-","--","-.",":"];
+    colors = ["red","green","blue"];
     legend_Arr = cell(3*order_size,1);
     legend_Arr(:) = {"todo"};
+    M=11;
+    
+    
+    %
+    opts.ref=2;
+  
+    
     
     plot_counter = 1;
     
@@ -608,7 +614,7 @@ function mpo_type_comparison_exact_generic_order
     for j = 1:order_size
         Order = Order_arr(j);
         
-        M=9;
+        
 
         %beta_arr = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2, 0.5,1.0,2.0,5.0,10,20,50];
         beta_arr = 10.^(  -4:0.2:2.0  );
@@ -676,19 +682,19 @@ function mpo_type_comparison_exact_generic_order
        
         
         if Order < 8
-            loglog( beta_arr, abs(cell2mat(plot_structure(3,:)))  );
+            loglog( beta_arr, abs(cell2mat(plot_structure(3,:))), "LineStyle", line_spec(j),"Color", colors(1) );
             legend_Arr{plot_counter}= sprintf("type 03 Order %d",Order );
             plot_counter = plot_counter+1;
             hold on
         end
        
         
-        loglog( beta_arr, abs(cell2mat(plot_structure(5,:)))  );
+        loglog( beta_arr, abs(cell2mat(plot_structure(5,:))),"LineStyle", line_spec(j),"Color", colors(2)   );
         legend_Arr{plot_counter}= sprintf("type 05 Order %d",Order );
         plot_counter = plot_counter+1;
         
         
-        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))));
+        loglog( beta_arr, abs(cell2mat(plot_structure(4,:))),"LineStyle", line_spec(j),"Color", colors(3) );
         legend_Arr{plot_counter}= sprintf("type 01 Order %d",Order );
         plot_counter = plot_counter+1;
         
