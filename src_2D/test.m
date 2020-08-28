@@ -16,20 +16,22 @@ function test_H_exp
     H_1_tensor =  reshape(0.3* S_x, [d,d,1,1,1,1]);
     H_2_tensor =  reshape( ncon( {S_z,S_z}, {[-1,-3],[-2,-4]}), [d,d,d,d,1,1,1,1,1,1]); 
 
-    mpo = generatePEPO(d,H_1_tensor,H_2_tensor);
+    pepo = generatePEPO(d,H_1_tensor,H_2_tensor,2);
 
     pos_map = [1,0,0;
                1,0,0;
                1,1,1];
 
-    Z1= mpo.H_exp(pos_map);       
+    Z1= pepo.H_exp(struct("pos_map",pos_map));       
 
 
     pos_map = [1,1,0;
-               0,1,1;
-               0,0,1];
+               1,1,1;
+               1,0,1];
 
-    Z2= mpo.H_exp(pos_map);  
+    Z2=pepo.H_exp(struct("pos_map",pos_map));     
     
-    A=Z2-Z1; %should be zero because it the same length chain numbered in same way
+    z4 = pepo.contract_network(struct("pos_map",pos_map), 2,1);
+    
+    %A=Z2-Z1; %should be zero because it the same length chain numbered in same way
 end
