@@ -51,20 +51,20 @@ function test_PEPO
     opts.testing=0;
     opts.visualise=0;
                
-    pos_map = [0,0,0,0;
-               0,0,1,1;
-               0,0,1,1;];
+    pos_map = [0,0,1,1;
+               1,1,1,1;
+               0,1,1,1;];
            
     map_arg = struct("map", PEPO.create_map(pos_map)  );     
-    beta_arr = 10.^[-4:0.2:2];
+    beta_arr = 10.^(-5:0.2:2);
     beta_len = size(beta_arr,2);
     err_arr = zeros( beta_len ,1); 
 
     for i=1:beta_len
         beta = beta_arr(i);
-        pepo = PEPO(d,beta*H_1_tensor,beta*H_2_tensor,1,1,opts);
+        pepo = PEPO(d,beta*H_1_tensor,beta*H_2_tensor,2,1,opts);
         err = pepo.calculate_error(map_arg );
-        fprintf("%.4e \n",err);
+        fprintf(" beta %.4e err %.4e \n",beta,abs(err));
         err_arr(i) = abs(err);
 
     end
