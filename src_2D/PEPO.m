@@ -19,10 +19,8 @@ classdef PEPO
         visualise
     end
     
-    properties (Access = private)
-        
-    end
     
+        
     methods
         function obj = PEPO(d,H_1_tensor,H_2_tensor,max_index,type,opts)
             obj.dim = d;
@@ -58,7 +56,7 @@ classdef PEPO
             map = PEPO.create_map([1 1]);
             map_arg = struct( "map",  map);
             
-            Tensor_010 = obj.H_exp(map_arg)/(obj.nf^(map.N)) -...
+            Tensor_010 = obj.H_exp(map_arg,obj.nf) -...
                 obj.contract_network(map_arg,current_max_index);
             
             err = eigs(reshape(Tensor_010,[d^(map.N),d^(map.N)]),1);   
@@ -93,7 +91,7 @@ classdef PEPO
             map = PEPO.create_map([1 1 1]);
             map_arg = struct( "map",  map);
             
-            Tensor_0110 = obj.H_exp(map_arg)/(obj.nf^(map.N))-...
+            Tensor_0110 = obj.H_exp(map_arg,obj.nf)-...
                 obj.contract_network(map_arg,current_max_index);
             
             
@@ -127,7 +125,7 @@ classdef PEPO
                                        1 1]);
                 map_arg = struct( "map",  map);
 
-                Tensor_0110 = obj.H_exp(map_arg)/(obj.nf^(map.N))-...
+                Tensor_0110 = obj.H_exp(map_arg,obj.nf)-...
                     obj.contract_network(map_arg,current_max_index);
 
                 err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
@@ -157,7 +155,7 @@ classdef PEPO
                                        1 0]);
                 map_arg = struct( "map",  map);
 
-                Tensor_0110 = obj.H_exp(map_arg)/(obj.nf^(map.N))-...
+                Tensor_0110 = obj.H_exp(map_arg,obj.nf)-...
                     obj.contract_network(map_arg,current_max_index);
 
                 err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
@@ -191,7 +189,7 @@ classdef PEPO
                                    1 1]);
             map_arg = struct( "map",  map);
             
-            Tensor_1111 = obj.H_exp(map_arg)/(obj.nf^(map.N))-...
+            Tensor_1111 = obj.H_exp(map_arg,obj.nf)-...
                 obj.contract_network(map_arg,current_max_index);
             
             err = eigs(reshape(Tensor_1111,[d^(map.N),d^(map.N)]),1);   
@@ -242,7 +240,12 @@ classdef PEPO
             end            
         end
         
-        function H = H_exp(obj,map)
+        function H = H_exp(obj,map,prefactor)
+            
+            if nargin<3
+                prefactor=1;
+            end
+            
             %map either contains pos_map or (map from parse_map function)   
             map = PEPO.parse_map(map);
 
@@ -345,9 +348,14 @@ classdef PEPO
                 end
             end
             
-            H_matrix = expm(reshape(H, [d^(map.N),d^(map.N)]));
+            H_matrix = reshape(H, [d^(map.N),d^(map.N)]);
             
-            H = reshape(H_matrix,dimension_vector(d,2*map.N)  );
+            H_matrix = H_matrix -  eye(d^(map.N))*map.N*log(prefactor);
+            
+            H_expo = expm(H_matrix);
+            
+            
+            H = reshape(H_expo,dimension_vector(d,2*map.N)  );
         end
         
         function T = contract_network(obj,map, max_index)
@@ -441,24 +449,27 @@ classdef PEPO
             end
         end
         
-        function err = calculate_error(obj,map)
+        function [err,prefact] = calculate_error(obj,map)
             d=obj.dim;
             map = PEPO.parse_map(map);
             map_arg = struct("map",map);
             
-            H_matrix=H_exp(obj,map_arg);
+           
+            
+            H_matrix=H_exp(obj,map_arg,obj.nf);
             Contraction=obj.contract_network(map_arg,obj.max_index);
             
             a = reshape(  H_matrix, [ d^(map.N), d^(map.N)]);
             b = reshape( Contraction, [ d^(map.N), d^(map.N)]);
             
             trace_a= trace(a);
+           
+            prefact = obj.nf* (trace_a^(1/map.N));
             
-            a = a/trace(a);
-            b = b* ( (obj.nf^map.N)/trace_a );
-            
-            
-            err = eigs(a -b,1)  ;
+            % for real values, multiply both with obj.nf^(map.N)*trace_a =
+            % prefact^N
+
+            err =  ( eigs(  (a-b)  ,1) )/trace_a   ;
         end
         
     end
