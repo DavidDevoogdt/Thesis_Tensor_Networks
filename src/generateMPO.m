@@ -20,6 +20,8 @@ classdef generateMPO
             obj.dim = d;
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
+
+            
             obj.I_tensor = eye(d);
             
             obj.H_exp_cell= cell(2,1);
@@ -198,9 +200,9 @@ classdef generateMPO
             addParameter(p,'method',"svd")
             addParameter(p,'testing',0)
             addParameter(p, 'testN',2)
+            addParameter(p, 'single_threshold',-1)
+            addParameter(p, 'double_threshold',-1)
             parse(p,opts)
-            
-            N_extra = p.Results.testN;
             
             
             if mod(order,2)==1
@@ -215,7 +217,6 @@ classdef generateMPO
             normalisation_factor = trace(O_11_unnormalised);
             
             O{1,1} = reshape(  O_11_unnormalised/normalisation_factor , [1,d,d,1] ) ;
-            
             
             
             %N=number of free bonds
@@ -248,13 +249,12 @@ classdef generateMPO
                 RHS_Tensor = H_exp(obj,N)/(normalisation_factor^(N+1))- contract_O(N,O,current_max_index,d);
                 
                 
-                
+                %fprintf("err %d\n",N);
                 err_before = eigs(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]),1);
                 
-                %fprintf("err %.4e",err_before);
-                
-                 err =0;
-                 if abs(err_before) < 1e-10
+              
+                err =0;
+                 if abs(err_before) < p.Results.double_threshold && p.Results.single_threshold ~= -1
                      err=1;
                      return
 
@@ -335,9 +335,8 @@ classdef generateMPO
                         %make invertible
                         for l = 1:size(S,1)
                             sigma = S(l,l);
-                            signum = sign(sigma);
-                            if abs(sigma)<1e-16
-                               sigma = signum*1e-15 ;
+                            if abs(sigma)<1e-14
+                               %sigma = 1e-14 ;
                             end
                             S(l,l)=sigma;
                         end
@@ -348,7 +347,7 @@ classdef generateMPO
                         left = U*sqrt_S;
                         right = sqrt_S*V';
                         
-                        P = eye(2*M+2);
+                        
                     otherwise
                         
                         
@@ -361,29 +360,6 @@ classdef generateMPO
                 O{M+1,M+2} = O_l;
                 O{M+2,M+1} =O_r;
                 
-                %unnecesary
-%                 %check whether this is really an improvement
-%                 %N_extra=2;
-%                 
-%                 RHS_Tensor_2 = reshape( H_exp(obj,N+N_extra)/(normalisation_factor^(N+1+N_extra)) - contract_O(N+N_extra,O,current_max_index,d),...
-%                                         [ d^(N+1+N_extra),d^(N+1+N_extra)]); 
-%                                     
-%                 RHS_Tensor_3 = reshape( H_exp(obj,N+N_extra)/(normalisation_factor^(N+1+N_extra)) - contract_O(N+N_extra,O,current_max_index+1,d),...
-%                                         [ d^(N+1+N_extra),d^(N+1+N_extra)]);                    
-%                                     
-% 
-%                 err_before = eigs(RHS_Tensor_2,1);
-%                 err_after  = eigs(RHS_Tensor_3,1);
-%                 
-%                 err = 0;
-%                 if abs(err_before) < abs(err_after)
-%                    
-%                    fprintf("befor %.4e after %.4e double update bad order %d, breaking ",err_before,err_after, current_max_index);
-%                    O{M+1,M+2} = {};
-%                    O{M+2,M+1} = {};
-%                    err = 1;
-%                 end
-
             end
             
             
@@ -393,27 +369,21 @@ classdef generateMPO
                 RHS_Tensor = H_exp(obj,N)/(normalisation_factor^(N+1)) - contract_O(N,O,current_max_index,d);
                 
                 
-                err_before = eigs(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]),1);
+                %fprintf("err %d\n",N);
+                err_before = svds(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]) ,1);
                 
-                %fprintf("err %.4e",err_before);
                 
-                %sensitive to overfitting
+                %fprintf("single %.4e",err_before)
                 
-                 if abs(err_before) < 1e-10
-                     
-                     return
-                     
-                 end
-                 
+                 if abs(err_before) < p.Results.single_threshold && p.Results.single_threshold ~= -1
+                     return      
+                 end                 
                 
                 
                 RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
                                         dimension_vector(d^2,N+1)); %group per ij index
 
-                                    
-                                    
-                                    
-                                    
+                                              
                 %search x st 
                 % left*x = res
                 % y*right = x
@@ -433,7 +403,6 @@ classdef generateMPO
                 contract_list{1}(1)=-1;
                 contract_list{end}(4)=-(2*M+2);
                 
-
                 left = reshape( ncon(left_list,contract_list) , [d^(2*M),d^(2*M)]);
                 right = reshape( ncon(right_list,contract_list) , [d^(2*M),d^(2*M)]);
                 res = reshape( RHS_Matrix, [d^(2*M),d^(2*M+2)]);
