@@ -31,7 +31,7 @@ function O_cell_N = mpoProduct(O_cell,N,truncdim,testing,type)
     O_right_C = O_cell{4};
     
     for i = 2:N    
-        fprintf("adding layer");
+        %fprintf("adding layer");
         
         oe_dim_C = size(O_odd_C,4); %odd even dim
         eo_dim_C = size(O_odd_C,1);%even odd dim
@@ -53,7 +53,7 @@ function O_cell_N = mpoProduct(O_cell,N,truncdim,testing,type)
         Oo2 = reshape(U*a_S_2, [td1,d,d,td2]);
         Oe2=  reshape(S/a_S_2*V', [td2,d,d,td1]);
 
-        fprintf('tussentijd %s \n', N, datestr(now,'HH:MM:SS.FFF'));
+        %fprintf('tussentijd %s \n', N, datestr(now,'HH:MM:SS.FFF'));
 
         %fix edges
 %         O_left_double = reshape( ncon( {O_left_C,O_left}, {[-1,-3,1,-5],[-2,1,-4,-6]} ),...

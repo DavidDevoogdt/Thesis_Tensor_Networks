@@ -13,8 +13,7 @@ function O_cell = truncateO(O,truncdim,testing)
     left = end_vector;
     right = left';
     
-   
-    
+
     O_odd = O;
     O_even = O;
 
