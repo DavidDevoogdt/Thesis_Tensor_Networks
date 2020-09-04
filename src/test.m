@@ -17,13 +17,14 @@ function mpo_type_comparison_exact_generic_order
     simul.types = [3,4];
     simul.M = 8;
     simul.beta_arr = 10.^(  -3:0.5:log10(40) );
+    simul.cyclic = 1;
     
     generate_opts.testing=0;
     
     opt3 = struct([]);
     
     opt4.method = "svd";
-    opt4.to_matrix = 0; %keep in cell form
+    opt4.to_matrix = 1; %keep in cell form
     
     opt5.method="diag";
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
@@ -71,8 +72,8 @@ function mpo_type_comparison_exact_generic_order
                         +ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
             H_1_tensor = zeros(d); 
             
-            opt4.single_threshold = 1e-10;
-            opt4.double_threshold = 1e-8;
+            opt4.single_threshold = -1;
+            opt4.double_threshold = -1;
             
             
             
@@ -110,6 +111,7 @@ function mpo_type_comparison_exact_generic_order
 
     %
     compare_opts.ref=2;
+    compare_opts.cyclic=simul.cyclic;
   
     %loop over different orders
     for j = 1:order_size
@@ -122,7 +124,7 @@ function mpo_type_comparison_exact_generic_order
         for i = 1:beta_len
             beta = simul.beta_arr(i);
             mpo_base = MPO_beta_N{i};
-            mpo_base_matrix = mpo_base.H_exp(simul.M-1,1); %buffered, not calculted again every time
+            mpo_base_matrix = mpo_base.H_exp(simul.M-1,1,simul.cyclic); %buffered, not calculted again every time
 
             fprintf("M %d beta %.4e order %d",simul.M,beta,Order);
             

@@ -4,7 +4,13 @@ function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
     
     %opts= "normed"
     
-    a = mpo_1.contract_mpo(M-1,1,0);
+    
+    p = inputParser;
+    addParameter(p,'ref',0)
+    addParameter(p,'cyclic',0);
+    parse(p,opts)
+    
+    a = mpo_1.contract_mpo(M-1,1,p.Results.cyclic);
     prefact_1 = mpo_1.nf;
     
 
@@ -20,9 +26,6 @@ function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
     end
     
 
-    p = inputParser;
-    addParameter(p,'ref',0)
-    parse(p,opts)
     
     if p.Results.ref == 2
         b=b*prefact_2^M;
@@ -61,65 +64,5 @@ function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
        error("not impl"); 
     end
 
-   
-%     catch
-%         warning('error = inf');
-%         err = Inf;
-%     end
-    
 
-
-%    tr_b = trace(b);
-%    tr_a = trace(a);
-% 
-%    mag_2=tr_b*prefact_2;
-%    mag_1=tr_a*prefact_1;
-% 
-%    
-%    if mag_2 > mag_1 || p.Results.ref == 2
-%        prefact = prefact_2*tr_b;
-%        b = b/tr_b; %b normed to 1
-%        a = a*(  prefact_1/ prefact);
-%    else
-%        prefact = prefact_2*tr_b;
-%        a = a/tr_a; %b normed to 1
-%        b = b*(  prefact_2/ prefact);
-%    end
-%                        
-%     matrix= (a-b);
-%     
-%     try
-%     	if p.Results.ref ~= 0
-%             err = eigs(matrix,1);
-%             return;
-%         end
-% 
-%         err = prefact*eigs(matrix,1);
-%     catch
-%         warning('error = inf');
-%         err = Inf;
-%     end
-    
-    
-   
-   
-end
-
-
-
-function matrix = generate_cycle(mpo_list,d)
-    M = size(mpo_list,2);
-   
-    leg_list = cell(1,M);
-    for i = 1:M
-       leg_list{i} = [i,-(i+1), -(i+M+1)  ,i+1  ] ;
-    end
-
-    leg_list{1}(1) = -1;
-    leg_list{M}(4) = -(2*M+2);
-    
-    temp = ncon( mpo_list,leg_list   );
-    
-    matrix = reshape( temp, [ d^M,d^M ]);
-    
 end
