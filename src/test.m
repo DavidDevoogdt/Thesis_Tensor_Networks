@@ -9,20 +9,23 @@ function mpo_type_comparison_exact_generic_order
     
     %change this
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    model = "XXZ_3D";
+    model = "t_ising";
     
     
-    simul.Order_arr =  [2,3,4,5];
+    simul.Order_arr =  [2,3,4,5,6,7];
+    
     simul.types = [3,4];
-    simul.M = 6;
+    simul.M = 8;
     simul.beta_arr = 10.^(  -3:0.5:log10(40) );
     
-    opt4.method = "svd";
-    opt4.testing = 0;
-    opt4.testN=3;
+    generate_opts.testing=0;
     
-    options5.method="diag";
-    options5.testing=0;
+    opt3 = struct([]);
+    
+    opt4.method = "svd";
+    opt4.to_matrix = 0; %keep in cell form
+    
+    opt5.method="diag";
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
        
        
@@ -41,8 +44,10 @@ function mpo_type_comparison_exact_generic_order
             g=1.05;
             
             H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
-            H_1_tensor =-J*g*S_x ;
+            H_1_tensor =-J*g*S_x_2 ;
     
+            opt4.single_threshold = -1;
+            opt4.double_threshold = -1;
             
             
             simul.title = sprintf("transverse ising g=%.3f",g);
@@ -65,6 +70,12 @@ function mpo_type_comparison_exact_generic_order
                         +ncon( {S_y_2,S_y_2}, {[-1,-3],[-2,-4]})...
                         +ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
             H_1_tensor = zeros(d); 
+            
+            opt4.single_threshold = 1e-10;
+            opt4.double_threshold = 1e-8;
+            
+            
+            
             simul.title = sprintf("Heisenberg");
             
         otherwise
@@ -86,21 +97,28 @@ function mpo_type_comparison_exact_generic_order
     hold off
     figure(1);
     %%%
+   
     
     %pregenerate all mpo's
     MPO_beta_N = cell(beta_len,1);
     for i=1:beta_len
         beta = simul.beta_arr(i);
-        MPO_beta_N{i} = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor );
+        
+        %generateMPO(d,H_1_tensor,H_2_tensor,type,order,type_opts,opts)
+        MPO_beta_N{i} = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,0 );
     end
 
     %
     compare_opts.ref=2;
   
+    %loop over different orders
     for j = 1:order_size
         Order = simul.Order_arr(j);
         plot_structure = cell( 5,beta_len);
-
+            
+        
+        
+        %loop over temps
         for i = 1:beta_len
             beta = simul.beta_arr(i);
             mpo_base = MPO_beta_N{i};
@@ -108,21 +126,24 @@ function mpo_type_comparison_exact_generic_order
 
             fprintf("M %d beta %.4e order %d",simul.M,beta,Order);
             
+            %loop of simulation types
             for t=1:size(simul.types,2)
                switch simul.types(t)
                    case 3
-                      [N3,mpo_N_03] = mpo_base.type_03(Order,0);
-                      err_03 = error_eigenvalue({N3,mpo_N_03},"O",mpo_base_matrix,"array",simul.M,d,compare_opts);
+          
+                      mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
+                      err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
                       fprintf(" err 03 %.4e",err_03);
                       plot_structure{3,i} = err_03;
+                      
                    case 4
-                      [N4,mpo_N_04] = mpo_base.type_04(Order,opt4);
-                      err_04 = error_eigenvalue({N4,mpo_N_04},"O",mpo_base_matrix,"array",simul.M,d,compare_opts);
+                      mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,Order,opt4,generate_opts);
+                      err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",simul.M,d,compare_opts);
                       fprintf(" err 04 %.4e",err_04);
                       plot_structure{4,i} = err_04;
                    case 5 
-                      [N5,mpo_N_05] = mpo_base.type_05(Order,options5);
-                      err_05 = error_eigenvalue({N5,mpo_N_05},"O",mpo_base_matrix,"array",simul.M,d,compare_opts);
+                      mpo_5 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,5,Order,opt5,generate_opts);
+                      err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",simul.M,d,compare_opts);
                       fprintf(" err 05 %.4e",err_05);
                       plot_structure{5,i} = err_05; 
                    otherwise
@@ -134,7 +155,7 @@ function mpo_type_comparison_exact_generic_order
 
         end
         
-        %plotting
+        %plotting loop for current order
         for t=1:size(simul.types,2)
                switch simul.types(t)
                    case 3

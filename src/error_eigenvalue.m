@@ -1,44 +1,20 @@
-function err = error_eigenvalue(mpo_1,type_01, mpo_2,type_02,M,d,opts)
+function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
     %type= "array"
-    %type= "list" 
-    %type= "O"
+    %type= "MPO"
     
     %opts= "normed"
     
-    switch type_01
-        case "array"
-            a = mpo_1;
-            prefact_1=1;
-        case "list"
-            a= generate_cycle(mpo_1,d);
-            prefact_1=1;
-        case "O"
-            N1 = mpo_1{1};
-            O1 = mpo_1{2};
-            
-            list = generateList(O1,M,-1,0);
-            a = generate_cycle(list,d);
-            prefact_1=N1^M;
-            
-        otherwise
-            error("invalid type_01 for error_eigenvalue")
-    end
+    a = mpo_1.contract_mpo(M-1,1,0);
+    prefact_1 = mpo_1.nf;
     
-      
+
     switch type_02
         case "array"
             b = mpo_2;
             prefact_2=1;
-        case "list"
-            b= generate_cycle(mpo_1,d);
-            prefact_2=1;
-        case "O"
-            N2 = mpo_2{1};
-            O2 = mpo_2{2};
-            list = generateList(O2,M,-1,0);
-            b = generate_cycle(list,d);
-            prefact_2=N2^M;
-            
+        case "MPO"
+            b = mpo_2.contract_mpo(M,0);
+            prefact_2 = mpo_2.nf;
         otherwise
             error("invalid type_01 for error_eigenvalue")
     end
@@ -49,16 +25,9 @@ function err = error_eigenvalue(mpo_1,type_01, mpo_2,type_02,M,d,opts)
     parse(p,opts)
     
     if p.Results.ref == 2
-        b=b*prefact_2;
-        a =a*prefact_1;
+        b=b*prefact_2^M;
+        a =a*prefact_1^M;
         
-        %eig_b= eigs(b,1);
-        
-        
-
-        %a = a*(  prefact_1/  prefact_2);
-
-        matrix= (a-b);
     else 
         
        error("todo not implemented") ;

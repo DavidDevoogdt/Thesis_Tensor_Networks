@@ -6,7 +6,7 @@ function mpo_list = generateList(O,M,truncdim,testing)
         testing =0;
     end
 
-    %assert( M>4);s
+    %assert( M>4);
  
     if iscell(O)
         assert( mod(M,2) ==0);
