@@ -19,7 +19,7 @@ function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
             b = mpo_2;
             prefact_2=1;
         case "MPO"
-            b = mpo_2.contract_mpo(M,0);
+            b = mpo_2.contract_mpo(M-1,1,p.Results.cyclic);
             prefact_2 = mpo_2.nf;
         otherwise
             error("invalid type_01 for error_eigenvalue")

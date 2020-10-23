@@ -11,7 +11,7 @@ classdef generateMPO
         testing
         nf
         MPO_cell
-        left  % left and right vector for matrix mpo
+        left  % left and right vector for matrix mpo, virtual level for cell mpo
         right
         MPO_type %internal representation, 'matrix' or 'cell'
         type_opts % opts specific for construction of certain type
@@ -48,6 +48,9 @@ classdef generateMPO
                 obj = obj.makeMPO();
             end
 
+            
+            
+            
             obj.H_exp_cell= cell(2,1);
             obj.H_exp_cell_cyclic= cell(2,1);
         end
@@ -82,6 +85,7 @@ classdef generateMPO
             addParameter(p, 'single_threshold',-1)
             addParameter(p, 'double_threshold',-1)
             addParameter(p, 'to_matrix',0)
+            addParameter(p, 'min_single_N',-1)
             
             parse(p,obj.type_opts)
             
@@ -114,8 +118,10 @@ classdef generateMPO
                         break;
                     end
                 else
-                    obj.current_max_index = N/2;
-                    single_update(N)
+                    if N >= p.Results.min_single_N
+                        obj.current_max_index = N/2;
+                        single_update(N)
+                    end
                 end
             end
             
@@ -187,6 +193,8 @@ classdef generateMPO
                     x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
                     y = x/right_i;
                     
+                    %fprintf("double cond numbers %.4e %.4e", cond(left_i),cond(right_i));
+                    
                     
                     new_parts = reshape(y, [d^(2*M),d^2,d^2,d^(2*M)]);
                 else
@@ -255,15 +263,16 @@ classdef generateMPO
             
             function single_update(N)
                 
+            
                 
                 RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1)) - obj.contract_mpo(N);
                 
-                err_before = svds(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]) ,1);
-                
-                %fprintf(" se %.4e st %.4e ",err_before,p.Results.single_threshold);
-                if abs(err_before) < p.Results.single_threshold && p.Results.single_threshold ~= -1
-                    return
-                end
+%                 err_before = svds(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]) ,1);
+%                 
+%                 %fprintf(" se %.4e st %.4e ",err_before,p.Results.single_threshold);
+%                 if abs(err_before) < p.Results.single_threshold && p.Results.single_threshold ~= -1
+%                     return
+%                 end
                 
                 
                 RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
@@ -291,6 +300,10 @@ classdef generateMPO
                 
                 left_i = reshape( ncon(left_list,contract_list) , [d^(2*M),d^(2*M)]);
                 right_i = reshape( ncon(right_list,contract_list) , [d^(2*M),d^(2*M)]);
+                
+                %fprintf("single cond numbers %.4e %.4e", cond(left_i),cond(right_i));
+       
+                
                 res = reshape( RHS_Matrix, [d^(2*M),d^(2*M+2)]);
                 
                 x = left_i\res;
@@ -398,6 +411,9 @@ classdef generateMPO
             obj.MPO_type = "matrix";
             obj.left = left_vect;
             obj.right = right_vect;
+
+%             obj.MPO_cell = zeros(total_dim+1,total_dim+1);
+%             obj.MPO_type = "cell";
             
             % 0
             unnorm = expm(obj.H_1_tensor);
@@ -407,11 +423,13 @@ classdef generateMPO
             
            obj.MPO_cell = add_block_to_tensor(obj.MPO_cell,0,0,0, O_00_0 ,d  );
             
+           %obj.MPO_cell{0,0} = O_00_0;
             
             %step 1:
             % 0--|--1'--|--0 = exp(H_12) - (0--|--|--0 )
             N = 1;                  %number accents = number of free bonds
             
+          
             
             RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1))- obj.contract_mpo(N);
             RHS_Matrix_site = reshape( permute( RHS_Tensor , site_ordering_permute(N+1) ),...
@@ -1074,7 +1092,11 @@ classdef generateMPO
             
         end
         
-        function T = contract_mpo(obj,N,matrix,cyclic)
+        function T = contract_mpo(obj,N,matrix,cyclic,virtual_level)
+            if nargin < 5
+                virtual_level = 0;
+            end
+            
             if nargin < 4
                 cyclic = 0;
             end
@@ -1090,12 +1112,14 @@ classdef generateMPO
                     
                     if cyclic == 1
                        total_pos =  (obj.current_max_index+1)^(N+1)-1;
+                       T = zeros( dimension_vector(d,2*(N+1)));  
                     else
                        total_pos = (obj.current_max_index+1)^N-1;
+                       T = zeros( dimension_vector(d,2*(N+1),[1,1]));  
                     end
                    
-
-                        T = zeros( dimension_vector(d,2*(N+1),[1,1]));    
+                        
+                          
                         
                         %generate all combinations of internam indices
                         for i= 0: total_pos
@@ -1104,7 +1128,7 @@ classdef generateMPO
                                 full_vect = [encode_index_array(i,N+1,obj.current_max_index+1);0];
                                 full_vect(end) = full_vect(1);
                             else
-                                full_vect = [0;encode_index_array(i,N,obj.current_max_index+1);0];
+                                full_vect = [virtual_level;encode_index_array(i,N,obj.current_max_index+1);virtual_level];
                             end
                             
                             
@@ -1124,6 +1148,9 @@ classdef generateMPO
 
                             if correct_index_set == 1
                                 legs = cell(1,N+1);
+                                
+                                
+                                
                                 for t=1:N
                                     legs{t} = zeros(1,4);
                                 end
@@ -1137,13 +1164,13 @@ classdef generateMPO
                                 end
 
                                 for t=1:N+1 %assign final places for i_n and j_n
-                                    legs{t}(2) = -(t+1);
-                                    legs{t}(3) = -(N+1 +t+1);
+                                    legs{t}(2) = -(t+1)+cyclic;
+                                    legs{t}(3) = -(N+1 +t+1)+cyclic;
                                 end
 
                                 if cyclic==1
-                                   leg_list{1}(1) = N+1;
-                                   leg_list{end}(4) = N+1;
+                                   legs{1}(1) = N+1;
+                                   legs{end}(4) = N+1;
                                 end
                                 
                                 T_j = ncon (O_tensors,legs);
