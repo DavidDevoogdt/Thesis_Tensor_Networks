@@ -41,8 +41,9 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
             %opt4.single_threshold = -1;
             %opt4.double_threshold = -1;
-            opt4.single_threshold = 1e-5;
-            opt4.double_threshold = 1e-10;
+            
+            opt4.single_threshold = 1e-11; %1e-8;
+            opt4.double_threshold = 1e-8;
 
             simul.title = sprintf("H=ZZ + %.3fX",g);
         case "l_ising"

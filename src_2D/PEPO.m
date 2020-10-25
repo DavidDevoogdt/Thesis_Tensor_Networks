@@ -98,7 +98,7 @@ classdef PEPO
             err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
             fprintf("0110 err %.4e",abs(err));
             
-            if abs(err) > 1e-7
+            if abs(err) > 1e-8
             
                 Tensor_0110_site = reshape(  permute(Tensor_0110, site_ordering_permute(map.N)),...
                                 [d^2,d^4] );
@@ -462,14 +462,14 @@ classdef PEPO
             a = reshape(  H_matrix, [ d^(map.N), d^(map.N)]);
             b = reshape( Contraction, [ d^(map.N), d^(map.N)]);
             
-            trace_a= trace(a);
+            eig_a= eigs(a,1);
            
-            prefact = obj.nf* (trace_a^(1/map.N));
+            prefact = obj.nf^map.N*(eig_a);
             
             % for real values, multiply both with obj.nf^(map.N)*trace_a =
             % prefact^N
 
-            err =  ( eigs(  (a-b)  ,1) )/trace_a   ;
+            err =  ( eigs(  (a-b)  ,1) )/ eig_a   ;
         end
         
     end
@@ -594,6 +594,8 @@ classdef PEPO
 
 
         end
+
+        % 
     end
 end
 
