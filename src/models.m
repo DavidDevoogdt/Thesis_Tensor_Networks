@@ -4,6 +4,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
     p = inputParser;
     addParameter(p,'g',1.05);
+    addParameter(p,'J',1);
     addParameter(p,'delta',0.5);
     parse(p,opts)
     
@@ -33,7 +34,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
     switch model
         case "t_ising"
             d=2;
-            J=1;
+            J=p.Results.J;
             g= p.Results.g;
 
             H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});

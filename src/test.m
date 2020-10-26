@@ -1,12 +1,12 @@
-function test
-%mpo_type_comparison_exact_generic_order;
-%mpo_type_comparison_M
-phase_transition();
-end
+% function test
+% %mpo_type_comparison_exact_generic_order;
+% %mpo_type_comparison_M
+% phase_transition();
+% end
 
 
 
-function phase_transition()
+%function phase_transition()
 
 
 %change this
@@ -16,48 +16,82 @@ S_z_2 = [1,0;0,-1];
 S_x_2 = [0,1;1,0];
 
 generate_opts.testing=0;
+
 opt3 = struct([]);
 opt5.method="diag";
 
+a=0.1;
+model_opts.J = 1/(2*a);
+
+square_size = 12;
+step_size = 0.5;
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-beta_max = 20; %from simulations
-t_max = 3;
+ %from simulations
+
 
 simul_struct.order = 3;
 simul_struct.mpo_type = 4;
-simul_struct.observable = 'A';
+simul_struct.observable = 'sx';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+beta_max = 10; %saveguard for numerical errors
 
 switch simul_struct.observable
     case 'sx'
         simul_struct.title = 'S_x';
         simul_struct.Z = 'S_x';
+        
+        t_max = 8;
+
+        t_arr = exp( log(1/beta_max):0.2:log(t_max))
+        beta_arr = 1./t_arr;
+        
+        %beta_arr = exp( l:0.1:log(50));
+        %t_arr = 1./beta_arr;
+        
+        beta_len = size(beta_arr,2);
+        
+        gamma_arr = 0.2:0.1:3;
+        gamma_len = size(gamma_arr,2);
+        
+        
     case 'xi'
-        simul_struct.title = 'xi';
-        simul_struct.Z = 'xi';
-    case 'A'
-        simul_struct.title = 'A';
-        simul_struct.Z = 'A';
+        simul_struct.title = '1/xi';
+        simul_struct.title2 = 'A';
+        simul_struct.Z = '1/xi';
+        simul_struct.Z2 = 'A';
+
+        m_arr = -square_size:step_size:square_size;
+        T_arr_max = square_size;
+
+        gamma_arr = 1-m_arr*a
+        gamma_arr = gamma_arr( gamma_arr>0.4);
+
+        gamma_len = size(gamma_arr,2);
+
+
+        t_min =  model_opts.J/beta_max;
+
+        t_arr =  t_min:step_size:T_arr_max
+        beta_arr = 1./t_arr;
+        beta_len = size(beta_arr,2);
+        
+
     otherwise
         error('unknown observable')
 end
 
 
-t_arr = exp( log(1/beta_max):0.2:log(t_max));
-beta_arr = 1./t_arr;
 
-%beta_arr = exp( l:0.1:log(50));
-%t_arr = 1./beta_arr;
 
-beta_len = size(beta_arr,2);
+% 
+ results = zeros(beta_len,gamma_len,2);
 
-gamma_arr = 0.2:0.1:3;
-gamma_len = size(gamma_arr,2);
-
-results = zeros(beta_len,gamma_len);
 
 disp(gamma_arr);
 
@@ -66,7 +100,10 @@ for beta_i = 1:beta_len
     fprintf("beta: %.4f gamma: ",beta)
     for gamma_i = 1:gamma_len
         gamma = gamma_arr(gamma_i);
+        
+        
         model_opts.g = gamma;
+        
         [simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
         
         
@@ -85,15 +122,12 @@ for beta_i = 1:beta_len
         switch simul_struct.observable
             case 'sx'
                 m = get_expectation(MPO_matrix, S_x_2);
-                results(beta_i,gamma_i) =  m ;
+                results(beta_i,gamma_i,1) =  m ;
             case 'xi'
-                [A, xi_inv] =   get_correlation_length(MPO_matrix, S_z_2,2);
+                [A, xi_inv] =   get_correlation_length(MPO_matrix, S_z_2,4,8,a);
                 fprintf(" %.4e ",xi_inv);
-                results(beta_i,gamma_i) = 1/ xi_inv ;
-            case 'A'
-                [A, xi_inv] =   get_correlation_length(MPO_matrix, S_z_2,2);
-                fprintf(" %.4e ",A);
-                results(beta_i,gamma_i) = A ;
+                results(beta_i,gamma_i,1) = xi_inv ;
+                results(beta_i,gamma_i,2) = A ;
             otherwise
                 error('unknown observable')
         end
@@ -103,28 +137,117 @@ for beta_i = 1:beta_len
     
 end
 
-figure()
+%%
 
-h=gca;
+% a = 0.1;
+% J= 1/(2*a);
 
-s = surf(gamma_arr-1,t_arr,results);
-colorbar
-xlabel('h')
-ylabel('T')
-zlabel(simul_struct.Z);
-title(simul_struct.title);
+switch simul_struct.observable 
+    case 'xi'
 
-s.EdgeColor = 'none';
-if (simul_struct.observable == 'xi') || (simul_struct.observable == 'A')
-    set(h,'zscale','log')
-    set(gca,'ColorScale','log')
-      
+    Z= model_opts.J^(-1/4);
+
+    T = t_arr;
+
+    m= (1-gamma_arr)/a;
+
+    [m_grid,T_grid] = meshgrid(m,T);
+
+    region_I = (T_grid < m_grid) & (m_grid>0);
+    region_II = (T_grid < -m_grid) & (m_grid<0);
+    region_III = ~(region_I | region_II );
+
+    m_I = m_grid; T_I = T_grid;
+    m_I(~region_I) = nan; 
+    T_I(~region_I) = nan; 
+
+    m_II = m_grid; T_II = T_grid;
+    m_II(~region_II) = nan; 
+    T_II(~region_II) = nan; 
+
+    m_III = m_grid; T_III = T_grid;
+    m_III(~region_III) = nan; 
+    T_III(~region_III) = nan; 
+
+
+
+    xi_inv_I = (  (2*m_I.*T_I/3.1415).^(0.5).*exp(-m_I./T_I));
+    xi_inv_III = (3.1415*T_III/4);
+    xi_inv_II = abs(m_II) + (2*abs(m_II).*T_II/3.1415).^(0.5).*exp(-abs(m_II)./T_II);
+
+
+    figure();
+    h=gca;
+
+    s = surf(m_grid,T_grid,results(:,:,1));
+
+    colorbar
+    xlabel('m')
+    ylabel('T')
+    zlabel(simul_struct.Z);
+    title(simul_struct.title);
+    s.EdgeColor = 'none';
+
+    hold on;
+    surf(m_I,T_I,xi_inv_I,'FaceAlpha',0.5);
+    surf(m_II,T_II,xi_inv_II,'FaceAlpha',0.5);
+    surf(m_III,T_III,xi_inv_III,'FaceAlpha',0.5);
+
+    hold off;
+
+
+
+
+
+        figure();
+        h=gca;
+
+
+
+        A_prefact = Z* (T_grid).^(0.25);
+
+        A_I = A_prefact.*(m_I./T_I).^(0.25);
+        A_III = A_prefact.*0.85871456;
+        A_II = A_prefact.*abs(m_II./T_II).^(-0.75);
+
+        s = surf(m_grid,T_grid,results(:,:,2));
+
+        colorbar
+        xlabel('m')
+        ylabel('T')
+        zlabel(simul_struct.Z2);
+        title(simul_struct.title2);
+
+        s.EdgeColor = 'none';
+
+        hold on;
+        surf(m_I,T_I,A_I,'FaceAlpha',0.5);
+        surf(m_II,T_II, A_II,'FaceAlpha',0.5);
+        surf(m_III,T_III,A_III,'FaceAlpha',0.5);
+
+        hold off;
+    case 'sx'
+        figure();
+        h=gca;
+
+        s = surf(gamma_arr,t_arr,results(:,:,1));
+
+        colorbar
+        xlabel('gamma')
+        ylabel('T')
+        zlabel(simul_struct.Z);
+        title(simul_struct.title);
+        s.EdgeColor = 'none';
+    otherwise
+        error('unknown plot ype')
 end
-end
 
 
 
+%surf( m,t_arr,xi_inv_calc );
 
+
+%%
 function mpo_type_comparison_exact_generic_order
 
 %change this
