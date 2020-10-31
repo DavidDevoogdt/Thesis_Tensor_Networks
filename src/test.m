@@ -1,12 +1,12 @@
-% function test
-% %mpo_type_comparison_exact_generic_order;
-% %mpo_type_comparison_M
-% phase_transition();
-% end
+function test
+%mpo_type_comparison_exact_generic_order;
+%mpo_type_comparison_M
+phase_transition();
+end
 
 
 
-%function phase_transition()
+function phase_transition()
 
 
 %change this
@@ -20,7 +20,7 @@ generate_opts.testing=0;
 opt3 = struct([]);
 opt5.method="diag";
 
-a=0.1;
+a=0.08;
 model_opts.J = 1/(2*a);
 
 square_size = 12;
@@ -33,9 +33,15 @@ step_size = 0.5;
  %from simulations
 
 
-simul_struct.order = 3;
-simul_struct.mpo_type = 4;
-simul_struct.observable = 'sx';
+simul_struct.order = 2;
+simul_struct.mpo_type = 3;
+simul_struct.observable = 'xi';
+
+
+simul_struct.cor_min = 4;
+simul_struct.cor_max = 8;
+
+simul_struct.model = 't_ising_2';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -104,7 +110,7 @@ for beta_i = 1:beta_len
         
         model_opts.g = gamma;
         
-        [simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
+        [simul,H_1_tensor,H_2_tensor,opt4,d] = models(simul_struct.model,model_opts);
         
         
         switch simul_struct.mpo_type
@@ -116,15 +122,18 @@ for beta_i = 1:beta_len
                 error('unknown mpo type')
         end
         
+        %MPO.nf
         
-        MPO_matrix = MPO.MPO_cell * MPO.nf;
+        MPO_matrix = MPO.MPO_cell;
         
         switch simul_struct.observable
             case 'sx'
-                m = get_expectation(MPO_matrix, S_x_2);
+                m = get_expectation(MPO_matrix, S_x_2,MPO.nf);
+                 fprintf(" %.4e ",m);
+                 fprintf(" %f ",gamma);
                 results(beta_i,gamma_i,1) =  m ;
             case 'xi'
-                [A, xi_inv] =   get_correlation_length(MPO_matrix, S_z_2,4,8,a);
+                [A, xi_inv] =   get_correlation_length(MPO_matrix, S_z_2,simul_struct.cor_min,simul_struct.cor_max,a,MPO.nf);
                 fprintf(" %.4e ",xi_inv);
                 results(beta_i,gamma_i,1) = xi_inv ;
                 results(beta_i,gamma_i,2) = A ;
@@ -193,44 +202,40 @@ switch simul_struct.observable
     surf(m_II,T_II,xi_inv_II,'FaceAlpha',0.5);
     surf(m_III,T_III,xi_inv_III,'FaceAlpha',0.5);
 
+
+
+    figure();
+    h=gca;
+
+
+
+    A_prefact = Z* (T_grid).^(0.25);
+
+    A_I = A_prefact.*(m_I./T_I).^(0.25);
+    A_III = A_prefact.*0.85871456;
+    A_II = A_prefact.*abs(m_II./T_II).^(-0.75);
+
+    s = surf(m_grid,T_grid,results(:,:,2));
+
+    colorbar
+    xlabel('m')
+    ylabel('T')
+    zlabel(simul_struct.Z2);
+    title(simul_struct.title2);
+
+    s.EdgeColor = 'none';
+
+    hold on;
+    surf(m_I,T_I,A_I,'FaceAlpha',0.5);
+    surf(m_II,T_II, A_II,'FaceAlpha',0.5);
+    surf(m_III,T_III,A_III,'FaceAlpha',0.5);
+
     hold off;
-
-
-
-
-
-        figure();
-        h=gca;
-
-
-
-        A_prefact = Z* (T_grid).^(0.25);
-
-        A_I = A_prefact.*(m_I./T_I).^(0.25);
-        A_III = A_prefact.*0.85871456;
-        A_II = A_prefact.*abs(m_II./T_II).^(-0.75);
-
-        s = surf(m_grid,T_grid,results(:,:,2));
-
-        colorbar
-        xlabel('m')
-        ylabel('T')
-        zlabel(simul_struct.Z2);
-        title(simul_struct.title2);
-
-        s.EdgeColor = 'none';
-
-        hold on;
-        surf(m_I,T_I,A_I,'FaceAlpha',0.5);
-        surf(m_II,T_II, A_II,'FaceAlpha',0.5);
-        surf(m_III,T_III,A_III,'FaceAlpha',0.5);
-
-        hold off;
     case 'sx'
         figure();
         h=gca;
 
-        s = surf(gamma_arr,t_arr,results(:,:,1));
+        s = surf(gamma_arr,t_arr,real(results(:,:,1)));
 
         colorbar
         xlabel('gamma')
@@ -242,7 +247,7 @@ switch simul_struct.observable
         error('unknown plot ype')
 end
 
-
+end
 
 %surf( m,t_arr,xi_inv_calc );
 
@@ -266,7 +271,7 @@ simul.Order_arr = [3,4,5,6];
 simul.types = [3,4];
 simul.M = 9;
 simul.beta_arr = 10.^(  -3:0.1:log10(50) );
-simul.cyclic = 0;
+simul.cyclic = 1;
 
 
 opt5.method="diag";

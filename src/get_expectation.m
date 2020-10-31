@@ -1,5 +1,5 @@
 %correlator
-function m = get_expectation(MPO_matrix,O)
+function m = get_expectation(MPO_matrix,O,nf)
     Traced_MPO = ncon( {MPO_matrix},{[-1,1,1,-2]});
     [V,D,W] = eig(Traced_MPO);
     

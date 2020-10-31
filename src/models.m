@@ -37,16 +37,40 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             J=p.Results.J;
             g= p.Results.g;
 
-            H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
-            H_1_tensor =-J*g*S_x_2 ;
+            %H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
+            %H_1_tensor =-J*g*S_x_2 ;
+            
+            H_2_tensor= -J*(ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]})...
+                    +0.5*g*   ncon( {S_x_2,eye(d)}, {[-1,-3],[-2,-4]})...
+                    +0.5*g*   ncon( {eye(d),S_x_2}, {[-1,-3],[-2,-4]}));
+            H_1_tensor =-0.0*eye(2) ;
+            
 
             %opt4.single_threshold = -1;
             %opt4.double_threshold = -1;
             
-            opt4.single_threshold = 1e-11; %1e-8;
-            opt4.double_threshold = 1e-8;
+            %opt4.single_threshold = 1e-11; %1e-8;
+            %opt4.double_threshold = 1e-8;
 
             simul.title = sprintf("H=ZZ + %.3fX",g);
+          case "t_ising_2"
+            d=2;
+            J=p.Results.J;
+            g= p.Results.g;
+
+            H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
+            H_1_tensor =-J*g*S_x_2 ;
+            
+
+
+            opt4.single_threshold = -1;
+            opt4.double_threshold = -1;
+            
+            %opt4.single_threshold = 1e-11; %1e-8;
+            %opt4.double_threshold = 1e-8;
+
+            simul.title = sprintf("H=ZZ + %.3fX",g);    
+            
         case "l_ising"
             d=2;
             J=1;

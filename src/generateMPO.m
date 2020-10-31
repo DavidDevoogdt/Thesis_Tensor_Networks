@@ -44,6 +44,11 @@ classdef generateMPO
 
                 obj.testing= p.Results.testing;
 
+                
+                S = svds(H_exp(obj,1,1));
+                obj.nf = sqrt( sum(S)   );
+                
+                
 
                 obj = obj.makeMPO();
             end
@@ -103,10 +108,9 @@ classdef generateMPO
             
             
             
-            O_11_unnormalised = expm( obj.H_1_tensor );
-            obj.nf = trace(O_11_unnormalised);
             
-            obj.MPO_cell{1,1} = reshape(  O_11_unnormalised/obj.nf , [1,d,d,1] ) ;
+
+            obj.MPO_cell{1,1} = reshape(  expm( obj.H_1_tensor)/ obj.nf , [1,d,d,1] ) ;
             
             
             %N=number of free bonds
@@ -417,7 +421,7 @@ classdef generateMPO
             
             % 0
             unnorm = expm(obj.H_1_tensor);
-            obj.nf = trace(unnorm);
+            %obj.nf = trace(unnorm);
             
             O_00_0 = reshape(unnorm/obj.nf, [1,d,d,1] );
             

@@ -1,6 +1,6 @@
 
 %%
- function [A,xi_inv] = thermal_correlation_helper(MPO_matrix,O,N1,N2,a)
+ function [A,xi_inv] = thermal_correlation_helper(MPO_matrix,O,N1,N2,a,nf)
 
     
     Traced_MPO = ncon( {MPO_matrix},{[-1,1,1,-2]});
@@ -33,10 +33,10 @@
     
     F = fit(  transpose( a_array) , plot_array, 'exp1');
 
-%       semilogy(a_array,plot_array)
-%       hold on
-%       semilogy(a_array,F(a_array) )
-%       hold off
+      semilogy(a_array,plot_array)
+      hold on
+      semilogy(a_array,F(a_array) )
+      hold off
 
     C =  coeffvalues(F);
     A = C(1);
