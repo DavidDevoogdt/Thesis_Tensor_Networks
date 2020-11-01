@@ -1,7 +1,8 @@
 function test
-%mpo_type_comparison_exact_generic_order;
+mpo_type_comparison_exact_generic_order;
 %mpo_type_comparison_M
-phase_transition();
+%phase_transition();
+
 end
 
 
@@ -33,7 +34,7 @@ step_size = 0.5;
  %from simulations
 
 
-simul_struct.order = 2;
+simul_struct.order = 3;
 simul_struct.mpo_type = 3;
 simul_struct.observable = 'xi';
 
@@ -264,17 +265,19 @@ opt3 = struct([]);
 
 
 model_opts.g =  0.5;
-[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
+[simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
 
 
-simul.Order_arr = [3,4,5,6];
-simul.types = [3,4];
-simul.M = 9;
-simul.beta_arr = 10.^(  -3:0.1:log10(50) );
-simul.cyclic = 1;
+simul.Order_arr = [1,4,5];
+simul.types = [2];
+simul.M = 8;
+simul.beta_arr = 10.^(  -3:0.05:log10(20) );
+simul.cyclic = 0;
 
 
 opt5.method="diag";
+
+opt2 = {};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -325,6 +328,11 @@ for j = 1:order_size
         %loop of simulation types
         for t=1:size(simul.types,2)
             switch simul.types(t)
+                case 2   
+                    mpo_2 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,Order,opt2,generate_opts);
+                    err_02 = error_eigenvalue(mpo_2,mpo_base_matrix,"array",simul.M,d,compare_opts);
+                    fprintf(" err 02 %.4e",err_02);
+                    plot_structure{2,i} = err_02;
                 case 3
                     
                     mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
@@ -354,6 +362,13 @@ for j = 1:order_size
     %plotting loop for current order
     for t=1:size(simul.types,2)
         switch simul.types(t)
+            case 2
+                colour = colors{1};
+                colour(4) = alphas(j);
+                loglog( simul.beta_arr, abs(cell2mat(plot_structure(2,:))), "LineStyle", line_spec(j),"Color",colour );
+                legend_Arr{plot_counter}= sprintf("type 02 Order %d",Order );
+                plot_counter = plot_counter+1;
+                hold on
             case 3
                 colour = colors{1};
                 colour(4) = alphas(j);

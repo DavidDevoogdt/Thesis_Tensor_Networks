@@ -31,17 +31,23 @@ classdef generateMPO
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
             
+            
+        
+            
             obj.type = type;
             
             if type ~= 0  %type 0 is used only for H_exp
-                 obj.type_opts = type_opts;
+                    
+                obj.type_opts = type_opts;
 
                 obj.order = order;
 
                 p = inputParser;
                 addParameter(p,'testing',0)
+                addParameter(p,'MPO_type','matrix')
                 parse(p,opts)
 
+                obj.MPO_type = p.Results.MPO_type;
                 obj.testing= p.Results.testing;
 
                 
@@ -65,7 +71,7 @@ classdef generateMPO
                 case 0
                     %not really a type, just used to generate H_exp
                 case 2
-                    obj = obj.type_03();
+                    obj = obj.type_02();
                 case 3
                     obj =obj.type_03();
                 case 4 
@@ -78,6 +84,121 @@ classdef generateMPO
                 otherwise
                     error("unknown type")
             end
+        end
+        
+        function obj = type_02(obj)
+
+            d = obj.dim;
+            
+            orig_type = obj.MPO_type;
+            
+            obj.MPO_type = "cell";
+ 
+            total_dim = geomSum(d^2,obj.order);
+            
+            obj.left= zeros(1,total_dim);
+            obj.left(1)=1;
+            obj.right= zeros(total_dim,1);
+            obj.right(1)=1;
+                  
+            unnorm = reshape(expm(obj.H_1_tensor), [1,d,d,1]);
+            
+            
+            
+            obj.MPO_cell = cell(obj.order,obj.order);
+            
+            obj.MPO_cell{0+1,0+1} = unnorm/obj.nf;
+            
+            obj.current_max_index=0;
+            obj.max_index = obj.order;
+            
+            %all other orders
+            for N=1:obj.order
+                construct_level(N)
+            end
+            
+
+            if orig_type == 'matrix'   
+             obj.MPO_cell =  mpo_cell_2_matrix(obj.MPO_cell,obj.order,d);
+             obj.MPO_type = 'matrix';
+            end
+            
+            function construct_level(N)
+                %step 4 :
+                % 0--|--1--|--2--|--3--|--4--|--0 = exp(H12+H23+h34)- (0--|--|--|--|--|--0)
+                %N=4
+                
+                ldim = (1+d^(2*(N-1)))/(1+d^2);
+                
+                RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1)) - obj.contract_mpo(N);
+                RHS_Matrix_site =reshape(permute(RHS_Tensor, site_ordering_permute(N+1) ),....
+                    [d^(2*(N-1)),d^4]);
+                
+                
+                %
+                if N==1
+                    part =reshape( RHS_Matrix_site, [d^2,d^2]);
+                else
+                    temp = reshape( obj.MPO_cell{0+1,1+1}, [d^2,d^2]);
+                    for i = 1:N-2
+                        temp = ncon( {temp,obj.MPO_cell{i+1,i+2} }, {[-1,1],[1,-2,-3,-4]}) ;
+                        temp = reshape( temp, [d^(2*(i+1)), d^(2*(i+1))] );
+                    end
+                    
+                    part = temp \RHS_Matrix_site ;
+                    
+                    part = reshape(part, [d^(2*N) , d^2 ]);
+                end
+                
+                
+                [U,S,V] = svd(part);
+                
+%                 %make invertible
+%                 for l = 1: min( size(S,1), size(S,2))
+%                     sigma = S(l,l);
+%                     %make param
+%                     if abs(sigma)<1e-14
+%                         %sigma = 1e-14 ;
+%                     end
+%                     S(l,l)=sigma;
+%                 end
+
+                %S
+                %sqrt_S = S.^(0.5);
+
+                left_i = U;
+                right_i = S*V';
+                
+                
+                
+                
+                obj.MPO_cell{N,N+1} = reshape(left_i, [ d^(2*(N-1)) ,d,d,d^(2*N ) ]  );
+                obj.MPO_cell{N+1,1} = reshape(right_i, [ d^(2*N) ,d,d,1]  );
+                
+                obj.current_max_index = N;
+                
+            end
+            
+            
+            function T = mpo_cell_2_matrix(O,maxIndex,d)
+                totaldimension = geomSum(d^2,maxIndex-1);
+                T = zeros(totaldimension,d,d,totaldimension);  
+                %reassemble into a large tensor without cells
+                for i = 0:maxIndex
+                    for j = 0:maxIndex
+                        start_i= geomSum(d^2,i-1);
+                        end_i =  start_i+d^(2*i)-1;
+                        start_j= geomSum(d^2,j-1);
+                        end_j =  start_j+d^(2*j)-1;
+                        
+                        O_ij = O{i+1,j+1};
+                        if length(O_ij) ~= 0
+                            T( start_i+1:end_i+1 ,:,:, start_j+1:end_j+1 ) = O{i+1,j+1};
+                        end
+                    end
+                end
+            end
+            
         end
         
         function obj =type_04(obj)
@@ -105,10 +226,7 @@ classdef generateMPO
             
             obj.MPO_cell = cell(obj.max_index+1,obj.max_index+1);
             obj.MPO_type = "cell";
-            
-            
-            
-            
+
 
             obj.MPO_cell{1,1} = reshape(  expm( obj.H_1_tensor)/ obj.nf , [1,d,d,1] ) ;
             
@@ -206,7 +324,7 @@ classdef generateMPO
                 end
                 
                 new_parts_sym = reshape( permute( new_parts , [1,2,4,3]), [d^(2*M+2),d^(2*M+2)]);
-                new_parts_sym = 0.5*( new_parts_sym+new_parts_sym');
+                %new_parts_sym = 0.5*( new_parts_sym+new_parts_sym');
                 
                 
                 
@@ -238,6 +356,7 @@ classdef generateMPO
                         %make invertible
                         for l = 1:size(S,1)
                             sigma = S(l,l);
+                            %make param
                             if abs(sigma)<1e-14
                                 %sigma = 1e-14 ;
                             end

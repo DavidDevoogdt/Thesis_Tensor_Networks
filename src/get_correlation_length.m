@@ -12,7 +12,7 @@
     
     rho_right= V(:,largest_ind);
     rho_left = W(:,largest_ind)';
-    lambda = D(largest_ind,largest_ind);
+    lambda = D(largest_ind,largest_ind)
     
     MPO_matrix_norm = MPO_matrix/lambda;
     traced_O_norm = Traced_MPO/lambda;
@@ -33,10 +33,10 @@
     
     F = fit(  transpose( a_array) , plot_array, 'exp1');
 
-      semilogy(a_array,plot_array)
-      hold on
-      semilogy(a_array,F(a_array) )
-      hold off
+%       semilogy(a_array,plot_array)
+%       hold on
+%       semilogy(a_array,F(a_array) )
+%       hold off
 
     C =  coeffvalues(F);
     A = C(1);

@@ -32,6 +32,48 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
     S_z_3 = [1,0,0;0,0,0;0,0,1;];
 
     switch model
+        case "random"
+            d=2;
+           
+            mask = [0,1i,1i,1i;
+                    0,0,1i,1i;
+                    0,0,0,1i;
+                    0,0,0,0;];
+            
+            r1 = (rand(d^2,d^2)-1)*2;
+            r2 = mask.*(rand(d^2,d^2)-1)*2;
+            
+            H_2 = ( r1+r2) + ( r1+r2)' ;
+            %H_2 = r1+r1';
+            
+            
+            S = svds(H_2)
+            
+            H_2 = H_2/(sum(S));
+            
+            H_2_tensor = permute(reshape(H_2,[d,d,d,d]), [3,4,1,2]);
+            
+            
+            H_1 = (rand(2,2)-1)*2;
+            b = 1i*rand;
+            H_1(1,2)=b;
+            H_1(2,1)= -b;
+            
+            
+%             H_2_tensor= -J*(ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]})...
+%                     +0.5*g*   ncon( {S_x_2,eye(d)}, {[-1,-3],[-2,-4]})...
+%                     +0.5*g*   ncon( {eye(d),S_x_2}, {[-1,-3],[-2,-4]}));
+            H_1_tensor = H_1  ;
+            
+
+            %opt4.single_threshold = -1;
+            %opt4.double_threshold = -1;
+            
+            %opt4.single_threshold = 1e-11; %1e-8;
+            %opt4.double_threshold = 1e-8;
+
+            simul.title = sprintf("H=random");
+        
         case "t_ising"
             d=2;
             J=p.Results.J;
