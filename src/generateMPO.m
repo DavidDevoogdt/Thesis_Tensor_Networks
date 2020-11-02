@@ -31,8 +31,7 @@ classdef generateMPO
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
             
-            
-        
+
             
             obj.type = type;
             
@@ -96,10 +95,7 @@ classdef generateMPO
  
             total_dim = geomSum(d^2,obj.order);
             
-            obj.left= zeros(1,total_dim);
-            obj.left(1)=1;
-            obj.right= zeros(total_dim,1);
-            obj.right(1)=1;
+         
                   
             unnorm = reshape(expm(obj.H_1_tensor), [1,d,d,1]);
             
@@ -118,9 +114,17 @@ classdef generateMPO
             end
             
 
-            if orig_type == 'matrix'   
-             obj.MPO_cell =  mpo_cell_2_matrix(obj.MPO_cell,obj.order,d);
-             obj.MPO_type = 'matrix';
+            for N=obj.order:-1: 1
+                err = reduce_dim(N);
+                if err ==1
+                   break; 
+                end
+            end
+        
+            
+            if orig_type == "matrix"   
+                mpo_cell_2_matrix();
+
             end
             
             function construct_level(N)
@@ -166,37 +170,106 @@ classdef generateMPO
                 %S
                 %sqrt_S = S.^(0.5);
 
-                left_i = U;
-                right_i = S*V';
-                
-                
-                
-                
-                obj.MPO_cell{N,N+1} = reshape(left_i, [ d^(2*(N-1)) ,d,d,d^(2*N ) ]  );
-                obj.MPO_cell{N+1,1} = reshape(right_i, [ d^(2*N) ,d,d,1]  );
+                if N ~= obj.order
+                    left_i = U;
+                    right_i = S*V';
+                    
+                    obj.MPO_cell{N,N+1} = reshape(left_i, [ d^(2*(N-1)) ,d,d,d^(2*N ) ]  );
+                    obj.MPO_cell{N+1,1} = reshape(right_i, [ d^(2*N) ,d,d,1]  );
+                else 
+                    left_i = U*S;
+                    right_i = V';
+                    
+                    obj.MPO_cell{N,N+1} = reshape(left_i, [ d^(2*(N-1)) ,d,d,d^2 ]  );
+                    obj.MPO_cell{N+1,1} = reshape(right_i, [ d^2 ,d,d,1]  );
+                    
+                end
                 
                 obj.current_max_index = N;
-                
+ 
             end
             
-            
-            function T = mpo_cell_2_matrix(O,maxIndex,d)
-                totaldimension = geomSum(d^2,maxIndex-1);
-                T = zeros(totaldimension,d,d,totaldimension);  
-                %reassemble into a large tensor without cells
-                for i = 0:maxIndex
-                    for j = 0:maxIndex
-                        start_i= geomSum(d^2,i-1);
-                        end_i =  start_i+d^(2*i)-1;
-                        start_j= geomSum(d^2,j-1);
-                        end_j =  start_j+d^(2*j)-1;
-                        
-                        O_ij = O{i+1,j+1};
-                        if length(O_ij) ~= 0
-                            T( start_i+1:end_i+1 ,:,:, start_j+1:end_j+1 ) = O{i+1,j+1};
-                        end
+            function err = reduce_dim(N)
+                   
+                    O34 = obj.MPO_cell{N,N+1};
+                    O23 = obj.MPO_cell{N-1,N};
+                    O30 = obj.MPO_cell{N,1};
+
+                    N_l = size(O23,1);
+                    N_m = size(O23,4);
+                    N_r = size(O34,4);
+
+                    err = 0;
+                    
+                    q = d^2*min( N_r+1,N_l);
+                    
+                    if N_m <= q
+                        err = 1;
+                        return
                     end
+                        
+
+                    P1 = reshape(   ncon(  {O23,O34}, {[-1,-2,-3,1],[1,-4,-5,-6]} ), [N_l*d^2, d^2*N_r]);
+                    P2 = reshape(   ncon(  {O23,O30}, {[-1,-2,-3,1],[1,-4,-5,-6]} ), [N_l*d^2, d^2]);
+
+
+                    [U,V,X,C,S] = gsvd(P1',P2');
+
+                    %undetermined dimension is lower than original
+                    O23_2 = reshape(X,      N_l,d,d,q);
+                    O34_2 = reshape((U*C)', q,d,d,N_r);
+                    O30_2 = reshape((V*S)', q,d,d,1);
+                    
+                    
+                    obj.MPO_cell{N,N+1} = O34_2 ;
+                    obj.MPO_cell{N-1,N} = O23_2 ;
+                    obj.MPO_cell{N,1} = O30_2;
+                    
+            end 
+            
+            function [T,totaldimension] = mpo_cell_2_matrix()
+                
+                size_arr = zeros(obj.order+1,1);
+                
+                for i = 1:obj.order+1
+                     size_arr(i) = size(obj.MPO_cell{i,1},1);    
                 end
+                
+                start_index = zeros(obj.order+2,1);
+                start_index(1) = 1;
+                ind = 1;
+                for i = 2:obj.order+2
+                    ind = ind+ size_arr(i-1); 
+                    start_index(i) = ind;    
+                end
+                
+                
+                totaldimension = start_index(end)-1;
+                
+                
+                
+                T = zeros(totaldimension,d,d,totaldimension);  
+                %first do tensors O_N_0
+                for i = 1:obj.order+1
+                    T( start_index(i):start_index(i+1)-1,:,:,1) = obj.MPO_cell{i,1};  
+                end
+                
+                for i = 1:obj.order
+                    T( start_index(i):start_index(i+1)-1,:,:,start_index(i+1):start_index(i+2)-1) = obj.MPO_cell{i,i+1};  
+                end
+                
+                %K=reshape(T(:,1,1,:),[45,45]);
+                
+                
+                obj.left= zeros(1,totaldimension);
+                obj.left(1)=1;
+                obj.right= zeros(totaldimension,1);
+                obj.right(1)=1;
+
+                obj.MPO_type = 'matrix';
+                
+                obj.MPO_cell = T;
+
             end
             
         end
@@ -1240,68 +1313,64 @@ classdef generateMPO
                        total_pos = (obj.current_max_index+1)^N-1;
                        T = zeros( dimension_vector(d,2*(N+1),[1,1]));  
                     end
-                   
-                        
                           
                         
-                        %generate all combinations of internam indices
-                        for i= 0: total_pos
-                            
-                            if cyclic ==1 
-                                full_vect = [encode_index_array(i,N+1,obj.current_max_index+1);0];
-                                full_vect(end) = full_vect(1);
-                            else
-                                full_vect = [virtual_level;encode_index_array(i,N,obj.current_max_index+1);virtual_level];
-                            end
-                            
-                            
-                            correct_index_set = 1;
+                    %generate all combinations of internam indices
+                    parfor i= 0: total_pos
 
-                            O_tensors =  cell(1,N+1);
-                            %Take correct O's for contraction with ncon
-                            for j = 1:N+1
-                                O_j = O{  full_vect(j)+1 ,full_vect(j+1)+1};
-                                if length(O_j)==0
-                                    correct_index_set = 0;
-                                    break;
-                                end
-                                O_tensors{j} = O_j;
-                            end
-
-
-                            if correct_index_set == 1
-                                legs = cell(1,N+1);
-                                
-                                
-                                
-                                for t=1:N
-                                    legs{t} = zeros(1,4);
-                                end
-
-                                legs{1}(1) = -1;%first index
-                                legs{N+1}(4) = -(  2*(N+1) +2); % last one
-
-                                for t=1:N %assign all indices to sum over
-                                    legs{t}(4) = t;
-                                    legs{t+1}(1) = t;
-                                end
-
-                                for t=1:N+1 %assign final places for i_n and j_n
-                                    legs{t}(2) = -(t+1)+cyclic;
-                                    legs{t}(3) = -(N+1 +t+1)+cyclic;
-                                end
-
-                                if cyclic==1
-                                   legs{1}(1) = N+1;
-                                   legs{end}(4) = N+1;
-                                end
-                                
-                                T_j = ncon (O_tensors,legs);
-                                T = T + T_j;
-                            end
+                        if cyclic ==1 
+                            full_vect = [encode_index_array(i,N+1,obj.current_max_index+1);0];
+                            full_vect(end) = full_vect(1);
+                        else
+                            full_vect = [virtual_level;encode_index_array(i,N,obj.current_max_index+1);virtual_level];
                         end
-                    
-                  
+
+
+                        correct_index_set = 1;
+
+                        O_tensors =  cell(1,N+1);
+                        %Take correct O's for contraction with ncon
+                        for j = 1:N+1
+                            O_j = O{  full_vect(j)+1 ,full_vect(j+1)+1};
+                            if length(O_j)==0
+                                correct_index_set = 0;
+                                break;
+                            end
+                            O_tensors{j} = O_j;
+                        end
+
+
+                        if correct_index_set == 1
+                            legs = cell(1,N+1);
+
+
+
+                            for t=1:N
+                                legs{t} = zeros(1,4);
+                            end
+
+                            legs{1}(1) = -1;%first index
+                            legs{N+1}(4) = -(  2*(N+1) +2); % last one
+
+                            for t=1:N %assign all indices to sum over
+                                legs{t}(4) = t;
+                                legs{t+1}(1) = t;
+                            end
+
+                            for t=1:N+1 %assign final places for i_n and j_n
+                                legs{t}(2) = -(t+1)+cyclic;
+                                legs{t}(3) = -(N+1 +t+1)+cyclic;
+                            end
+
+                            if cyclic==1
+                               legs{1}(1) = N+1;
+                               legs{end}(4) = N+1;
+                            end
+
+                            T_j = ncon (O_tensors,legs);
+                            T = T + T_j;
+                        end
+                    end
                     
                 case "matrix"
                     

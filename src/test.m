@@ -260,6 +260,7 @@ function mpo_type_comparison_exact_generic_order
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 generate_opts.testing=0;
+generate_opts.MPO_type = "matrix";
 
 opt3 = struct([]);
 
@@ -268,16 +269,22 @@ model_opts.g =  0.5;
 [simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
 
 
-simul.Order_arr = [1,4,5];
-simul.types = [2];
+simul.Order_arr = [2,3,4,5,6,7];
+simul.types = [2,3];
 simul.M = 8;
-simul.beta_arr = 10.^(  -3:0.05:log10(20) );
+simul.beta_arr = 10.^(  -3:10:log10(20) );
 simul.cyclic = 0;
 
 
 opt5.method="diag";
 
+
+
+compare_opts.ref=2;
+compare_opts.cyclic=simul.cyclic;
+
 opt2 = {};
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -307,16 +314,13 @@ for i=1:beta_len
 end
 
 %
-compare_opts.ref=2;
-compare_opts.cyclic=simul.cyclic;
+
 
 %loop over different orders
 for j = 1:order_size
     Order = simul.Order_arr(j);
     plot_structure = cell( 5,beta_len);
-    
-    
-    
+
     %loop over temps
     for i = 1:beta_len
         beta = simul.beta_arr(i);
@@ -339,7 +343,6 @@ for j = 1:order_size
                     err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
                     fprintf(" err 03 %.4e",err_03);
                     plot_structure{3,i} = err_03;
-                    
                 case 4
                     mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,Order,opt4,generate_opts);
                     err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",simul.M,d,compare_opts);
