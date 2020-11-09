@@ -1,6 +1,6 @@
 function test
 mpo_type_comparison_exact_generic_order;
-%mpo_type_comparison_M
+%5mpo_type_comparison_M
 %phase_transition();
 
 end
@@ -17,6 +17,7 @@ S_z_2 = [1,0;0,-1];
 S_x_2 = [0,1;1,0];
 
 generate_opts.testing=0;
+generate_opts.MPO_type="matrix";
 
 opt3 = struct([]);
 opt5.method="diag";
@@ -34,13 +35,13 @@ step_size = 0.5;
  %from simulations
 
 
-simul_struct.order = 3;
-simul_struct.mpo_type = 3;
-simul_struct.observable = 'xi';
+simul_struct.order = 6;
+simul_struct.mpo_type = 2;
+simul_struct.observable = 'sx';
 
 
-simul_struct.cor_min = 4;
-simul_struct.cor_max = 8;
+simul_struct.cor_min = 1;
+simul_struct.cor_max = 4;
 
 simul_struct.model = 't_ising_2';
 
@@ -115,6 +116,8 @@ for beta_i = 1:beta_len
         
         
         switch simul_struct.mpo_type
+            case 2
+                MPO = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,simul_struct.order,opt3,generate_opts);
             case 3           
                 MPO = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,simul_struct.order,opt3,generate_opts);
             case 4
@@ -266,13 +269,13 @@ opt3 = struct([]);
 
 
 model_opts.g =  0.5;
-[simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
+[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D_X',model_opts);
 
 
-simul.Order_arr = [2,3,4,5,6,7];
-simul.types = [2,3];
-simul.M = 8;
-simul.beta_arr = 10.^(  -3:10:log10(20) );
+simul.Order_arr = [4,5,6];
+simul.types = [3,4];
+simul.M = 9;
+simul.beta_arr = 10.^(  -3:0.1:log10(20) );
 simul.cyclic = 0;
 
 
@@ -292,7 +295,7 @@ opt2 = {};
 order_size = size(simul.Order_arr,2);
 line_spec = ["-"    ,"--"   ,"-."   ,":"    ,"-"    ,"--"   ,"-."   ,":"];
 alphas= [1     ,1      ,1      ,1      ,0.5    ,0.5    ,0.5    ,0.5];
-colors = {[1 0 0 0],[0 1 0 0],[0 0 1 0]}; %reserved for specific type
+colors = {[1 0 0 0],[0 1 0 0],[0 0 1 0],[0,1,1]}; %reserved for specific type
 
 legend_Arr = cell(size(simul.types,2)*order_size,1);
 legend_Arr(:) = {"todo"};
@@ -338,7 +341,6 @@ for j = 1:order_size
                     fprintf(" err 02 %.4e",err_02);
                     plot_structure{2,i} = err_02;
                 case 3
-                    
                     mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
                     err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
                     fprintf(" err 03 %.4e",err_03);
@@ -366,7 +368,7 @@ for j = 1:order_size
     for t=1:size(simul.types,2)
         switch simul.types(t)
             case 2
-                colour = colors{1};
+                colour = colors{4};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(2,:))), "LineStyle", line_spec(j),"Color",colour );
                 legend_Arr{plot_counter}= sprintf("type 02 Order %d",Order );
@@ -424,11 +426,11 @@ generate_opts.testing=0;
 
 opt3 = struct([]);
 
-[simul,H_1_tensor,H_2_tensor,opt4] = models('t_ising');
-simul.Order_arr = [2,3,4,5,6];
+[simul,H_1_tensor,H_2_tensor,opt4] = models('random');
+simul.Order_arr = [4,5,6];
 simul.types = [3,4];
-simul.M = 10;
-simul.beta_arr = 10.^(  -3:0.1:log10(50) );
+simul.M = 9;
+simul.beta_arr = 10.^(  -3:0.05:log10(50) );
 simul.cyclic = 1;
 
 

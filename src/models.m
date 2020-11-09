@@ -31,6 +31,9 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
     S_y_3 = 1/sqrt(2)*[0, -1i,0;1i,0, -1i;0, 1i, 0;];
     S_z_3 = [1,0,0;0,0,0;0,0,1;];
 
+    opt4.single_threshold = 1e8;
+    opt4.double_threshold = 1e12;
+    
     switch model
         case "random"
             d=2;
@@ -66,11 +69,6 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             H_1_tensor = H_1  ;
             
 
-            %opt4.single_threshold = -1;
-            %opt4.double_threshold = -1;
-            
-            %opt4.single_threshold = 1e-11; %1e-8;
-            %opt4.double_threshold = 1e-8;
 
             simul.title = sprintf("H=random");
         
@@ -88,11 +86,6 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             H_1_tensor =-0.0*eye(2) ;
             
 
-            %opt4.single_threshold = -1;
-            %opt4.double_threshold = -1;
-            
-            %opt4.single_threshold = 1e-11; %1e-8;
-            %opt4.double_threshold = 1e-8;
 
             simul.title = sprintf("H=ZZ + %.3fX",g);
           case "t_ising_2"
@@ -104,9 +97,8 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             H_1_tensor =-J*g*S_x_2 ;
             
 
-
-            opt4.single_threshold = -1;
-            opt4.double_threshold = -1;
+            opt4.single_threshold = 1e10;
+            opt4.double_threshold = 1e13;
             
             %opt4.single_threshold = 1e-11; %1e-8;
             %opt4.double_threshold = 1e-8;
@@ -121,10 +113,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
             H_1_tensor =-J*( S_z_2 + g*S_x_2)  ;
 
-            %opt4.single_threshold = -1;
-            %opt4.double_threshold = -1;
-            %opt4.single_threshold = 1e-10;
-            %opt4.double_threshold = -1;
+       
 
             simul.title = sprintf("H=ZZ+Z+%.2f X",g);
 
@@ -147,10 +136,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
                 -ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
             H_1_tensor = zeros(d);
 
-            opt4.single_threshold = -1;
-            opt4.double_threshold = -1;
-
-
+        
 
             simul.title = sprintf("XX+YY+ZZ (2D)");
 
@@ -161,11 +147,6 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
                 -ncon( {S_y_2,S_y_2}, {[-1,-3],[-2,-4]})...
                 -ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
             H_1_tensor =- g*S_x_2;
-
-            opt4.single_threshold = -1;
-            opt4.double_threshold = -1;
-
-
 
             simul.title = sprintf("XX+YY+ZZ+%.3fX (2D)",g);
 
