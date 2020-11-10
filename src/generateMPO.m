@@ -323,8 +323,8 @@ classdef generateMPO
                 %step similar to
                 % 0--|--1--|--2--|--1--|--0 = exp(H_12+H_23+H_34) - (0--|--|--|--|--0)
                 
-                hexp = H_exp(obj,N,1)/(obj.nf^(N+1));
-                obj.nf_correction = sum( abs( svds(hexp) )  );
+                %hexp = H_exp(obj,N,1)/(obj.nf^(N+1));
+                %obj.nf_correction = sum( abs( svds(hexp) )  );
 
                 
                 %fprintf("nf %f",  nf_correction   )
@@ -412,15 +412,22 @@ classdef generateMPO
                         S_sqrt = sqrt( S_2  );
                         
                         
-                        left_i = U2*diag(S_sqrt);
-                        right_i = diag(P.*S_sqrt)*U2';
+                        left_j = U2*diag(S_sqrt);
+                        right_j = diag(P.*S_sqrt)*U2';
                     case "svd"
                         [U,S,V] = svd(new_parts_sym);
                         
-                        %[U2,S2,V2] = svd(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]));
+                        S2 =  diag(S).^(0.5);
                         
-                        %S
-                        sqrt_S = S.^(0.5);
+                        %eps = 1e-14;
+                        
+                        %fprintf("min %e",min(S2));
+                        
+                        %S2(S2< eps) = eps;
+                        sqrt_S = diag(S2);
+                        
+                        
+                       
                         
                         left_j = U*sqrt_S;
                         right_j = sqrt_S*V';
@@ -433,30 +440,44 @@ classdef generateMPO
                 
                 %S1 = svds(  reshape( RHS_Tensor, [d^(N+1),d^(N+1)]));
                 
+                
+                O_l =reshape(left_j, [d^(2*M),d,d,d^(2*(M+1))]);
+                O_r =permute( reshape( right_j, [d^(2*M+2),d^(2*M),d,d])  , [1,3,4,2]);
+
+
+                obj.MPO_cell{M+1,M+2} = O_l;
+                obj.MPO_cell{M+2,M+1} =O_r;
+
+                obj.current_max_index = M+1;
+                
+                %check whether it's better
+                
+                
+                
                 RHS_reshaped = reshape( RHS_Matrix, [d^(2*M+2),d^(2*M+2)]);
                 
-                if M ~=0
-                    RHS_Matrix_new = RHS_reshaped +  reshape( ncon( {left_i,reshape( new_parts_sym, [d^(2*M),d^2,d^2,d^(2*M)] ), right_i}, {[-1,1],[1,-2,-3,2],[2,-4]}), [d^(2*M+2),d^(2*M+2)]);
-                else
-                    RHS_Matrix_new = RHS_Matrix +  left_j* right_j;
-                end
+                RHS_Tensor_2 = H_exp(obj,N)/(obj.nf^(N+1)) - ...
+                    obj.contract_mpo(N);
+                RHS_Matrix_2 = reshape( permute(RHS_Tensor_2, site_ordering_permute(N+1) ),...
+                    dimension_vector(d^2,N+1));%group per ij index
                 
-                %cond1 = sum(abs( svds(  RHS_reshaped)   ));
-                %cond2 = sum(abs( svds(  RHS_Matrix_new)   ));
-
+                RHS_reshaped_2 = reshape( RHS_Matrix_2, [d^(2*M+2),d^(2*M+2)]);
+                
+                
                 %cond = cond1/cond2;
                 
                 
-                cond1 = svds(  RHS_reshaped)   ;
-                cond2 =  svds(  RHS_Matrix_new)   ;
+                cond1 = svds( RHS_reshaped)   ;
+                cond2 =  svds(  RHS_reshaped_2)   ;
                 
-                cond  = max(abs( cond1 )) /max(abs(cond2));
-                %cond  = sum(abs( cond1 )) /sum(abs(cond2));
+                %cond  = max(abs( cond2 )) /max(abs(cond1));
+                cond  = sum(abs( cond2 )) /sum(abs(cond1));
+                maxcond  = max(abs( cond2 )) /max(abs(cond1));
                 
                 %cond = sum(abs(svds(new_parts_sym)))/obj.nf_correction;
 
 
-                fprintf(" cond %.4e", cond );
+                %fprintf(" cond %.4e,%.4e,,%.4e", cond,max(S2),min(S2) );
                 
                
                         
@@ -464,19 +485,12 @@ classdef generateMPO
                 
                 err =0;
                 
-                if cond < 1.1
-                
-                %if cond < obj.type_opts.double_threshold      
-                    O_l =reshape(left_j, [d^(2*M),d,d,d^(2*(M+1))]);
-                    O_r =permute( reshape( right_j, [d^(2*M+2),d^(2*M),d,d])  , [1,3,4,2]);
+                if (cond > 1) || (maxcond>1)
+                    err = 1;
+               
+                    obj.MPO_cell{M+1,M+2} = {};
+                    obj.MPO_cell{M+2,M+1} = {};
 
-
-                    obj.MPO_cell{M+1,M+2} = O_l;
-                    obj.MPO_cell{M+2,M+1} =O_r;
-
-                else 
-                    fprintf("err");
-                   err=1; 
                 end
                 
             end
@@ -484,8 +498,8 @@ classdef generateMPO
             function err= single_update(N)
                 
                 %put this toghether with a higher order
-                hexp = H_exp(obj,N,1)/(obj.nf^(N+1)) ;
-                obj.nf_correction = sum( abs( svds(hexp) )) ;
+                %hexp = H_exp(obj,N,1)/(obj.nf^(N+1)) ;
+                %obj.nf_correction = sum( abs( svds(hexp) ))^(1/(N+1)) ;
                 
                 %RHS_Tensor_2 = H_exp(obj,N+1)/(obj.nf^(N+2)) - obj.contract_mpo(N+1);
                 %RHS_Matrix_2 = reshape( permute(RHS_Tensor_2, site_ordering_permute(N+2)),...
@@ -533,24 +547,68 @@ classdef generateMPO
                 
                 res = reshape( RHS_Matrix, [d^(2*M),d^(2*M+2)]);
                 
+                %cond_left = cond(left_i);
+                %cond_right = cond(right_i);
+                
+                %%%%normal solution
                 x = left_i\res;
                 x = reshape(x, [d^(2*M+2),d^(2*M)]);
                 y = x/right_i;
                 
+                %%%%least squares sol
+                %x = lsqminnorm(left_i,res);
+                %x = reshape(x, [d^(2*M+2),d^(2*M)]);
+                %y = lsqminnorm(right_i',x')';
+                
+                cond_left = cond(left_i,2);
+                cond_right = cond(right_i,2);
+                
+                %sigmay = svds(y);
                 
                 
-                y_reshaped = reshape(y, [d^(2*M),d^2,d^(2*M)]);
+%%%%%%%%%%%%%%%%%
+                hexp2 = H_exp(obj,N+1);
+                hexp = hexp2/(obj.nf^(N+2));
+                
+                %nf_corr = sum(  abs(svds(reshape(hexp,[d^(2*M+2),d^(2*M+2)]) ))).^(1/(N+2));
+                
 
+                RHS_Tensor_2 = hexp - obj.contract_mpo(N+1);
+                RHS_Matrix_2 = reshape( permute(RHS_Tensor_2, site_ordering_permute(N+2)),...
+                    dimension_vector(d^2,N+2));
+
+
+                obj.MPO_cell{M+1,M+1} = reshape(y, [d^(2*M),d,d,d^(2*M)]);
+
+                RHS_Tensor_3 = hexp - obj.contract_mpo(N+1);
+                RHS_Matrix_3 = reshape( permute(RHS_Tensor_3, site_ordering_permute(N+2)),...
+                    dimension_vector(d^2,N+2));
+
+
+                RHS_2_reshaped = reshape(RHS_Matrix_2, [d^(2*M+2),d^(2*M+2)] );
+                RHS_3_reshaped = reshape(RHS_Matrix_3, [d^(2*M+2),d^(2*M+2)] );
+                
+                cond1 = svds( RHS_2_reshaped)   ;
+                cond2 =  svds(  RHS_3_reshaped)   ;
+                
+                %cond  = max(abs( cond2 )) /max(abs(cond1));
+                sumcond  = sum(abs( cond2 )) /sum(abs(cond1));
+                maxcond = sum(max( cond2 )) /sum(max(cond1));
+                
              %%%%%%%%%%%%%%%%%double versio 
-                y_double = reshape( ncon( {y_reshaped,y_reshaped}, {[-1,-2,1],[1,-3,-4]} ) , [ d^(2*M+2),d^(2*M+2) ]);
+             
+                %y_reshaped = reshape(y, [d^(2*M),d^2,d^(2*M)]);
+                %y_double = reshape( ncon( {y_reshaped,y_reshaped}, {[-1,-2,1],[1,-3,-4]} ) , [ d^(2*M+2),d^(2*M+2) ]);
+                
+                %convergence_y = svds(y_double,1) / nf_corr^2;
                 
                 %RHS_reshaped = reshape( RHS_Matrix_2 , [d^(2*M+2),d^(2*M+2)]);
                 %RHS_Matrix_new = RHS_reshaped +  reshape( ncon( {left_i,y_double, right_i}, {[-1,1],[1,-2,-3,2],[2,-4]}), [d^(2*M+2),d^(2*M+2)]);
                 
                 
-                cond1 = sqrt( abs(svds(  y_double) ))  ;
+                %cond1 =  abs(svds(  y_double) )  ;
                 
-                cond =  max(cond1)/obj.nf_correction;
+                %cond =  sum(cond1)/obj.nf_correction;
                 
                 %cond2 =  svds(  RHS_Matrix_new)   ;
                 
@@ -583,14 +641,14 @@ classdef generateMPO
                 
                 %cond2 = sum(abs( svds( y)   ))/ obj.nf_correction;
                 
-                fprintf(" cond2 %.4e", cond );
+                fprintf(" cond2 %.4e %.4e", cond_left,cond_right);
+                
                 err=0;
                 
-                if cond < 0.99
-                     obj.MPO_cell{M+1,M+1} = reshape(y, [d^(2*M),d,d,d^(2*M)]);
-                else
+                if (sumcond > 0.5) || (maxcond>0.5) || max(cond_left,cond_right)>1e5
+                    obj.MPO_cell{M+1,M+1} = {};
+                    fprintf("stop");
                     err=1;
-                
                 end
                 
                 

@@ -269,12 +269,13 @@ opt3 = struct([]);
 
 
 model_opts.g =  0.5;
-[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D_X',model_opts);
-
+%[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D',model_opts);
+%[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
+[simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
 
 simul.Order_arr = [4,5,6];
 simul.types = [3,4];
-simul.M = 9;
+simul.M = 8;
 simul.beta_arr = 10.^(  -3:0.1:log10(20) );
 simul.cyclic = 0;
 
