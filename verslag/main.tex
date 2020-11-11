@@ -1,0 +1,126 @@
+\documentclass{article}
+%\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{braket}
+
+\usepackage{subcaption} % Subfigure environment 
+\usepackage{gensymb}
+
+\usepackage{amsmath} % Mathematical symbols
+\usepackage{amssymb} % Symbols
+
+\usepackage{caption}% Captions onder figuur gecentreerd
+%\usepackage[toc,page]{appendix}
+\usepackage{subcaption} % Subfigure environment 
+%\usepackage{float}
+
+\usepackage{etoolbox} %for if empty functionality
+
+\usepackage{ifthen}
+
+%break long urls at a - and not only at . or /
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-}
+\usepackage{breakurl}
+\usepackage[hidelinks,breaklinks]{hyperref}
+
+\usepackage{verbatim}
+%\usepackage{hyperref}
+\usepackage{siunitx} % Elegant eenheden zetten
+\usepackage[version=3]{mhchem} % ingeven van chemische fomules
+\usepackage{cleveref} % Paragraaf tekens
+\usepackage{longtable}
+%\usepackage{lscape}
+\usepackage[T1]{fontenc}
+\usepackage{fontenc}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{grffile}%double dot in figure name
+\usepackage{lipsum}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{booktabs}
+\usepackage{physics}
+\usepackage{leftidx}
+\usepackage[utf8]{inputenc}
+\usepackage{gensymb} % /textdegree
+
+
+%\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+\usepackage{graphicx}
+
+\usepackage{todonotes}
+
+%\usepackage[nottoc]{tocbibind}
+
+\title{Thesis}
+
+\date{2020}
+
+\begin{document}
+
+\input{macros.sty}
+
+
+\onecolumn
+\begin{titlepage}
+	\begin{center}	
+		
+		\pagenumbering{gobble}
+		\includegraphics[width=4cm]{Figuren/UGent.png} \\[0.5cm]    %Logo UGENT	
+		
+		\Large{\textsc{Master Engineering Physics}} \\[0.5cm]  %Vakgroep	
+		
+		\normalsize{Year 2020-2021} \\[3cm]  %Academiejaar
+		
+		\huge{\textsc{Master desertatoin}} \\[0.25cm]   %Titel
+		
+		\Large{\textsc{Thesis Tensor networks}}\\[0.25cm]
+		
+		\large \textnormal{October 2020} \\[2.5cm]   %Extra informatie
+		
+		%\small      %Namen
+		
+       David Devoogdt \\       [2.5cm]
+
+		 
+        Academic supervisor: prof. 
+         
+
+		
+		
+		\vfill		
+		
+	\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\listoftodos
+\newpage
+
+%\twocolumn
+\pagenumbering{arabic}
+
+\input{tikzsetup}
+
+\section{Introduction}
+\input{introduction.tex}
+
+\section{Statistical mechanics}
+\input{statmech.tex}
+
+\section{contruction MPO}
+\input{mpo1d}
+
+\section{Benchmark 1D cluster expansion}
+\input{qphasediag}
+
+\bibliographystyle{elsarticle-num} 
+\bibliography{bib}
+\end{document}
