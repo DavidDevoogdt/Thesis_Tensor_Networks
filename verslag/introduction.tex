@@ -5,7 +5,7 @@ To deal with these strongly correlated systems, a class of methods called tensor
 
 \subsection{MPS}
 
-A general quantum state with n sites can be described in a given basis $\ket{i}$ as 
+A general quantum state with n sites can be described in a given basis $\ket{i}$ as
 \begin{equation}
     \ket{\Psi} = \sum_{i_1 i_2 \cdots i_n } C^{i_1 i_2 \cdots i_n} \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
 \end{equation}
@@ -26,24 +26,24 @@ Where summation over shared indices is implied. It is always possible to find su
 
 \begin{figure}
     \centering
-   
- \begin{tikzpicture}[ ] 
-          
-    \draw (-3,-0) rectangle (1,1)  [add reference=C]   ;
-	\node  at (C center) {C};
+
+    \begin{tikzpicture}[ ]
+
+        \draw (-3,-0) rectangle (1,1)  [add reference=C]   ;
+        \node  at (C center) {C};
 
 
-	\node (N1)  at  (-2.5,-1) {};	
-	\node (N2)  at  (-1.5,-1) {};	
-	\node  at  (-.5,-0.5) {...};	
-\node  (N3) at  (.5,-1) {};	
+        \node (N1)  at  (-2.5,-1) {};
+        \node (N2)  at  (-1.5,-1) {};
+        \node  at  (-.5,-0.5) {...};
+        \node  (N3) at  (.5,-1) {};
 
 
-	\draw    (N1) -- (N1 |-  C south); 
-	\draw    (N2) -- (N2 |-  C south); 
-\draw    (N3) -- (N3 |-  C south); 
+        \draw    (N1) -- (N1 |-  C south);
+        \draw    (N2) -- (N2 |-  C south);
+        \draw    (N3) -- (N3 |-  C south);
 
-\end{tikzpicture}
+    \end{tikzpicture}
 
     \caption{Caption}
     \label{fig:my_label}
@@ -67,37 +67,36 @@ Tensor networks can be written in a graphical notation. The legs f a tensor deno
     \centering
     \caption{Caption}
     \begin{tabular}{l|l|l}
-    conventional & Einstein & tensor notation \\
-    \hline
-         $\Vec{x}$ & $x_{\alpha}$ &   
-         
-         \begin{tikzpicture}[baseline=({N2.base}) ] 
-    	    \clip (-0.5,-0.5) rectangle (1,0.5);
+        conventional            & Einstein                & tensor notation           \\
+        \hline
+        $\Vec{x}$               & $x_{\alpha}$            &
+
+        \begin{tikzpicture}[baseline=({N2.base}) ]
+            \clip (-0.5,-0.5) rectangle (1,0.5);
             \node[circle, draw] (N2) at (0,0) {$x$};
-        	\node[] (N1) at (1,0) {};
-        	\draw  (N1) -- (N2) ;
-    \end{tikzpicture}  \\
-          M   & $M_{\alpha \beta}$ &  \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ] 
-        	    \clip (-1,-0.5) rectangle (1,0.5);
-    
-                \node[circle, draw] (N2) at (0,0) {$M$};
-    			\node[] (N0) at (-1,0) {};
-            	\node[] (N1) at (1,0) {};
-    
-            	\draw  (N1) -- (N2) ;
-    			\draw  (N0) -- (N2) ;
-    				
+            \node[] (N1) at (1,0) {};
+            \draw  (N1) -- (N2) ;
+        \end{tikzpicture}                                                     \\
+        M                       & $M_{\alpha \beta}$      & \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
+            \clip (-1,-0.5) rectangle (1,0.5);
+
+            \node[circle, draw] (N2) at (0,0) {$M$};
+            \node[] (N0) at (-1,0) {};
+            \node[] (N1) at (1,0) {};
+
+            \draw  (N1) -- (N2) ;
+            \draw  (N0) -- (N2) ;
+
         \end{tikzpicture} \\
-        
-        $\Vec{x} \cdot \Vec{y}$ & $x_{\alpha} y_{\alpha}$ &  \begin{tikzpicture}[baseline=({N2.base}) ] 
-    	    \clip (-0.5,-0.5) rectangle (1.5,0.5);
+
+        $\Vec{x} \cdot \Vec{y}$ & $x_{\alpha} y_{\alpha}$ & \begin{tikzpicture}[baseline=({N2.base}) ]
+            \clip (-0.5,-0.5) rectangle (1.5,0.5);
             \node[circle, draw] (N2) at (0,0) {$x$};
-        	\node[circle, draw] (N1) at (1,0) {$y$};
-        	\draw  (N1) -- (N2) ;
-\end{tikzpicture} \\
-        
+            \node[circle, draw] (N1) at (1,0) {$y$};
+            \draw  (N1) -- (N2) ;
+        \end{tikzpicture} \\
     \end{tabular}
-    
+
     \label{tab:grafical_not}
 \end{table}
 
@@ -107,14 +106,14 @@ Tensor networks can be written in a graphical notation. The legs f a tensor deno
 
 \subsection{MPO}
 
-In a similar fashion, a Matrix Product Operator (MPO) is of the following form: 
+In a similar fashion, a Matrix Product Operator (MPO) is of the following form:
 
 \begin{equation} \label{def_mpo}
-\begin{split}
-      \hat{O} &= \sum Tr(A^{i_1 j_1} A^{i_2 j_2} \cdots A^{i_n j_n} M) \\
-    & \times \ket{i_1}\bra{j_1} \otimes \ket{i_2}\bra{j_2} \otimes \cdots \otimes \ket{i_n}\bra{j_n}
-\end{split}
-\end{equation} 
+    \begin{split}
+        \hat{O} &= \sum Tr(A^{i_1 j_1} A^{i_2 j_2} \cdots A^{i_n j_n} M) \\
+        & \times \ket{i_1}\bra{j_1} \otimes \ket{i_2}\bra{j_2} \otimes \cdots \otimes \ket{i_n}\bra{j_n}
+    \end{split}
+\end{equation}
 
 The matrix M contains the boundary conditions of the operator.
 

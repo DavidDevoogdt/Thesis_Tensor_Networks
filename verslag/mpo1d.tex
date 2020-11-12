@@ -4,19 +4,19 @@ The manipulations of MPO's is done by manipulating the tensor into a matrix, per
 
 \subsubsection{decomposition}
 
-\def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}} 
+\def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
 
 \begin{equation}
     \begin{split}
-       \figone &= O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w} \\
+        \figone &= O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w} \\
         &\cong O^{u w}_{ (\alpha_u i_1 j_1) (\gamma_w i_2 j_2) } \\
         &= O^{u v}_{(\alpha_u i_1 j_1) \beta_v } O^{v w}_{ \beta_v (\gamma_w i_2 j_2) } \\
         &\cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}
     \end{split}
 \end{equation}
 
-Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The exact nature of this decomposition is dicussed further. The last step transforms the indices back to separate legs.  
+Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The exact nature of this decomposition is dicussed further. The last step transforms the indices back to separate legs.
 
 For an exact representation, the bond dimension of virtual level v is:
 \begin{equation}
@@ -27,8 +27,8 @@ For an exact representation, the bond dimension of virtual level v is:
 \subsubsection{inverse}
 Suppose we want to find a MPO O for given tensors A and B such that the following holds:
 
-\def \figone {\expH{2}{$A$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_2$"}}{{"u",}}} 
-\def \figthree {\expH{3}{$B$}{{"$i_1$","$i_2$","$i_3$"}}{{"$j_1$","$j_2$","$j_3$"}}{{"u","v"}}} 
+\def \figone {\expH{2}{$A$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_2$"}}{{"u",}}}
+\def \figthree {\expH{3}{$B$}{{"$i_1$","$i_2$","$i_3$"}}{{"$j_1$","$j_2$","$j_3$"}}{{"u","v"}}}
 
 \def \figtwo {\mpo{1}{{,"v"}}{{"$i_3$",}}{{"$j_3$",}}{}{}}
 
@@ -41,11 +41,11 @@ Again, the indices can be taken toghether in the following way: $\alpha = (u i_1
     A_{\alpha \gamma} O_{\gamma \beta} = B_{\alpha \beta}
 \end{equation}
 
-This will be denoted by 
+This will be denoted by
 
-\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}} 
-\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}} 
-\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}} 
+\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
+\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
+\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
 
 \def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
 
@@ -54,7 +54,7 @@ This will be denoted by
 \begin{equation}
     \begin{split}
         \figtwob &=  \left[ \figoneb \right ]^{-1}  \figthreeb \\
-         &=  \left[ \figonec  \right ]  \figthreeb\\
+        &=  \left[ \figonec  \right ]  \figthreeb\\
         &= \figfour
     \end{split}
     \label{eq_mpoinvdef}
@@ -73,20 +73,20 @@ This can now be computed with linear algebra packages. Note that it is not neces
 \paragraph{Matrisation} From the construction with svd we can see that the dimension of virtual bond $\dim{n} = d^{2 n}$ with d the dimension of $\ket{i}$. The virtual levels can be joined into a $\chi \times d \times d \times \chi$ dimensional tensor O. This tensor is given by a tridiagonal block matrix :
 
 \begin{equation}
-    O^{ij}_{\alpha \beta} = \begin{bmatrix} 
-    O^{00,ij} & O^{01,ij} &   &  & \\
-    O^{10,ij} & O^{11,ij} & O^{12,ij} & \\
-      &   O^{21,ij}     & O^{22,ij}&  \ddots \\
-      & &  \ddots  &   \ddots &&
+    O^{ij}_{\alpha \beta} = \begin{bmatrix}
+        O^{00,ij} & O^{01,ij} &           &        &     \\
+        O^{10,ij} & O^{11,ij} & O^{12,ij} &              \\
+                  & O^{21,ij} & O^{22,ij} & \ddots       \\
+                  &           & \ddots    & \ddots &   &
     \end{bmatrix}
 \end{equation}
 
 The boundary conditions (leftmost and rightmost virtual level are zero) correspond to vectors:
 \begin{equation}
     \begin{split}
-    l &= \begin{bmatrix} 1 & 0 
-    &\cdots \end{bmatrix} \\
-    r &= l^{T}
+        l &= \begin{bmatrix} 1 & 0
+              & \cdots\end{bmatrix} \\
+        r &= l^{T}
     \end{split}
 \end{equation}
 
@@ -102,7 +102,7 @@ This thesis builds on the cluster expansions introduced in \cite{clusterExp}. Th
 
 A Hamiltonian of the folowing form is assumed
 \begin{equation}
-   \hat{H}_n = \sum_{i=1}^{n-1} \hat{h} _{i,i+1}+ \sum_{i=1}^n \hat{h'}_i 
+    \hat{H}_n = \sum_{i=1}^{n-1} \hat{h} _{i,i+1}+ \sum_{i=1}^n \hat{h'}_i
 \end{equation}
 
 Virtual level zero is defined as follows:
@@ -118,7 +118,7 @@ Virtual level zero is defined as follows:
 Similarly, the contraction of elements $O_{01}$ and $O_{10}$ are defined as follows:
 
 \begin{equation}
-        \mpo{2}{{0,1,0}}{}{}{}{} =  \expH{2}{}{}{}{} - \mpo{2}{{0,,0}}{}{}{}{}
+    \mpo{2}{{0,1,0}}{}{}{}{} =  \expH{2}{}{}{}{} - \mpo{2}{{0,,0}}{}{}{}{}
 \end{equation}
 
 Some notation will be introduced that will be used later on. The rensor $L_n$ is the contraction of n MPO's where the virtual index increases between each bond. $R_n$ is similar but the virtual bond starts from n and decreases.
@@ -176,18 +176,18 @@ The contraction of $O^{n m }$ and $O^{m n} $ is defined by:
     \label{eq_nmn_level}
 \end{equation}
 
-The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd decoposition. 
+The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd decoposition.
 
 \todo{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}
 
 \subsubsection{Truncation}
 
-Because the inverse is possibly ill conditioned, increasing the order does not always inprove accuracy. Therefore, criteria are needed to truncute the order at the optimal point. 
-\paragraph{$O^{n n}$}
+Because the inverse is possibly ill conditioned, increasing the order does not always inprove accuracy. Therefore, criteria are needed to truncute the order at the optimal point.
+\paragraph{ \( O^{n n} \)}
 For this block 2 criteria need to be checked. First, the inverse needs to be well conditioned:
 \begin{equation}
-\begin{split}
-    \mathcal{K} &= \frac{\sigma_{max}}{\sigma_{min}}\\
+    \begin{split}
+        \mathcal{K} &= \frac{\sigma_{max}}{\sigma_{min}}\\
         &< 10^5
     \end{split}
 \end{equation}
@@ -208,20 +208,20 @@ Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$
 
 \def \rhs{\expH{2}{ $L_{m}^{-1}  M_{n+1} $ }{{"$i_n$","$i_{n+1}$"}}{{"$j_n$","$j_{n+1}$"}}{{"m","0"}}  }
 \begin{equation}
-        \begin{split}
-            \mpo{2}{ {"m","n","0"}  }{ { "$i_n$","$i_{n+1}$"}}{ { "$j_n$","$j_{n+1}$"}}{}{} &= \rhs \\
-            &\cong X_{(\alpha_m i_n j_n)(i_{n+1} j_{n+1})}\\
-            &= U^n  \Sigma V^{\dagger}
-        \end{split}
+    \begin{split}
+        \mpo{2}{ {"m","n","0"}  }{ { "$i_n$","$i_{n+1}$"}}{ { "$j_n$","$j_{n+1}$"}}{}{} &= \rhs \\
+        &\cong X_{(\alpha_m i_n j_n)(i_{n+1} j_{n+1})}\\
+        &= U^n  \Sigma V^{\dagger}
+    \end{split}
 \end{equation}
 
-The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$. Take has to be taken with the indices to apply the inverse. 
+The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$. Take has to be taken with the indices to apply the inverse.
 
 \begin{equation}
-\begin{split}
-    U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
-    &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
-\end{split}
+    \begin{split}
+        U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
+        &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
+    \end{split}
 \end{equation}
 If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
 \begin{equation}
@@ -235,15 +235,15 @@ With the notation from \cref{eq_mpoinvdef} we have:
 \end{equation}
 The inverse can be applied sequentially.
 
-\paragraph{dimension} From the construction the bond dimension grows from the left to the right. Again $\dim{n} = d^{2n}$. However this can be reduced if we can solve the following equations simultaneously: 
+\paragraph{dimension} From the construction the bond dimension grows from the left to the right. Again $\dim{n} = d^{2n}$. However this can be reduced if we can solve the following equations simultaneously:
 
 \begin{equation}
     \begin{split}
-        \mpo{1}{ {"m","n"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= A^m_{ (\alpha i j ) \beta} \\
+        \mpo{1}{ {"m","n"}  }{ { "\(i\)",}}{ { "$j$",}}{}{} &= A^m_{ (\alpha i j ) \beta} \\
         \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \\
     \end{split}
 \end{equation}
-Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that 
+Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
 \begin{equation}
     \begin{split}
         S=A^{m} A^{n} &= A'^{m} A'^{n} \\
