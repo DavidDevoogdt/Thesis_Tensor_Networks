@@ -1,8 +1,16 @@
-\contentsline {todo}{Figure: make this in graphical notation}{1}{equation.1.3}%
-\contentsline {todo}{explain https://nl.mathworks.com/help/matlab/ref/mldivide.html}{5}{section*.5}%
-\contentsline {todo}{explain}{5}{section*.6}%
-\contentsline {todo}{berken exact en maak tabletje voor de verschillende types}{6}{section*.7}%
-\contentsline {todo}{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}{8}{section*.8}%
-\contentsline {todo}{blabla}{8}{section*.9}%
-\contentsline {todo}{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}{10}{section*.10}%
-\contentsline {todo}{primed virtual levels}{10}{section*.11}%
+\contentsline {todo}{write this}{1}{section*.3}%
+\contentsline {todo}{in basis: hermitian H}{2}{section*.4}%
+\contentsline {todo}{(}{2}{section*.5}%
+\contentsline {todo}{Figure: make this in graphical notation}{2}{equation.4.6}%
+\contentsline {todo}{connect trace and hide legs at M}{3}{section*.8}%
+\contentsline {todo}{explain https://nl.mathworks.com/help/matlab/ref/mldivide.html}{7}{section*.9}%
+\contentsline {todo}{explain}{7}{section*.10}%
+\contentsline {todo}{berken exact en maak tabletje voor de verschillende types}{7}{section*.11}%
+\contentsline {todo}{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}{9}{section*.12}%
+\contentsline {todo}{blabla}{10}{section*.13}%
+\contentsline {todo}{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}{11}{section*.14}%
+\contentsline {todo}{primed virtual levels}{11}{section*.15}%
+\contentsline {todo}{time complexity algoritms}{12}{section*.16}%
+\contentsline {todo}{open chain or cyclical}{12}{section*.17}%
+\contentsline {todo}{trace norm, schatten p norm, ...}{12}{section*.18}%
+\contentsline {todo}{run with M=11}{14}{section*.21}%

@@ -2,24 +2,37 @@
 
 \subsubsection{Classical Ising}
 
-The classical ising model is given by the following hamiltonian
+The classical ising model is given by the following hamiltonian:
+\begin{equation}
+    H = -J \left (  \sum_{<i j>} \sigma_i \sigma_j + g\sum_i \sigma_i \right )
+\end{equation}
+where $<i j>$ runs over all neighbouring lattice sites. Classical refers to the fact that all the operators in the hamiltonian commute with each other. The values of $\sigma$ depends on the spin dimension. For spin $1/2$ lattices $\sigma \in {-1,+1}$.
+
+\paragraph{1D Phase Diagram}
+
+\paragraph{2D Phase Diagram}
+
+\subsubsection{Quantum Ising}
+In the quantum Ising model, the operators no longer commute with each other. An example is the transversal ising model given by:
 
 \begin{equation}
-    H = \sum_{<i j>} \sigma_i \sigma_j + \sum_i \sigma_i
+    \hat{H} = -J \left (  \sum_{<i j>} \sigma^x_i \sigma^x_j + g \sum_i \sigma^z_i \right )
 \end{equation}
 
-\subsubsection{transversel}
+\paragraph{1D Phase Diagram}
 
+\paragraph{2D Phase Diagram}
 
-The quantum ising chain is given by the following hamiltonian:
-
-
-\begin{equation}
-    H = \sum_i S
-\end{equation}
 
 \subsection{Heisenberg}
 
-test 2
+The heisenberg model is given by:
+
+\begin{equation}
+    \hat{H} =  -\left( \sum_{<i j>} J_x \sigma^z_i \sigma^z_j + J_y \sigma^y_i \sigma^y_j+ J_z \sigma^z_i \sigma^z_j + h \sum_i \sigma^z_i \right )
+\end{equation}
+
+These models have different names depending on the values of $J_{\alpha} $ with $\alpha=x,y,z$. $J_x = J_y \neq J_z = \Delta$ is called the XXZ model.
 
 \subsection{Random}
+It's also possible to construct random hamiltonians. \todo{in basis: hermitian H}
