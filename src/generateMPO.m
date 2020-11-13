@@ -375,9 +375,15 @@ classdef generateMPO
                     res = reshape( RHS_Matrix, [d^(2*M),d^(2* (N+1-M))]);
                     
                                       
-                    x = left_i\res;
-                    x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
-                    y = x/right_i;
+                    %x = left_i\res;
+                    %x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
+                    %y = x/right_i;
+                    
+                    
+                   x = lsqminnorm(left_i,res);
+                   x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
+                   y = lsqminnorm(right_i',x')';
+                    
                     
                     %fprintf("double cond numbers %.4e %.4e", cond(left_i),cond(right_i));
                     
@@ -551,14 +557,14 @@ classdef generateMPO
                 %cond_right = cond(right_i);
                 
                 %%%%normal solution
-                x = left_i\res;
-                x = reshape(x, [d^(2*M+2),d^(2*M)]);
-                y = x/right_i;
+                %x = left_i\res;
+                %x = reshape(x, [d^(2*M+2),d^(2*M)]);
+                %y = x/right_i;
                 
                 %%%%least squares sol
-                %x = lsqminnorm(left_i,res);
-                %x = reshape(x, [d^(2*M+2),d^(2*M)]);
-                %y = lsqminnorm(right_i',x')';
+                x = lsqminnorm(left_i,res);
+                x = reshape(x, [d^(2*M+2),d^(2*M)]);
+                y = lsqminnorm(right_i',x')';
                 
                 cond_left = cond(left_i,2);
                 cond_right = cond(right_i,2);
@@ -645,7 +651,8 @@ classdef generateMPO
                 
                 err=0;
                 
-                if (sumcond > 0.5) || (maxcond>0.5) || max(cond_left,cond_right)>1e5
+                %if (sumcond > 0.5) || (maxcond>0.5) || max(cond_left,cond_right)>1e5
+                if (sumcond > 1) || (maxcond>1) || max(cond_left,cond_right)>1e5
                     obj.MPO_cell{M+1,M+1} = {};
                     fprintf("stop");
                     err=1;

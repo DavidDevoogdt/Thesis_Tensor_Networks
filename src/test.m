@@ -237,7 +237,7 @@ switch simul_struct.observable
     hold off;
     case 'sx'
         figure();
-        h=gca;
+        
 
         s = surf(gamma_arr,t_arr,real(results(:,:,1)));
 
@@ -273,10 +273,10 @@ model_opts.g =  0.5;
 %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
 [simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
 
-simul.Order_arr = [4,5,6];
-simul.types = [3,4];
+simul.Order_arr = [2,3,4,5,6];
+simul.types = [4,3];
 simul.M = 8;
-simul.beta_arr = 10.^(  -3:0.1:log10(20) );
+simul.beta_arr = 10.^(  -3:0.05:log10(20) );
 simul.cyclic = 0;
 
 
@@ -305,6 +305,9 @@ beta_len = size(simul.beta_arr,2);
 plot_counter = 1;
 %hold off
 figure();
+x_width = 15;
+y_width=10;
+set(gcf,'PaperUnits','centimeters','PaperPosition',[0,0,x_width,y_width],'PaperSize', [x_width,y_width])
 %%%
 
 
@@ -372,28 +375,28 @@ for j = 1:order_size
                 colour = colors{4};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(2,:))), "LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("type 02 Order %d",Order );
+                legend_Arr{plot_counter}= sprintf("02:%d",Order );
                 plot_counter = plot_counter+1;
                 hold on
+             case 4
+                colour = colors{3};
+                colour(4) = alphas(j);
+                loglog( simul.beta_arr, abs(cell2mat(plot_structure(4,:))),"LineStyle", line_spec(j),"Color",colour );
+                legend_Arr{plot_counter}= sprintf("A:%d",Order );
+                plot_counter = plot_counter+1;
+                hold on    
             case 3
                 colour = colors{1};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(3,:))), "LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("type 03 Order %d",Order );
-                plot_counter = plot_counter+1;
-                hold on
-            case 4
-                colour = colors{3};
-                colour(4) = alphas(j);
-                loglog( simul.beta_arr, abs(cell2mat(plot_structure(4,:))),"LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("type 01 Order %d",Order );
+                legend_Arr{plot_counter}= sprintf("B:%d",Order );
                 plot_counter = plot_counter+1;
                 hold on
             case 5
                 colour = colors{2};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(5,:))),"LineStyle", line_spec(j),"Color",colour    );
-                legend_Arr{plot_counter}= sprintf("type 05 Order %d",Order );
+                legend_Arr{plot_counter}= sprintf("05:%d",Order );
                 plot_counter = plot_counter+1;
                 hold on
             otherwise
@@ -402,9 +405,11 @@ for j = 1:order_size
     end
     
     title( simul.title   )
-    xlabel('$  \beta \cdot J$','Interpreter','latex')
-    ylabel("relative err")
-    legend(legend_Arr,'Location','northwest','NumColumns',2)
+    xlabel('$  \beta \cdot J$','Interpreter','latex', 'FontSize', 11)
+    ylabel("relative err", 'FontSize', 11)
+    legend(legend_Arr,'Location','northwest','NumColumns',2 )
+    
+    ylim([0 10])
     
     figure(gcf)
     
@@ -412,6 +417,10 @@ end
 
 
 hold off
+
+filename = sprintf('../auto_fig/comp%s.pdf',datestr(now,'mm-dd-yy_HH-MM-SS'));
+saveas(gcf,filename )
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
