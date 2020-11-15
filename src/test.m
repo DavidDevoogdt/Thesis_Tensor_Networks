@@ -1,6 +1,6 @@
 function test
 mpo_type_comparison_exact_generic_order;
-%5mpo_type_comparison_M
+%mpo_type_comparison_M
 %phase_transition();
 
 end
@@ -259,169 +259,199 @@ end
 %%
 function mpo_type_comparison_exact_generic_order
 
+simulatiemodellen = ["random","random","random","Heisenberg_2D","t_ising","Heisenberg_2D_X","random","random"];
+%simulatiemodellen = ["random"];
+models_len = size(simulatiemodellen,2);
+
+    for round = 1:models_len
 %change this
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-generate_opts.testing=0;
-generate_opts.MPO_type = "matrix";
+    generate_opts.testing=0;
+    generate_opts.MPO_type = "matrix";
 
-opt3 = struct([]);
-
-
-model_opts.g =  0.5;
-%[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D',model_opts);
-%[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
-[simul,H_1_tensor,H_2_tensor,opt4,d] = models('random',model_opts);
-
-simul.Order_arr = [2,3,4,5,6];
-simul.types = [4,3];
-simul.M = 8;
-simul.beta_arr = 10.^(  -3:0.05:log10(20) );
-simul.cyclic = 0;
+    opt3 = struct([]);
 
 
-opt5.method="diag";
+    model_opts.g =  0.5;
+    %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D',model_opts);
+    %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
+    [simul,H_1_tensor,H_2_tensor,opt4,d] = models( simulatiemodellen(round)  ,model_opts);
+
+    opt4.single_threshold = 1e-12;
+%     
+% 
+% %simulatiemodellen = ["random","random","random","Heisenberg_2D","t_ising","Heisenberg_2D_X","random","random"];
+% simulatiemodellen = [1e-10,1e-11,1e-12,1e-13,1e-14];
+% models_len = size(simulatiemodellen,2);
+% 
+% generate_opts.testing=0;
+% generate_opts.MPO_type = "matrix";
+% 
+% opt3 = struct([]);
+% 
+% 
+% model_opts.g =  0.5;
+% %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D',model_opts);
+% %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
+% [simul,H_1_tensor,H_2_tensor,opt4,d] = models( "t_ising"  ,model_opts);
+% 
+%     for round = 1:models_len
+% 
+%     opt4.single_threshold =simulatiemodellen(round);
+%     
+
+
+    simul.Order_arr = [2,3,4,5];
+    simul.types = [2,4];
+    simul.M = 8;
+    %simul.beta_arr = 10.^(  -4:0.2:log10(20));
+    simul.beta_arr = 10.^(  -4:0.05:1);
+    simul.cyclic = 1;
+
+
+    opt5.method="diag";
 
 
 
-compare_opts.ref=2;
-compare_opts.cyclic=simul.cyclic;
+    compare_opts.ref=2;
+    compare_opts.cyclic=simul.cyclic;
 
-opt2 = {};
+    opt2 = {};
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%plot stuff
-order_size = size(simul.Order_arr,2);
-line_spec = ["-"    ,"--"   ,"-."   ,":"    ,"-"    ,"--"   ,"-."   ,":"];
-alphas= [1     ,1      ,1      ,1      ,0.5    ,0.5    ,0.5    ,0.5];
-colors = {[1 0 0 0],[0 1 0 0],[0 0 1 0],[0,1,1]}; %reserved for specific type
-
-legend_Arr = cell(size(simul.types,2)*order_size,1);
-legend_Arr(:) = {"todo"};
-beta_len = size(simul.beta_arr,2);
-
-plot_counter = 1;
-%hold off
-figure();
-x_width = 15;
-y_width=10;
-set(gcf,'PaperUnits','centimeters','PaperPosition',[0,0,x_width,y_width],'PaperSize', [x_width,y_width])
-%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%pregenerate all mpo's
-MPO_beta_N = cell(beta_len,1);
-for i=1:beta_len
-    beta = simul.beta_arr(i);
-    
-    %generateMPO(d,H_1_tensor,H_2_tensor,type,order,type_opts,opts)
-    MPO_beta_N{i} = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,0 );
-end
+    %%%plot stuff
+    order_size = size(simul.Order_arr,2);
+    line_spec = ["-"    ,"--"   ,"-."   ,":"    ,"-"    ,"--"   ,"-."   ,":"];
+    alphas= [1     ,1      ,1      ,1      ,0.5    ,0.5    ,0.5    ,0.5];
+    colors = {[1 0 0 0],[0 1 0 0],[0 0 1 0],[0,1,1]}; %reserved for specific type
 
-%
+    legend_Arr = cell(size(simul.types,2)*order_size,1);
+    legend_Arr(:) = {"todo"};
+    beta_len = size(simul.beta_arr,2);
+
+    plot_counter = 1;
+    %hold off
+    figure();
+    x_width = 15;
+    y_width=10;
+    set(gcf,'PaperUnits','centimeters','PaperPosition',[0,0,x_width,y_width],'PaperSize', [x_width,y_width])
+    %%%
 
 
-%loop over different orders
-for j = 1:order_size
-    Order = simul.Order_arr(j);
-    plot_structure = cell( 5,beta_len);
-
-    %loop over temps
-    for i = 1:beta_len
+    %pregenerate all mpo's
+    MPO_beta_N = cell(beta_len,1);
+    for i=1:beta_len
         beta = simul.beta_arr(i);
-        mpo_base = MPO_beta_N{i};
-        mpo_base_matrix = mpo_base.H_exp(simul.M-1,1,simul.cyclic); %buffered, not calculted again every time
-        
-        fprintf("M %d beta %.4e order %d",simul.M,beta,Order);
-        
-        %loop of simulation types
+
+        %generateMPO(d,H_1_tensor,H_2_tensor,type,order,type_opts,opts)
+        MPO_beta_N{i} = generateMPO(simul.d,-beta*H_1_tensor,-beta*H_2_tensor,0 );
+    end
+
+    %
+
+
+    %loop over different orders
+    for j = 1:order_size
+        Order = simul.Order_arr(j);
+        plot_structure = cell( 5,beta_len);
+
+        %loop over temps
+        for i = 1:beta_len
+            beta = simul.beta_arr(i);
+            mpo_base = MPO_beta_N{i};
+            mpo_base_matrix = mpo_base.H_exp(simul.M-1,1,simul.cyclic); %buffered, not calculted again every time
+
+            fprintf("M %d beta %.4e order %d",simul.M,beta,Order);
+
+            %loop of simulation types
+            for t=1:size(simul.types,2)
+                switch simul.types(t)
+                    case 2   
+                        mpo_2 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,Order,opt2,generate_opts);
+                        err_02 = error_eigenvalue(mpo_2,mpo_base_matrix,"array",simul.M,d,compare_opts);
+                        fprintf(" err 02 %.4e",err_02);
+                        plot_structure{2,i} = err_02;
+                    case 3
+                        mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
+                        err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
+                        fprintf(" err 03 %.4e",err_03);
+                        plot_structure{3,i} = err_03;
+                    case 4
+                        mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,Order,opt4,generate_opts);
+                        err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",simul.M,d,compare_opts);
+                        fprintf(" err 04 %.4e",err_04);
+                        plot_structure{4,i} = err_04;
+                    case 5
+                        mpo_5 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,5,Order,opt5,generate_opts);
+                        err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",simul.M,d,compare_opts);
+                        fprintf(" err 05 %.4e",err_05);
+                        plot_structure{5,i} = err_05;
+                    otherwise
+                        error("unknown type")
+                end
+            end
+
+            fprintf("\n");
+
+        end
+
+        %plotting loop for current order
         for t=1:size(simul.types,2)
             switch simul.types(t)
-                case 2   
-                    mpo_2 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,Order,opt2,generate_opts);
-                    err_02 = error_eigenvalue(mpo_2,mpo_base_matrix,"array",simul.M,d,compare_opts);
-                    fprintf(" err 02 %.4e",err_02);
-                    plot_structure{2,i} = err_02;
+                case 2
+                    colour = colors{1};
+                    colour(4) = alphas(j);
+                    loglog( simul.beta_arr, abs(cell2mat(plot_structure(2,:))), "LineStyle", line_spec(j),"Color",colour );
+                    legend_Arr{plot_counter}= sprintf("B:%d",Order );
+                    plot_counter = plot_counter+1;
+                    hold on
+                 case 4
+                    colour = colors{3};
+                    colour(4) = alphas(j);
+                    loglog( simul.beta_arr, abs(cell2mat(plot_structure(4,:))),"LineStyle", line_spec(j),"Color",colour );
+                    legend_Arr{plot_counter}= sprintf("A:%d",Order );
+                    plot_counter = plot_counter+1;
+                    hold on    
                 case 3
-                    mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
-                    err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
-                    fprintf(" err 03 %.4e",err_03);
-                    plot_structure{3,i} = err_03;
-                case 4
-                    mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,Order,opt4,generate_opts);
-                    err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",simul.M,d,compare_opts);
-                    fprintf(" err 04 %.4e",err_04);
-                    plot_structure{4,i} = err_04;
+                    colour = colors{2};
+                    colour(4) = alphas(j);
+                    loglog( simul.beta_arr, abs(cell2mat(plot_structure(3,:))), "LineStyle", line_spec(j),"Color",colour );
+                    legend_Arr{plot_counter}= sprintf("C:%d",Order );
+                    plot_counter = plot_counter+1;
+                    hold on
                 case 5
-                    mpo_5 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,5,Order,opt5,generate_opts);
-                    err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",simul.M,d,compare_opts);
-                    fprintf(" err 05 %.4e",err_05);
-                    plot_structure{5,i} = err_05;
+                    colour = colors{4};
+                    colour(4) = alphas(j);
+                    loglog( simul.beta_arr, abs(cell2mat(plot_structure(5,:))),"LineStyle", line_spec(j),"Color",colour    );
+                    legend_Arr{plot_counter}= sprintf("05:%d",Order );
+                    plot_counter = plot_counter+1;
+                    hold on
                 otherwise
                     error("unknown type")
             end
         end
-        
-        fprintf("\n");
-        
+
+        title( simul.title   )
+        xlabel('$  \beta \cdot J$','Interpreter','latex', 'FontSize', 11)
+        ylabel('$  \epsilon $','Interpreter','latex', 'FontSize', 11)
+        legend(legend_Arr,'Location','northwest','NumColumns',2 )
+
+        ylim([0 10])
+
+        figure(gcf)
+
     end
-    
-    %plotting loop for current order
-    for t=1:size(simul.types,2)
-        switch simul.types(t)
-            case 2
-                colour = colors{4};
-                colour(4) = alphas(j);
-                loglog( simul.beta_arr, abs(cell2mat(plot_structure(2,:))), "LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("02:%d",Order );
-                plot_counter = plot_counter+1;
-                hold on
-             case 4
-                colour = colors{3};
-                colour(4) = alphas(j);
-                loglog( simul.beta_arr, abs(cell2mat(plot_structure(4,:))),"LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("A:%d",Order );
-                plot_counter = plot_counter+1;
-                hold on    
-            case 3
-                colour = colors{1};
-                colour(4) = alphas(j);
-                loglog( simul.beta_arr, abs(cell2mat(plot_structure(3,:))), "LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("B:%d",Order );
-                plot_counter = plot_counter+1;
-                hold on
-            case 5
-                colour = colors{2};
-                colour(4) = alphas(j);
-                loglog( simul.beta_arr, abs(cell2mat(plot_structure(5,:))),"LineStyle", line_spec(j),"Color",colour    );
-                legend_Arr{plot_counter}= sprintf("05:%d",Order );
-                plot_counter = plot_counter+1;
-                hold on
-            otherwise
-                error("unknown type")
-        end
+
+
+    hold off
+
+    filename = sprintf('../auto_fig/comp%s.pdf',datestr(now,'mm-dd-yy_HH-MM-SS'));
+    saveas(gcf,filename )
+
     end
-    
-    title( simul.title   )
-    xlabel('$  \beta \cdot J$','Interpreter','latex', 'FontSize', 11)
-    ylabel("relative err", 'FontSize', 11)
-    legend(legend_Arr,'Location','northwest','NumColumns',2 )
-    
-    ylim([0 10])
-    
-    figure(gcf)
-    
-end
-
-
-hold off
-
-filename = sprintf('../auto_fig/comp%s.pdf',datestr(now,'mm-dd-yy_HH-MM-SS'));
-saveas(gcf,filename )
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -433,14 +463,17 @@ function mpo_type_comparison_M
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 generate_opts.testing=0;
+generate_opts.MPO_type="cell";
 
 opt3 = struct([]);
 
-[simul,H_1_tensor,H_2_tensor,opt4] = models('random');
-simul.Order_arr = [4,5,6];
+model_opts.g =  0.5;
+
+[simul,H_1_tensor,H_2_tensor,opt4] = models('Heisenberg_2D',model_opts);
+simul.M_arr = [6,7,8,9];
 simul.types = [3,4];
-simul.M = 9;
-simul.beta_arr = 10.^(  -3:0.05:log10(50) );
+simul.Order = 4;
+simul.beta_arr = 10.^(  -3.1:0.1:log10(20) );
 simul.cyclic = 1;
 
 
@@ -461,6 +494,9 @@ beta_len = size(simul.beta_arr,2);
 plot_counter = 1;
 %hold off
 figure();
+x_width = 15;
+y_width=10;
+set(gcf,'PaperUnits','centimeters','PaperPosition',[0,0,x_width,y_width],'PaperSize', [x_width,y_width])
 %%%
 
 
@@ -476,43 +512,42 @@ plot_structure = cell( 5,beta_len,M_size);
 for i = 1:beta_len
     beta = simul.beta_arr(i);
     
-    mpo_base =   generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,0);
+    mpo_base =   generateMPO(simul.d,-beta*H_1_tensor,-beta*H_2_tensor,0);
     
     for t=1:size(simul.types,2)
         switch simul.types(t)
             case 3
-                mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,simul.Order,opt3,generate_opts);
+                mpo_3 = generateMPO(simul.d,-beta*H_1_tensor,-beta*H_2_tensor,3,simul.Order,opt3,generate_opts);
             case 4
-                mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,simul.Order,opt4,generate_opts);
+                mpo_4 = generateMPO(simul.d,-beta*H_1_tensor,-beta*H_2_tensor,4,simul.Order,opt4,generate_opts);
             case 5
-                mpo_5 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,5,simul.Order,opt5,generate_opts);
+                mpo_5 = generateMPO(simul.d,-beta*H_1_tensor,-beta*H_2_tensor,5,simul.Order,opt5,generate_opts);
             otherwise
                 error("unknown type")
         end
     end
     
-
+    fprintf("beta %.4e \n",beta);
 
     for j = 1:M_size
         M = simul.M_arr(j);
-        
-        
+
         mpo_base_matrix = mpo_base.H_exp(M-1,1,simul.cyclic);
 
-        fprintf("beta %.4e M %d",beta,M);
+        fprintf(" M %d ",M);
         for t=1:size(simul.types,2)
             switch simul.types(t)
                 case 3
-                    err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",M,d,compare_opts);
+                    err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",M,simul.d,compare_opts);
                     fprintf(" err 03 %.4e",err_03);
                     plot_structure{3,i,j} = err_03;
 
                 case 4
-                    err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",M,d,compare_opts);
+                    err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",M,simul.d,compare_opts);
                     fprintf(" err 04 %.4e",err_04);
                     plot_structure{4,i,j} = err_04;
                 case 5
-                    err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",M,d,compare_opts);
+                    err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",M,simul.d,compare_opts);
                     fprintf(" err 05 %.4e",err_05);
                     plot_structure{5,i,j} = err_05;
                 otherwise
@@ -534,14 +569,14 @@ for j=1:M_size
                 colour = colors{1};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(3,:,j))), "LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("type 03 M %d",M );
+                legend_Arr{plot_counter}= sprintf("B-%d",M );
                 plot_counter = plot_counter+1;
                 hold on
             case 4
                 colour = colors{3};
                 colour(4) = alphas(j);
                 loglog( simul.beta_arr, abs(cell2mat(plot_structure(4,:,j))),"LineStyle", line_spec(j),"Color",colour );
-                legend_Arr{plot_counter}= sprintf("type 01  M %d",M );
+                legend_Arr{plot_counter}= sprintf("A-%d",M );
                 plot_counter = plot_counter+1;
                 hold on
             case 5
@@ -558,12 +593,18 @@ for j=1:M_size
 end
 title( simul.title   )
 xlabel('$  \beta \cdot J$','Interpreter','latex')
-ylabel("relative error")
+ylabel('$ \epsilon $','Interpreter','latex')
 legend(legend_Arr,'Location','northwest','NumColumns',2)
 
 figure(gcf)
 
 hold off
+
+
+filename = sprintf('../auto_fig/compM%s.pdf',datestr(now,'mm-dd-yy_HH-MM-SS'));
+saveas(gcf,filename )
+
+
 
 end
 

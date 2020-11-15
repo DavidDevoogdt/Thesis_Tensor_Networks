@@ -38,13 +38,13 @@ function err = error_eigenvalue(mpo_1, mpo_2,type_02,M,d,opts)
         
     p=2;
     
-    [~,S1,~] = svd(a-b);
+    [~,S1,~] = svds(a-b,30);
     
     
     sum1 = (sum(diag(S1).^p))^(1/p);
     
   
-    [~,S2,~] = svd(b);
+    [~,S2,~] = svds(b,30);
     
 
     sum2 = (sum(diag(S2).^p))^(1/p);

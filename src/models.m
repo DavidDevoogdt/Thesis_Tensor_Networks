@@ -17,7 +17,8 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
     opt4.method = "svd";
     opt4.to_matrix = 1; %keep in cell form
-    opt4.min_single_N=-1;
+    opt4.single_threshold = 1e-12;
+
 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,13 +32,14 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
     S_y_3 = 1/sqrt(2)*[0, -1i,0;1i,0, -1i;0, 1i, 0;];
     S_z_3 = [1,0,0;0,0,0;0,0,1;];
 
-    opt4.single_threshold = 1e8;
-    opt4.double_threshold = 1e12;
+    %opt4.single_threshold = 1e8;
+    %opt4.double_threshold = 1e-12;
     
     switch model
         case "random"
             d=2;
-           
+           simul.d = d;
+            
             mask = [0,1i,1i,1i;
                     0,0,1i,1i;
                     0,0,0,1i;
@@ -74,6 +76,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
         
         case "t_ising"
             d=2;
+            simul.d = d;
             J=p.Results.J;
             g= p.Results.g;
 
@@ -90,6 +93,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             simul.title = sprintf("H=ZZ + %.3fX",g);
           case "t_ising_2"
             d=2;
+            simul.d = d;
             J=p.Results.J;
             g= p.Results.g;
 
@@ -97,16 +101,12 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
             H_1_tensor =-J*g*S_x_2 ;
             
 
-            opt4.single_threshold = 1e10;
-            opt4.double_threshold = 1e13;
             
-            %opt4.single_threshold = 1e-11; %1e-8;
-            %opt4.double_threshold = 1e-8;
-
             simul.title = sprintf("H=ZZ + %.3fX",g);    
             
         case "l_ising"
             d=2;
+            simul.d = d;
             J=1;
             g= p.Results.g;
 
@@ -119,6 +119,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
         case "XXZ_3D"
             d = 3;
+            simul.d = d;
             delta= p.Results.delta;
 
             H_2_tensor =-( ncon( {S_x_3,S_x_3}, {[-1,-3],[-2,-4]})+...
@@ -131,6 +132,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
         case "Heisenberg_2D"
             d=2;
+            simul.d = d;
             H_2_tensor = -ncon( {S_x_2,S_x_2}, {[-1,-3],[-2,-4]})...
                 -ncon( {S_y_2,S_y_2}, {[-1,-3],[-2,-4]})...
                 -ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
@@ -142,6 +144,7 @@ function [simul,H_1_tensor,H_2_tensor,opt4,d] = models(model,opts)
 
          case "Heisenberg_2D_X"
             d=2;
+            simul.d = d;
             g= p.Results.g;
             H_2_tensor =- ncon( {S_x_2,S_x_2}, {[-1,-3],[-2,-4]})...
                 -ncon( {S_y_2,S_y_2}, {[-1,-3],[-2,-4]})...
