@@ -180,31 +180,99 @@ The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd d
 
 \todo{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}
 
+During the svd the bond dimension can be lowered by only keeping the rows and colums belonging to $\sigma > \sigma_0$. This also helps the invertibility. Increasing $\sigma_0$ reduces the precision of the MPO. This can be seen in \cref{fig:sigman0}. A good tradeoff seems to be $ \sigma_0 = {10}^{-12}$. There is almost no precision loss vor small $\beta$, while for intermediate it performs optimal for intermediate $\beta$.
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figuren/mpo_construction/sigm0/e10.pdf}
+        \caption{ ${10}^{-10}$}
+        \label{fig:sub1}
+    \end{subfigure}%
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figuren/mpo_construction/sigm0/e11.pdf}
+        \caption{${10}^{-11}$}
+        \label{fig:sub2}
+    \end{subfigure}
+    \caption{A figure with two subfigures}
+    \label{fig:sigman0}
+\end{figure}
+
+
+\begin{figure} \ContinuedFloat
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figuren/mpo_construction/sigm0/e12.pdf}
+        \caption{ ${10}^{-12}$}
+        \label{fig:sub1}
+    \end{subfigure}%
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figuren/mpo_construction/sigm0/e13.pdf}
+        \caption{${10}^{-13}$}
+        \label{fig:sub2}
+    \end{subfigure}
+    \caption{A figure with two subfigures}
+    \label{fig:sigman0}
+\end{figure}
+
+
+\begin{figure} \ContinuedFloat
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figuren/mpo_construction/sigm0/e14.pdf}
+        \caption{ ${10}^{-14}$}
+        \label{fig:sub1}
+    \end{subfigure}%
+    \caption{A figure with two subfigures}
+    \label{fig:sigman0}
+\end{figure}
+
+\todo{toon figuurtjes met verschillende sigma 0 voor $t_ising$}
+
+
+
+As can be seen in \cref{construction:sigma0}, mainly the construction for small values of $\beta$ get affected by the choice of $\sigma_0$.
+
+
 \subsubsection{Truncation}
 
-Because the inverse is possibly ill conditioned, increasing the order does not always inprove accuracy. Therefore, criteria are needed to truncute the order at the optimal point.
 \paragraph{ \( O^{n n} \)}
-For this block 2 criteria need to be checked. First, the inverse needs to be well conditioned:
-\begin{equation}
-    \begin{split}
-        \mathcal{K} &= \frac{\sigma_{max}}{\sigma_{min}}\\
-        &< 10^5
-    \end{split}
-\end{equation}
-It is also necesarry to check whether the added block really improves the error. Therefore, $M_{2*n+2}$ is calculated with and without the new block. The singular values spectrum is calculated for the middle bond. The maximum error needs to decrease: $\sigma_{max,new} < \sigma_{max,new}$ and also the average error: $\sum \sigma_{i,new} < \sum \sigma_{i,new}$.
 
-\paragraph{$O^{m n}$ and $O^{n m}$ }
-It is sufficient to check whether the maximum singular value and the average singular values have decreased.
 
-\subsubsection{discussion}
+Intoduction of a \( O^{n n} \) block can result in large fluctuating errors. This happens because the inverses are possible ill conditioned. Therefore the construction of the MPO should be stopped at a certain optimal order.
 
-\todo{blabla}
+
+% For this block 2 criteria need to be checked. First, the inverse needs to be well conditioned:
+% \begin{equation}
+%     \begin{split}
+%         \mathcal{K} &= \frac{\sigma_{max}}{\sigma_{min}}\\
+%         &< 10^5
+%     \end{split}
+% \end{equation}
+% It is also necesarry to check whether the added block really improves the error. Therefore, $M_{2*n+2}$ is calculated with and without the new block. The singular values spectrum is calculated for the middle bond. The maximum error needs to decrease: $\sigma_{max,new} < \sigma_{max,new}$ and also the average error: $\sum \sigma_{i,new} < \sum \sigma_{i,new}$.
+
+% \paragraph{$O^{m n}$ and $O^{n m}$ }
+% It is sufficient to check whether the maximum singular value and the average singular values have decreased.
+
+The \( O^{n n} \) blocks can form long chains. To test whether these chains improve accuracy, the norm of the residul error is calculated before and after the insertion of the block. A closed chain is used with the same number of sites. The closed chain resembles much better an infite chain than the open counterpart.
+
+
+\paragraph{$O^{m n}$ and $O^{n m}$ } \todo{nog niet gevodnen}
+
+\todo{zeggen wat allemaal niet werkt}
+
 
 \subsubsection{Type B}
 
 Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$
-
-
 
 \def \rhs{\expH{2}{ $L_{m}^{-1}  M_{n+1} $ }{{"$i_n$","$i_{n+1}$"}}{{"$j_n$","$j_{n+1}$"}}{{"m","0"}}  }
 \begin{equation}
@@ -270,3 +338,4 @@ As expected, the bond dimension is the $\dim{n'} = \min(d^2 \dim{m}, \dim (n+1)d
 \todo{primed virtual levels}
 
 \subsubsection{Type D}
+\todo{dit erin zeten of niet?? type05}

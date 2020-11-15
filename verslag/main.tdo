@@ -7,10 +7,13 @@
 \contentsline {todo}{explain}{7}{section*.10}%
 \contentsline {todo}{berken exact en maak tabletje voor de verschillende types}{7}{section*.11}%
 \contentsline {todo}{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}{9}{section*.12}%
-\contentsline {todo}{blabla}{10}{section*.13}%
-\contentsline {todo}{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}{11}{section*.14}%
-\contentsline {todo}{primed virtual levels}{11}{section*.15}%
-\contentsline {todo}{time complexity algoritms}{12}{section*.16}%
-\contentsline {todo}{open chain or cyclical}{12}{section*.17}%
-\contentsline {todo}{trace norm, schatten p norm, ...}{12}{section*.18}%
-\contentsline {todo}{run with M=11}{14}{section*.21}%
+\contentsline {todo}{toon figuurtjes met verschillende sigma 0 voor $t_ising$}{9}{section*.16}%
+\contentsline {todo}{nog niet gevodnen}{12}{section*.17}%
+\contentsline {todo}{zeggen wat allemaal niet werkt}{12}{section*.18}%
+\contentsline {todo}{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}{14}{section*.19}%
+\contentsline {todo}{primed virtual levels}{14}{section*.20}%
+\contentsline {todo}{dit erin zeten of niet?? type05}{14}{section*.21}%
+\contentsline {todo}{time complexity algoritms}{15}{section*.22}%
+\contentsline {todo}{trace norm, schatten p norm, ...}{15}{section*.23}%
+\contentsline {todo}{calculate complexity}{15}{section*.24}%
+\contentsline {todo}{run with M=11}{18}{section*.29}%
