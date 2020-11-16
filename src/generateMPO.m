@@ -263,6 +263,7 @@ classdef generateMPO
             p = inputParser;
             addParameter(p,'method',"svd")
             addParameter(p, 'single_threshold',1e-12)
+            addParameter(p, 'max_err',1e0)
             addParameter(p, 'to_matrix',0)
             
             parse(p,obj.type_opts)
@@ -435,15 +436,18 @@ classdef generateMPO
                 cond1 = svds( RHS_2_reshaped,6)   ;
                 cond2 =  svds(  RHS_3_reshaped,6)   ;
                 
-                sumcond  = sum(abs( cond2 )) /sum(abs(cond1));
-                maxcond = sum(max( cond2 )) /sum(max(cond1));
+                p1=2;
+                sum1 = (sum(cond1.^p1))^(1/p1);
+                sum2 = (sum(cond2.^p1))^(1/p1);
                 
+                condres = sum2/sum1;
+               
+                err=0;
+               
+                %fprintf("-%.4e %.4e-",sumcond,maxcond)
                 
-                %fprintf("-%f-",max(sumcond,maxcond))
-                
-                err =0;
-                
-                if (sumcond > 1.1) || (maxcond>1.1)
+                if condres > p.Results.max_err
+                    fprintf("-%.4e -",condres)
                     obj.MPO_cell{M+1,M+2} = {};
                     obj.MPO_cell{M+2,M+1} = {} ;
                     obj.current_max_index = M;
@@ -526,13 +530,22 @@ classdef generateMPO
                 RHS_2_reshaped = reshape(RHS_Matrix_2, [d^(2*M+2),d^(2*M+2)] );
                 RHS_3_reshaped = reshape(RHS_Matrix_3, [d^(2*M+2),d^(2*M+2)] );
                 
-                cond1 = svds( RHS_2_reshaped,6)   ;
-                cond2 =  svds(  RHS_3_reshaped,6)   ;
                 
-                sumcond  = sum(abs( cond2 )) /sum(abs(cond1));
-                maxcond = sum(max( cond2 )) /sum(max(cond1));
-
-                if (sumcond > 1) || (maxcond>1)
+                cond1 = svds( RHS_2_reshaped,10)   ;
+                cond2 =  svds(  RHS_3_reshaped,10)   ;
+                
+                  p1=2;
+                sum1 = (sum(cond1.^p1))^(1/p1);
+                sum2 = (sum(cond2.^p1))^(1/p1);
+                condres = sum2/sum1;
+               
+                
+               
+                %fprintf("-%.4e %.4e-",sumcond,maxcond)
+                
+                if condres > p.Results.max_err
+                    
+                    fprintf("-%.4e -",condres)
                     obj.MPO_cell{M+1,M+1} = {};
                     fprintf("stop %d",N);
                     err=1;
@@ -861,22 +874,25 @@ classdef generateMPO
             %
             % 1    T_00| S01  0   |-2*S01  0   | S01  0    | S01*D11   0
             %      ____|          |            | 0    S12  | 0         0
-            % d^2  S01'  0    S12 | 0 -2*S02   | 0    0    | 0         0
+            % d^2  S01'  0    S12 | 0 -2*S12   | 0    0    | 0         0
             % d^4  0     S12' 0   | 0      0   | 0    0    | 0         0
             %      _______________| 0      0   | 0    0    | 0         0
             % d^2  S01'  0    0     0      0   | 0    0    | 0         0
-            % d^4  0     S02' 0     0      0   | 0    0    | 0         0
+            % d^4  0     S12' 0     0      0   | 0    0    | 0         0
             %      ____________________________| 0    0    | 0         0
             % d^2  S01'  0    0     0      0     T11  0    | 0         0
             % d^4  0     S12' 0     0      0     0    T22  | 0         0
             %      ________________________________________| 0         0
-            % d^2  S01'  0    0     0      0     0    0      0         1/D11*S12*D22
+            % d^2  S01'  0    0     0      0     0    0      0         (1/D11)*S12*D22
             % d^4  0     0    0     0      0     0    0      S12'      0
             
             %intuition matrix: B4: create blocks with D,  B3 with B1: create T_nn
             %sequences. B1 is is used to create S(n n+1) sequence beforen T_nn^m
             % block B2 corrects for spurious multiplications in B1 and B3 that do not
             % involve any T_nn
+            
+            
+            obj.nf = 3*obj.nf;
             
             p = inputParser;
             addParameter(p,'method',"diag")
@@ -890,6 +906,8 @@ classdef generateMPO
             else
                 obj.max_index = obj.order/2;
             end
+            
+            obj.current_max_index = 0;
             
             total_dim =  1+ 4* (  ((d^2)^(obj.max_index+1)-1)/(d^2-1) - 1)  ;
             
@@ -909,23 +927,21 @@ classdef generateMPO
             % 00 block
             N=0;
             
-            unnorm = expm(obj.H_1_tensor);
-            obj.nf = trace(unnorm);
 
             obj.MPO_type= "matrix";
 
-            T00 = reshape(unnorm/obj.nf, [1,d,d,1] );
+            T00 =reshape(  expm( obj.H_1_tensor)/ obj.nf , [1,d,d,1] );
             obj.MPO_cell = add_block_Tn(obj.MPO_cell,N,T00,obj.order,d );
             
             %other blocks
             %N=number of free bonds
             for N=1:obj.order
                 if mod(N,2)==1
-                    obj.current_max_index = (N-1)/2;  %used to contract the tensor
+                    %obj.current_max_index = (N-1)/2;  %used to contract the tensor
                     [sqrt_Dn_l,sqrt_Dn_r]=double_update(N,sqrt_Dn_l,sqrt_Dn_r);
                     
                 else
-                    obj.current_max_index = N/2;
+                    %obj.current_max_index = N/2;
                     single_update(N)
                 end
                 
@@ -935,70 +951,100 @@ classdef generateMPO
             
             %n current num of bonds
             %N max free bonds (order)
-            function [sqrt_Dn_l,sqrt_Dn_r] = double_update(N,sqrt_Dnm_l,sqrt_Dnm_r)
+            function [sqrt_Dn_l_inv,sqrt_Dn_r_inv] = double_update(N,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv)
                 %  S01--S12--...--S(n-1 n)--D_nn--n--S(n-1 n)'--...--S21'--S10' with D a real diagonal matrix
                 
                 M=obj.current_max_index;
                 
-                RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1))- obj.contract_mpo(N);
+               RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1)) - obj.contract_mpo(N);
                 
-                RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1) ),  [d^(2*M),d^2,d^2,d^(2*M) ]  );
+
+                RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1) ),...
+                    dimension_vector(d^2,N+1));%group per ij index
                 
-                res = RHS_Matrix;
+                M= obj.current_max_index;
                 
-                for i = 1:obj.current_max_index
-                    %apply one at a time
-                    U= U_cell{i};
-                    V= V_cell{i};
-                    res = ncon(  {U',  reshape(res, [ d^(2*i )  , d^(2*M-2*i+2) , d^(2*M-2*i+2) , d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});
+                if M ~=0
                     
+                    left_list = cell( 1,M );
+                    right_list = cell( 1,M );
+                    contract_list = cell( 1,M );
+                    
+                    for i = 1:M
+                        left_list{i} = U_cell{i};
+                        right_list{end-i+1} =  V_cell{i};
+                        
+                        contract_list{i} = [i,-(2*i),-(2*i+1),i+1];
+                    end
+                    
+                    contract_list{1}(1)=-1;
+                    contract_list{end}(4)=-(2*M+2);
+                    
+                    
+                    %auto detect size
+                    left_i = reshape( ncon(left_list,contract_list) , d^(2*M),[] );
+                    right_i = reshape( ncon(right_list,contract_list) , [],d^(2*M));
+                    
+                    
+                    left_dim = size(left_i,2);
+                    right_dim = size(right_i,1);
+                    
+                    res = reshape( RHS_Matrix, [d^(2*M),d^4*d^(2*M) ]);
+                    
+                                      
+                    %x = left_i\res;
+                    %x = reshape(x, [d^(2* (N+1-M)),d^(2*M)] );
+                    %y = x/right_i;
+                    
+                    
+                   x = lsqminnorm(left_i,res);
+                   x = reshape(x, [left_dim*d^4,d^(2*M)] );
+                   y = lsqminnorm(right_i',x')';
+
+                    new_parts = reshape(y, [left_dim,d^2,d^2,right_dim]);
+                else
+                    left_dim = d^(2*M);
+                    right_dim = d^(2*M);
+                    
+                    new_parts = reshape(RHS_Matrix, [left_dim,d^2,d^2,right_dim] );
                 end
+                
+                new_parts= reshape( permute( new_parts , [1,2,4,3]), [left_dim*d^2,d^2*right_dim]);
+                %new_parts= reshape(  new_parts , [left_dim*d^2,d^2*right_dim]);
+             
                 
                 
                 
                 switch p.Results.method
                     case "svd"
-                        new_parts = reshape( res ,[d^(2*M+2),d^(2*M+2)]);
                         [U,Dn,V] = svd(new_parts);
                         
-                        Dn = Dn.^(1/2);
+                        eps = 1e-15;
                         
-                        Sn = reshape(U,[d^(2*M),d,d,d^(2*M+2)]);
-                        SnD =  reshape(V',[d^(2*M+2),d,d,d^(2*M)]);
-                        U_cell{1+obj.current_max_index}= reshape( U, [d^(2*M+2),d^(2*M+2)]);
-                        V_cell{1+obj.current_max_index}= reshape( V, [d^(2*M+2),d^(2*M+2)]);
+                        maxval = sum( diag(Dn));
+                        sqrtmaxval = maxval^0.5;
                         
+                        diag_Dn = diag(Dn/maxval);
+                        mask = diag_Dn < eps;
+                        diag_Dn(  mask) = 0;
                         
-                    case "diag"
+                        diag_Dn_inv = diag_Dn;
+                        diag_Dn_inv(~mask) = diag_Dn_inv(~mask).^(-1);
                         
-                        new_parts =reshape( permute( res, [1,2,4,3]), [d^(2*M+2),d^(2*M+2)]);
+                        sqrt_Dn_l = diag ( diag_Dn.^(1/2)    );
+                        sqrt_Dn_r = sqrt_Dn_l ;
                         
-                        err = 0.5* ( new_parts - new_parts');
-                        new_parts = 0.5* ( new_parts + new_parts');
+                        sqrt_Dn_l_inv = diag ( diag_Dn_inv.^(1/2)    );
+                        sqrt_Dn_r_inv = sqrt_Dn_l_inv;
                         
+
                         
-                        %new parts should be symmetrised
-                        [Q,Dn] = eig( new_parts, "vector" );  % new_parts = Q*D*Q' with Q unitary
+                        Sn = reshape(U*sqrtmaxval,[d^(2*M),d,d,d^(2*M+2)]);
                         
-                        P = sign(Dn);
-                        Dn = Dn.*P;
-                        Dn(Dn<1e-16)=1e-16;
-                        
-                        %Dn=diag(Dn.*P);
-                        
-                        sqrt_Dn = Dn.^0.5;
-                        
-                        sqrt_Dn_l = diag( P.*sqrt_Dn);
-                        sqrt_Dn_r = diag( sqrt_Dn);
-                        
-                        
-                        
-                        Sn=   reshape( Q,  [d^(2*M),d,d,d^(2*M+2)]);
-                        SnD = permute(reshape( Q', [d^(2*M+2),d^(2*M),d,d]), [1,3,4,2]);
-                        
-                        U_cell{1+obj.current_max_index}= reshape( Sn, [d^(2*M+2),d^(2*M+2)]);
-                        V_cell{1+obj.current_max_index}= reshape( SnD, [d^(2*M+2),d^(2*M+2)])';
-                        
+                        SnD = permute( reshape( V'*sqrtmaxval, [d^(2*M+2),right_dim,d,d])  , [1,3,4,2]);
+                        %SnD =  reshape(V'*sqrtmaxval, [d^(2*M+2),d,d,d^(2*M)] ) ;
+                        U_cell{1+obj.current_max_index}= Sn;
+                        V_cell{1+obj.current_max_index}= SnD;
                         
                     otherwise
                         error("unknown method");
@@ -1006,9 +1052,11 @@ classdef generateMPO
                 end
                 
                 
-                obj.MPO_cell = add_block_05(obj.MPO_cell,obj.current_max_index+1,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l,sqrt_Dnm_r,d );
                 
                 
+                obj.MPO_cell = add_block_05(obj.MPO_cell,obj.current_max_index+1,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d );
+                
+                obj.current_max_index = obj.current_max_index+1;
                 
             end
             
@@ -1016,52 +1064,59 @@ classdef generateMPO
             function single_update(N)
                 %  S01--S12--...--S(n-1 n)--(T_nn--)^m--S(n n-1)'--...--S21'--S10' with
                 
-                RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1))...
-                    - obj.contract_mpo(N);
                 
+                RHS_Tensor = H_exp(obj,N)/(obj.nf^(N+1)) ...
+                    - obj.contract_mpo(N);
                 
                 RHS_Matrix = reshape( permute(RHS_Tensor, site_ordering_permute(N+1)),...
                     dimension_vector(d^2,N+1)); %group per ij index
                 
+                
+                %search x st
+                % left*x = res
+                % y*right = x
                 M=obj.current_max_index;
                 
+                left_list = cell( 1,M );
+                right_list = cell( 1,M );
+                contract_list = cell( 1,M );
                 
-                res= RHS_Matrix;
-                
-                for i = 1:obj.current_max_index
-                    %apply one at a time
-                    U= U_cell{i};
-                    V= V_cell{i};
-                    res = ncon(  {U',  reshape(res, [ d^(2*i )  ,d^(2*M+1-2*i),d^(2*M+1-2*i), d^(2*i ) ]) , V}, { [-1,1],[1,-2,-3,2],[2,-4]});
+                for i = 1:M
+                    left_list{i} = U_cell{i};
+                    right_list{end-i+1} = V_cell{i};
                     
+                    contract_list{i} = [i,-(2*i),-(2*i+1),i+1];
                 end
                 
-                switch p.Results.method
-                    case "svd"
-                        
-                        
-                    case "diag"
-                        err = 0.5*( res- permute(res, [4,2,3,1]));
-                        res = 0.5*( res+ permute(res, [4,2,3,1]));
-                        
-                        
-                    otherwise
-                        error("unknown method");
-                        
-                end
+                contract_list{1}(1)=-1;
+                contract_list{end}(4)=-(2*M+2);
                 
+                left_i = reshape( ncon(left_list,contract_list) ,d^(2*M),[]);
+                right_i = reshape( ncon(right_list,contract_list) , [],d^(2*M));
+             
+                left_dim = size(left_i,2);
+                right_dim = size(right_i,1);
+                    
+                res = reshape( RHS_Matrix, [d^(2*M),d^(2*M+2)]);
+
+                 x = lsqminnorm(left_i,res);
+                 x = reshape(x, [left_dim*d^2,d^(2*M)]);
+                 y = lsqminnorm(right_i',x')';
                 
+                new_parts = reshape(y, [left_dim,d,d,right_dim]);
                 
                 %add_block_Tn(MPO,n,Tn,max_index,d )
-                obj.MPO_cell = add_block_Tn(obj.MPO_cell,obj.current_max_index,res,obj.max_index,d );
+                obj.MPO_cell = add_block_Tn(obj.MPO_cell,obj.current_max_index,new_parts,obj.max_index,d );
                 
                 %for debugging purposes
             
+                Z=ncon( {obj.MPO_cell},{[-1,1,1,-2]});
+                
                 
             end
             
             %add blocks to mpo like in discription
-            function MPO =  add_block_05(MPO,n,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l,sqrt_Dnm_r,d )
+            function MPO =  add_block_05(MPO,n,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d )
                 
                 %horizontal
                 block_start_x = 1;
@@ -1112,9 +1167,9 @@ classdef generateMPO
                     internal_diag_m = geom_sum(n-2,d)+1;
                     
                     
-                    sqrt_Dnm_l_inv = sqrt_Dnm_l^-1; %is diagonal
-                    sqrt_Dnm_r_inv = sqrt_Dnm_r^-1; %is diagonal
-                    
+%                     sqrt_Dnm_l_inv = sqrt_Dnm_l_inv^-1; %is diagonal
+%                     sqrt_Dnm_r_inv = sqrt_Dnm_r_inv^-1; %is diagonal
+%                     
                     SD = ncon( {sqrt_Dnm_l_inv, Sn, sqrt_Dn_l},{ [-1,1] [1,-2,-3,2],[2,-4]});
                     
                     SDn =  ncon( {sqrt_Dn_r, SnD, sqrt_Dnm_r_inv},{ [-1,1] [1,-2,-3,2],[2,-4]});
@@ -1142,7 +1197,7 @@ classdef generateMPO
                     return
                 end
                 
-                B=3;
+                B=3; 
                 block_start_y = get_B_start(B,d,max_index);
                 internal_diag = geom_sum(n-1,d);
                 

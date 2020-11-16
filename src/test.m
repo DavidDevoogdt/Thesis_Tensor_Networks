@@ -20,13 +20,13 @@ generate_opts.testing=0;
 generate_opts.MPO_type="matrix";
 
 opt3 = struct([]);
-opt5.method="diag";
+opt5.method="svd";
 
-a=0.08;
+a=0.5;
 model_opts.J = 1/(2*a);
 
-square_size = 12;
-step_size = 0.5;
+square_size = 4;
+step_size = 0.3;
 
 
 
@@ -35,15 +35,15 @@ step_size = 0.5;
  %from simulations
 
 
-simul_struct.order = 6;
-simul_struct.mpo_type = 2;
-simul_struct.observable = 'sx';
+simul_struct.order = 5;
+simul_struct.mpo_type = 4;
+simul_struct.observable = 'xi';
 
 
 simul_struct.cor_min = 1;
 simul_struct.cor_max = 4;
 
-simul_struct.model = 't_ising_2';
+simul_struct.model = 't_ising';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -56,7 +56,8 @@ switch simul_struct.observable
         
         t_max = 8;
 
-        t_arr = exp( log(1/beta_max):0.2:log(t_max))
+        t_arr = exp( log(1/beta_max):0.2:log(t_max));
+        %t_arr =  1/beta_max :0.5:t_max;   %exp( log(1/beta_max):0.2:log(t_max))
         beta_arr = 1./t_arr;
         
         %beta_arr = exp( l:0.1:log(50));
@@ -259,8 +260,8 @@ end
 %%
 function mpo_type_comparison_exact_generic_order
 
-simulatiemodellen = ["random","random","random","Heisenberg_2D","t_ising","Heisenberg_2D_X","random","random"];
-%simulatiemodellen = ["random"];
+simulatiemodellen = ["t_ising","random","random","random","Heisenberg_2D","Heisenberg_2D_X","random","random"];
+%simulatiemodellen = ["Heisenberg_2D"];
 models_len = size(simulatiemodellen,2);
 
     for round = 1:models_len
@@ -302,15 +303,15 @@ models_len = size(simulatiemodellen,2);
 %     
 
 
-    simul.Order_arr = [2,3,4,5];
-    simul.types = [2,4];
-    simul.M = 8;
-    %simul.beta_arr = 10.^(  -4:0.2:log10(20));
-    simul.beta_arr = 10.^(  -4:0.05:1);
+    simul.Order_arr = [2,4];
+    simul.types = [2,5];
+    simul.M =8 ;
+    simul.beta_arr = 10.^(  -3:0.1:1.5);
+    %simul.beta_arr = 10.^(  -0:0.05:1);
     simul.cyclic = 1;
 
 
-    opt5.method="diag";
+    opt5.method="svd";
 
 
 
@@ -426,7 +427,7 @@ models_len = size(simulatiemodellen,2);
                     colour = colors{4};
                     colour(4) = alphas(j);
                     loglog( simul.beta_arr, abs(cell2mat(plot_structure(5,:))),"LineStyle", line_spec(j),"Color",colour    );
-                    legend_Arr{plot_counter}= sprintf("05:%d",Order );
+                    legend_Arr{plot_counter}= sprintf("D:%d",Order );
                     plot_counter = plot_counter+1;
                     hold on
                 otherwise
