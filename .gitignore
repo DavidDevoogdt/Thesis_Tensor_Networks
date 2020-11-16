@@ -23,6 +23,8 @@
 *.bbl
 *.blg
 
+
 #
 
 *.fls
+*.tdo
