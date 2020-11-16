@@ -1,127 +1,28 @@
-\subsection{Mpo manipulations}
-
-The manipulations of MPO's is done by manipulating the tensor into a matrix, performing some matrix calculations and casting it back into it's original form. This section gives some examples how these manipulations are done in practice:
-
-\subsubsection{decomposition}
-
-\def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
-
-
-\begin{equation}
-    \begin{split}
-        \figone &= O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w} \\
-        &\cong O^{u w}_{ (\alpha_u i_1 j_1) (\gamma_w i_2 j_2) } \\
-        &= O^{u v}_{(\alpha_u i_1 j_1) \beta_v } O^{v w}_{ \beta_v (\gamma_w i_2 j_2) } \\
-        &\cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}
-    \end{split}
-\end{equation}
-
-Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The exact nature of this decomposition is dicussed further. The last step transforms the indices back to separate legs.
-
-For an exact representation, the bond dimension of virtual level v is:
-\begin{equation}
-    \dim{v} = \min( \dim{u}, \dim{v}) + 2 \dim{i}
-\end{equation}
-
-
-\subsubsection{inverse}
-Suppose we want to find a MPO O for given tensors A and B such that the following holds:
-
-\def \figone {\expH{2}{$A$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_2$"}}{{"u",}}}
-\def \figthree {\expH{3}{$B$}{{"$i_1$","$i_2$","$i_3$"}}{{"$j_1$","$j_2$","$j_3$"}}{{"u","v"}}}
-
-\def \figtwo {\mpo{1}{{,"v"}}{{"$i_3$",}}{{"$j_3$",}}{}{}}
-
-\begin{equation}
-    \combineTikz{ \figone }{\figtwo}{1.8} =  \figthree
-\end{equation}
-
-Again, the indices can be taken toghether in the following way: $\alpha = (u i_1 i_2 j_1 j_2)$ and $\beta = (i_3 j_3 v)$:
-\begin{equation}
-    A_{\alpha \gamma} O_{\gamma \beta} = B_{\alpha \beta}
-\end{equation}
-
-This will be denoted by
-
-\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
-\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
-\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
-
-\def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
-
-\def \figfour { \expH{1}{$A^{-1}B$}{{"$i_3$",}}{{"$j_3$",}}{{"u","v"}} }
-
-\begin{equation}
-    \begin{split}
-        \figtwob &=  \left[ \figoneb \right ]^{-1}  \figthreeb \\
-        &=  \left[ \figonec  \right ]  \figthreeb\\
-        &= \figfour
-    \end{split}
-    \label{eq_mpoinvdef}
-\end{equation}
-
-For the first equation the unmarked legs on similar positions need to be connected to each other. The second line the mirrored positions are connected.
-
-This can now be computed with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution.
-\todo{explain https://nl.mathworks.com/help/matlab/ref/mldivide.html}
-
-
-\subsubsection{virtual levels and matrisation}
-
-\todo{explain}
-
-\paragraph{Matrisation} From the construction with svd we can see that the dimension of virtual bond $\dim{n} = d^{2 n}$ with d the dimension of $\ket{i}$. The virtual levels can be joined into a $\chi \times d \times d \times \chi$ dimensional tensor O. This tensor is given by a tridiagonal block matrix :
-
-\begin{equation}
-    O^{ij}_{\alpha \beta} = \begin{bmatrix}
-        O^{00,ij} & O^{01,ij} &           &        &     \\
-        O^{10,ij} & O^{11,ij} & O^{12,ij} &              \\
-                  & O^{21,ij} & O^{22,ij} & \ddots       \\
-                  &           & \ddots    & \ddots &   &
-    \end{bmatrix}
-\end{equation}
-
-The boundary conditions (leftmost and rightmost virtual level are zero) correspond to vectors:
-\begin{equation}
-    \begin{split}
-        l &= \begin{bmatrix} 1 & 0
-              & \cdots\end{bmatrix} \\
-        r &= l^{T}
-    \end{split}
-\end{equation}
-
-The total dimension is the sum of dimensions of the virtual level. In this case the \todo{berken exact en maak tabletje voor de verschillende types}
-
 
 
 
 \subsection{Time evolution methods}
 
+\todo{https://tensornetwork.org/mps/algorithms/timeevo/}
+
+
 \subsection{Cluster expansion}
 This thesis builds on the cluster expansions introduced in \cite{clusterExp}. The idea is to create tensor network with a number of virtual levels. The representation is exact up to M connected sites, where M is the order. Different variations are possible.
-
 A Hamiltonian of the folowing form is assumed
 \begin{equation}
     \hat{H}_n = \sum_{i=1}^{n-1} \hat{h} _{i,i+1}+ \sum_{i=1}^n \hat{h'}_i
 \end{equation}
-
 Virtual level zero is defined as follows:
 \begin{equation}
     \begin{split}
         \mpo{1}{ {0,0}  }{}{}{}{} &=  \expH{1}{}{{,,,,,,,,}}{{,,,,,,,,}}{}
     \end{split}
 \end{equation}
-
-
-
-
 Similarly, the contraction of elements $O_{01}$ and $O_{10}$ are defined as follows:
-
 \begin{equation}
     \mpo{2}{{0,1,0}}{}{}{}{} =  \expH{2}{}{}{}{} - \mpo{2}{{0,,0}}{}{}{}{}
 \end{equation}
-
-Some notation will be introduced that will be used later on. The rensor $L_n$ is the contraction of n MPO's where the virtual index increases between each bond. $R_n$ is similar but the virtual bond starts from n and decreases.
+Some notation will be introduced that will be used later on. The rensor $L_n$ is the contraction of n MPO's where the virtual index increases between each bond. $R_n$ is similar but the virtual bond starts from n and decreases. The tensor is defined in gra[hical notation by:
 
 \def \On {\mpo{4}{ {0,1,,"m","n"}  }{}{}{{0,0,1,0,0}}{}}
 \def \OnBlock {\expH{4}{ $L_n$  }{ {,,"...",} }{ {,,"...",} }{{0,"n"}} }
@@ -138,7 +39,7 @@ Some notation will be introduced that will be used later on. The rensor $L_n$ is
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }
 \def \Mn {\mpo{4}{ {0,,,,0}  }{}{}{{0,0,1,0,0}}{}}
 
-$M_n$ is the difference between the exponentiated hamiltonian for n sites and the contraction of the MPO over all the currently assigned combinations of virtual levels.
+\noindent $M_n$ is the difference between the exponentiated hamiltonian for n sites and the contraction of the MPO over all the currently assigned combinations of virtual levels.
 
 \begin{equation}
     \begin{split}
@@ -147,8 +48,10 @@ $M_n$ is the difference between the exponentiated hamiltonian for n sites and th
     \end{split}
 \end{equation}
 
+In what follows different constructions will detailed. Some notes on the practical implementation is given later in this section.
+
 \subsubsection{Type A}
-This type was originally proposed in \cite{clusterExp}. The following types of blocks appear:
+This type was originally proposed in \cite{clusterExp}. The following types of blocks appear in the cluster expansion:
 
 \mpo{1}{ {"n","m"}  }{}{}{}{},\mpo{1}{ {"m ","n"}  }{}{}{}{} and \mpo{1}{ {"n","n"}  }{}{}{}{} with $n \in \mathbb{N}_0$ and $m=n-1$.
 
@@ -163,24 +66,42 @@ The $O^{n n}$ block is defined by \cref{eq_nn_level}
     \mpo{1}{ {"n","n"}  }{}{}{}{} = \rhs
     \label{eq_nn_level}
 \end{equation}
-
-The residual error M is calculated for a chain of size $2n+1$. The left and right inverses are applied to M to find the block $O^{n n}$
+The residual error M is calculated for a chain of size $2n+1$. The left and right inverses $L_n$ and $R_n$ are applied to M to find the block $O^{n n}$.
 
 \paragraph{ $O^{m n }$ and $O^{n m} $}
 The contraction of $O^{n m }$ and $O^{m n} $ is defined by:
 
 
-\def \rhs{\expH{1}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
+\def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
 \begin{equation}
     \mpo{2}{ {"n","m","n"}  }{}{}{}{} = \rhs
     \label{eq_nmn_level}
 \end{equation}
 
-The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd decoposition.
+The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd decoposition as explained in \cref{decompMPO}. The square root of the singuar values is multiplied to the left and right of the decomposition. The operator $L_{n+1}$ and $R_{n+1}$ can be construdted directly. \todo{implementeren en testen.}
 
-\todo{symmetric split S, invertibility lowest eiges, eigensplit, order cutoff}
 
-During the svd the bond dimension can be lowered by only keeping the rows and colums belonging to $\sigma > \sigma_0$. This also helps the invertibility. Increasing $\sigma_0$ reduces the precision of the MPO. This can be seen in \cref{fig:sigman0}. A good tradeoff seems to be $ \sigma_0 = {10}^{-12}$. There is almost no precision loss vor small $\beta$, while for intermediate it performs optimal for intermediate $\beta$.
+During the svd the bond dimension can be lowered by only keeping the rows and colums belonging to $\sigma_i > \sigma_0$. This also helps the invertibility. Increasing $\sigma_0$ reduces the precision of the MPO.
+
+\paragraph{Truncation}
+
+Intoduction of a new block can result in large fluctuating errors. This happens because the inverses are possible ill conditioned. Therefore the construction of the MPO should be stopped at a certain optimal order. Many different criteria can be tought of (and have been tried), but the most reliable method is as follows:
+
+\paragraph{ \( O^{n n} \)}
+
+The \( O^{n n} \) blocks can form long chains. To test whether these chains improve accuracy, the norm (see \cref{mponormdef}) of the residul error is calculated before and after the insertion of the block for a cyclic chain. A closed chain is used with the same number of sites. The closed chain resembles much better an infite chain than the open counterpart.
+
+Only strict improvements are accepted, otherwise the MPO without the newly calculated blocks is returned.
+
+\paragraph{$O^{m n}$ and $O^{n m}$ } For these the same procedure holds.
+
+\paragraph{dimension}
+
+From the construction is can be seen that  the dimension of the new virtual level is at most $d^2$ times the dimension of the previous level. Depending on $\sigma_0$, the bond dimension is even lower.
+
+\paragraph{discussion}
+
+The only parameter in the construction is $\sigma_0$ As can be seen in \cref{construction:sigman0}, mainly the construction for small values of $\beta$ get affected by the choice of $\sigma_0$.This can be seen in \cref{fig:sigman0}. A good tradeoff seems to be $ \sigma_0 = {10}^{-12}$. There is almost no precision loss vor small $\beta$, while for intermediate it performs optimal for intermediate $\beta$.
 
 
 \begin{figure}
@@ -235,39 +156,7 @@ During the svd the bond dimension can be lowered by only keeping the rows and co
     \label{fig:sigman0}
 \end{figure}
 
-\todo{toon figuurtjes met verschillende sigma 0 voor $t_ising$}
-
-
-
-As can be seen in \cref{construction:sigma0}, mainly the construction for small values of $\beta$ get affected by the choice of $\sigma_0$.
-
-
-\subsubsection{Truncation}
-
-\paragraph{ \( O^{n n} \)}
-
-
-Intoduction of a \( O^{n n} \) block can result in large fluctuating errors. This happens because the inverses are possible ill conditioned. Therefore the construction of the MPO should be stopped at a certain optimal order.
-
-
-% For this block 2 criteria need to be checked. First, the inverse needs to be well conditioned:
-% \begin{equation}
-%     \begin{split}
-%         \mathcal{K} &= \frac{\sigma_{max}}{\sigma_{min}}\\
-%         &< 10^5
-%     \end{split}
-% \end{equation}
-% It is also necesarry to check whether the added block really improves the error. Therefore, $M_{2*n+2}$ is calculated with and without the new block. The singular values spectrum is calculated for the middle bond. The maximum error needs to decrease: $\sigma_{max,new} < \sigma_{max,new}$ and also the average error: $\sum \sigma_{i,new} < \sum \sigma_{i,new}$.
-
-% \paragraph{$O^{m n}$ and $O^{n m}$ }
-% It is sufficient to check whether the maximum singular value and the average singular values have decreased.
-
-The \( O^{n n} \) blocks can form long chains. To test whether these chains improve accuracy, the norm of the residul error is calculated before and after the insertion of the block. A closed chain is used with the same number of sites. The closed chain resembles much better an infite chain than the open counterpart.
-
-
-\paragraph{$O^{m n}$ and $O^{n m}$ } \todo{nog niet gevodnen}
-
-\todo{zeggen wat allemaal niet werkt}
+In practice, the truncation criterium is not completely optimal in some specific cases.
 
 
 \subsubsection{Type B}
@@ -283,34 +172,18 @@ Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$
     \end{split}
 \end{equation}
 
-The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$. Take has to be taken with the indices to apply the inverse.
+The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$. \todo{implement this!}
 
-\begin{equation}
-    \begin{split}
-        U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
-        &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
-    \end{split}
-\end{equation}
-If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
-\begin{equation}
-    \mpo{1}{ {"$\delta$","$\alpha$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{\delta i j \alpha}
-\end{equation}
-With the notation from \cref{eq_mpoinvdef} we have:
-\def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
-
-\begin{equation}
-    \OnBlock =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
-\end{equation}
-The inverse can be applied sequentially.
-
-\paragraph{dimension} From the construction the bond dimension grows from the left to the right. Again $\dim{n} = d^{2n}$. However this can be reduced if we can solve the following equations simultaneously:
-
+\paragraph{dimension} From the construction the bond dimension grows from the left to the right. For the last step, there are only $d^2$ non zero singular values.  Each steps adds $d^2$ to the dimension.
+For the last step, only $d^2$ non zero singular values need to be keeped. With the following natation:
 \begin{equation}
     \begin{split}
         \mpo{1}{ {"m","n"}  }{ { "\(i\)",}}{ { "$j$",}}{}{} &= A^m_{ (\alpha i j ) \beta} \\
         \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \\
     \end{split}
 \end{equation}
+The bond dimension of lower virtual levels can be reduced if we can solve the following equations simultaneously:
+
 Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
 \begin{equation}
     \begin{split}
@@ -318,15 +191,14 @@ Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{
         T=A^{m} B^{n} &= A'^{m} B'^{n} \\
     \end{split}
 \end{equation}
-
-Such matrices with optimal bond dimension can be found with generalised SVD. Generalised SVD decomposes 2 matrices as follows
+Such matrices with optimal bond dimension can be found with generalised SVD. Generalised SVD decomposes 2 matrices as follows:
 \begin{equation}
     \begin{split}
         S^{\dagger} = (U \Sigma_1) Q^{\dagger} \\
         T^{\dagger} = (V \Sigma_2) Q^{\dagger}
     \end{split}
 \end{equation}
-As expected, the bond dimension is the $\dim{n'} = \min(d^2 \dim{m}, \dim (n+1)d^2 )$.
+The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  The dimension is higher than type A.
 
 
 \todo{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}
@@ -334,8 +206,75 @@ As expected, the bond dimension is the $\dim{n'} = \min(d^2 \dim{m}, \dim (n+1)d
 
 \paragraph{discussion}
 
+This type has no parameters to fine tune. The only blocks appearing in this series expansion are explicitly calculated to lower the remaining error. The inverse is well defined. It is expected that the error increases strictly with increasing temperature and keeps decreasing for higher orders.
+
 \subsubsection{Type C}
 \todo{primed virtual levels}
 
+This type implements the same strict type as Type B, blubut in a different way. No calculation is involved, except the calculation of the the exponentiated hamiltonian to certain order. The following kind of MPO strings are allowed:
+
+\mpo{2}{{"0","1","0"}}{}{}{}{}
+\mpo{3}{{"0","1'","2'","0"}}{}{}{}{}
+\mpo{3}{{"0","1''","2''","0"}}{}{}{}{}
+and so forth. All but one MPO elements are chosen to be the identity matrix. The middle one is the exponentiated hamiltonian with reshaped legs.
+
+Primed levels are in fact just non overlapping virtual levels. They can be mapped to normal virtual levels.
+
+\paragraph{discussion}
+As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B, and will not be reported in the \cref{chap_bench}. This type could be improved by compressing the MPO at itermediate stages before adding a new primed level. This would likely not improve the speed and dimension of Type B. \todo{quantify}
+
 \subsubsection{Type D}
-\todo{dit erin zeten of niet?? type05}
+
+This type uses a differemt setup which tries to capture the best of both Type A and B. Type  could handle long range correlation better because of the introuction of $O^{n n}$, but the inverse was not necesarily well defined. Type B had well conditioned inverses, but performed in most of the cases worse. The block appearing in type D are as follows:
+
+
+\mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{}
+
+Similar to type A,
+
+
+
+\def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
+\begin{equation}
+    \begin{split}
+        \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} &= \rhs \\
+        &= U \Sigma V^{ \dagger}
+    \end{split}
+    \label{eq_nmn_level}
+\end{equation}
+
+Matrix $D_n$ is the singular value diagonal matrix devided by a normalisation factor $\phi$. Both U and V are multiplied by $  \sqrt{\phi} $.
+
+
+\paragraph{discussion}
+It's not completely clear what the values of $\phi$ should be.  If $\phi$ is to large, large chains are not surpressed. If phi is to small, the $O^{n n}$ blocks will become large and hence the chain will diverge again. A reasonable value is the sum of the singular values. \todo{other things could be tried here, WIP}
+
+\paragraph{matrisation}
+The cost of this type lies in the fact that it has no compact way of casting it to a matrix. The following works, but has quite a large dimension:
+
+\begin{tabular}{ccc|cc|cc|cc}
+    $O_{00}$               & $O_{01} $   &             & $-2  O_{01}$ &                & $ O_{01}$ &             & $ O_{01}  D_1^{1/2}$           &                                \\
+    ${O_{10}}$             &             & ${ O_{12}}$ &              & $-2 { O_{12}}$ &           & ${ O_{12}}$ &                                &                                \\
+                           & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
+    \hline
+    ${O_{10}}$             &             &             &              &                &           &             &                                &                                \\
+                           & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
+    \hline
+    ${ O_{10}}$            &             &             &              &                & $O_{11}$  &             &                                &                                \\
+                           & ${ O_{21}}$ &             &              &                &           & $O_{22}$    &                                &                                \\
+    \hline
+    $ D_1^{1/2} { O_{10}}$ &             &             &              &                &           &             &                                & $D_1^{-1/2} O_{12}  D_2^{1/2}$ \\
+                           &             &             &              &                &           &             & $ D_2^{1/2} O_{21} D_1^{-1/2}$                                  \\\end{tabular}
+
+\todo{fix this }
+
+
+\subsection{Implementation details}
+
+\subsubsection{Sourse code structure}
+
+\subsubsection{internal representation}
+
+\subsubsection{normalisation factor}
+
+\subsubsection{buffering results}

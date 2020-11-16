@@ -68,18 +68,28 @@
                     \node[circle,draw, radius=\radius] (O\N) at (\p,0) {\nname};
 
 
-                    \node[] (Ou\N) at (\p, \legpos ) { \labelUp };
+                    \ifthenelse{ \equal{\labelUp}{-}  }{
+                    }{
+                        \node[] (Ou\N) at (\p, \legpos ) { \labelUp };
+                        \draw (O\N) -- (Ou\N);
+                    }
 
 
-                    \node[] (Od\N) at (\p,-\legpos) {\labeldown};
+                    \ifthenelse{ \equal{\labeldown}{-}  }{
+                    }{
+                        \node[] (Od\N) at (\p,-\legpos) {\labeldown};
+                        \draw (O\N) -- (Od\N);
+                    }
 
 
-                    \draw (O\N) -- (Ou\N);
-                    \draw (O\N) -- (Od\N);
+
+
+
+
+
+
                 }{
                     \node[circle] (O\N) at (\p,0) { $\cdots$ };
-
-
                 }
 
 
