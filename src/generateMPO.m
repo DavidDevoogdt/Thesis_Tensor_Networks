@@ -651,19 +651,32 @@ classdef generateMPO
             
             %total_dim = 1+ d^2 + (d^2+d^2)+ (d^2+d^4+d^2)+(d^2+d^4+d^4+d^2);
             
+          
             
+            p = inputParser;
+            addParameter(p, 'SparseArr',1)
+            
+            parse(p,obj.type_opts)
+                        
+            if p.Results.SparseArr ==1
+                 sparsem = ndSparse( sparse(total_dim,d^2*total_dim));       
+                 obj.MPO_cell = reshape( sparsem, [total_dim,d,d,total_dim] );
+            else
+                obj.MPO_cell = zeros(total_dim,d,d,total_dim);   
+            end
+            
+              
             left_vect= zeros(1,total_dim);
             left_vect(1)=1;
             right_vect= zeros(total_dim,1);
             right_vect(1)=1;
             
-            obj.MPO_cell = zeros(total_dim,d,d,total_dim);
+            
+            %obj.MPO_cell = zeros(total_dim,d,d,total_dim);
             obj.MPO_type = "matrix";
             obj.left = left_vect;
             obj.right = right_vect;
 
-%             obj.MPO_cell = zeros(total_dim+1,total_dim+1);
-%             obj.MPO_type = "cell";
             
             % 0
             unnorm = expm(obj.H_1_tensor);
@@ -896,7 +909,10 @@ classdef generateMPO
             
             p = inputParser;
             addParameter(p,'method',"diag")
+            addParameter(p, 'SparseArr',1)
+            
             parse(p,obj.type_opts)
+                        
             
             %setup
             d=obj.dim;
@@ -916,7 +932,16 @@ classdef generateMPO
             obj.right= zeros(total_dim,1);
             obj.right(1)=1;
             
-            obj.MPO_cell = zeros(total_dim,d,d,total_dim);
+            if p.Results.SparseArr ==1
+                 sparsem = ndSparse( sparse(total_dim,d^2*total_dim));       
+                 obj.MPO_cell = reshape( sparsem, [total_dim,d,d,total_dim] );
+            else
+                obj.MPO_cell = zeros(total_dim,d,d,total_dim);   
+            end
+            
+           
+            
+            %
             
             U_cell= cell(1,obj.max_index) ;
             V_cell= cell(1,obj.max_index) ;
@@ -931,7 +956,7 @@ classdef generateMPO
             obj.MPO_type= "matrix";
 
             T00 =reshape(  expm( obj.H_1_tensor)/ obj.nf , [1,d,d,1] );
-            obj.MPO_cell = add_block_Tn(obj.MPO_cell,N,T00,obj.order,d );
+            add_block_Tn(N,T00,obj.order,d );
             
             %other blocks
             %N=number of free bonds
@@ -939,7 +964,6 @@ classdef generateMPO
                 if mod(N,2)==1
                     %obj.current_max_index = (N-1)/2;  %used to contract the tensor
                     [sqrt_Dn_l,sqrt_Dn_r]=double_update(N,sqrt_Dn_l,sqrt_Dn_r);
-                    
                 else
                     %obj.current_max_index = N/2;
                     single_update(N)
@@ -1054,7 +1078,7 @@ classdef generateMPO
                 
                 
                 
-                obj.MPO_cell = add_block_05(obj.MPO_cell,obj.current_max_index+1,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d );
+                add_block_05(obj.current_max_index+1,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d );
                 
                 obj.current_max_index = obj.current_max_index+1;
                 
@@ -1106,17 +1130,17 @@ classdef generateMPO
                 new_parts = reshape(y, [left_dim,d,d,right_dim]);
                 
                 %add_block_Tn(MPO,n,Tn,max_index,d )
-                obj.MPO_cell = add_block_Tn(obj.MPO_cell,obj.current_max_index,new_parts,obj.max_index,d );
+                add_block_Tn(obj.current_max_index,new_parts,obj.max_index,d );
                 
                 %for debugging purposes
             
-                Z=ncon( {obj.MPO_cell},{[-1,1,1,-2]});
+                %Z=ncon( {obj.MPO_cell},{[-1,1,1,-2]});
                 
                 
             end
             
             %add blocks to mpo like in discription
-            function MPO =  add_block_05(MPO,n,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d )
+            function  add_block_05(n,Sn,SnD,sqrt_Dn_l,sqrt_Dn_r,sqrt_Dnm_l_inv,sqrt_Dnm_r_inv,d )
                 
                 %horizontal
                 block_start_x = 1;
@@ -1126,9 +1150,9 @@ classdef generateMPO
                 block_start_y = get_B_start(B,d,obj.max_index);
                 internal_diag = geom_sum(n-1,d);
                 internal_diag_m = geom_sum(n-2,d)+1;
-                MPO(1+ block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1)  ,:,:, block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
+                obj.MPO_cell(1+ block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1)  ,:,:, block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
                 %mirror case for
-                MPO(block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = Sn;
+                obj.MPO_cell(block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = Sn;
                 
                 %                 if n==1
                 %B=2 case
@@ -1136,18 +1160,18 @@ classdef generateMPO
                 block_start_y = get_B_start(B,d,obj.max_index);
                 internal_diag = geom_sum(n-1,d);
                 internal_diag_m = geom_sum(n-2,d)+1;
-                MPO( 1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1),:,:, block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
+                obj.MPO_cell( 1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1),:,:, block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
                 %mirror case for
-                MPO(block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = -2* Sn;
+                obj.MPO_cell(block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = -2* Sn;
                 
                 %B=3 case
                 B=3;
                 block_start_y = get_B_start(B,d,obj.max_index);
                 internal_diag = geom_sum(n-1,d);
                 internal_diag_m = geom_sum(n-2,d)+1;
-                MPO(1+ block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1),:,:,block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
+                obj.MPO_cell(1+ block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1),:,:,block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1) ) = SnD;
                 %mirror case for
-                MPO( block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = Sn;
+                obj.MPO_cell( block_start_x+internal_diag_m:block_start_x+internal_diag_m+(d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+(d^(2*n)-1) ) = Sn;
                 
                 
                 if n ==1
@@ -1158,8 +1182,8 @@ classdef generateMPO
                     
                     block_start_y=get_B_start(4,d,obj.max_index);
                     %MPO
-                    MPO(1,:,:,1+block_start_y:1+block_start_y+ (d^2-1) ) = SD;
-                    MPO(1+block_start_y:1+block_start_y+ (d^2-1),:,:,1 ) = SDn;
+                    obj.MPO_cell(1,:,:,1+block_start_y:1+block_start_y+ (d^2-1) ) = SD;
+                    obj.MPO_cell(1+block_start_y:1+block_start_y+ (d^2-1),:,:,1 ) = SDn;
                     
                 else  %todo
                     block_start_y=get_B_start(4,d,obj.max_index);
@@ -1174,8 +1198,8 @@ classdef generateMPO
                     
                     SDn =  ncon( {sqrt_Dn_r, SnD, sqrt_Dnm_r_inv},{ [-1,1] [1,-2,-3,2],[2,-4]});
                     
-                    MPO(block_start_y+internal_diag_m:block_start_y+internal_diag_m+ (d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+ (d^(2*n)-1) ) = SD;
-                    MPO(1+block_start_y+internal_diag:1+block_start_y+internal_diag+ (d^(2*n)-1),:,:, block_start_y+internal_diag_m:block_start_y+internal_diag_m+ (d^(2*n-2)-1) ) = SDn;
+                    obj.MPO_cell(block_start_y+internal_diag_m:block_start_y+internal_diag_m+ (d^(2*n-2)-1),:,:,1+block_start_y+internal_diag:1+block_start_y+internal_diag+ (d^(2*n)-1) ) = SD;
+                    obj.MPO_cell(1+block_start_y+internal_diag:1+block_start_y+internal_diag+ (d^(2*n)-1),:,:, block_start_y+internal_diag_m:block_start_y+internal_diag_m+ (d^(2*n-2)-1) ) = SDn;
                 end
                 
                 function y= get_B_start(B,d,N)
@@ -1190,10 +1214,10 @@ classdef generateMPO
             end
             
             
-            function MPO =  add_block_Tn(MPO,n,Tn,max_index,d )
+            function add_block_Tn(n,Tn,max_index,d )
                 
                 if n==0
-                    MPO(1,:,:,1)=Tn;
+                    obj.MPO_cell(1,:,:,1)=Tn;
                     return
                 end
                 
@@ -1202,7 +1226,7 @@ classdef generateMPO
                 internal_diag = geom_sum(n-1,d);
                 
                 z = block_start_y+internal_diag;
-                MPO(1+z:1+z+(d^(2*n)-1) ,:,:, 1+z:1+z+(d^(2*n)-1) ) = Tn;
+                obj.MPO_cell(1+z:1+z+(d^(2*n)-1) ,:,:, 1+z:1+z+(d^(2*n)-1) ) = Tn;
                 
                 function y= get_B_start(B,d,N)
                     block_dim = geom_sum(N,d);
@@ -1254,7 +1278,7 @@ classdef generateMPO
                 %     add_block_05(MPO,n,Sn,SnD,Tn,Dn,Dnm,N,d )
                 MPO = add_block_05(MPO,N,S23,S32,T33,D33,D22,N,2);
                 
-                Z=reshape( MPO(:,1,1,:), [total_dim,total_dim]) ;
+                %Z=reshape( MPO(:,1,1,:), [total_dim,total_dim]) ;
             end
             
         end

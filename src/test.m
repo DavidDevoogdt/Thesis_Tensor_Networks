@@ -260,7 +260,7 @@ end
 %%
 function mpo_type_comparison_exact_generic_order
 
-simulatiemodellen = ["t_ising","random","random","random","Heisenberg_2D","Heisenberg_2D_X","random","random"];
+simulatiemodellen = ["Heisenberg_2D","random","random","random","t_ising","Heisenberg_2D_X","random","random"];
 %simulatiemodellen = ["Heisenberg_2D"];
 models_len = size(simulatiemodellen,2);
 
@@ -270,9 +270,6 @@ models_len = size(simulatiemodellen,2);
 
     generate_opts.testing=0;
     generate_opts.MPO_type = "matrix";
-
-    opt3 = struct([]);
-
 
     model_opts.g =  0.5;
     %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('Heisenberg_2D',model_opts);
@@ -303,22 +300,26 @@ models_len = size(simulatiemodellen,2);
 %     
 
 
-    simul.Order_arr = [2,4];
-    simul.types = [2,5];
+    simul.Order_arr = [2,3,4,5];
+    simul.types = [3,5];
     simul.M =8 ;
     simul.beta_arr = 10.^(  -3:0.1:1.5);
     %simul.beta_arr = 10.^(  -0:0.05:1);
-    simul.cyclic = 1;
+    simul.cyclic = 0;
 
 
     opt5.method="svd";
-
+    
+    opt2 = {};
+    opt3.SparseArr = 1;
+    opt5.SparseArr = 1;
+    %opt5= struct([]);
 
 
     compare_opts.ref=2;
     compare_opts.cyclic=simul.cyclic;
 
-    opt2 = {};
+    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -372,21 +373,25 @@ models_len = size(simulatiemodellen,2);
                 switch simul.types(t)
                     case 2   
                         mpo_2 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,Order,opt2,generate_opts);
+                        fprintf(".");
                         err_02 = error_eigenvalue(mpo_2,mpo_base_matrix,"array",simul.M,d,compare_opts);
                         fprintf(" err 02 %.4e",err_02);
                         plot_structure{2,i} = err_02;
                     case 3
                         mpo_3 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,Order,opt3,generate_opts);
+                         fprintf(".");
                         err_03 = error_eigenvalue(mpo_3,mpo_base_matrix,"array",simul.M,d,compare_opts);
                         fprintf(" err 03 %.4e",err_03);
                         plot_structure{3,i} = err_03;
                     case 4
                         mpo_4 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,4,Order,opt4,generate_opts);
+                         fprintf(".");
                         err_04 = error_eigenvalue(mpo_4,mpo_base_matrix,"array",simul.M,d,compare_opts);
                         fprintf(" err 04 %.4e",err_04);
                         plot_structure{4,i} = err_04;
                     case 5
                         mpo_5 = generateMPO(d,-beta*H_1_tensor,-beta*H_2_tensor,5,Order,opt5,generate_opts);
+                         fprintf(".");
                         err_05 = error_eigenvalue(mpo_5,mpo_base_matrix,"array",simul.M,d,compare_opts);
                         fprintf(" err 05 %.4e",err_05);
                         plot_structure{5,i} = err_05;
