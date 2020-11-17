@@ -221,7 +221,7 @@ and so forth. All but one MPO elements are chosen to be the identity matrix. The
 Primed levels are in fact just non overlapping virtual levels. They can be mapped to normal virtual levels.
 
 \paragraph{discussion}
-As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B, and will not be reported in the \cref{chap_bench}. This type could be improved by compressing the MPO at itermediate stages before adding a new primed level. This would likely not improve the speed and dimension of Type B. \todo{quantify}
+As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B.
 
 \subsubsection{Type D}
 
@@ -271,10 +271,25 @@ The cost of this type lies in the fact that it has no compact way of casting it 
 
 \subsection{Implementation details}
 
-\subsubsection{Sourse code structure}
+All of the above types are implemented for arbitrary order in Matlab.
+
+\subsubsection{Source code structure}
+
+The source code for this project can be found on \href{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}{github}. The implementation of these types can be found under \path{src/generateMPO.m}. In this class the different types of MPO can be constructed. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian.
+
+\path{src/test.m}  contains the code to create the plots to compare different types and orders. The other files in the folder are self-explanatory.
 
 \subsubsection{internal representation}
 
+Two main inernal representations are used to construct the given MPO. Either, the MPO is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that matlab does't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this} library is used.
+
 \subsubsection{normalisation factor}
 
+An overal normalisation factor $\kappa$ per site is used to keep the numbers in matric within a reasonable range. In practice, $e^{\beta H_n}$ is divided by by $\kappa^n$. Otherwise nothing has to be changed to the algorithms. $\kappa$ can be changed during the construction by absorbing the factor in the matrices.
+
 \subsubsection{buffering results}
+
+The matrix exponential for different number of sites is called on many different places. The results for chain and cycle are stored in the class to save computing time the next time.
+
+\subssubection{Optimalisations}
+The construction is not yet fully optimised for speed. The arrays can be cast to Matlab gpuArray's to offload the calculations.
