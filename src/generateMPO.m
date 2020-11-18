@@ -18,11 +18,15 @@ classdef generateMPO
         max_index
         current_max_index
         nf_correction
+        inverse_MPO
+                inverse_MPO_left
+        inverse_MPO_right
     end
 
     properties (Access = private)
         H_exp_cell %store exp H for future uses
         H_exp_cell_cyclic
+
     end
 
     methods
@@ -43,9 +47,13 @@ classdef generateMPO
 
                 p = inputParser;
                 addParameter(p, 'testing', 0)
+                addParameter(p, 'invMPO', 1)
                 addParameter(p, 'MPO_type', 'matrix')
                 parse(p, opts)
 
+                
+                obj.inverse_MPO = p.Results.invMPO;
+                
                 obj.MPO_type = p.Results.MPO_type;
                 obj.testing = p.Results.testing;
 
@@ -264,6 +272,12 @@ classdef generateMPO
             obj.MPO_cell = cell(obj.max_index+1, obj.max_index+1);
             obj.MPO_type = "cell";
 
+            if obj.inverse_MPO %todo get real bounds
+                obj.inverse_MPO_left =  cell(obj.max_index+1, 1);
+                obj.inverse_MPO_right = cell(obj.max_index+1, 1) ;
+            end
+
+            
 
             obj.MPO_cell{1, 1} = reshape(expm(obj.H_1_tensor)/obj.nf, [1, d, d, 1]);
 
@@ -317,7 +331,7 @@ classdef generateMPO
                 x = reshape(x, [left_dim * d^4, d^(2 * M)]);
                 [y, right_dim] = invert_right(obj, x, M);
 
-                new_parts = reshape(y, [left_dim, d^2, d^2, right_dim]);
+                new_parts = reshape(y, [left_dim , d^2, d^2,right_dim]);
 
                 new_parts_sym = reshape(permute(new_parts, [1, 2, 4, 3]), [left_dim * d^2, d^2 * right_dim]);
 
@@ -332,16 +346,30 @@ classdef generateMPO
                 S2 = S(1:middle_dim, 1:middle_dim);
                 V2 = V(:, 1:middle_dim);
 
+                V2_dag_perm = reshape( permute( reshape(V2', [middle_dim, right_dim, d, d]) , [1, 3, 4, 2]  ), [middle_dim,middle_dim]);               
+                V2_perm = reshape( permute( reshape(V2, [right_dim, d, d,middle_dim] ) , [2, 3, 1, 4]  ), [middle_dim,middle_dim]);
+                
+                
+                %V2_dag_perm*V2_perm  ok
+                
                 sqrt_S = S2.^0.5;
-
+                
                 left_j = U2 * sqrt_S;
-                right_j = sqrt_S * V2';
+                right_j = sqrt_S * V2_dag_perm;
+                
+                %V_2_perm = reshape(  permute( reshape(  V2, [right_dim,d^2,middle_dim] ), [2,1,3]), [middle_dim,middle_dim]);
+                
                 %%%%%%%%%%%%%%%%%%%
 
 
                 O_l = reshape(left_j, [left_dim, d, d, middle_dim]);
-                O_r = permute(reshape(right_j, [middle_dim, right_dim, d, d]), [1, 3, 4, 2]);
+                %O_r = reshape(right_j, [middle_dim, d, d,right_dim]);
+                O_r = reshape(right_j, [middle_dim,d,d, right_dim]);
 
+                obj = obj.register_left_inv_mpo(M,U2,sqrt_S);
+                obj = obj.register_right_inv_mpo(M,  V2_perm   ,sqrt_S);
+                
+                
                 hexp2 = H_exp(obj, N, 0, 1); %cyclic error
                 hexp = hexp2 / (obj.nf^(N + 1));
 
@@ -1425,6 +1453,61 @@ classdef generateMPO
 
         end
 
+        function [left_inv, left_dim] = get_L_inv_MPO(obj, M)
+            if M ~= 0
+
+                left_list = cell(1, M);
+                contract_list = cell(1, M);
+
+                for i = 1:M
+                    left_list{i} = obj.inverse_MPO_left{i};
+                    contract_list{i} = [i,i-1 , -(2 * i), -(2 * i + 1)];
+                end
+
+
+                contract_list{1}(2) = -(2 * M + 2);
+                contract_list{end}(1) = -1;
+
+        
+                left_inv = reshape(ncon(left_list, contract_list), [] ,obj.dim^(2 * M));
+                left_dim = size(left_inv,1);
+
+            else
+                left_inv = [1];
+                left_dim = 1;
+            end
+            
+        end
+        
+        function [right_inv, right_dim] = get_R_inv_MPO(obj, M)
+            if M ~= 0
+                
+                right_list = cell(1, M);
+                contract_list = cell(1, M);
+
+                for i = 1:M
+                    j = M-i+1;
+                    right_list{i} = obj.inverse_MPO_right{i};
+                    contract_list{i} = [-(2 * j), -(2 * j + 1),i-1, i];
+
+                end
+
+                contract_list{1}(3) =  -1;
+                contract_list{end}(4) = -(2 * M + 2);
+
+                right_inv = reshape(ncon(right_list, contract_list), obj.dim^(2 * M), []);
+                
+
+                
+                right_dim = size(right_inv,2);
+
+            else
+                right_inv = [1];
+                right_dim = 1;
+            end
+            
+        end
+        
         function [right_i, right_dim] = get_R(obj, M, V_cell)
 
             cellsource = 0;
@@ -1471,31 +1554,62 @@ classdef generateMPO
 
         function [y, left_dim] = invert_left(obj, x, M, U_cell)
 
-
-            if nargin < 4
-                [left_i, left_dim] = get_L(obj, M);
+            if obj.inverse_MPO      
+                %recollect inverses from memory
+                [left_inv, left_dim] = get_L_inv_MPO(obj, M);
+                y = ncon( {left_inv,x},{[-1,1],[1,-2]}  );
             else
-                [left_i, left_dim] = get_L(obj, M, U_cell);
-            end
-
-
-            y = lsqminnorm(left_i, x);
+                if nargin < 4
+                    [left_i, left_dim] = get_L(obj, M);
+                else
+                    [left_i, left_dim] = get_L(obj, M, U_cell);
+                end
+                y = lsqminnorm(left_i, x);    
+             end
 
         end
-
 
         function [y, right_dim] = invert_right(obj, x, M, V_cell)
-            if nargin < 4
-                [right_i, right_dim] = get_R(obj, M);
+% 
+            if obj.inverse_MPO      
+                %recollect inverses from memory
+                [right_inv, right_dim] = get_R_inv_MPO(obj, M);
+                y = ncon( {x,right_inv},{[-1,1],[1,-2]}  );
             else
-                [right_i, right_dim] = get_R(obj, M, V_cell);
-            end
-
-            y = lsqminnorm(right_i', x')';
-
+                if nargin < 4
+                [   right_i, right_dim] = get_R(obj, M);
+                else
+                    [right_i, right_dim] = get_R(obj, M, V_cell);
+                end
+                y = lsqminnorm(right_i', x')';
+             end
         end
 
+        function obj = register_left_inv_mpo(obj,N,U,sigma)
 
+            if obj.inverse_MPO
+               ldim = size(U,1)/(obj.dim^2);
+               rdim = size(sigma,2);
+               
+               invSigma = diag(sigma).^-1;
+               invMPO = reshape( diag(invSigma)* U', [rdim,ldim,obj.dim,obj.dim]);
+                             
+               obj.inverse_MPO_left{N+1,1} =invMPO ;
+            end
+        end
+        
+        function obj =  register_right_inv_mpo(obj,N,V,sigma)
+            if obj.inverse_MPO
+               ldim = size(sigma,1);
+               rdim = size(V,1)/obj.dim^2;
+               
+               invSigma = diag(sigma).^-1;
+               invMPO = reshape( V* diag(invSigma), [obj.dim,obj.dim,rdim,ldim]);
+                             
+               obj.inverse_MPO_right{N+1,1} = invMPO;
+            end
+        end
+        
         function [O, normalisation_factor] = change_normalisation(O, normalisation_factor, change)
             max_dim = size(O, 1);
 
@@ -1509,7 +1623,6 @@ classdef generateMPO
             normalisation_factor = normalisation_factor / change;
 
         end
-
     end
 end
 
