@@ -255,7 +255,7 @@ end
 %%
 function mpo_type_comparison_exact_generic_order
 
-simulatiemodellen = ["Heisenberg_2D", "random", "random", "random", "t_ising", "Heisenberg_2D_X", "random", "random"];
+simulatiemodellen = ["random", "random", "random", "t_ising","Heisenberg_2D",  "Heisenberg_2D_X", "random", "random"];
 %simulatiemodellen = ["Heisenberg_2D"];
 models_len = size(simulatiemodellen, 2);
 
@@ -295,15 +295,15 @@ for round = 1:models_len
     %
 
 
-    simul.Order_arr = [3, 4, 5];
-    simul.types = [2, 4, 5];
+    simul.Order_arr = [3,4,5,6];
+    simul.types = [2,4,5];
     simul.M = 8;
     simul.beta_arr = 10.^(-3:0.1:1.5);
     %simul.beta_arr = 10.^(  -0:0.05:1);
     simul.cyclic = 0;
 
 
-    opt5.method = "svd";
+    %opt5.method = "svd";
 
     opt2 = {};
     opt3.SparseArr = 1;

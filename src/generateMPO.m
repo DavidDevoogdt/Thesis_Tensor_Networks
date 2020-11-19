@@ -19,7 +19,7 @@ classdef generateMPO
         current_max_index
         nf_correction
         inverse_MPO
-                inverse_MPO_left
+        inverse_MPO_left
         inverse_MPO_right
     end
 
@@ -47,13 +47,13 @@ classdef generateMPO
 
                 p = inputParser;
                 addParameter(p, 'testing', 0)
-                addParameter(p, 'invMPO', 1)
+                addParameter(p, 'invMPO', 1) %
                 addParameter(p, 'MPO_type', 'matrix')
                 parse(p, opts)
 
-                
+
                 obj.inverse_MPO = p.Results.invMPO;
-                
+
                 obj.MPO_type = p.Results.MPO_type;
                 obj.testing = p.Results.testing;
 
@@ -139,6 +139,8 @@ classdef generateMPO
 
 
                 [part, ~] = invert_left(obj, RHS_Matrix_site, N-1);
+
+
                 part = reshape(part, [d^(2 * N), d^2]);
 
 
@@ -147,6 +149,10 @@ classdef generateMPO
                 if N ~= obj.order
                     left_i = U;
                     right_i = S * V';
+
+
+                    obj = obj.register_left_inv_mpo(N-1, U');
+
 
                     obj.MPO_cell{N, N+1} = reshape(left_i, [d^(2 * (N - 1)), d, d, d^(2 * N)]);
                     obj.MPO_cell{N+1, 1} = reshape(right_i, [d^(2 * N), d, d, 1]);
@@ -253,7 +259,7 @@ classdef generateMPO
             d = obj.dim;
 
             p = inputParser;
-            addParameter(p, 'method', "svd")
+            addParameter(p, 'method', "diag")
             addParameter(p, 'single_threshold', 1e-12)
             addParameter(p, 'max_err', 1e0)
             addParameter(p, 'to_matrix', 0)
@@ -273,11 +279,10 @@ classdef generateMPO
             obj.MPO_type = "cell";
 
             if obj.inverse_MPO %todo get real bounds
-                obj.inverse_MPO_left =  cell(obj.max_index+1, 1);
-                obj.inverse_MPO_right = cell(obj.max_index+1, 1) ;
+                obj.inverse_MPO_left = cell(obj.max_index+1, 1);
+                obj.inverse_MPO_right = cell(obj.max_index+1, 1);
             end
 
-            
 
             obj.MPO_cell{1, 1} = reshape(expm(obj.H_1_tensor)/obj.nf, [1, d, d, 1]);
 
@@ -331,45 +336,74 @@ classdef generateMPO
                 x = reshape(x, [left_dim * d^4, d^(2 * M)]);
                 [y, right_dim] = invert_right(obj, x, M);
 
-                new_parts = reshape(y, [left_dim , d^2, d^2,right_dim]);
+                new_parts = reshape(y, [left_dim, d^2, d^2, right_dim]);
 
                 new_parts_sym = reshape(permute(new_parts, [1, 2, 4, 3]), [left_dim * d^2, d^2 * right_dim]);
 
 
                 %%%%%%%%%%%%
-                [U, S, V] = svd(new_parts_sym);
+                switch p.Results.method 
+                    case "svd"
+              
+                        [U, S, V] = svd(new_parts_sym);
+                        
+                                        
+                        index_arr = diag(S) > p.Results.single_threshold;
+                        middle_dim = sum(index_arr);
 
-                index_arr = diag(S) > p.Results.single_threshold;
-                middle_dim = sum(index_arr);
+                        U2 = U(:, 1:middle_dim);
+                        S2 = S(1:middle_dim, 1:middle_dim);
+                        V2 = V(:, 1:middle_dim);
+                        
 
-                U2 = U(:, 1:middle_dim);
-                S2 = S(1:middle_dim, 1:middle_dim);
-                V2 = V(:, 1:middle_dim);
+                        V2_dag_perm = reshape(permute(reshape(V2', [middle_dim, right_dim, d, d]), [1, 3, 4, 2]), [ middle_dim,right_dim*d^2]);
+                        V2_perm = reshape(permute(reshape(V2, [right_dim, d, d, middle_dim]), [2, 3, 1, 4]), [right_dim*d^2, middle_dim]);
 
-                V2_dag_perm = reshape( permute( reshape(V2', [middle_dim, right_dim, d, d]) , [1, 3, 4, 2]  ), [middle_dim,middle_dim]);               
-                V2_perm = reshape( permute( reshape(V2, [right_dim, d, d,middle_dim] ) , [2, 3, 1, 4]  ), [middle_dim,middle_dim]);
-                
-                
-                %V2_dag_perm*V2_perm  ok
-                
-                sqrt_S = S2.^0.5;
-                
-                left_j = U2 * sqrt_S;
-                right_j = sqrt_S * V2_dag_perm;
-                
-                %V_2_perm = reshape(  permute( reshape(  V2, [right_dim,d^2,middle_dim] ), [2,1,3]), [middle_dim,middle_dim]);
-                
+
+                        sqrt_S = diag(diag(S2).^0.5);
+                        sqrt_S_inv = diag(diag(S2).^(-0.5));
+                        
+                        U_inv = sqrt_S_inv*U2';
+                        V_inv = V2_perm*sqrt_S_inv;
+                            
+                        
+                        U = U2 * sqrt_S;
+                        V = sqrt_S * V2_dag_perm;
+                        
+                    case "diag"
+                        [U, S] = eig(new_parts_sym);
+                        middle_dim = size(S,1);
+                        U_inv= U^-1;  %expensive
+                        
+                        V2_dag_perm = reshape(permute(reshape(U_inv, [middle_dim, right_dim, d, d]), [1, 3, 4, 2]), [middle_dim, middle_dim]);
+                        V2_perm = reshape(permute(reshape(U, [right_dim, d, d, middle_dim]), [2, 3, 1, 4]), [middle_dim, middle_dim]);
+
+                        sqrt_S_vect = diag(S).^0.5;
+                        sqrt_S = diag(sqrt_S_vect);
+                        sqrt_S_inv = diag(sqrt_S_vect.^(-1));
+                        
+                        U_inv =  sqrt_S_inv*U_inv;
+                        V_inv = V2_perm*sqrt_S_inv;
+                        
+                        U = U*sqrt_S;
+                        V = sqrt_S*V2_dag_perm;
+                    otherwise
+                        error("unknown method")
+                        
+                end
+
+
                 %%%%%%%%%%%%%%%%%%%
 
 
-                O_l = reshape(left_j, [left_dim, d, d, middle_dim]);
+                O_l = reshape(U, [left_dim, d, d, middle_dim]);
                 %O_r = reshape(right_j, [middle_dim, d, d,right_dim]);
-                O_r = reshape(right_j, [middle_dim,d,d, right_dim]);
+                O_r = reshape(V, [middle_dim, d, d, right_dim]);
 
-                obj = obj.register_left_inv_mpo(M,U2,sqrt_S);
-                obj = obj.register_right_inv_mpo(M,  V2_perm   ,sqrt_S);
-                
-                
+                obj = obj.register_left_inv_mpo(M, U_inv);
+                obj = obj.register_right_inv_mpo(M, V_inv);
+
+
                 hexp2 = H_exp(obj, N, 0, 1); %cyclic error
                 hexp = hexp2 / (obj.nf^(N + 1));
 
@@ -874,8 +908,8 @@ classdef generateMPO
 
             %
 
-            U_cell = cell(1, obj.max_index);
-            V_cell = cell(1, obj.max_index);
+            %U_cell = cell(1, obj.max_index);
+            %V_cell = cell(1, obj.max_index);
 
             sqrt_Dn_l = [1];
             sqrt_Dn_r = [1];
@@ -920,52 +954,92 @@ classdef generateMPO
 
                 res = reshape(RHS_Matrix, [d^(2 * M), d^4 * d^(2 * M)]);
 
-                [x, left_dim] = invert_left(obj, res, M, U_cell);
+                %[x, left_dim] = invert_left(obj, res, M, U_cell);
+                [x, left_dim] = invert_left(obj, res, M);
                 x = reshape(x, [left_dim * d^4, d^(2 * M)]);
-                [y, right_dim] = invert_right(obj, x, M, V_cell);
+                %[y, right_dim] = invert_right(obj, x, M, V_cell);
+                [y, right_dim] = invert_right(obj, x, M);
 
 
                 new_parts = reshape(y, [left_dim, d^2, d^2, right_dim]);
 
 
-                new_parts = reshape(permute(new_parts, [1, 2, 4, 3]), [left_dim * d^2, d^2 * right_dim]);
+                new_parts_sym = reshape(permute(new_parts, [1, 2, 4, 3]), [left_dim * d^2, d^2 * right_dim]);
+
+
                 %new_parts= reshape(  new_parts , [left_dim*d^2,d^2*right_dim]);
 
-
-                switch p.Results.method
+                switch p.Results.method 
                     case "svd"
-                        [U, Dn, V] = svd(new_parts);
+              
+                        [U2, S, V2] = svd(new_parts_sym);
 
-                        eps = 1e-15;
-
-                        maxval = sum(diag(Dn));
-                        sqrtmaxval = maxval^0.5;
-
-                        diag_Dn = diag(Dn/maxval);
-                        mask = diag_Dn < eps;
-                        diag_Dn(mask) = 0;
-
-                        diag_Dn_inv = diag_Dn;
-                        diag_Dn_inv(~mask) = diag_Dn_inv(~mask).^(-1);
-
-                        sqrt_Dn_l = diag(diag_Dn.^(1 / 2));
-                        sqrt_Dn_r = sqrt_Dn_l;
-
-                        sqrt_Dn_l_inv = diag(diag_Dn_inv.^(1 / 2));
-                        sqrt_Dn_r_inv = sqrt_Dn_l_inv;
-
-
-                        Sn = reshape(U*sqrtmaxval, [d^(2 * M), d, d, d^(2 * M + 2)]);
-
-                        SnD = permute(reshape(V' * sqrtmaxval, [d^(2 * M + 2), right_dim, d, d]), [1, 3, 4, 2]);
-                        %SnD =  reshape(V'*sqrtmaxval, [d^(2*M+2),d,d,d^(2*M)] ) ;
-                        U_cell{1+obj.current_max_index} = Sn;
-                        V_cell{1+obj.current_max_index} = SnD;
-
+                        V2_dag = V2';
+                        V2_inv = V2;
+                        U2_inv = U2';
+                        
+                       
+                        
+                    case "diag"
+                        [U2, S] = eig(new_parts_sym);
+                        
+                        V2_dag = U2^-1;
+                        V2_inv = U2;
+                        U2_inv = V2_dag;
                     otherwise
-                        error("unknown method");
-
+                        error("unknown method")
+                        
                 end
+                
+             
+                 
+                        middle_dim = size(S,1);
+                        
+
+                        V2_dag_perm = reshape(permute(reshape(V2_dag, [middle_dim, right_dim, d, d]), [1, 3, 4, 2]), [middle_dim, middle_dim]);
+                        V2_perm = reshape(permute(reshape(V2_inv, [right_dim, d, d, middle_dim]), [2, 3, 1, 4]), [middle_dim, middle_dim]);
+
+                        U_inv = U2_inv;
+                        V_inv = V2_perm;
+                            
+                        U = U2 ;
+                        V_dag = V2_dag_perm;
+                
+              
+                        %[U, Dn, V] = svd(new_parts);
+
+%                         middle_dim = size(Dn, 1);
+% 
+%                         eps = 1e-15;
+% 
+                         maxval = sum(abs(diag(S)));
+                         sqrtmaxval = maxval^0.5;
+% 
+                         diag_Dn = diag(S/maxval);
+
+                         diag_Dn_inv = diag_Dn.^-1;
+
+%                         diag_Dn_inv = diag_Dn;
+%                         diag_Dn_inv(~mask) = diag_Dn_inv(~mask).^(-1);
+% 
+                        diag_vect = diag_Dn.^(1 / 2);
+
+                         sqrt_Dn_l = diag(diag_vect);
+                         sqrt_Dn_r = sqrt_Dn_l;
+                         sqrt_Dn_l_inv = diag(diag_vect.^(-1));
+                         sqrt_Dn_r_inv = sqrt_Dn_l_inv;
+
+
+                        obj = register_left_inv_mpo(obj, M, U_inv / sqrtmaxval);
+                        obj = register_right_inv_mpo(obj, M, V_inv / sqrtmaxval);
+
+                        Sn = reshape(U*sqrtmaxval, [left_dim, d, d, middle_dim]);
+                        SnD = reshape(V_dag*sqrtmaxval, [middle_dim, d, d, right_dim]);
+                        %SnD =  reshape(V'*sqrtmaxval, [d^(2*M+2),d,d,d^(2*M)] ) ;
+                        %U_cell{1+obj.current_max_index} = Sn;
+                        %V_cell{1+obj.current_max_index} = SnD;
+
+
 
                 add_block_05(obj.current_max_index+1, Sn, SnD, sqrt_Dn_l, sqrt_Dn_r, sqrt_Dnm_l_inv, sqrt_Dnm_r_inv, d);
 
@@ -988,9 +1062,12 @@ classdef generateMPO
 
                 res = reshape(RHS_Matrix, [d^(2 * M), d^2 * d^(2 * M)]);
 
-                [x, left_dim] = invert_left(obj, res, M, U_cell);
+                
+                %[x, left_dim] = invert_left(obj, res, M, U_cell);
+                [x, left_dim] = invert_left(obj, res, M);
                 x = reshape(x, [left_dim * d^2, d^(2 * M)]);
-                [y, right_dim] = invert_right(obj, x, M, V_cell);
+                %[y, right_dim] = invert_right(obj, x, M, V_cell);
+                [y, right_dim] = invert_right(obj, x, M);
 
                 new_parts = reshape(y, [left_dim, d, d, right_dim]);
 
@@ -1461,53 +1538,52 @@ classdef generateMPO
 
                 for i = 1:M
                     left_list{i} = obj.inverse_MPO_left{i};
-                    contract_list{i} = [i,i-1 , -(2 * i), -(2 * i + 1)];
+                    contract_list{i} = [i, i - 1, -(2 * i), -(2 * i + 1)];
                 end
 
 
                 contract_list{1}(2) = -(2 * M + 2);
                 contract_list{end}(1) = -1;
 
-        
-                left_inv = reshape(ncon(left_list, contract_list), [] ,obj.dim^(2 * M));
-                left_dim = size(left_inv,1);
+
+                left_inv = reshape(ncon(left_list, contract_list), [], obj.dim^(2 * M));
+                left_dim = size(left_inv, 1);
 
             else
                 left_inv = [1];
                 left_dim = 1;
             end
-            
+
         end
-        
+
         function [right_inv, right_dim] = get_R_inv_MPO(obj, M)
             if M ~= 0
-                
+
                 right_list = cell(1, M);
                 contract_list = cell(1, M);
 
                 for i = 1:M
-                    j = M-i+1;
+                    j = M - i + 1;
                     right_list{i} = obj.inverse_MPO_right{i};
-                    contract_list{i} = [-(2 * j), -(2 * j + 1),i-1, i];
+                    contract_list{i} = [-(2 * j), -(2 * j + 1), i - 1, i];
 
                 end
 
-                contract_list{1}(3) =  -1;
+                contract_list{1}(3) = -1;
                 contract_list{end}(4) = -(2 * M + 2);
 
                 right_inv = reshape(ncon(right_list, contract_list), obj.dim^(2 * M), []);
-                
 
-                
-                right_dim = size(right_inv,2);
+
+                right_dim = size(right_inv, 2);
 
             else
                 right_inv = [1];
                 right_dim = 1;
             end
-            
+
         end
-        
+
         function [right_i, right_dim] = get_R(obj, M, V_cell)
 
             cellsource = 0;
@@ -1554,62 +1630,80 @@ classdef generateMPO
 
         function [y, left_dim] = invert_left(obj, x, M, U_cell)
 
-            if obj.inverse_MPO      
+            if obj.inverse_MPO
                 %recollect inverses from memory
                 [left_inv, left_dim] = get_L_inv_MPO(obj, M);
-                y = ncon( {left_inv,x},{[-1,1],[1,-2]}  );
+                y = ncon({left_inv, x}, {[-1, 1], [1, -2]});
             else
                 if nargin < 4
                     [left_i, left_dim] = get_L(obj, M);
                 else
                     [left_i, left_dim] = get_L(obj, M, U_cell);
                 end
-                y = lsqminnorm(left_i, x);    
-             end
+                y = lsqminnorm(left_i, x);
+            end
 
         end
 
         function [y, right_dim] = invert_right(obj, x, M, V_cell)
-% 
-            if obj.inverse_MPO      
+            %
+            if obj.inverse_MPO
                 %recollect inverses from memory
                 [right_inv, right_dim] = get_R_inv_MPO(obj, M);
-                y = ncon( {x,right_inv},{[-1,1],[1,-2]}  );
+                y = ncon({x, right_inv}, {[-1, 1], [1, -2]});
             else
                 if nargin < 4
-                [   right_i, right_dim] = get_R(obj, M);
+                    [right_i, right_dim] = get_R(obj, M);
                 else
                     [right_i, right_dim] = get_R(obj, M, V_cell);
                 end
                 y = lsqminnorm(right_i', x')';
-             end
-        end
-
-        function obj = register_left_inv_mpo(obj,N,U,sigma)
-
-            if obj.inverse_MPO
-               ldim = size(U,1)/(obj.dim^2);
-               rdim = size(sigma,2);
-               
-               invSigma = diag(sigma).^-1;
-               invMPO = reshape( diag(invSigma)* U', [rdim,ldim,obj.dim,obj.dim]);
-                             
-               obj.inverse_MPO_left{N+1,1} =invMPO ;
             end
         end
-        
-        function obj =  register_right_inv_mpo(obj,N,V,sigma)
+
+        function obj = register_left_inv_mpo(obj, N, U_inv, sigma)
+
             if obj.inverse_MPO
-               ldim = size(sigma,1);
-               rdim = size(V,1)/obj.dim^2;
-               
-               invSigma = diag(sigma).^-1;
-               invMPO = reshape( V* diag(invSigma), [obj.dim,obj.dim,rdim,ldim]);
-                             
-               obj.inverse_MPO_right{N+1,1} = invMPO;
+
+                ldim = size(U_inv, 2) / (obj.dim^2);
+
+                if nargin < 4
+                    rdim = size(U_inv, 1);
+                    inv = U_inv;
+                else
+                    rdim = size(sigma, 2);
+                    invSigma = diag(sigma).^-1;
+                    inv = diag(invSigma) * U_inv;
+                end
+
+
+                invMPO = reshape(inv, [rdim, ldim, obj.dim, obj.dim]);
+
+                obj.inverse_MPO_left{N+1, 1} = invMPO;
             end
         end
+
+        function obj = register_right_inv_mpo(obj, N, V_inv, sigma)
+            if obj.inverse_MPO
+
+                rdim = size(V_inv, 1) / obj.dim^2;
+
+                if nargin < 4
+                    ldim = size(V_inv, 2);
+                    inv = V_inv;
+                else
+                    ldim = size(sigma, 1);
+                    invSigma = diag(sigma).^-1;
+                    inv = V_inv * diag(invSigma);
+                end
+
         
+                invMPO = reshape(inv, [obj.dim, obj.dim, rdim, ldim]);
+
+                obj.inverse_MPO_right{N+1, 1} = invMPO;
+            end
+        end
+
         function [O, normalisation_factor] = change_normalisation(O, normalisation_factor, change)
             max_dim = size(O, 1);
 

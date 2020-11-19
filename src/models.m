@@ -14,7 +14,7 @@ parse(p, opts)
 %model = "l_ising";
 
 
-opt4.method = "svd";
+%opt4.method = "svd";
 opt4.to_matrix = 1; %keep in cell form
 opt4.single_threshold = 1e-12;
 
