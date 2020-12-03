@@ -4,6 +4,8 @@ function test
 end
 
 function test_H_exp
+    fprintf("test_H_exp\n")
+
     d=2;
     S_x = 0.5* [0,1;1,0];
     S_y = 0.5* [0,-1i;1i,0];
@@ -41,9 +43,14 @@ function test_H_exp
            
     fprintf( "diff= %f \n", sum(  abs( reshape(Z2-Z1,[],1)))) %should be zero because it the same length chain numbered in same way       
    
+    fprintf("\n end test_H_exp\n")
+    
 end
 
 function test_PEPO
+
+    fprintf("\n")
+
     d=2;
     
     %hamiltonian setup
@@ -69,7 +76,7 @@ function test_PEPO
     
     map = PEPO.create_map(pos_map);
     map_arg = struct("map", map  );     
-    beta_arr = 10.^(-5:0.2:2);
+    beta_arr = 10.^(-3:0.2:2);
     beta_len = size(beta_arr,2);
     err_arr = zeros( beta_len ,1); 
 
@@ -77,6 +84,12 @@ function test_PEPO
         beta = beta_arr(i);
         pepo = PEPO(d,beta*H_1_tensor,beta*H_2_tensor,2,1,opts);
         [err,prefact] = pepo.calculate_error(map_arg );
+        
+        
+        
+        
+        [A,G,lambda,ctr,error] = pepo.vumps();
+        
         fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );
         err_arr(i) = abs(err);
 

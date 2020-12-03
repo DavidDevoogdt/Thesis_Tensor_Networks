@@ -17,6 +17,8 @@ classdef PEPO
         max_index
         testing
         visualise
+        virtual_level_sizes_horiz
+        virtual_level_sizes_vert
     end
     
     
@@ -56,12 +58,18 @@ classdef PEPO
             map = PEPO.create_map([1 1]);
             map_arg = struct( "map",  map);
             
+            %todo do this in code
+            obj.virtual_level_sizes_horiz = [d^0,d^2,d^2];
+            obj.virtual_level_sizes_vert = [d^0,d^2,d^4];
+            
+            
             Tensor_010 = obj.H_exp(map_arg,obj.nf) -...
                 obj.contract_network(map_arg,current_max_index);
             
             err = eigs(reshape(Tensor_010,[d^(map.N),d^(map.N)]),1);   
             fprintf("010 err %.4e",abs(err));
             
+
             if abs(err) > 1e-10
                 Tensor_010_site = reshape(  permute(Tensor_010, site_ordering_permute(map.N)),...
                                 [d^2,d^2] );
@@ -449,6 +457,80 @@ classdef PEPO
             end
         end
         
+        function [T, totaldimension] = cell2matrix(obj)
+                        
+            d = obj.dim;
+            
+            size_arr_horiz = obj.virtual_level_sizes_horiz;
+
+            start_index_H = zeros(obj.max_index+2, 1);
+            start_index_H(1) = 1;
+            ind = 1;
+            for i = 2:obj.max_index + 2
+                ind = ind + size_arr_horiz(i-1);
+                start_index_H(i) = ind;
+            end
+
+
+            totaldimension = start_index_H(end) - 1;
+
+            
+            function y = getH(i)
+               y=  start_index_H(i):start_index_H(i + 1)-1;
+            end
+            
+            size_arr_vert = obj.virtual_level_sizes_vert;
+
+            start_index_V = zeros(obj.max_index+2, 1);
+            start_index_V(1) = 1;
+            ind = 1;
+            for i = 2:obj.max_index + 2
+                ind = ind + size_arr_vert(i-1);
+                start_index_V(i) = ind;
+            end
+
+
+            totaldimension = start_index_V(end) - 1;
+
+            
+            function y = getV(i)
+               y=  start_index_V(i):start_index_V(i + 1)-1;
+            end
+            
+            
+
+            T = zeros(totaldimension,totaldimension,totaldimension,totaldimension);
+            %move all existing tensors to matrix
+            for i1 = 1:obj.max_index + 1
+                for i2 = 1:obj.max_index + 1
+                    for i3 = 1:obj.max_index + 1
+                        for i4 = 1:obj.max_index + 1
+                            %trace the spins for the environment
+                            cell =  obj.PEPO_cell{i1,i2,i3,i4};
+                            if length(cell)~=0 
+                                T(getH(i1), getV(i2), getH(i3),getV(i4) ) = ncon(  { obj.PEPO_cell{i1,i2,i3,i4} } , {[1,1,-1,-2,-3,-4]} );
+                            end
+                            
+                            
+                        end
+                    end
+                end
+            end
+
+
+            %K=reshape(T(:,1,1,:),[45,45]);
+
+
+%             obj.left = zeros(1, totaldimension);
+%             obj.left(1) = 1;
+%             obj.right = zeros(totaldimension, 1);
+%             obj.right(1) = 1;
+
+
+
+            
+        end
+        
         function [err,prefact] = calculate_error(obj,map)
             d=obj.dim;
             map = PEPO.parse_map(map);
@@ -470,6 +552,50 @@ classdef PEPO
             % prefact^N
 
             err =  ( eigs(  (a-b)  ,1) )/ eig_a   ;
+        end
+        
+        function [A,G,lambda,ctr,error] = vumps(obj)
+            
+
+            %todo check these params
+            opts.charges='regular';
+            opts.dynamical='off';
+            opts.dyncharges=0;
+            opts.schmidtcut=1e-10;
+            opts.chimax=350;
+            opts.disp='iter';
+            opts.tolmax=1e-4;
+            opts.tolfactor=1e4;
+            opts.minit=1;
+            opts.dyniter=5;
+            opts.truncate=0;
+            opts.method='vumps';
+            opts.save=0;
+
+
+            opts.plot='on';
+            opts.maxit=1000;
+            opts.tolfixed=1e-10;
+            
+            %put into vumps format
+            
+
+            [T, totaldimension] = cell2matrix(obj);
+         
+            o.legs=4;
+            o.group='none';
+            o.dims = size( T ) ;
+            o.var = T;
+
+            O.type = 'mpo';
+            O.mpo=o;
+
+
+            [A,G,lambda,ctr,error]=Vumps(O,40,[],opts);
+
+            %%
+
+            
         end
         
     end
