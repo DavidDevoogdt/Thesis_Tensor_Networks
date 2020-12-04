@@ -66,8 +66,8 @@ classdef PEPO
             Tensor_010 = obj.H_exp(map_arg,obj.nf) -...
                 obj.contract_network(map_arg,current_max_index);
             
-            err = eigs(reshape(Tensor_010,[d^(map.N),d^(map.N)]),1);   
-            fprintf("010 err %.4e",abs(err));
+            %err = eigs(reshape(Tensor_010,[d^(map.N),d^(map.N)]),1);   
+            %fprintf("010 err %.4e",abs(err));
             
 
             if abs(err) > 1e-10
@@ -103,8 +103,8 @@ classdef PEPO
                 obj.contract_network(map_arg,current_max_index);
             
             
-            err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
-            fprintf("0110 err %.4e",abs(err));
+            %err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
+            %fprintf("0110 err %.4e",abs(err));
             
             if abs(err) > 1e-8
             
@@ -136,8 +136,8 @@ classdef PEPO
                 Tensor_0110 = obj.H_exp(map_arg,obj.nf)-...
                     obj.contract_network(map_arg,current_max_index);
 
-                err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
-                fprintf("err %.4e",abs(err));
+                %err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
+                %fprintf("err %.4e",abs(err));
 
                 Tensor_0110_site = reshape(  permute(Tensor_0110, site_ordering_permute(map.N))....
                                             ,[d^2,d^2,d^2] );
@@ -166,8 +166,8 @@ classdef PEPO
                 Tensor_0110 = obj.H_exp(map_arg,obj.nf)-...
                     obj.contract_network(map_arg,current_max_index);
 
-                err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
-                fprintf("err %.4e",abs(err));
+                %err = eigs(reshape(Tensor_0110,[d^(map.N),d^(map.N)]),1);   
+                %fprintf("err %.4e",abs(err));
 
 
 
@@ -200,10 +200,10 @@ classdef PEPO
             Tensor_1111 = obj.H_exp(map_arg,obj.nf)-...
                 obj.contract_network(map_arg,current_max_index);
             
-            err = eigs(reshape(Tensor_1111,[d^(map.N),d^(map.N)]),1);   
-            fprintf("block err %.4e",abs(err));
+            %err = eigs(reshape(Tensor_1111,[d^(map.N),d^(map.N)]),1);   
+            %fprintf("block err %.4e",abs(err));
             
-            if abs(err) > 1e-8
+            %if abs(err) > 1e-8
                 Tensor_1111_site = reshape(  permute(Tensor_1111, site_ordering_permute(map.N)),...
                                 [d^4,d^4] );
 
@@ -245,7 +245,7 @@ classdef PEPO
                       fprintf("err decomposing block %.4e",err);
                 end
                         
-            end            
+            %end            
         end
         
         function H = H_exp(obj,map,prefactor)
@@ -499,7 +499,7 @@ classdef PEPO
             
             
 
-            T = zeros(totaldimension,totaldimension,totaldimension,totaldimension);
+            T = zeros(d,d,totaldimension,totaldimension,totaldimension,totaldimension);
             %move all existing tensors to matrix
             for i1 = 1:obj.max_index + 1
                 for i2 = 1:obj.max_index + 1
@@ -508,7 +508,7 @@ classdef PEPO
                             %trace the spins for the environment
                             cell =  obj.PEPO_cell{i1,i2,i3,i4};
                             if length(cell)~=0 
-                                T(getH(i1), getV(i2), getH(i3),getV(i4) ) = ncon(  { obj.PEPO_cell{i1,i2,i3,i4} } , {[1,1,-1,-2,-3,-4]} );
+                                T(:,:,getH(i1), getV(i2), getH(i3),getV(i4)) = obj.PEPO_cell{i1,i2,i3,i4}; %ncon(  { obj.PEPO_cell{i1,i2,i3,i4} } , {[1,1,-1,-2,-3,-4]} );
                             end
                             
                             
@@ -517,6 +517,8 @@ classdef PEPO
                 end
             end
 
+           
+            
 
             %K=reshape(T(:,1,1,:),[45,45]);
 
@@ -575,25 +577,29 @@ classdef PEPO
 
             opts.plot='on';
             opts.maxit=1000;
-            opts.tolfixed=1e-10;
+            opts.tolfixed=1e-20;
             
             %put into vumps format
             
 
             [T, totaldimension] = cell2matrix(obj);
          
+            %put auxilary indices at the end for vumps and reshape to peps
+            %format
+            M = ncon( {T},{[1,1,-2,-3,-4,-1]});
+            
             o.legs=4;
             o.group='none';
-            o.dims = size( T ) ;
-            o.var = T;
+            o.dims = size( M ) ;
+            o.var = M;
 
             O.type = 'mpo';
             O.mpo=o;
 
 
-            [A,G,lambda,ctr,error]=Vumps(O,40,[],opts);
+            [A,G,lambda,ctr,error]=Vumps(O,20,[],opts);
 
-            %%
+           
 
             
         end

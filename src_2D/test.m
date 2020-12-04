@@ -1,5 +1,5 @@
 function test
-    test_H_exp
+    %test_H_exp
     test_PEPO
 end
 
@@ -68,15 +68,15 @@ function test_PEPO
     opts.testing=0;
     opts.visualise=0;
                
-    pos_map = [1,0,0,1;
+    pos_map = [1,1,0,1;
                1,1,1,1;
-               1,1,1,1];
+               0,1,1,1];
 
               
     
     map = PEPO.create_map(pos_map);
     map_arg = struct("map", map  );     
-    beta_arr = 10.^(-3:0.2:2);
+    beta_arr = 10.^(-1:0.2:2);
     beta_len = size(beta_arr,2);
     err_arr = zeros( beta_len ,1); 
 
