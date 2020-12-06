@@ -14,7 +14,7 @@ function test_H_exp
 
     %ij indices in front, others dont matter hare
     J=1;
-    g=2.1;
+    g=0.4;
     
     opts.testing=0;
     opts.visualise=0;
@@ -68,27 +68,25 @@ function test_PEPO
     opts.testing=0;
     opts.visualise=0;
                
-    pos_map = [1,1,0,1;
+    pos_map = [0,0,1,1;
                1,1,1,1;
-               0,1,1,1];
+               0,0,1,1];
 
-              
-    
-    map = PEPO.create_map(pos_map);
-    map_arg = struct("map", map  );     
-    beta_arr = 10.^(-1:0.2:2);
+
+    map = PEPO.create_map(pos_map); 
+    beta_arr = 10.^(-3:0.2:1);
     beta_len = size(beta_arr,2);
     err_arr = zeros( beta_len ,1); 
 
     for i=1:beta_len
         beta = beta_arr(i);
-        pepo = PEPO(d,beta*H_1_tensor,beta*H_2_tensor,2,1,opts);
-        [err,prefact] = pepo.calculate_error(map_arg );
+        pepo = PEPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,1,opts);
+        [err,prefact] = pepo.calculate_error(map );
         
+        %[A,G,lambda,ctr,error] = pepo.vumps();
         
+        %pepo.get_expectation( S_z  )
         
-        
-        [A,G,lambda,ctr,error] = pepo.vumps();
         
         fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );
         err_arr(i) = abs(err);
