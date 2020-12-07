@@ -60,16 +60,19 @@ function test_PEPO
     I_tensor = eye(2);
 
     J=1;
-    g=2.1;
+    g=0.1;
     
-    H_1_tensor = -J*g*reshape( S_x, [d,d]);
-    H_2_tensor = -J* reshape( ncon( {S_z,S_z}, {[-1,-3],[-2,-4]}), [d,d,d,d]); 
+    H_1_tensor = 0*eye(d);
+    H_2_tensor = -J* ( reshape( ncon( {S_z,S_z}, {[-1,-3],[-2,-4]}), [d,d,d,d]) +...
+                        0.5* reshape( ncon( {S_x,eye(d)}, {[-1,-3],[-2,-4]}), [d,d,d,d])+...
+                        0.5* reshape( ncon( {eye(d),S_x}, {[-1,-3],[-2,-4]}), [d,d,d,d]));
+                        
 
     opts.testing=0;
     opts.visualise=0;
                
     pos_map = [0,0,1,1;
-               1,1,1,1;
+               0,1,1,1;
                0,0,1,1];
 
 
@@ -80,12 +83,12 @@ function test_PEPO
 
     for i=1:beta_len
         beta = beta_arr(i);
-        pepo = PEPO(d,-beta*H_1_tensor,-beta*H_2_tensor,2,1,opts);
-        [err,prefact] = pepo.calculate_error(map );
+        pepo = PEPO(d,-beta*H_1_tensor,-beta*H_2_tensor,3,1,opts);
+        %[err,prefact] = pepo.calculate_error(map );
         
         %[A,G,lambda,ctr,error] = pepo.vumps();
         
-        %pepo.get_expectation( S_z  )
+        pepo.get_expectation( S_z  )
         
         
         fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );

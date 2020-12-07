@@ -50,13 +50,12 @@ classdef PEPO
             d = obj.dim;
             
             %todo do this in code
-            obj.virtual_level_sizes_horiz = [d^0,d^2,d^2];
-            obj.virtual_level_sizes_vert = [d^0,d^2,d^4];
-            %obj.virtual_level_sizes_horiz = [d^0,d^2];
-            %obj.virtual_level_sizes_vert = [d^0,d^2];
+            obj.virtual_level_sizes_horiz = [d^0,d^2,d^4,d^2];
+            obj.virtual_level_sizes_vert = [d^0,d^2,d^4,d^4];
+
             
             %%%%%%%%%%single site
-            O_0000 = expm( obj.H_1_tensor );
+            O_0000 = expm( 0*obj.H_1_tensor );
             obj.nf = trace(O_0000);
             
             obj.PEPO_cell{1,1,1,1} = reshape(  O_0000/obj.nf , [d,d,1,1,1,1] ) ;
@@ -64,126 +63,219 @@ classdef PEPO
             %%%%%%%%%%%%%% 0--|--1--|--0 and all other veriants
             obj.current_max_index = 0;
             
-            map = PEPO.create_map([1 1]);
+            
+            part = obj.get_middle_part(...
+                {[],[],[],[]},[1,2],0);
 
-            Tensor_010 = obj.H_exp(map,obj.nf) -...
-                obj.contract_network(map,obj.current_max_index);
 
-            Tensor_010_site = reshape(  permute(Tensor_010, site_ordering_permute(map.N)),...
-                            [d^2,d^2] );
-
-            [U,S,V] = svd( Tensor_010_site);
-
+            [U,S,V] = svd(  reshape(part,d^2,d^2) );
+            
             sqrt_S = diag(diag(S).^0.5);
             
-            block_01 = reshape(U*sqrt_S, [d,d,d^2]);
-            block_10 = permute( reshape(sqrt_S*V', [d^2,d,d]), [2,3,1]); 
+            block_l = permute( reshape(U*sqrt_S, [1,d,d,d^2]), [2,3,1,4]);
+            block_r = permute( reshape(sqrt_S*V', [d^2,d,d,1]), [2,3,1,4]); 
+            
 
-            obj.PEPO_cell{1,1,2,1} =reshape(block_01, [d,d,1,1,d^2,1]);%right
-            obj.PEPO_cell{1,1,1,2} =reshape(block_01, [d,d,1,1,1,d^2]);%down
+            obj.PEPO_cell{1,1,2,1} =reshape(block_l, [d,d,1,1,d^2,1]);%right
+            obj.PEPO_cell{1,1,1,2} =reshape(block_l, [d,d,1,1,1,d^2]);%down
 
-            obj.PEPO_cell{2,1,1,1} =reshape(block_10, [d,d,d^2,1,1,1]);%left
-            obj.PEPO_cell{1,2,1,1} =reshape(block_10, [d,d,1,d^2,1,1]);%up
+            obj.PEPO_cell{2,1,1,1} =reshape(block_r, [d,d,d^2,1,1,1]);%left
+            obj.PEPO_cell{1,2,1,1} =reshape(block_r, [d,d,1,d^2,1,1]);%up
 
-
-            if obj.testing==1
-                err = ncon( { obj.PEPO_cell{1,1,2,1},  obj.PEPO_cell{2,1,1,1}  },{ [-1,-3,-5,-6,1,-7],[-2,-4,1,-8,-9,-10]  }  )-Tensor_010;
-                fprintf(  "err 010 %.4e \n",  eigs(  reshape(err, [d^map.N,d^map.N]),1) ); 
-            end
-            %end
             
             %%%%%%%%%%%%%%%%%create 0--|--1--|--1--|--0 and variants
-            obj.current_max_index=1;
+           if obj.max_index >=1 
             
-            part = obj.get_middle_part( [1,2],[2,3],[1,2,3] );
+                obj.current_max_index=1;
+
+                block_11 = obj.get_middle_part( {[1,2],[],[2,3],[]},[1,2,3] );
+                %block_11_bis = obj.get_middle_part(
+                %{[1,2],[],[],[2;3]},[1,2;0,3] ); same 
+
+                %6E-8
+    %             obj.calculate_error( PEPO.create_map([1 2 3],1)) %  0
+    %             obj.calculate_error( PEPO.create_map([1 2;0 3],1)) % 0
+    %             obj.calculate_error( PEPO.create_map([1 0; 2 3],1)) %2E-16
+    %             obj.calculate_error( PEPO.create_map([1; 2 ;3;],1)) %  0
+
+                %al same block because up and left blocks are the same
+                obj.PEPO_cell{2,1,2,1}= reshape(block_11,[d,d,d^2,1,d^2,1]); 
+                obj.PEPO_cell{2,1,1,2}= reshape(block_11,[d,d,d^2,1,1,d^2]); 
+                obj.PEPO_cell{1,2,2,1}= reshape(block_11,[d,d,1,d^2,d^2,1]); 
+                obj.PEPO_cell{1,2,1,2}= reshape(block_11,[d,d,1,d^2,1,d^2]); 
+
+
+
+                %this is between 2 01 blocks
+
+
+                %obj.calculate_error( PEPO.create_map([0 2; 1 3],1))
+                %obj.calculate_error( PEPO.create_map([0 3; 1 2],1))
+
+
+                obj.PEPO_cell{2,2,1,1}= obj.get_middle_part( ....
+                    {[1,3],[2; 3],[],[]},[0 2;
+                                          1 3]); %ok
+
+                %this is between 2 10 blocks
+
+                %obj.calculate_error( PEPO.create_map([1 2; 3 0],1))
+                %obj.calculate_error( PEPO.create_map([1 3; 2 0],1))
+
+                obj.PEPO_cell{1,1,2,2}= obj.get_middle_part(...
+                    {[],[],[1,2],[1;3]},[1 2;
+                                         3 0]); %ok
+
+                %%%%% node with 3 1 indices                     
+                              
+                %obj.calculate_error( PEPO.create_map([1 2 3;0 4 0],1))
+                obj.PEPO_cell{2,1,2,2}= obj.get_middle_part(...
+                    {[1 2],[],[2,3],[2;4]},[1 2 3;
+                                            0 4 0]);
+                                        
+                obj.PEPO_cell{2,2,2,1}= obj.get_middle_part(...
+                    {[1 3],[2;3],[3,4],[]},[0 2 0;
+                                            1 3 4]);
+                                        
+                obj.PEPO_cell{1,2,2,2}= obj.get_middle_part(...
+                    {[],[1;2],[2,3],[2;4]},[1 0;
+                                            2 3;
+                                            4 0]);
+                
+                obj.PEPO_cell{2,2,1,2}= obj.get_middle_part(...
+                    {[1 3],[2;3],[],[3;4]},[0 2;
+                                            1 3;
+                                            0 4]);
+                
+                %%%%  four vertex node
+                %obj.calculate_error( PEPO.create_map([ 0 2 0;1 3 4; 0 5 0],1))
+                obj.PEPO_cell{2,2,2,2}= obj.get_middle_part(...
+                    {[1 3],[2;3],[3,4],[3;5]},[ 0 2 0;
+                                                1 3 4;
+                                                0 5 0]);
+                                        
+                                        
+                %%%%%%%%%%%%% create  0--|--1--|--2--|--1--|--0
+                
+                if obj.max_index >= 2 
+                    %horizontal
+                    obj.current_max_index=2;
+
+                    part = obj.get_middle_part(...
+                        {[1,2],[],[3,4],[]},[1,2,3,4],0);
+
+                    [U,S,V] = svd( reshape(part,d^2*d^2,d^2*d^2) );
+
+                    sqrt_S = diag(diag(S).^0.5);
+
+
+                    %maps 
+        %             obj.calculate_error( PEPO.create_map([1 2 3 4],1)) % 4e-15 --6e-21
+        %             obj.calculate_error( PEPO.create_map([1 2 3; 0 0 4],1)) %4e-15-- 6 e-21
+        %             obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],1)) %4e-15 --2 e-16
+        %             obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],1)) %4e-15--2e-16
+
+                    block_l = permute( reshape(U*sqrt_S, [d^2,d,d,d^4]), [2,3,1,4]);
+                    block_r = permute( reshape(sqrt_S*V', [d^4,d,d,d^2]), [2,3,1,4]); 
+
+                    obj.PEPO_cell{2,1,3,1}= reshape(block_l,[d,d,d^2,1,d^4,1]);
+                    obj.PEPO_cell{1,2,3,1}= reshape(block_l,[d,d,1,d^2,d^4,1]);
+
+                    obj.PEPO_cell{3,1,2,1}= reshape(block_r,[d,d,d^4,1,d^2,1]);
+                    obj.PEPO_cell{3,1,1,2}= reshape(block_r,[d,d,d^4,1,1,d^2]);
+
+
+
+
+                    %vertical can be merged with previous calculation
+                    part = obj.get_middle_part(...
+                        {[],[1;2],[],[3;4]},[1;2;3;4],0);
+
+                    [U,S,V] = svd(  reshape(part,d^2*d^2,d^2*d^2) );
+
+                    sqrt_S = diag(diag(S).^0.5);
+
+                    block_u = permute( reshape(U*sqrt_S, [d^2,d,d,d^4]), [2,3,1,4]);
+                    block_d = permute( reshape(sqrt_S*V', [d^4,d,d,d^2]), [2,3,1,4]); 
+
+
+        %             obj.calculate_error( PEPO.create_map([1; 2; 3; 4;],1)) % 
+        %             obj.calculate_error( PEPO.create_map([1 0;2 0;3 4],1)) %
+        %             obj.calculate_error( PEPO.create_map([1 2; 0 3; 0 4],1)) %
+        %             obj.calculate_error( PEPO.create_map([1 2 0; 0 3 4],1)) %
+
+                    obj.PEPO_cell{1,2,1,3}= reshape(block_u,[d,d,1,d^2,1,d^4]);
+                    obj.PEPO_cell{2,1,1,3}= reshape(block_u,[d,d,d^2,1,1,d^4]);
+
+                    obj.PEPO_cell{1,3,1,2}= reshape(block_d,[d,d,1,d^4,1,d^2]);
+                    obj.PEPO_cell{1,3,2,1}= reshape(block_d,[d,d,1,d^4,d^2,1]);
+
+                    %special left
+                    % obj.calculate_error( PEPO.create_map([1,2,3;4,0,0;],1))
+
+                    part = obj.get_middle_part(...
+                        {[],[],[1,2,3],[1;4]},[1,2,3;
+                                               4,0,0;],1);
+                    obj.PEPO_cell{1,1,3,2}= part; %ok                 
+
+                    %special right
+                    % obj.calculate_error( PEPO.create_map([0,0,3;1,2,4;],1))
+                    part = obj.get_middle_part(...
+                        {[1,2,4],[3;4],[],[]},[0,0,3;
+                                               1,2,4;],1);              
+                    obj.PEPO_cell{3,2,1,1}= part; %ok
+                                            
+               end
+           end
             
-            block_11 = permute( reshape(part, [d^2,d,d,d^2]), [2,3,1,4]);
-
-            obj.PEPO_cell{2,1,2,1}= reshape(block_11,[d,d,d^2,1,d^2,1]);
-            obj.PEPO_cell{2,1,1,2}= reshape(block_11,[d,d,d^2,1,1,d^2]);
-            obj.PEPO_cell{1,2,2,1}= reshape(block_11,[d,d,1,d^2,d^2,1]);
-            obj.PEPO_cell{1,2,1,2}= reshape(block_11,[d,d,1,d^2,1,d^2]);
-
-            %this is between 2 01 blocks
-
-            part = obj.get_middle_part( [1,2],[2;
-                                               3],[0 3; 
-                                                   1 2]);
-
-            block_11 = permute( reshape(part, [d^2,d,d,d^2]), [2,3,1,4]);
-            obj.PEPO_cell{2,2,1,1}= reshape(block_11,[d,d,d^2,d^2,1,1]);
-
-            %this is between 2 10 blocks
-
-            part = obj.get_middle_part( [1;
-                                         2],[2,3],[2 3; 
-                                                   1 0]); 
-            block_11 = permute( reshape(part, [d^2,d,d,d^2]), [2,3,1,4]);
-
-            obj.PEPO_cell{1,1,2,2}= reshape(block_11,[d,d,1,1,d^2,d^2]);
-
             
-            
-            obj.max_index=1;
+            %%%%%%%%%%%%  correct for loop
+            obj.current_max_index=2;   
 
-
-
-%             %  correct for one loop
-             
             map = PEPO.create_map([1 1;
                                    1 1]);
             
             Tensor_1111 = obj.H_exp(map,obj.nf)-...
                 obj.contract_network(map,obj.current_max_index);
-            
-%             err = eigs(reshape(Tensor_1111,[d^(map.N),d^(map.N)]),1);   
-%             fprintf("block err %.4e",abs(err));
-%             
-%             if abs(err) > 1e-8
-                Tensor_1111_site = reshape(  permute(Tensor_1111, site_ordering_permute(map.N)),...
-                                [d^4,d^4] );
 
-                [U,S,V] = svd(Tensor_1111_site );
-                sqrt_S = S.^0.5;
+            Tensor_1111_site = reshape(  permute(Tensor_1111, site_ordering_permute(map.N)),...
+                            [d^4,d^4] );
 
-                l = reshape( permute(reshape(U*sqrt_S, [d^2,d^2,d^2,d^2]), [3,1,2,4]), [d^4,d^4]);
-                [U2,S2,V2] = svd(l);
+            [U,S,V] = svd(Tensor_1111_site );
+            sqrt_S = S.^0.5;
 
-                sqrt_S2 = S2.^0.5;
+            l = reshape( permute(reshape(U*sqrt_S, [d^2,d^2,d^2,d^2]), [3,1,2,4]), [d^4,d^4]);
+            [U2,S2,V2] = svd(l);
 
-                lu = reshape(  U2*sqrt_S2, [d^2,d,d,d^4]);
-                ld =  reshape(  sqrt_S2*V2', [d^4,d,d,d^2]);
+            sqrt_S2 = S2.^0.5;
 
-                r = reshape( permute(reshape(sqrt_S*V', [d^2,d^2,d^2,d^2]), [1,3,4,2]), [d^4,d^4]);
-                [U3,S3,V3] = svd(r);
+            lu = reshape(  U2*sqrt_S2, [d^2,d,d,d^4]);
+            ld =  reshape(  sqrt_S2*V2', [d^4,d,d,d^2]);
 
-                sqrt_S3 = S3.^0.5;
+            r = reshape( permute(reshape(sqrt_S*V', [d^2,d^2,d^2,d^2]), [1,3,4,2]), [d^4,d^4]);
+            [U3,S3,V3] = svd(r);
 
-                ru = reshape( U3*sqrt_S3, [d^2,d,d,d^4]);
-                rd =  reshape(  sqrt_S3*V3', [d^4,d,d,d^2]);
+            sqrt_S3 = S3.^0.5;
 
-                lu_2 = permute(lu,[2,3,1,4]);
-                ld_2 = permute(ld,[2,3,1,4]);
-                ru_2 = permute(ru,[2,3,1,4]);
-                rd_2 = permute(rd,[2,3,4,1]);
+            ru = reshape( U3*sqrt_S3, [d^2,d,d,d^4]);
+            rd =  reshape(  sqrt_S3*V3', [d^4,d,d,d^2]);
 
-                obj.PEPO_cell{1,1,3,3}= reshape(lu_2,[d,d,1,1,d^2,d^4]);
-                obj.PEPO_cell{1,3,3,1}= reshape(ld_2,[d,d,1,d^4,d^2,1]);
-                obj.PEPO_cell{3,1,1,3}= reshape(ru_2,[d,d,d^2,1,1,d^4]);
-                obj.PEPO_cell{3,3,1,1}= reshape(rd_2,[d,d,d^2,d^4,1,1]);
+            lu_2 = permute(lu,[2,3,1,4]);
+            ld_2 = permute(ld,[2,3,1,4]);
+            ru_2 = permute(ru,[2,3,1,4]);
+            rd_2 = permute(rd,[2,3,4,1]);
 
-                if obj.testing
-                    %err1 = eigs(reshape(ncon(  {lu,ld,ru,rd}, { [1,-1,-5,2],[2,-2,-6,3],[1,-3,-7,4],[4,-4,-8,3] })-Tensor_1111,[d^4,d^4]),1);
-                    err = eigs(reshape(....
-                        ncon( {obj.PEPO_cell{1,1,3,3},obj.PEPO_cell{1,3,3,1},obj.PEPO_cell{3,1,1,3},obj.PEPO_cell{3,3,1,1}},...               
-                             map.leg_list )-Tensor_1111...
-                          ,[d^4,d^4]),1);
-                      fprintf("err decomposing block %.4e",err);
-                end
-%                      
-                
-                obj = obj.cell2matrix() ; %save matrix form
-            %end            
+            obj.PEPO_cell{1,1,4,4}= reshape(lu_2,[d,d,1,1,d^2,d^4]);
+            obj.PEPO_cell{1,4,4,1}= reshape(ld_2,[d,d,1,d^4,d^2,1]);
+            obj.PEPO_cell{4,1,1,4}= reshape(ru_2,[d,d,d^2,1,1,d^4]);
+            obj.PEPO_cell{4,4,1,1}= reshape(rd_2,[d,d,d^2,d^4,1,1]);
+% 
+            %obj.calculate_error( PEPO.create_map([1,3;4,2],1))
+            %obj.calculate_error( PEPO.create_map([1,2,3;4,5,6],1))
+
+
+            obj = obj.cell2matrix() ; %save matrix form
+           
         end
         
         function H = H_exp(obj,map,prefactor)
@@ -222,16 +314,14 @@ classdef PEPO
             end
             
             %do all horizontal H12
-  
-            
             for x =1:map.n-1
                 for y =1:map.m
                     if map.num_map(y,x) ~=0 && map.num_map(y,x+1) ~=0
-                        a = map.num_map(y,x);
-                        b = map.num_map(y,x+1);
+                        n1 = map.num_map(y,x);
+                        n2 = map.num_map(y,x+1);
                         
-                        n1 = min(a,b);
-                        n2 = max(a,b);
+                        %n1 = min(a,b);
+                        %n2 = max(a,b);
                         
                         
                         leg_list_copy = map.leg_list(1,:);
@@ -239,7 +329,7 @@ classdef PEPO
                         index_list_n1 = map.leg_list{n1};
                         index_list_n2 = map.leg_list{n2};
                         
-                        leg_list_copy(n2) = []; %remove element
+                        leg_list_copy( max(n2,n1)) = []; %remove element
                         
                         %do ij
                         new_list = [0,0,0,0];
@@ -251,11 +341,11 @@ classdef PEPO
                             leg_list_copy{s} = leg_list_copy{s}(1:2);
                         end
                         
-                        leg_list_copy{n1} = new_list;
+                        leg_list_copy{ min(n1,n2) } = new_list;
                         
                         tensor_list = cell(1,map.N-1);
                         tensor_list(:) = {Itensor};
-                        tensor_list{n1} = H_2;
+                        tensor_list{  min(n1,n2) } = H_2;
                         
                         
                         H=H+ncon( tensor_list,leg_list_copy );
@@ -268,11 +358,11 @@ classdef PEPO
                 for y =1:map.m-1
                     if map.num_map(y,x) ~=0 && map.num_map(y+1,x) ~=0
                         
-                        a = map.num_map(y,x);
-                        b = map.num_map(y+1,x);
+                        n1 = map.num_map(y,x);
+                        n2 = map.num_map(y+1,x);
                         
-                        n1 = min(a,b);
-                        n2 = max(a,b);
+                        %n1 = min(a,b);
+                        %n2 = max(a,b);
                         
 
                         leg_list_copy = map.leg_list(1,:);
@@ -281,7 +371,7 @@ classdef PEPO
                         index_list_n2 = map.leg_list{n2};
                         
                         
-                        leg_list_copy( n2) =[]; %remove element 
+                        leg_list_copy( max(n1,n2) ) =[]; %remove element 
  
                         
                         for s=1:map.N-1
@@ -297,11 +387,11 @@ classdef PEPO
 
                             
                         
-                        leg_list_copy{  n1  } = new_list;
+                        leg_list_copy{  min(n1,n2)  } = new_list;
                         
                         tensor_list = cell(1,map.N-1);
                         tensor_list(:) = {Itensor};
-                        tensor_list{n1} = H_2;
+                        tensor_list{   min(n1,n2) } = H_2;
                         
                         
                         H=H+ncon( tensor_list,leg_list_copy );
@@ -544,17 +634,32 @@ classdef PEPO
 
             
             
-            a = reshape(  H_matrix, [ d^(map.N), d^(map.N)]);
-            b = reshape( Contraction, [ d^(map.N), d^(map.N)]);
+            b = reshape(  H_matrix, [ d^(map.N), d^(map.N)]);
+            a = reshape( Contraction, [ d^(map.N), d^(map.N)]);
             
-            eig_a= eigs(a,1);
+            %eig_a= eigs(a,4);
+            
+            
+            p = 2;
+
+            [~, S1, ~] = svds(a-b, 30);
+
+
+            sum_1 = (sum(diag(S1).^p))^(1 / p);
+
+
+            [~, S2, ~] = svds(b, 30);
+
+
+            sum_2 = (sum(diag(S2).^p))^(1 / p);
+            
            
-            prefact = obj.nf^map.N*(eig_a);
+            prefact = obj.nf^map.N*( sum_2);
             
             % for real values, multiply both with obj.nf^(map.N)*trace_a =
             % prefact^N
 
-            err =  ( eigs(  (a-b)  ,1) )/ eig_a   ;
+            err =  sum_1/ sum_2   ;
         end
         
         function [A,G,lambda,ctr,error] = vumps(obj)
@@ -564,7 +669,7 @@ classdef PEPO
             opts.charges='regular';
             opts.dynamical='off';
             opts.dyncharges=0;
-            opts.schmidtcut=1e-6;
+            opts.schmidtcut=1e-10;
             opts.chimax=350;
             opts.disp='iter';
             opts.tolmax=1e-4; %1e-4
@@ -580,7 +685,7 @@ classdef PEPO
 
             opts.plot='on';
             opts.maxit=1000;
-            opts.tolfixed=1e-8;
+            opts.tolfixed=1e-14;
             
             %put into vumps format
             
@@ -592,7 +697,7 @@ classdef PEPO
             
             %put auxilary indices at the end for vumps and reshape to peps
             %format
-            %M = ncon(  {T},  {[1,1,-1,-2,-3,-4]} );
+            M = ncon(  {T},  {[1,1,-1,-2,-3,-4]} );
             
             %M = reshape(ncon(  {T},  {[-1,-4,-2,-3,-5,-6]} ),...
             %                        [ obj.dim, hdim*vdim, obj.dim, hdim*vdim ]);
@@ -600,7 +705,7 @@ classdef PEPO
             %M = permute( reshape( T, [obj.dim,obj.dim,hdim*vdim,hdim*vdim]),...
             %    [1,3,2,4]);
             
-            M = permute (T, [3,4,5,6,1,2]);
+            %M = permute (T, [3,4,5,6,1,2]);
             
             %M = ncon(  {T,conj(T)},  {[1,2,-1,-3,-5,-7],[2,1,-2,-4,-6,-8]} );
             %M = reshape(M, [hdim^2,vdim^2,hdim^2,vdim^2]);
@@ -619,141 +724,215 @@ classdef PEPO
 
         end
         
-        function part = get_middle_part(obj,l_map,r_map,map)
-             %inverts l_map and r_map 
-             %l_map ; largest index is open
-             %only for chain like structures
+        function part = get_middle_part(obj,inv_maps,map,perm)
+             %calculates residual hamiltonian and inverts the legs given in
+             %inv_maps in the order {left,up,right,down}. left and up
+             %should be increasing indices to central pepo cell, right and
+             %down decreasing.
             
+             if nargin<4
+                perm = 1;
+             end
+             
             d=obj.dim;
            
-            r_map_2 = r_map(2:end);
-            r_map_2 = r_map_2-min(r_map_2)+1;
-            r_map_2 = PEPO.create_map(r_map_2,1);
-            r_map = r_map-min(r_map)+1;
-            r_map = PEPO.create_map(r_map,1);
-            
-            l_map_2 = PEPO.create_map(l_map(1:end-1),1);
-            l_map = PEPO.create_map(l_map,1);
-            
-            
-            
             map = PEPO.create_map(map,1);
-            
-            % get the correct tensors for left inverse. Last one is not
-            % added
-            l_tensors = cell(1,l_map.N-1);
-            
-            last_index = 0;
-            for i = 1:l_map.N-1
-                index_set = [0,0,0,0];
-                    
-                index_set_mask = l_map.leg_list{i}(3:end)>0; 
-                non_empty = find(index_set_mask);
-                
-                if size(non_empty,2)==1
-                    last_index = non_empty(1);
-                    index_set(last_index) = i;
-                else
-                    prev_index = mod(last_index+2,4);
-                    if non_empty(1)==prev_index
-                        index_set(non_empty(1))=i-1;
-                        index_set(non_empty(2))=i;
-                        last_index = non_empty(2);
-                    else
-                        index_set(non_empty(2))=i-1;
-                        index_set(non_empty(1))=i;
-                        last_index = non_empty(1);
-                    end
-                end
-                
-                l_tensors{i} = obj.PEPO_cell{index_set(1)+1,index_set(2)+1,index_set(3)+1,index_set(4)+1};
-            end
-            
-            leg_list_copy = l_map_2.leg_list;
-            l_chain =  ncon( l_tensors,  leg_list_copy   );
-            
-            l_chain_size = size(l_chain);
-            l_size = d^(2*l_map_2.N);
-            l_chain_new_size = [l_chain_size(1:2*l_map_2.N) ,l_size]; 
-            
-            l_chain = reshape(l_chain, l_chain_new_size  );
-            
-            % saame for right side. First one doesn't count
-            r_tensors = cell(1,r_map.N-1);
-            
-            last_index = 0;
-            for i = r_map.N:-1:2
-                index_set = [0,0,0,0];
-                    
-                index_set_mask = r_map.leg_list{i}(3:end)>0; 
-                non_empty = find(index_set_mask);
-                
-                if size(non_empty,2)==1
-                    last_index = non_empty(1);
-                    index_set(last_index) = r_map.N- i+1;
-                else
-                    prev_index = mod(last_index+2,4);
-                    if non_empty(1)==prev_index
-                        index_set(non_empty(1))=r_map.N-(i);
-                        index_set(non_empty(2))=r_map.N-(i-1);
-                        last_index = non_empty(2);
-                    else
-                        index_set(non_empty(2))=r_map.N-(i);
-                        index_set(non_empty(1))=r_map.N-(i-1);
-                        last_index = non_empty(1);
-                    end
-                end
-                
-                r_tensors{i-1} = obj.PEPO_cell{index_set(1)+1,index_set(2)+1,index_set(3)+1,index_set(4)+1};
-            end
-            
-            leg_list_copy = r_map_2.leg_list;
-            r_chain = ncon( r_tensors,  leg_list_copy   );
-            
-            r_chain_size = size(r_chain);
-            r_size = d^(2*r_map_2.N);
-            r_chain_new_size = [r_chain_size(1:2*r_map_2.N) ,r_size]; 
-        
-            r_chain = reshape(r_chain, r_chain_new_size  );
-            
-            
-            %%%%%%%%%%%%%todo apply inverses
             
             Tensor = obj.H_exp(map,obj.nf)-obj.contract_network(map,obj.current_max_index);
 
-            Tensor_site = reshape(  permute(Tensor, site_ordering_permute(map.N)),...
-                            l_size,[] );
+            Tensor_site = permute(Tensor, site_ordering_permute(map.N));
             
-                        
-                        
-            l_permute = [ site_ordering_permute(l_map_2.N); 2*l_map_2.N+1];        
-            r_permute = [ 2*r_map_2.N+1;  site_ordering_permute(r_map_2.N)] ;               
-             
-            l_chain_site = reshape( permute( l_chain, l_permute ), [l_size,l_size] ); 
-            r_chain_site = reshape( permute( r_chain, r_permute ), [r_size,r_size] ); 
-         
-            x = l_chain_site\Tensor_site;
-            x = reshape(x, [],r_size);
-            y = x/r_chain_site;
+            vector_sizes = [0,0,0,0,0];
+            for l=1:2
+                i_map = inv_maps{l};
+                if size(i_map,1) ~= 0
+                    vector_sizes(l) = sum( i_map~=0  )-1; 
+                end 
+            end
+            for l=3:4
+                i_map = inv_maps{l};
+                if size(i_map,1)~= 0
+                    vector_sizes(l+1) = sum( i_map~=0  )-1; 
+                end 
+            end
+            vector_sizes(3) = map.N-sum(vector_sizes);
+            vector_sizes = d.^(2* vector_sizes );
             
-            part = reshape(y, l_size,[],r_size);
+            
+            
+            Tensor_site = reshape(Tensor_site, vector_sizes  );
+            
+
+            
+            function [l_chain_site,l_size] = get_l_chain(l_map,l_map_2) 
+                l_map_2 = PEPO.create_map(l_map_2,1);
+                l_map = PEPO.create_map(l_map,1);
+                
+                l_tensors = cell(1,l_map.N-1);
+            
+                last_index = 0;
+                for i = 1:l_map.N-1
+                    index_set = [0,0,0,0];
+
+                    index_set_mask = l_map.leg_list{i}(3:end)>0; 
+                    non_empty = find(index_set_mask);
+
+                    if size(non_empty,2)==1
+                        last_index = non_empty(1);
+                        index_set(last_index) = i;
+                    else
+                        prev_index = mod(last_index+2,4);
+                        if non_empty(1)==prev_index
+                            index_set(non_empty(1))=i-1;
+                            index_set(non_empty(2))=i;
+                            last_index = non_empty(2);
+                        else
+                            index_set(non_empty(2))=i-1;
+                            index_set(non_empty(1))=i;
+                            last_index = non_empty(1);
+                        end
+                    end
+                
+                    l_tensors{i} = obj.PEPO_cell{index_set(1)+1,index_set(2)+1,index_set(3)+1,index_set(4)+1};
+                end
+
+                leg_list_copy = l_map_2.leg_list;
+                l_chain =  ncon( l_tensors,  leg_list_copy   );
+
+                l_chain_size = size(l_chain);
+                l_size = d^(2*l_map_2.N);
+                l_chain_new_size = [l_chain_size(1:2*l_map_2.N) ,l_size]; 
+
+                l_chain = reshape(l_chain, l_chain_new_size  );
+                
+                
+                l_permute = [ site_ordering_permute(l_map_2.N); 2*l_map_2.N+1];        
+                l_chain_site = reshape( permute( l_chain, l_permute ), [l_size,l_size] );
+            end
+            
+            function [r_chain_site,r_size] = get_r_chain(r_map,r_map_2) 
+
+                r_map_2 = PEPO.create_map(r_map_2,1);
+                r_map = PEPO.create_map(r_map,1);
+                
+                r_tensors = cell(1,r_map.N-1);
+            
+                last_index = 0;
+                for i = r_map.N:-1:2
+                    index_set = [0,0,0,0];
+
+                    index_set_mask = r_map.leg_list{i}(3:end)>0; 
+                    non_empty = find(index_set_mask);
+
+                    if size(non_empty,2)==1
+                        last_index = non_empty(1);
+                        index_set(last_index) = r_map.N- i+1;
+                    else
+                        prev_index = mod(last_index+2,4);
+                        if non_empty(1)==prev_index
+                            index_set(non_empty(1))=r_map.N-(i);
+                            index_set(non_empty(2))=r_map.N-(i-1);
+                            last_index = non_empty(2);
+                        else
+                            index_set(non_empty(2))=r_map.N-(i);
+                            index_set(non_empty(1))=r_map.N-(i-1);
+                            last_index = non_empty(1);
+                        end
+                    end
+
+                    r_tensors{i-1} = obj.PEPO_cell{index_set(1)+1,index_set(2)+1,index_set(3)+1,index_set(4)+1};
+                end
+
+                leg_list_copy = r_map_2.leg_list;
+                r_chain = ncon( r_tensors,  leg_list_copy   );
+
+                r_chain_size = size(r_chain);
+                r_size = d^(2*r_map_2.N);
+                r_chain_new_size = [r_chain_size(1:2*r_map_2.N) ,r_size]; 
+
+                r_chain = reshape(r_chain, r_chain_new_size  );
+                
+                r_permute = [ 2*r_map_2.N+1;  site_ordering_permute(r_map_2.N)] ;               
+                r_chain_site = reshape( permute( r_chain, r_permute ), [r_size,r_size] ); 
+            end
+            
+            function [x1,x2] = renumber(x,central,renumber)
+               mask =  x~=0 ;
+               
+               mask_central = x==central;
+               
+               x_size = size(x,1);
+               y = reshape( x(mask), [],1 );
+
+               [~,y] = sort(y);
+               y = reshape(y,x_size,[]);
+               
+               x1=x;
+               x1(mask) = y;
+               x2 = x1;
+               x2(mask_central) = 0;
+               
+               if renumber==1
+                    x2(~mask_central) = x2(~mask_central)-1;
+               end
+
+            end
+            
+            for leg=1:4
+                inv_map = inv_maps{leg};
+                if size(inv_map,1) ~= 0
+                    
+                    if leg<3
+                        central = max(inv_map);
+                        
+                        [i_map,i_map_2] = renumber(inv_map,central,0);
+                        [l_chain_site,l_size] = get_l_chain(i_map,i_map_2);
+                        if leg ==1 
+                            Tensor_site = reshape(Tensor_site, vector_sizes(1),[]);
+                            Tensor_site = l_chain_site\Tensor_site;
+                            Tensor_site = reshape(Tensor_site,vector_sizes);
+                        else
+                            Tensor_site = reshape( permute(Tensor_site, [2,1,3,4,5] ) , vector_sizes(2),[]);
+                            Tensor_site = l_chain_site\Tensor_site;
+                            Tensor_site = permute( reshape(Tensor_site,vector_sizes), [2,1,3,4,5]);
+                        end 
+                    else
+                        central = min(inv_map(inv_map~=0));
+                        
+                        [i_map,i_map_2] = renumber(inv_map,central,1);
+                        [r_chain_site,r_size] = get_r_chain(i_map,i_map_2);
+                         if leg ==4
+                            Tensor_site = reshape(Tensor_site, [],vector_sizes(5));
+                            Tensor_site = Tensor_site/r_chain_site;
+                            Tensor_site = reshape(Tensor_site,vector_sizes);
+                        else
+                            Tensor_site = reshape( permute(Tensor_site, [1,2,3,5,4] ) , [],vector_sizes(4));
+                            Tensor_site = Tensor_site/r_chain_site;
+                            Tensor_site = permute( reshape(Tensor_site,vector_sizes), [1,2,3,5,4]);
+                        end 
+                    end
+            
+                end
+                
+            end
+            
+            if perm
+                part = reshape( permute( Tensor_site, [3,1,2,4,5]), [d,d,vector_sizes(1),vector_sizes(2),vector_sizes(4),vector_sizes(5)]);
+            else
+                part = Tensor_site;
+            end
+            
         end
         
         function m = get_expectation (obj,X)
             [A,G,lambda,ctr,error] = vumps(obj);
             
-            M = permute( reshape( T, [obj.dim,obj.dim,hdim*vdim,hdim*vdim]),...
-                [1,3,2,4]);
+            T = obj.PEPO_matrix;
             
+            M = ncon(  {T},  {[1,1,-1,-2,-3,-4]} );
+            O =  ncon ( {T,X}, {[1,2,-1,-2,-3,-4],[2,1]}  );
             
-            
-            T =   ncon ( {M,X }, {[1,-1,2,-2],[1,2]}  );
-            O =  ncon ( {M}, {[1,-1,2],[1,2]}  );
-            
-            
-            Ac = A{3};
-            Gl = G{1};
-            Gr = G{2};
+
             
             overlap1=TensorContract({G{1},A{4},G{2},TensorConj(A{4})},{[1,4:A{1}.legs+1,2],[2,3],[3,4:A{1}.legs+2],[1,A{1}.legs+2]});
             
