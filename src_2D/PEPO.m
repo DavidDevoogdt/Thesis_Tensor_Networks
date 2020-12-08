@@ -671,7 +671,8 @@ classdef PEPO
             opts.dyncharges=0;
             opts.schmidtcut=1e-10;
             opts.chimax=350;
-            opts.disp='iter';
+            %opts.disp='iter';
+            opts.disp='none';
             opts.tolmax=1e-4; %1e-4
             opts.tolfactor=1e5;
             opts.minit=1;
@@ -685,7 +686,7 @@ classdef PEPO
 
             opts.plot='on';
             opts.maxit=1000;
-            opts.tolfixed=1e-14;
+            opts.tolfixed=1e-8;
             
             %put into vumps format
             
@@ -720,7 +721,7 @@ classdef PEPO
             O.mpo=o;
 
 
-            [A,G,lambda,ctr,error]=Vumps(O,5,[],opts);
+            [A,G,lambda,ctr,error]=Vumps(O,40,[],opts);
 
         end
         
@@ -924,18 +925,48 @@ classdef PEPO
             
         end
         
-        function m = get_expectation (obj,X)
+        function mag = get_expectation (obj,X)
             [A,G,lambda,ctr,error] = vumps(obj);
             
             T = obj.PEPO_matrix;
             
             M = ncon(  {T},  {[1,1,-1,-2,-3,-4]} );
-            O =  ncon ( {T,X}, {[1,2,-1,-2,-3,-4],[2,1]}  );
             
-
+            m.legs=4;
+            m.group='none';
+            m.dims = size( M ) ;
+            m.var = M;
             
-            overlap1=TensorContract({G{1},A{4},G{2},TensorConj(A{4})},{[1,4:A{1}.legs+1,2],[2,3],[3,4:A{1}.legs+2],[1,A{1}.legs+2]});
             
+            O =  ncon ( {T,X}, {[1,2,-1,-2,-3,-4],[1,2]}  );
+            o.legs=4;
+            o.group='none';
+            o.dims = size( O ) ;
+            o.var = O;
+            
+            
+            GL = G{1};GR = G{2};
+            
+            Al = A{1}; cAl = TensorConj(Al);
+            
+            Ac = A{4}; cAc = TensorConj(Ac);
+            
+            
+            %[al2,~] = TensorContract({cAc,GL,Ac,m},...
+            %        {[1,2,-1],[1,3,4],[4,5,-3],[5,-2,2,3]} );
+                
+            %[al3,~] = TensorContract({cAc,GL,Ac,m},...
+            %        {[1,2,-1],[1,3,4],[4,5,-3],[3,5,-2,2]} );
+            
+            %should be lambda?
+            [x,~]=TensorContract({cAc,GL,Ac,m,GR},...
+                    {[1,2,6],[1,3,4],[4,5,8],[5,7,2,3],[8,7,6]});
+                
+            [y,~]=TensorContract({cAc,GL,Ac,o,GR},...
+                    {[1,2,6],[1,3,4],[4,5,8],[5,7,2,3],[8,7,6]});    
+            
+            mag = y/x;
+         
       
             
         end

@@ -60,12 +60,12 @@ function test_PEPO
     I_tensor = eye(2);
 
     J=1;
-    g=0.1;
+    g=0.01;
     
     H_1_tensor = 0*eye(d);
     H_2_tensor = -J* ( reshape( ncon( {S_z,S_z}, {[-1,-3],[-2,-4]}), [d,d,d,d]) +...
-                        0.5* reshape( ncon( {S_x,eye(d)}, {[-1,-3],[-2,-4]}), [d,d,d,d])+...
-                        0.5* reshape( ncon( {eye(d),S_x}, {[-1,-3],[-2,-4]}), [d,d,d,d]));
+                        0.5*g* reshape( ncon( {S_x,eye(d)}, {[-1,-3],[-2,-4]}), [d,d,d,d])+...
+                        0.5*g* reshape( ncon( {eye(d),S_x}, {[-1,-3],[-2,-4]}), [d,d,d,d]));
                         
 
     opts.testing=0;
@@ -77,7 +77,14 @@ function test_PEPO
 
 
     map = PEPO.create_map(pos_map); 
-    beta_arr = 10.^(-3:0.2:1);
+    
+    T = 1:0.1:3;
+    
+    
+    
+    %beta_arr = 10.^(-2:0.1:0);
+    beta_arr=1./T;
+    
     beta_len = size(beta_arr,2);
     err_arr = zeros( beta_len ,1); 
 
@@ -88,19 +95,28 @@ function test_PEPO
         
         %[A,G,lambda,ctr,error] = pepo.vumps();
         
-        pepo.get_expectation( S_z  )
+        mag = pepo.get_expectation( S_z  );
         
+                
+        fprintf(" T %.4e mag %.4e \n",1/beta,abs(mag) );
+        err_arr(i) = abs(mag);
         
-        fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );
-        err_arr(i) = abs(err);
+        %fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );
+        %err_arr(i) = abs(err);
 
     end
     
     figure();
-    loglog(  beta_arr,err_arr );
-    title(  sprintf("2D transverse ising M=%d",map.N));
-    xlabel( "$\beta \cdot J$","Interpreter","Latex");
-    ylabel( "relative error");
+    %loglog(  beta_arr,err_arr );
+    plot(T,err_arr );
+%     
+%     title(  sprintf("2D transverse ising M=%d",map.N));
+%     xlabel( "$\beta \cdot J$","Interpreter","Latex");
+%     ylabel( "relative error");
+    
+    title(  sprintf("2D transverse Ising, g=%.4f ",g));
+    xlabel( "$\frac{k T}{J}$","Interpreter","Latex");
+    ylabel( "m");
     
 
 end
