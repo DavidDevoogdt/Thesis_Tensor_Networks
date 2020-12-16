@@ -1,4 +1,4 @@
-[m_arr,T_arr,corr_arr,marek_arr,name] = calc_ising_2d(1,1,1.4,5,0.2,0.1,0);
+[m_arr,T_arr,corr_arr,marek_arr,name] = calc_ising_2d(0.1,1,0.6,2,0.1,0.1,0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 plot_onsager(m_arr,T_arr,1,0.001)
@@ -31,11 +31,11 @@ function [m_arr,T_arr,corr_arr,marek_arr,name] = calc_ising_2d(T0,J,g,chi,aim_dx
     H_2_tensor = -J* ( reshape( ncon( {S_z,S_z}, {[-1,-3],[-2,-4]}), [d,d,d,d]));
                         
 
-    opts.testing=0;
+    opts.testing=1;
     opts.visualise=0;
                
     pos_map = [0,0,1,1;
-               0,1,1,1;
+               1,1,1,1;
                0,0,1,1];
 
 
@@ -117,7 +117,7 @@ function [m_arr,T_arr,corr_arr,marek_arr,name] = calc_ising_2d(T0,J,g,chi,aim_dx
         marek_arr(i) = marek;
         
         
-        if m<1e-1
+        if m<1e-5
            deadcounter = deadcounter -1;
            if  deadcounter ==0
                 break; 
@@ -127,8 +127,8 @@ function [m_arr,T_arr,corr_arr,marek_arr,name] = calc_ising_2d(T0,J,g,chi,aim_dx
  
     T_arr = T_arr(1:i);
     m_arr = m_arr(1:i);
-    corr_arr(i) =  corr_arr(1:i);
-    marek_arr(i) = marek_arr(1:i);
+    corr_arr =  corr_arr(1:i);
+    marek_arr = marek_arr(1:i);
     
     
     save(name,'T_arr','m_arr','corr_arr','marek_arr') ;
@@ -156,7 +156,7 @@ end
 
     
      
-    [f,gof] = fit_data(0.7,1e-7, m_arr,T_arr);
+    [f,gof] = fit_data(0.7,1e-1, m_arr,T_arr);
     
     fitfun = @(t) f.a* ( (f.Tc-t)./f.Tc).^f.beta ;
     %[f,gof] = fit_data(0.3,1e-8,   m_onsager(T_onsager,J),T_onsager  );
@@ -165,7 +165,7 @@ end
     
     fprintf( 'dbeta %.4e dTc %.4f\n', abs(f.beta-1/8), abs( f.Tc-  2*J/(log(1+sqrt(2)))));
     
-    plot(T_onsager, fitfun(T_onsager));
+    plot(T_arr, fitfun(T_arr));
 
     ylim( [0,1]);
     

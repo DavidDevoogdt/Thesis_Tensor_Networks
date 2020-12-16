@@ -21,12 +21,16 @@ classdef PEPO
         virtual_level_sizes_vert
         PEPO_matrix
         current_max_index
+        numopts
     end
     
     
         
     methods
         function obj = PEPO(d,H_1_tensor,H_2_tensor,max_index,type,opts)
+            numopts.numbered = 1;
+            obj.numopts = numopts;
+            
             obj.dim = d;
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
@@ -64,7 +68,7 @@ classdef PEPO
 
             
             %%%%%%%%%%single site
-            O_0000 = eye(d);%expm( 0*obj.H_1_tensor );
+            O_0000 =expm( 0*obj.H_1_tensor ); % eye(d);%expm( 0*obj.H_1_tensor );
             %obj.nf = trace(O_0000);
             
             obj.PEPO_cell{1,1,1,1} = reshape(  O_0000/obj.nf , [d,d,1,1,1,1] ) ;
@@ -113,12 +117,13 @@ classdef PEPO
                 obj.PEPO_cell{1,2,2,1}= reshape(block_11,[d,d,1,d^2,d^2,1]); 
                 obj.PEPO_cell{1,2,1,2}= reshape(block_11,[d,d,1,d^2,1,d^2]); 
 
+                
 
                 if obj.testing ==1
-                    obj.calculate_error( PEPO.create_map([1 2 3],1)) 
-                    obj.calculate_error( PEPO.create_map([1 2;0 3],1)) 
-                    obj.calculate_error( PEPO.create_map([1 0; 2 3],1)) 
-                    obj.calculate_error( PEPO.create_map([1; 2 ;3;],1)) 
+                    obj.calculate_error( PEPO.create_map([1 2 3],obj.numopts)) 
+                    obj.calculate_error( PEPO.create_map([1 2;0 3],obj.numopts)) 
+                    obj.calculate_error( PEPO.create_map([1 0; 2 3],obj.numopts)) 
+                    obj.calculate_error( PEPO.create_map([1; 2 ;3;],obj.numopts)) 
                 end
 
                 %this is between 2 01 blocks
@@ -133,8 +138,8 @@ classdef PEPO
                                           1 3]); %ok
                 
                 if obj.testing ==1
-                    obj.calculate_error( PEPO.create_map([0 2; 1 3],1))
-                    obj.calculate_error( PEPO.create_map([0 3; 1 2],1))
+                    obj.calculate_error( PEPO.create_map([0 2; 1 3],obj.numopts))
+                    obj.calculate_error( PEPO.create_map([0 3; 1 2],obj.numopts))
                 end
                                       
                                       
@@ -148,8 +153,8 @@ classdef PEPO
                     {[],[],[1,2],[1;3]},[1 2;
                                          3 0]); %ok
                 if obj.testing ==1
-                    obj.calculate_error( PEPO.create_map([1 2; 3 0],1))
-                    obj.calculate_error( PEPO.create_map([1 3; 2 0],1))
+                    obj.calculate_error( PEPO.create_map([1 2; 3 0],obj.numopts))
+                    obj.calculate_error( PEPO.create_map([1 3; 2 0],obj.numopts))
                 end
                                      
                                      
@@ -176,10 +181,10 @@ classdef PEPO
                                             0 4]);
                 
                 if obj.testing ==1
-                    obj.calculate_error( PEPO.create_map([1 2 3;0 4 0],1))
-                    obj.calculate_error( PEPO.create_map([0 2 0;1 3 4],1))
-                    obj.calculate_error( PEPO.create_map([1 0;2 3;4 0],1))
-                    obj.calculate_error( PEPO.create_map([0 2;1 3;0 4],1))
+                    obj.calculate_error( PEPO.create_map([1 2 3;0 4 0],obj.numopts))
+                    obj.calculate_error( PEPO.create_map([0 2 0;1 3 4],obj.numopts))
+                    obj.calculate_error( PEPO.create_map([1 0;2 3;4 0],obj.numopts))
+                    obj.calculate_error( PEPO.create_map([0 2;1 3;0 4],obj.numopts))
                 end                        
                                         
                                         
@@ -190,7 +195,7 @@ classdef PEPO
                                                 1 3 4;
                                                 0 5 0;]);
                 if obj.testing ==1
-                    obj.calculate_error( PEPO.create_map([ 0 2 0;1 3 4; 0 5 0],1))
+                    obj.calculate_error( PEPO.create_map([ 0 2 0;1 3 4; 0 5 0],obj.numopts))
                 end                                   
                                         
                                         
@@ -218,10 +223,10 @@ classdef PEPO
 
                       
                     if obj.testing ==1
-                        obj.calculate_error( PEPO.create_map([1 2 3 4],1)) 
-                        obj.calculate_error( PEPO.create_map([1 2 3; 0 0 4],1))
-                        obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],1))
-                        obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],1))
+                        obj.calculate_error( PEPO.create_map([1 2 3 4],obj.numopts)) 
+                        obj.calculate_error( PEPO.create_map([1 2 3; 0 0 4],obj.numopts))
+                        obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],obj.numopts))
+                        obj.calculate_error( PEPO.create_map([1 0; 2 3; 0 4],obj.numopts))
                     end
                     
                     %special1
@@ -232,7 +237,7 @@ classdef PEPO
                                                                    4,0,0;],1);                 
 
                     if obj.testing ==1
-                        obj.calculate_error( PEPO.create_map([1,2,3;4,0,0;],1))
+                        obj.calculate_error( PEPO.create_map([1,2,3;4,0,0;],obj.numopts)) %direct
                     end
                     
                     
@@ -244,8 +249,15 @@ classdef PEPO
                                                        1,2,4;],1);      
                     
                     if obj.testing ==1
-                        obj.calculate_error( PEPO.create_map([0,0,4;1,2,3;],1))
+                        obj.calculate_error( PEPO.create_map([0,0,4;1,2,3;],obj.numopts))
                     end
+                    
+                    if obj.testing ==1
+                        obj.calculate_error( PEPO.create_map([0,3;
+                                                              1,2;
+                                                              4,0;],obj.numopts)) %double special
+                    end
+                    
                     
                     %%% vertical
                     
@@ -268,10 +280,10 @@ classdef PEPO
                     obj.PEPO_cell{1,3,2,1}= reshape(block_d,[d,d,1,d^4,d^2,1]);
 
                     if obj.testing ==1
-                        obj.calculate_error( PEPO.create_map([1; 2; 3; 4;],1)) % 
-                        obj.calculate_error( PEPO.create_map([1 0;2 0;3 4],1)) %
-                        obj.calculate_error( PEPO.create_map([1 2; 0 3; 0 4],1)) %
-                        obj.calculate_error( PEPO.create_map([1 2 0; 0 3 4],1)) %
+                        obj.calculate_error( PEPO.create_map([1; 2; 3; 4;],obj.numopts)) % 
+                        obj.calculate_error( PEPO.create_map([1 0;2 0;3 4],obj.numopts)) %
+                        obj.calculate_error( PEPO.create_map([1 2; 0 3; 0 4],obj.numopts)) %
+                        obj.calculate_error( PEPO.create_map([1 2 0; 0 3 4],obj.numopts)) %
                     end
                
                     %special left
@@ -292,6 +304,11 @@ classdef PEPO
                                                        1,4],1);      
                     if obj.testing ==1
                         obj.calculate_error( PEPO.create_map([0,2;0,3;1,4],1))
+                    end
+                    
+                    if obj.testing ==1
+                        obj.calculate_error( PEPO.create_map([0,3,4;
+                                                              1,2,0;],1))
                     end
                     
                end
@@ -339,6 +356,64 @@ classdef PEPO
             obj.PEPO_cell{4,1,1,4}= reshape(ru_2,[d,d,d^2,1,1,d^4]);
             obj.PEPO_cell{4,4,1,1}= reshape(rd_2,[d,d,d^2,d^4,1,1]);
  
+
+            if obj.testing ==1
+            obj.calculate_error( PEPO.create_map([1,2;
+                                                  4,3],obj.numopts))
+            end
+
+            %%%%%% double loop horizontal 
+            map = PEPO.create_map([1,3,5;
+                                   2,4,6],1);
+            
+            Tensor_6 = obj.H_exp(map,obj.nf)-...
+                obj.contract_network(map,obj.current_max_index);
+            Tensor_1111_site = reshape(  permute(Tensor_6, site_ordering_permute(map.N)),...
+                            [d^4,d^4,d^4] );
+            
+            left = ncon( {obj.PEPO_cell{1,1,4,4}, obj.PEPO_cell{1,4,4,1}},{ [-1,-2, -7 , -8 ,-5 ,1 ],[-3,-4, -9, 1 , -6 , -10 ] } );
+            left= reshape(left, [d^4,d^4]);
+            
+            
+            right = ncon( { obj.PEPO_cell{4,1,1,4},obj.PEPO_cell{4,4,1,1}},{ [-3,-4,-1 , -7,-8 , 1],[-5,-6,-2,1 ,-9 ,-10] } );
+            right = reshape(right, [d^4,d^4]);
+            
+            part =  left \ reshape(Tensor_1111_site, [d^4,d^8]);
+            part =   reshape(part, [d^8,d^4]);
+            part = part / right;
+            
+            part = permute(reshape(part, [d^2,d^2,d^2,d^2,d^2,d^2] ), [1,3,5,2,4,6])
+            
+            [U,S,V] = svd(reshape(part, [d^6,d^6]));
+            
+            truncdim = d^4;
+            
+            sqrt_S = diag(diag(S).^(0.5));
+            
+            up = U*sqrt_S;
+            down =  sqrt_S*V';
+            
+            up = reshape( up(:,1:truncdim), [d^2,d^2,d^2,truncdim]);
+            down = reshape(  down(1:truncdim,:), [truncdim,d^2,d^2,d^2]);
+            
+            up2 = permute(up, [2,1,3,4]);
+            
+            down2 = permute(down, [3,2,1,4]);
+            
+            
+            obj.PEPO_cell{4,1,4,4} = reshape( up2, [d,d, d^2,1,d^2,d^4]);
+            obj.PEPO_cell{4,4,4,1} = reshape( down2, [d,d, d^2,d^4,d^2,1]);
+            
+            if obj.testing ==1
+                obj.calculate_error( PEPO.create_map([1,2,5;
+                                                      4,3,6],obj.numopts)) %0.093?
+            end
+            
+            
+            %%%%%% double loop vertical
+            
+            
+            
             %%%%%%%%%%%
 
             obj = obj.cell2matrix() ; %save matrix form
@@ -476,7 +551,7 @@ classdef PEPO
             H = reshape(H_expo,dimension_vector(d,2*map.N)  );
         end
         
-        function M = contract_network(obj,map, max_index,matrix,borders)
+        function M = contract_network(obj,map, max_index,matrix)
             %generate all index sets for a given configuration
                         
             if nargin < 4 
@@ -497,7 +572,7 @@ classdef PEPO
             if obj.visualise ==1
                 new_map = zeros( 2*map.m+1, 2*map.n+1 )+NaN;
                 for j=1:map.N
-                   coor= map.lookup{j} ;
+                   coor= map.pos_lookup{j} ;
                    new_y = 2+ 2*(coor(1)-1);
                    new_x = 2+ 2*(coor(2)-1);
                    
@@ -550,15 +625,13 @@ classdef PEPO
                         end
 
 
-
-
                         if ~correct_index_set
 
                             break;
                         end
 
-                        if obj.visualise==1
-                           coor= map.lookup{i} ;
+                        if obj.visualise==1 %probably doens't work for cyclic
+                           coor= map.pos_lookup{i} ;
                            new_y = 2+ 2*(coor(1)-1);
                            new_x = 2+ 2*(coor(2)-1);
 
@@ -843,7 +916,9 @@ classdef PEPO
              
             d=obj.dim;
            
-            map = PEPO.create_map(map,1);
+            
+            
+            map = PEPO.create_map(map, obj.numopts);
             
             Tensor = obj.H_exp(map,obj.nf)-obj.contract_network(map,obj.current_max_index);
 
@@ -875,8 +950,8 @@ classdef PEPO
 
             
             function [l_chain_site,l_size] = get_l_chain(l_map,l_map_2) 
-                l_map_2 = PEPO.create_map(l_map_2,1);
-                l_map = PEPO.create_map(l_map,1);
+                l_map_2 = PEPO.create_map(l_map_2,obj.numopts);
+                l_map = PEPO.create_map(l_map, obj.numopts);
                 
                 l_tensors = cell(1,l_map.N-1);
             
@@ -922,8 +997,8 @@ classdef PEPO
             
             function [r_chain_site,r_size] = get_r_chain(r_map,r_map_2) 
 
-                r_map_2 = PEPO.create_map(r_map_2,1);
-                r_map = PEPO.create_map(r_map,1);
+                r_map_2 = PEPO.create_map(r_map_2,obj.numopts);
+                r_map = PEPO.create_map(r_map,obj.numopts);
                 
                 r_tensors = cell(1,r_map.N-1);
             
@@ -1131,12 +1206,25 @@ classdef PEPO
     end
     
     methods (Static=true)
-        function map = create_map(pos_map,numbered)
+        function map = create_map(pos_map,opts)
             if nargin < 2
-               numbered = 0; 
+               opts.numbered = 0; 
+               opts.v_cyclic = 0;
+               opts.h_cyclic = 0;
+            end
+            
+            if ~isfield(opts,'numbered')
+                opts.numbered=0;
+            end
+            
+            if ~isfield(opts,'v_cyclic')
+                opts.v_cyclic=0;
+            end
+          
+            if ~isfield(opts,'h_cyclic')
+                opts.h_cyclic=0;
             end
                 
-            
             %number the location of operators from up to down and left to
             %right, and create toghether with it a leg_list for ncon
 
@@ -1144,17 +1232,17 @@ classdef PEPO
             map.m=m;
             map.n=n;
 
-            map.lookup = {};
+            map.pos_lookup = {};
 
             
-            if numbered == 0
+            if opts.numbered == 0
             
                 counter = 1;
                 for x =1:n
                     for y =1:m
                         if pos_map(y,x)==1
                             pos_map(y,x) = counter;
-                            map.lookup{counter} = [y,x];
+                            map.pos_lookup{counter} = [y,x];
                             counter = counter +1;
                         end
                     end
@@ -1168,7 +1256,7 @@ classdef PEPO
                         if pos_map(y,x)~=0
                             counter = pos_map(y,x);
                             %pos_map(y,x) = counter;
-                            map.lookup{counter} = [y,x];
+                            map.pos_lookup{counter} = [y,x];
                             if counter > N
                                N = counter; 
                             end
@@ -1183,6 +1271,16 @@ classdef PEPO
 
             map.num_map=pos_map;
 
+            map.h_bonds = {}; 
+            map.v_bonds = {};
+            
+            %left right up down bonds
+            map.h_bond_l_lookup = cell(N,1);
+            map.h_bond_r_lookup = cell(N,1);
+            map.v_bond_u_lookup = cell(N,1);
+            map.v_bond_d_lookup = cell(N,1);
+            
+            
 
             leg_list = cell(1,N);
             leg_list(:) = { [0,0,0,0,0,0]  };
@@ -1191,55 +1289,97 @@ classdef PEPO
 
             internal_counter = 1;
 
-            for x =1:n-1
-                for y =1:m
-                    if pos_map(y,x) ~=0 && pos_map(y,x+1) ~=0
-                        n1 = pos_map(y,x);
-                        n2 = pos_map(y,x+1);
+            for num = 1:N
+               coor = map.pos_lookup{num};
+               x= coor(2); y = coor(1);
+               
+               if x==n
+                   if opts.h_cyclic==1
+                       next_x = 1;
+                   else
+                       continue; %skip this round
+                   end
+               else
+                  next_x = x+1; 
+               end
+                
+               if pos_map(y,x) ~=0 && pos_map(y,next_x) ~=0
+                    n1 = pos_map(y,x);
+                    n2 = pos_map(y,next_x);
 
-                        leg_list{n1}(5) = internal_counter;
-                        leg_list{n2}(3) = internal_counter;
+                    leg_list{n1}(5) = internal_counter;
+                    leg_list{n2}(3) = internal_counter;
 
-                        internal_counter=internal_counter+1;
+                    
+                    map.h_bonds{internal_counter} = [n1,n2];
+                    
+                    %save bonds per site
+                    map.h_bond_r_lookup{n1} = [ map.h_bond_r_lookup{n1} , internal_counter ];
+                    map.h_bond_l_lookup{n2} = [ map.h_bond_l_lookup{n2} , internal_counter ];
+                    
+                    internal_counter=internal_counter+1;
 
-                        %fprintf( "hor %d-%d\n",pos_map(y,x), pos_map(y,x+1));
-                    end
-                end
+                    
+                    %fprintf( "hor %d-%d\n",pos_map(y,x), pos_map(y,x+1));
+               end
             end
-
+            
+            map.num_h_bonds = internal_counter-1;
+            
             %vertical internal bonds
 
-            for x =1:n
-                for y =1:m-1
-                    if pos_map(y,x) ~=0 && pos_map(y+1,x) ~=0
-                        n1 = pos_map(y,x);
-                        n2 = pos_map(y+1,x);
+            for num = 1:N
+               coor = map.pos_lookup{num};
+               x= coor(2); y = coor(1);
+               
+               if y==m
+                   if opts.v_cyclic==1
+                       next_y = 1;
+                   else
+                       continue; %skip this round
+                   end
+               else
+                  next_y = y+1; 
+               end
+               
 
-                        leg_list{n1}(6) = internal_counter;
-                        leg_list{n2}(4) = internal_counter;
+                if pos_map(y,x) ~=0 && pos_map(next_y,x) ~=0
+                    n1 = pos_map(y,x);
+                    n2 = pos_map(next_y,x);
 
-                        internal_counter=internal_counter+1;
+                    leg_list{n1}(6) = internal_counter;
+                    leg_list{n2}(4) = internal_counter;
 
-                        %fprintf( "vert %d-%d\n",pos_map(y,x), pos_map(y+1,x));
-                    end
+                    v_number = internal_counter-map.num_h_bonds;
+                    map.v_bonds{ v_number} = [n1,n2];
+                    
+                    %save bonds per site
+                    map.v_bond_d_lookup{n1} = [ map.v_bond_d_lookup{n1} , v_number ];
+                    map.v_bond_u_lookup{n2} = [ map.v_bond_u_lookup{n2} , v_number ];
+                    
+                    
+                    internal_counter=internal_counter+1;
+
+                    %fprintf( "vert %d-%d\n",pos_map(y,x), pos_map(y+1,x));
                 end
+                
             end
 
+            
+            map.num_v_bonds = internal_counter-map.num_h_bonds-1;
+            
+            
             map.internal_legs=internal_counter-1;
 
             %number ij according to number
             external_counter=1;
 
-            for x =1:n
-                for y =1:m
-                    N1 = pos_map(y,x);
-                    if N1 ~=0
-                        leg_list{N1}(1)= -N1;
-                        leg_list{N1}(2)= -(N1+N);
+        
+            for N1 =1:N
+                leg_list{N1}(1)= -N1;
+                leg_list{N1}(2)= -(N1+N);
 
-                        external_counter = external_counter+1;
-                    end
-                end
+                external_counter = external_counter+1;
             end
 
             external_counter= 2*N+1;
@@ -1259,7 +1399,6 @@ classdef PEPO
             map.leg_list= leg_list;
             
             map.map = "true";
-
         end
 
     end
