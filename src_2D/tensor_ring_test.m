@@ -2,17 +2,20 @@
 mapopts.numbered=0;
 mapopts.v_cyclic=0;
 mapopts.h_cyclic=1;
-map = PEPO.create_map([1,1],mapopts); %cyclic ring
+map = PEPO.create_map([1,1,1],mapopts); %cyclic ring
 
 physdim=2;
 
-target_mps=  rand(physdim^2,physdim^2);
+target_mps=  rand(physdim^2,physdim^2,physdim^2);
 
 opts.tol = 1e-13;
 opts.maxit = 1;
 opts.print_level = 1;
-opts.get_elem_num = [1;1];
-opts.solve_type = {'fsolve','fsolve'};
+opts.get_elem_num = [1;1;1];
+opts.solve_type = {'fsolve','',''};
+
+% opts.maxit = 10;
+% opts.solve_type = {'matrix_inv','',''};
 
 
 elem_list = cell(1,1);
@@ -41,7 +44,8 @@ target_mps=  rand(physdim^2,physdim^2,physdim^2,physdim^2);
 opts1.tol = 1e-13;
 opts1.maxit = 5000;
 opts1.print_level = 1;
-opts1.solve_type = {'matrix_inv','matrix_inv','matrix_inv','matrix_inv'};
+%opts1.solve_type = {'matrix_inv','matrix_inv','matrix_inv','matrix_inv'};
+opts1.solve_type = {'fsolve','fsolve','fsolve','fsolve'};
 
 
 elem_list = cell(1,4);
@@ -64,6 +68,7 @@ opts2.tol = 1e-12;
 opts2.maxit = 5000;
 opts2.print_level = 1;
 opts2.optim = [5,6];
+%opts2.solve_type = {'','','','','matrix_inv','matrix_inv'};
 opts2.solve_type = {'','','','','matrix_inv','matrix_inv'};
 
 elem_list_2 = cell(1,6);

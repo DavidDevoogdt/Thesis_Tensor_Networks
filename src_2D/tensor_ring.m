@@ -15,11 +15,26 @@ function [elem_list,err] = tensor_ring(elem_list,map,target_MPS, opts )
   end
   
 
- 
-    function elems = get_elem_list()
+ %select elements, including identical ones and subst num_elem for x;
+    function elems = get_elem_list(num,x)
         elems = cell(1,map.N);
-        for ii=1:map.N
-            elems{ii} = elem_list{ opts.get_elem_num(ii) } ;
+        if nargin<1
+        
+            for ii=1:map.N
+                elems{ii} = elem_list{ opts.get_elem_num(ii) } ;
+            end    
+        else
+            for ii=1:map.N
+                elem_num = opts.get_elem_num(ii);
+               
+                if elem_num == opts.get_elem_num(num)
+                    elems{ii} = x;
+                else
+                    elems{ii} = elem_list{ elem_num } ;
+                end
+
+            end
+            
         end
     end
   
@@ -53,9 +68,13 @@ function [elem_list,err] = tensor_ring(elem_list,map,target_MPS, opts )
         C=reshape(B,[],physical_dim);
     end
 
-    function [A,x0_shape]= get_A(num)
-        
-        temp_list = get_elem_list();
+    function [A,x0_shape]= get_A(num,x)
+
+        if nargin< 2  
+            temp_list = get_elem_list();
+        else
+            temp_list = get_elem_list(num,x);
+        end
         
         x0_shape = size(temp_list{num},[1,2,3,4,5,6]); %properly padded with ones
         
@@ -129,23 +148,62 @@ function [elem_list,err] = tensor_ring(elem_list,map,target_MPS, opts )
         A = reshape( permute(A, perm_vector)  , [],prod(x0_shape(3:end)));
     end
     
-    function F = get_residual(num,target,x)
+    function [F,G] = get_residual(num,duplicates,target,x)
 
-        temp_list = get_elem_list();
+        temp_list_1 = get_elem_list(num,x);
 
-        for ii = 1:map.N
-            if opts.get_elem_num(ii) == num
-                temp_list{ii} = x;
-            end
-        end
-
-        A  = ncon( temp_list,map.leg_list);
+        A1  = ncon( temp_list_1,map.leg_list);
         
-        F = reshape(  permute(A,site_ordering_permute(map.N)), size(target)) -target;
+        F = reshape(  permute(A1,site_ordering_permute(map.N)), size(target)) -target;
 
+        if nargout > 1 %calculate gradient
+            
+            size_x_red = size(x,[1,2,3,4,5,6]);
+            d2 = size_x_red(1)^2;
+            size_x_red(1) = d2;
+            size_x_red(2)=[];
+
+            grad_total_size = [size(F),size_x_red];
+            Grad_total = zeros( grad_total_size );
+            
+            
+            for ii = 1:size(duplicates,1)
+                num = duplicates(ii);
+                
+                index_before = num-1;
+                index_after = map.N-num;
+                
+                Grad_total = reshape(Grad_total, [d2^index_before, d2,d2^index_after, size_x_red ]    );
+                
+                [Ai,~]= get_A(num,x);
+                
+                Ai_res = reshape(Ai, [d2^index_before,1,d2^index_after,1, size_x_red(2:5)  ] );
+                
+                for iii =1:size_x_red(1)
+                    %delta ij
+                    Grad_total(:,iii,:,iii,:,:,:,:) = Grad_total(:,iii,:,iii,:,:,:,:)+ Ai_res(:,1,:,1,:,:,:,:);
+                    
+                end
+                
+                
+            end
+            
+            
+            G = reshape(Grad_total, numel(F), numel(x )  );
+            
+        end
+        
     end
 
-
+    function err = get_current_error()
+      
+        temp_list_1 = get_elem_list();
+        A1  = ncon( temp_list_1,map.leg_list);
+        a= reshape(  permute(A1,site_ordering_permute(map.N)), size(target_MPS)) -target_MPS; 
+        
+        
+        err = sum(reshape( a,[],1).^2).^(0.5);
+    end
 
     function  optimize_norms()
         norms_red = current_norms (current_norms>0 );
@@ -227,53 +285,56 @@ function [elem_list,err] = tensor_ring(elem_list,map,target_MPS, opts )
         curr_elem = opts.optim(curr_ind);
         
         elem_index = opts.get_elem_num(curr_elem);
-        
-        
-        switch opts.solve_type{curr_elem}
-            case 'fsolve'
-                
-                %for fsolve only unique subprobs should be solved
-                
-                if  elem_index ==  curr_elem
+       
+        if  elem_index ==  curr_elem
 
-                    options = optimoptions('fsolve','Display','iter');
+            switch opts.solve_type{curr_elem}
+                case 'fsolve'
 
-                    x = fsolve( @(x) get_residual(curr_elem,target_MPS,x),  elem_list{ elem_index }, options );
-                    normx = norm( reshape(x,[],1));
+                    %for fsolve only unique subprobs should be solved
 
-                    F = get_residual(curr_elem,target_MPS,x);
-                    
-                    err = sum(reshape( F,[],1).^2).^(0.5);
-        
+
+                        options = optimoptions('fsolve','Display','iter','SpecifyObjectiveGradient',true,'Algorithm','levenberg-marquardt' );
+
+                        duplicates =  find( opts.get_elem_num  == elem_index  );
+
+                        x = fsolve( @(x) get_residual(curr_elem, duplicates,target_MPS,x),  elem_list{ elem_index }, options );
+                        normx = norm( reshape(x,[],1));
+
+                        F = get_residual(curr_elem,duplicates,target_MPS,x);
+
+                        %err = sum(reshape( F,[],1).^2).^(0.5);
+
+                        current_norms(opts.get_elem_num(curr_elem)) = normx;
+                        elem_list{opts.get_elem_num(curr_elem) } = x;
+
+
+
+                case 'matrix_inv'
+
+                    B = rotate_rhs(target_MPS,curr_elem);
+                    [A,x0_shape] = get_A(curr_elem); 
+
+                    x=lsqminnorm(A,B);
+
+                    %F= A*x-B;
+
+                    normx = norm(x);
+
+                    x = permute(reshape(x, [x0_shape(3),x0_shape(4),x0_shape(5),x0_shape(6),x0_shape(1),x0_shape(2)]),[5,6,1,2,3,4]); %put phys dims back in front
+
+                    %err = sum(reshape( F,[],1).^2).^(0.5);
+
                     current_norms(opts.get_elem_num(curr_elem)) = normx;
                     elem_list{opts.get_elem_num(curr_elem) } = x;
-                    
-                end
-                    
-            case 'matrix_inv'
-        
-                B = rotate_rhs(target_MPS,curr_elem);
-                [A,x0_shape] = get_A(curr_elem); 
 
-                x=lsqminnorm(A,B);
 
-                F= A*x-B;
-                
-                normx = norm(x);
-
-                x = permute(reshape(x, [x0_shape(3),x0_shape(4),x0_shape(5),x0_shape(6),x0_shape(1),x0_shape(2)]),[5,6,1,2,3,4]); %put phys dims back in front
-
-                err = sum(reshape( F,[],1).^2).^(0.5);
-        
-                current_norms(opts.get_elem_num(curr_elem)) = normx;
-                elem_list{opts.get_elem_num(curr_elem) } = x;
-                
-            
-            otherwise 
-                error("unknown solve type")
-        end
-        
+                otherwise 
+                    error("unknown solve type")
+            end
+         end
  
+        err = get_current_error();
         
         if curr_ind==num_optim
             if opts.print_level ==1
