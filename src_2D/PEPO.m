@@ -272,84 +272,92 @@ classdef PEPO
                 obj.calculate_error( [1 2 3],obj.numopts) 
             end
             
-            
+
+%                 %%%%%%%%%%%%%%%calculate M1  
+            [map,b_map] = PEPO.create_map([1 2 3 4],obj.cycleopts);
+
+            fixed_bonds_M0 = PEPO.get_fixed_bonds(b_map,{ {[3,4],0},...
+                                                          {[4,1],0} });
+            fixed_bonds_M1 = PEPO.get_fixed_bonds(b_map,{ {[3,4],1},...
+                                                          {[4,1],1} });
+
+            target = obj.H_exp(map,obj.nf)-...
+                obj.contract_network(b_map,struct('max_index', obj.current_max_index, 'fixed', fixed_bonds_M0  ));
+            target_site = reshape( permute(target, site_ordering_permute(map.N) ), [d^6,1]  );       
+
+
+            valid_M1_contractions = get_valid_contractions(obj,b_map, struct('max_index', obj.current_max_index, 'fixed', fixed_bonds_M1  ));
+
+            [A,x0_shape]  = obj.contract_partial(4, b_map, valid_M1_contractions ) ;
+            M1 = reshape(  A \ target_site, [d^2,d^2]);
+
+
+            obj.boundary_matrix_x{2,2} = M1;
+
+            if obj.testing == 1
+                target = obj.H_exp(map,obj.nf)- obj.contract_network(b_map,struct('max_index', obj.current_max_index  ));
+            end
+
+
+
+            % optimize toghether
+                
+                
+                
+
+            [map_1,b_map_1] = PEPO.create_map([1 2 3 4],obj.cycleopts);
+
+            target_1 = obj.H_exp(map_1,obj.nf);
+            target_site_1 = reshape( permute(target_1, site_ordering_permute(map_1.N) ), [d^2,d^2,d^2]  );       
+
+            con_cells_1 = get_valid_contractions(obj,b_map_1, struct('max_index', obj.current_max_index));
+
+            % prob 2
+            [map_2,b_map_2] = PEPO.create_map([1 2 3],obj.cycleopts);
+
+            target2 = obj.H_exp(map_2,obj.nf);
+            target_site_2 = reshape( permute(target2, site_ordering_permute(map_2.N) ), [d^2,d^2]  );       
+
+            con_cells_2 = get_valid_contractions(obj,b_map_2, struct('max_index', obj.current_max_index));
+
+
             it = 0;
             while 1
-            
-                %%%%%%%%%%%%% create  0--|--1--|--2--|--1--|--0
-     
-                %horizontal
-
-                part = obj.get_middle_part(...
-                    {[1,2],[],[3,4],[]},[1,2,3,4],0);
-
-                [U,S,V] = svd( reshape(part,d^2*d^2,d^2*d^2) );
-                sqrt_S = diag(diag(S).^0.5);
-
-                block_l = permute( reshape(U*sqrt_S, [d^2,d,d,d^4]), [2,3,1,4]);
-                block_r = permute( reshape(sqrt_S*V', [d^4,d,d,d^2]), [2,3,1,4]); 
-
-                obj.PEPO_cell{2,1,3,1}= reshape(block_l,[d,d,d^2,1,d^4,1]);
-
-                obj.PEPO_cell{3,1,2,1}= reshape(block_r,[d,d,d^4,1,d^2,1]);
-
-
-                if obj.testing ==1
-                    obj.calculate_error( [1 2 3 4],obj.numopts) 
-                end
-
-
-                %%%%%%%%%%%%%%%calculate M1
-
-                if it == 0
-                    [map,b_map] = PEPO.create_map([1 2 3 4],obj.cycleopts);
-
-                    fixed_bonds_M0 = PEPO.get_fixed_bonds(b_map,{ {[3,4],0},...
-                                                                  {[4,1],0} });
-                    fixed_bonds_M1 = PEPO.get_fixed_bonds(b_map,{ {[3,4],1},...
-                                                                  {[4,1],1} });
-
-                    target = obj.H_exp(map,obj.nf)-...
-                        obj.contract_network(b_map,struct('max_index', obj.current_max_index, 'fixed', fixed_bonds_M0  ));
-                    target_site = reshape( permute(target, site_ordering_permute(map.N) ), [d^6,1]  );       
-
-
-                    valid_M1_contractions = get_valid_contractions(obj,b_map, struct('max_index', obj.current_max_index, 'fixed', fixed_bonds_M1  ));
-
-                    [A,x0_shape]  = obj.contract_partial(4, b_map, valid_M1_contractions ) ;
-                    M1 = reshape(  A \ target_site, [d^2,d^2]);
-
-
-                    obj.boundary_matrix_x{2,2} = M1;
-
-                    if obj.testing == 1
-                        target = obj.H_exp(map,obj.nf)- obj.contract_network(b_map,struct('max_index', obj.current_max_index  ));
-                    end
-
-                end
-
-                % c--|--x--|--x--|--M1--c  =expH(3,cyclish) -   c--|--x--|--x--|--M0--c 
-                [map,b_map] = PEPO.create_map([1 2 3 4],obj.cycleopts);
-
-                target = obj.H_exp(map,obj.nf);
-                target_site = reshape( permute(target, site_ordering_permute(map.N) ), [d^2,d^2,d^2]  );       
-
-                x0 = obj.PEPO_cell{2,1,2,1};
-
-                con_cells = get_valid_contractions(obj,b_map, struct('max_index', obj.current_max_index));
-
-
-                options = optimoptions('fsolve','Display','iter',...
-                                                'SpecifyObjectiveGradient',true,...
+                          
+                options = optimoptions('fsolve','Display','iter-detailed',...
                                                 'Algorithm','levenberg-marquardt',...
-                                                'MaxIterations',1000,...
-                                                'FunctionTolerance',1e-12);
-
+                                                'MaxIterations',5000,...
+                                                'SpecifyObjectiveGradient',true,... 
+                                                'FunctionTolerance',1e-25,...
+                                                'StepTolerance',1e-15);
+                x0 = obj.PEPO_cell{2,1,2,1};
+                M1 = obj.boundary_matrix_x{2,2};
 
                                             
-                x = fsolve( @(x) obj.get_value_and_grad(b_map,con_cells,[1,0,1,0],target_site,x),  x0 , options );
+                x_sizes = { size(x0), size(M1) };   
+                patterns = { [1,0,1,0], [1,1] };                           
+                begin_vec = [reshape( obj.PEPO_cell{2,1,2,1} ,1,[]) ,reshape(obj.boundary_matrix_x{2,2},1,[])];
+                con_cells = { con_cells_1, con_cells_2  };
+                targets = {target_site_1,target_site_2};
+                maps = { b_map_1,b_map_2 };
                 
-                obj.PEPO_cell{2,1,2,1} = x;
+%                 x_sizes = { size(x0) };   
+%                 patterns = { [1,0,1,0]};                           
+%                 begin_vec = [reshape( rand(size(x0)),1,[])];
+%                 con_cells = { con_cells_1, con_cells_2  };
+%                 targets = {target_site_1,target_site_2};
+%                 maps = { b_map_1,b_map_2 };
+                
+
+                x = fsolve( @(x) obj.get_value_and_grad(maps,con_cells,patterns,targets,x,x_sizes),  begin_vec , options );
+                
+                x_cell = split_x (x,x_sizes);
+                
+                x1= x_cell{1};
+                M1= x_cell{2};
+                
+                obj.PEPO_cell{2,1,2,1} = x1;
+                obj.boundary_matrix_x{2,2} = M1;
 
                 if obj.testing ==1
                     %cyclic error improved
@@ -357,12 +365,37 @@ classdef PEPO
                     err = obj.calculate_error( 1:4,obj.numopts) 
 
                     err = obj.calculate_error(1:4,obj.cycleopts)
-                    err = obj.calculate_error(1:5,obj.cycleopts)
+                    err = obj.calculate_error(1:3,obj.cycleopts)
                 end
 
                 it = it+1;
             end
 
+            
+            
+%             %%%%%%%%%%%%% create  0--|--1--|--2--|--1--|--0
+% 
+%             %horizontal
+% 
+%             part = obj.get_middle_part(...
+%                 {[1,2],[],[3,4],[]},[1,2,3,4],0);
+% 
+%             [U,S,V] = svd( reshape(part,d^2*d^2,d^2*d^2) );
+%             sqrt_S = diag(diag(S).^0.5);
+% 
+%             block_l = permute( reshape(U*sqrt_S, [d^2,d,d,d^4]), [2,3,1,4]);
+%             block_r = permute( reshape(sqrt_S*V', [d^4,d,d,d^2]), [2,3,1,4]); 
+% 
+%             obj.PEPO_cell{2,1,3,1}= reshape(block_l,[d,d,d^2,1,d^4,1]);
+% 
+%             obj.PEPO_cell{3,1,2,1}= reshape(block_r,[d,d,d^4,1,d^2,1]);
+% 
+% 
+%             if obj.testing ==1
+%                 obj.calculate_error( [1 2 3 4],obj.numopts) 
+%             end
+            
+            
 %             
 %              %%%%%%%%%%%%%%%calculate M2
 %             %initialize random boundary matrices
@@ -633,22 +666,30 @@ classdef PEPO
 
         end
          
-        function tensors = fetch_PEPO_cells(obj,map,legs,pattern,x)
+        function tensors = fetch_PEPO_cells(obj,map,legs,patterns,xs)
             
             if nargin <=3
-               pattern = [];
+               patterns = [];
             end
             
+            num_patterns = size(patterns,2);
          
             
             tensors=cell(1,map.N);
             for n=1:map.N
                 leg = legs{n};
 
-
-                if same_pattern(leg,pattern)==1
-                    tensors{n} = x;
-                else
+                matched_pattern = 0;
+                
+                for ii=1:num_patterns
+                    if same_pattern(leg,patterns{ii})==1
+                        tensors{n} = xs{ii};
+                        matched_pattern = 1;
+                        break;
+                    end
+                end
+                
+                if matched_pattern == 0
                     if map.is_x_border(n)
                        tensors{n} = obj.boundary_matrix_x{leg(1)+1,leg(2)+1};
                     elseif map.is_y_border(n)
@@ -661,8 +702,12 @@ classdef PEPO
             end
         end
         
-        function [A,x0_shape]= contract_partial(obj,num, map, con_cells , x )  
+        function [A,x0_shape]= contract_partial(obj,num, map, con_cells , x, pattern )  
 
+            %xsizes: how to split x into different components 
+            %patterns: match x with pattern given pattern for subs
+
+            
             % create new contraction list without num and legs connected to
             % num as last indices
             l=map.h_bond_l_lookup{num};
@@ -752,7 +797,7 @@ classdef PEPO
                 if nargin <5
                     temp_list = fetch_PEPO_cells(obj,map,legs);
                 else
-                    temp_list = fetch_PEPO_cells(obj,map,legs,legs{num},x);
+                    temp_list = fetch_PEPO_cells(obj,map,legs,pattern,x);
                 end
                 
                 x0_shape = size(temp_list{num}); %
@@ -779,68 +824,166 @@ classdef PEPO
 
         end
         
-        function [F,G] = get_value_and_grad(obj,map,con_cells,pattern,target,x)
-                
-            F = -target;
+        function [F,G] = get_value_and_grad(obj,maps,con_cells_cell,patterns,targets,x0,x_sizes)
             
-            G= zeros(numel(F), numel(x ));
-
-            for con_cell_index =1:size(con_cells,2)
-                
-                legs = con_cells{con_cell_index}{1};
-                temp_list_1 = fetch_PEPO_cells(obj,map,legs,pattern,x);
-                
-                A1  = ncon( temp_list_1,map.leg_list);
-                F = F + reshape(  permute(A1,site_ordering_permute(map.N2)), size(target));
+            num_sub_probs = size(maps,2);
             
-                if nargout > 1 %calculate gradient
+            F_cell= cell(num_sub_probs,1);
+            G_cell = cell(num_sub_probs,1);
+            
+            
+            F_total_size = 0;
+            
+            
+            for sub_prob = 1:num_sub_probs
+                con_cells = con_cells_cell{sub_prob};
+                target = targets{sub_prob};
+                map = maps{sub_prob};
+                
+                F_total_size = F_total_size+numel(target);
+                
+                
+                num_x = size(x_sizes,2);
 
-                    size_x_red = size(x,[1,2,3,4,5,6]);
-                    d2 = obj.dim^2;
-                    size_x_red(1) = d2;
-                    size_x_red(2)=[];
+                %x= reshape(x,[],1);
 
-                    grad_total_size = [size(F),size_x_red];
-                    Grad_total = zeros( grad_total_size );
+                x_cell = cell(num_x,1);
+
+                F_sub = -target;
+                G_sub_cell = cell(num_x,1);
+
+                curr=0;
+                for i =1:num_x
+                    num_elem = prod(x_sizes{i});
+                    x_cell{i} = reshape(x0(curr+1:curr+num_elem),x_sizes{i});
+                    curr = curr+num_elem;
+                    G_sub_cell{i} = zeros(numel(F_sub), num_elem );
+                end
 
 
-                    num = 0;
+                total_size = curr;
 
-                    for ii = 1:size(legs,2)
-                        if  same_pattern(legs{ii}, pattern)
 
-                            index_before = num;
-                            index_after = map.N2-num-1;
+                for con_cell_index =1:size(con_cells,2)
 
-                            Grad_total = reshape(Grad_total, [d2^index_before, d2,d2^index_after, size_x_red ]    );
+                    legs = con_cells{con_cell_index}{1};
+                    temp_list_1 = fetch_PEPO_cells(obj,map,legs,patterns,x_cell);
 
-                            [Ai,~]=contract_partial(obj,ii, map, con_cells(con_cell_index) , x ) ;
+                    A1  = ncon( temp_list_1,map.leg_list);
+                    F_sub = F_sub + reshape(  permute(A1,site_ordering_permute(map.N2)), size(target));
 
-                            Ai_res = reshape(Ai, [d2^index_before,1,d2^index_after,1, size_x_red(2:5)  ] );
+                    if nargout > 1 %calculate gradient
 
-                            for iii =1:size_x_red(1)
-                                %delta ij
-                                Grad_total(:,iii,:,iii,:,:,:,:) = Grad_total(:,iii,:,iii,:,:,:,:)+ Ai_res(:,1,:,1,:,:,:,:);
+                        for pat_num = 1:num_x
 
+                            x=x_cell{pat_num};
+
+                            if size(patterns{pat_num},2)==2 %boundary matrix
+
+                                grad_total_size = [ numel(F_sub), numel(x) ];
+                                Grad_total = zeros( grad_total_size );
+
+                                for ii = 1:size(legs,2)
+                                    if  same_pattern(legs{ii}, patterns{ pat_num} )
+                                        [Ai,~]=contract_partial(obj,ii, map, con_cells(con_cell_index) , x_cell,patterns  ) ;
+                                        Grad_total = Grad_total + Ai;
+                                    end
+                                end
+
+                            else
+                                size_x_red = size(x,[1,2,3,4,5,6]);
+                                d2 = obj.dim^2;
+                                size_x_red(1) = d2;
+                                size_x_red(2)=[];
+
+
+                                grad_total_size = [size(F_sub),size_x_red];
+                                Grad_total = zeros( grad_total_size );
+
+
+                                num = 0;
+
+                                for ii = 1:size(legs,2)
+                                    if  same_pattern(legs{ii}, patterns{ pat_num} )
+
+                                        index_before = num;
+                                        index_after = map.N2-num-1;
+
+                                        Grad_total = reshape(Grad_total, [d2^index_before, d2,d2^index_after, size_x_red ]    );
+
+                                        [Ai,~]=contract_partial(obj,ii, map, con_cells(con_cell_index) , x_cell,patterns  ) ;
+
+                                        Ai_res = reshape(Ai, [d2^index_before,1,d2^index_after,1, size_x_red(2:5)  ] );
+
+
+
+                                        for iii =1:size_x_red(1)
+                                            %delta ij
+                                            Grad_total(:,iii,:,iii,:,:,:,:) = Grad_total(:,iii,:,iii,:,:,:,:)+ Ai_res(:,1,:,1,:,:,:,:);
+
+                                        end
+
+
+                                        Grad_total =  reshape(Grad_total, grad_total_size );
+                                    end
+
+                                    if size(legs{ii},2)==4 %not boundary matrix
+                                        num = num+1;
+                                    end
+                                end
                             end
 
-
-                            Grad_total =  reshape(Grad_total, grad_total_size );
-                        end
-
-                        if size(legs{ii},2)==4 %not boundary matrix
-                            num = num+1;
+                            G_sub_cell{pat_num} = G_sub_cell{pat_num} +reshape( Grad_total, size(G_sub_cell{pat_num}));
                         end
 
                     end
-
-                    G = G +reshape( Grad_total, size(G));
-
                 end
+
+                %put back toghether
+
+                if nargout > 1 
+                    G_sub = zeros( [ numel(F_sub) ,total_size]);
+
+                    curr=0;
+                    for i =1:num_x
+                        num_elem = prod(x_sizes{i});
+                        G_sub(:,curr+1:curr+num_elem) = G_sub_cell{i}  ;
+                        curr = curr+num_elem;
+
+                    end
+                end
+                
+                F_cell{sub_prob} = F_sub;
+                if nargout > 1 
+                    G_cell{sub_prob} = G_sub;
+                end
+            
             end
+            
+           F = zeros(F_total_size,1);
+           if nargout > 1 
+              G = zeros(F_total_size,total_size);
+           end
+           
+           
+           curr = 0;
+           
+           for sub_prob = 1:num_sub_probs
+                num_elem =  numel(F_cell{sub_prob})  ;
+                F(curr+1:curr+num_elem) = reshape(F_cell{sub_prob},[num_elem,1]) ;
+                
+               
+                if nargout > 1 
+                    G(curr+1:curr+num_elem,:) = G_cell{sub_prob};
+                end
+                
+                curr = curr+num_elem;
+                
+           end
+
+            
         end
-        
-        
+
         function M = contract_network(obj,map, opts)
             %generate all index sets for a given configuration
                         
@@ -1776,4 +1919,18 @@ function bool = same_pattern(leg1,leg2)
            bool=1; 
         end
     end
+end
+
+function x_cell = split_x (x,x_sizes)
+
+    num_x = size(x_sizes,2);
+    x_cell = cell(num_x,1);
+
+    curr=0;
+    for i =1:num_x
+        num_elem = prod(x_sizes{i});
+        x_cell{i} = reshape(x(curr+1:curr+num_elem),x_sizes{i});
+        curr = curr+num_elem;
+    end
+            
 end
