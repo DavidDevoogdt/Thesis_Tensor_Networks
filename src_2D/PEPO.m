@@ -28,8 +28,6 @@ classdef PEPO
         boundary_matrix_y
     end
     
-    
-        
     methods
         function obj = PEPO(d,H_1_tensor,H_2_tensor,max_index,type,opts)
             numopts.numbered = 1;
@@ -72,6 +70,98 @@ classdef PEPO
             
             
             obj = obj.makePEPO();
+        end
+        
+        
+        function obj = makePEPO(obj)
+            d = obj.dim;
+            
+            
+            
+            %%%%%%%%%%single site
+            O_0000 =expm( 0*obj.H_1_tensor ); % eye(d);%expm( 0*obj.H_1_tensor );
+            %obj.nf = trace(O_0000);
+            
+            obj.PEPO_cell{1,1,1,1} = reshape(  O_0000/obj.nf , [d,d,1,1,1,1] ) ;
+            %%%%%%%%%% identity
+            
+            function [map,con_cells_b,res_target] = double(n)
+                
+                obj.current_max_index=n/2;
+                
+                [map,~] = PEPO.create_map(1:n,obj.numopts);
+                target = obj.H_exp(map,obj.nf);
+                target_site = reshape( permute(target, site_ordering_permute(map.N) ), dimension_vector(d^2,map.N)  );       
+
+                m = n/2;
+
+                pattern = { [m-1,0,m,0],[m,0,m-1,0] };
+
+                con_cells = get_valid_contractions(obj,map, struct('max_index', obj.current_max_index,'pattern',{pattern} ) );
+                [con_cells_a,con_cells_b] = PEPO.split_con_cells(map,con_cells);
+
+                [x_cell,res_target] = obj.solve_lin(pattern, map,con_cells_a,target_site);
+
+                pp = ncon( {x_cell{1},x_cell{2}},  { [-2,-3,-1,-7 , 1,-8 ],[-4,-5, 1,-9,-6,-10 ] }  );
+                
+                
+                obj.PEPO_cell{m,1,m+1,1} = x_cell{1};%right
+                obj.PEPO_cell{m+1,1,m,1} = x_cell{2};%left
+
+                if obj.testing ==1
+                    err = obj.calculate_error( 1:n ,obj.numopts) 
+                end   
+            end
+            
+            function  [map,con_cells_b,res_target] = single(n)
+                 %%%%%%%%%%%%%%%%  determine 1--|--1 
+                [map,~] = PEPO.create_map(1:n,obj.numopts);
+
+                m= (n-1)/2;
+                
+                %d2 = d^4;
+
+                target = obj.H_exp(map,obj.nf);
+                target_site = reshape( permute(target, site_ordering_permute(map.N) ), dimension_vector(d^2,map.N)  );       
+
+                pattern = {[m,0,m,0]};
+                
+                con_cells = get_valid_contractions(obj,map, struct('max_index', obj.current_max_index,'pattern',{pattern}  ));
+                [con_cells_a,con_cells_b] = PEPO.split_con_cells(map,con_cells);
+
+                [x_cell,res_target] = obj.solve_lin(pattern, map,con_cells_a,target_site);
+
+               obj.PEPO_cell{m+1,1,m+1,1} =  x_cell{1}; 
+
+
+                if obj.testing ==1
+                   err = obj.calculate_error(1:n,obj.numopts) 
+                end
+            end
+            
+            %%%%%%%%%%%%%% 0--|--1--|--0 and all other veriants
+            obj.current_max_index = 1;
+            obj.virtual_level_sizes_horiz = [1];
+            obj.virtual_level_sizes_vert = [1];
+            
+            
+            for n=1:3
+                obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^(2*n)];
+                obj.virtual_level_sizes_vert =  [obj.virtual_level_sizes_vert,  d^(2*n) ];
+                
+                [~,con_cells_b,res_target] = double(2*n);
+                res_target
+                
+                [~,con_cells_b,res_target] = single(2*n+1);
+                res_target
+                
+            end
+            
+            
+            %%%%%%%%%%%
+
+            obj = obj.cell2matrix() ; %save matrix form
+            
         end
         
         function obj = makePEPO3(obj)
@@ -215,13 +305,17 @@ classdef PEPO
            
         end
 %       
-        function obj = makePEPO(obj)
+        function obj = makePEPO_old(obj)
             d = obj.dim;
             
-            %todo do this in code
-            obj.virtual_level_sizes_horiz = [d^0,d^2];
-            obj.virtual_level_sizes_vert = [d^0,d^2];
+           
 
+            d1_extra = 0;
+            d2_extra = 0;
+            
+             %todo do this in code
+            obj.virtual_level_sizes_horiz = [d^0,d^2+d1_extra, d^4+d2_extra,0,0,0];
+            obj.virtual_level_sizes_vert =  [d^0,d^2+d1_extra, d^4+d2_extra,0,0,0];
             
             %%%%%%%%%%single site
             O_0000 =expm( 0*obj.H_1_tensor ); % eye(d);%expm( 0*obj.H_1_tensor );
@@ -241,10 +335,10 @@ classdef PEPO
 
             [U,S,V] = svd(  reshape(part,d^2,d^2) );
             
-            n_extra = 4;
-            d1 = d^2+n_extra;
             
-            [U,S,V] = expand_svd(U,S,V,n_extra);
+            d1 = d^2+d1_extra;
+            
+            [U,S,V] = expand_svd(U,S,V,d1_extra);
             
             sqrt_S = diag(diag(S).^0.5);
             
@@ -289,7 +383,7 @@ classdef PEPO
  
             [U,S,V] = svd( reshape(part,d1*d^2,d^2*d1));
 
-            d2_extra = d^2;
+            
 
             d2 = d^4+d2_extra;
 
@@ -309,8 +403,29 @@ classdef PEPO
             end   
             
             %%%%%%%
-
+  
+            [map_2,~] = PEPO.create_map(1:2,obj.numopts);
+            [map_4,~] = PEPO.create_map(1:4,obj.numopts);
+            [map_5,~] = PEPO.create_map(1:5,obj.numopts);
+            [map_6,~] = PEPO.create_map(1:6,obj.numopts);
              %make 2--|--2
+             
+             %0--|--1--|--2--|--2--|--1--|--0 
+             
+             
+            target_3 = obj.H_exp(map_5,obj.nf);
+            target_site_3 = reshape( permute(target_3, site_ordering_permute(map_5.N) ), [d^2,d^2,d^2,d^2,d^2]  );       
+
+            con_cells_3 = get_valid_contractions(obj,map_5, struct('max_index', obj.current_max_index,'pattern',[2,0,2,0]));
+            [con_cells_3_a,con_cells_3_b] = PEPO.split_con_cells(map_5,con_cells_3);
+             
+            pattern = [2,0,2,0] ;
+             
+            
+            test = obj.solve_lin(pattern, map_5,con_cells_3_a,target_site_3)
+             
+             
+             
              obj.PEPO_cell{3,1,3,1} =  obj.get_middle_part(...
                  {[1,2,3],[],[3,4,5],[]},[1,2,3,4,5],1); 
            
@@ -318,9 +433,6 @@ classdef PEPO
                err = obj.calculate_error(1:5,obj.numopts) ;
             end
              
-            
-            
-            
             %setup new numerical prob
 
              %%%%%%%5solve for M2
@@ -329,85 +441,111 @@ classdef PEPO
             obj.boundary_matrix_x{3,3} = eye(d2);
             
              %%%%%%%%%%%%%5
-             
-             
+                         
              %prob1
-            [map_1,b_map_1] = PEPO.create_map([1 2 3],obj.cycleopts);
-
-            target_site_1 = zeros([d^2,d^2] );
+           
+            %%%%%%%%%%%%%%5
             
-            con_cells_1 = {...
-                    {{[2,0,1,0],[1,0,2,0]},[2,1,2]},...
-                    {{[2,0,2,0],[2,0,2,0]},[2,2,2]},...
+            tf = cell(4,1);
+            
+            % 1--1--1 + 1--2--1 =0
+            tf{1} = {...
+                    {{[1,0,1,0],[1,0,1,0]},'1--1--1'},...
+                    {{[1,0,2,0],[2,0,1,0]},'1--2--1'},...
                 };
             
-            % prob 2
-            [map_2,b_map_2] = PEPO.create_map([1 2 3 4],obj.numopts);
+            % 1--1--2 + 1--2--2 =0
+            tf{2}= {...
+                    {{[1,0,1,0],[1,0,2,0]},'1--1--2'},...
+                    {{[1,0,2,0],[2,0,2,0]},'1--2--2'},...
+                };
+            % 2--1--1 + 2--2--1 =0
+            tf{3} = {...
+                    {{[2,0,1,0],[1,0,1,0]},'2--1--1'},...
+                    {{[2,0,2,0],[2,0,1,0]},' 2--2--1'},...
+                };
+            
+            % 2--1--2 + 2--2--2 =0
+            tf{4}= {...
+                    {{[2,0,1,0],[1,0,2,0]},'2--1--2'},...
+                    {{[2,0,2,0],[2,0,2,0]},' 2--2--2' },...
+                };
+            
+           
+            
+           
+%%%%%%%%%%%%%
 
-            target2 = obj.H_exp(map_2,obj.nf);
-            target_site_2 = reshape( permute(target2, site_ordering_permute(map_2.N) ), [d^2,d^2,d^2,d^2]  );       
 
-            con_cells_2 = get_valid_contractions(obj,b_map_2, struct('max_index', obj.current_max_index));
+            target_site_1_a = zeros(dimension_vector(d^2,6) );
+            target_site_1_b = zeros(dimension_vector(d^2,5) );
+            target_site_1_c = zeros(dimension_vector(d^2,5));
+            %target_site_1_d = zeros(dimension_vector(d^2,4) );
+            
+            
+            %%% [0,0,1,0],[1,0,2,0]  --  ,[2,0,1,0],[1,0,0,0]
+            %%%  [0,0,1,0], --- ,[1,0,0,0]
+            
+            % 2--1--2 + 2--2--2 =0
+            con_cells_1_a = {...
+                    {{[0,0,1,0],[1,0,2,0],[2,0,1,0],[1,0,2,0],[2,0,1,0],[1,0,0,0]},'2-x-2'},...
+                    {{[0,0,1,0],[1,0,2,0],[2,0,2,0],[2,0,2,0],[2,0,1,0],[1,0,0,0]},'2-x-2'},...
+                };
+            
+            
+            
+            
+            
+%             % 1--1--2 + 1--2--2 =0
+%             con_cells_1_b = {...
+%                     {{[0,0,1,0],[1,0,1,0],[1,0,2,0],[2,0,1,0],[1,0,0,0]},'1-x-2'},...
+%                     {{[0,0,1,0],[1,0,2,0],[2,0,2,0],[2,0,1,0],[1,0,0,0]},'1-x-2'},...
+%                 };
+%             % 2--1--1 + 2--2--1 =0
+%             con_cells_1_c = {...
+%                     {{[0,0,1,0],[1,0,2,0],[2,0,1,0],[1,0,1,0],[1,0,0,0]},'2-x-1'},...
+%                     {{[0,0,1,0],[1,0,2,0],[2,0,2,0],[2,0,1,0],[1,0,0,0]},'2-x-1'},...
+%                 };
+            
+            % 1--1--1 + 1--2--1 =0
+%             con_cells_1_d = {...
+%                     {{[0,0,1,0],[1,0,1,0],[1,0,1,0],[1,0,0,0]},'1-x-1'},...
+%                     {{[0,0,1,0],[1,0,2,0],[2,0,1,0],[1,0,0,0]},'1-x-1'},...
+%                 };            
 
 
-            % prob3
+            % prob 2  0--|--1--|--2--|--1--|--0
+            
+            
+            target2 = obj.H_exp(map_4,obj.nf);
+            target_site_2 = reshape( permute(target2, site_ordering_permute(map_4.N) ), [d^2,d^2,d^2,d^2]  );       
 
-            [map_3,b_map_3] = PEPO.create_map([1 2 3 4 5],obj.numopts);
+            con_cells_2 = get_valid_contractions(obj,map_4, struct('max_index', obj.current_max_index));
+            
+            
+            
+            % prob3 0--|--1--|--2--|--2--|--1--|--0
 
-            target_3 = obj.H_exp(map_3,obj.nf);
-            target_site_3 = reshape( permute(target_3, site_ordering_permute(map_3.N) ), [d^2,d^2,d^2,d^2,d^2]  );       
+            
+            target_3 = obj.H_exp(map_5,obj.nf);
+            target_site_3 = reshape( permute(target_3, site_ordering_permute(map_5.N) ), [d^2,d^2,d^2,d^2,d^2]  );       
 
-            con_cells_3 = get_valid_contractions(obj,b_map_3, struct('max_index', obj.current_max_index));
-
+            con_cells_3 = obj.get_valid_contractions(map_5, struct('max_index', obj.current_max_index));
+            [a,b] = PEPO.split_con_cells(map_5,con_cells_3);
            
             %start solver
+               
+            patterns = {[2,0,2,0], [1,0,2,0], [2,0,1,0] }; 
+            con_cells = { con_cells_1_a, con_cells_2 ,con_cells_3 };
+            targets = {target_site_1_a,target_site_2,target_site_3};
+            maps = { map_6,map_4,map_5 };
 
-
-            options = optimoptions('fsolve','Display','iter-detailed',...
-                                            'Algorithm','levenberg-marquardt',...
-                                            'MaxIterations',2000,...
-                                            'SpecifyObjectiveGradient',true,... 
-                                            'FunctionTolerance',1e-25,...
-                                            'StepTolerance',1e-16,...
-                                            'PlotFcn','optimplotfirstorderopt');
-            x22 = obj.PEPO_cell{3,1,3,1};
-            x12 = obj.PEPO_cell{2,1,3,1};
-            x21 = obj.PEPO_cell{3,1,2,1};
             
-            x_sizes = { size(x22), size(x12),size(x21)};   
-            patterns = { [2,0,2,0], [1,0,2,0], [2,0,1,0] }; 
-            begin_vec = [reshape( x22 ,1,[]) ,reshape( x12,1,[]),reshape( x21,1,[]) ];
+            x_cell = obj.solve_non_lin(patterns,maps,targets,con_cells, struct() );
 
-          
-
-            con_cells = { con_cells_1, con_cells_2 ,con_cells_3 };
-            targets = {target_site_1,target_site_2,target_site_3};
-            maps = { map_1,b_map_2,b_map_3 };
-
-            [con_cells2, targets2] = optimize_con_cells(obj,maps,con_cells, patterns,targets );
-           
-            
-           
-            if obj.testing == 1
-                [f0,g0] = obj.get_value_and_grad(maps,con_cells,patterns,targets,begin_vec,x_sizes);
-                [f1,g1] = obj.get_value_and_grad(maps,con_cells2,patterns,targets2,begin_vec,x_sizes);
-            end
-            
-
-%    
-            x = fsolve( @(x) obj.get_value_and_grad(maps,con_cells2,patterns,targets2,x,x_sizes),  begin_vec , options );
-
-            x_cell = split_x (x,x_sizes);
-
-            x22= x_cell{1};
-            x12= x_cell{2};
-            x21= x_cell{3};
-            
-           
-
-            obj.PEPO_cell{3,1,3,1} = x22;
-            obj.PEPO_cell{2,1,3,1} = x12;
-            obj.PEPO_cell{3,1,2,1} = x21;
+            obj.PEPO_cell{3,1,3,1} = x_cell{1};
+            obj.PEPO_cell{2,1,3,1} = x_cell{2};
+            obj.PEPO_cell{3,1,2,1} = x_cell{3};
 
 
             if obj.testing ==1
@@ -429,8 +567,6 @@ classdef PEPO
             obj = obj.cell2matrix() ; %save matrix form
            
         end
-        
-
 
         function obj = makePEPO1d(obj)
             d = obj.dim;
@@ -525,9 +661,6 @@ classdef PEPO
             con_cells_3 = get_valid_contractions(obj,b_map_3, struct('max_index', obj.current_max_index));
 
            
-            %start solver
-
-
             options = optimoptions('fsolve','Display','iter-detailed',...
                                             'Algorithm','levenberg-marquardt',...
                                             'MaxIterations',2000,...
@@ -635,6 +768,8 @@ classdef PEPO
             M2_cons = obj.get_valid_contractions(b_map_2, struct('fixed',fixed_bonds_M2));
             M2_target_site = reshape( permute(M2_target, site_ordering_permute(map_2.N) ), [d^8,1]  );  
             
+            %map2 = obj.remove_elem(5,map);
+            %todo do this with lin_solve
             [A,~]=contract_partial(obj,5, b_map_2, M2_cons );
                    
             M2 = reshape(A, [d^8, d2^2 ]) \ M2_target_site;
@@ -753,6 +888,337 @@ classdef PEPO
            
         end
         
+        function x_cell = solve_non_lin(obj,patterns,maps,targets,con_cells, opts )
+            p = inputParser;
+            addParameter(p,'optimise',1)
+            parse(p,opts)
+            
+
+            options = optimoptions('fsolve','Display','iter-detailed',...
+                                        'Algorithm','levenberg-marquardt',...
+                                        'MaxIterations',2000,...
+                                        'SpecifyObjectiveGradient',true,... 
+                                        'FunctionTolerance',1e-25,...
+                                        'StepTolerance',1e-16,...
+                                        'PlotFcn','optimplotfirstorderopt');
+            
+            num_patterns = size(patterns,2);                        
+            
+            x_sizes = cell(1,num_patterns);
+            begin_vec = [];
+            
+            for i=1:size(patterns,2)
+                pattern = patterns{i};
+                if size(pattern,2) ~=4
+                   error("fetch boundary matrices here") 
+                end
+                
+                tens = obj.PEPO_cell{ pattern(1)+1,pattern(2)+1,pattern(3)+1,pattern(4)+1 } ;
+                x_sizes{i} = size(tens);
+                begin_vec = [begin_vec, reshape(tens,1,[])];
+            end
+                                    
+            if p.Results.optimise == 1 
+                [con_cells, targets] = optimize_con_cells(obj,maps,con_cells, patterns,targets );
+            end
+ 
+            x = fsolve( @(x) obj.get_value_and_grad(maps,con_cells,patterns,targets,x,x_sizes),  begin_vec , options );
+
+            x_cell = split_x (x,x_sizes);
+
+            
+%             if obj.testing == 1
+%                 for i = 1:size(maps,2)
+%                     F = obj.get_value_and_grad(maps(i), con_cells2(i),patterns,targets2(i),begin_vec,x_sizes);
+%                     norm = sum(F.^2)^0.5
+%                 end
+%                 
+%                 for i = 1:size(tf,1)
+%                     A = 0;
+%                     for j = 1:size(tf{i},2)
+%                         tensors = obj.fetch_PEPO_cells(map_2, tf{i}{j}{1} );
+%                         vect  =  ncon( tensors, map_2.leg_list );
+%                         leg_1_size =  prod(size(vect,5:8));
+%                         vect = reshape(vect,d^2,d^2, leg_1_size,[]  );
+%                         perm = reshape( permute(vect, [3,1,2,4]), leg_1_size*d^2,[]);
+%                         A=A+perm;
+%                         
+%                     end
+%                     S= (svds(A,2).^0.5)
+%                 end
+%                 
+%             end
+            
+            
+        end
+         
+        function [x_cell,residual_target] = solve_lin(obj,pattern, map,con_cells,target)
+            %x is a tensor with the solved part, dims are the individual
+            %dimensions of the PEPO cells. The still connected bonds are
+            %numbered with negative indices in dims
+            
+            
+            %bring all parts without the PEPO cells to solve to the target
+            [con_cells_cell2, target2] = obj.optimize_con_cells({map}, {con_cells} , pattern,{target} );
+            
+            if numel(con_cells_cell2) ~=1
+               error("to many sub_problems") 
+            end
+            
+            if numel(con_cells_cell2{1}) ~=1
+               error("not linear") 
+            end
+            
+            residual_target= target2{1};
+            cc = con_cells_cell2{1}{1};
+            
+            
+            %get locaton of patterns
+            num_pats = size(pattern,2);
+            
+            nums = zeros( num_pats,1) -1;
+            
+            for pat = 1:num_pats
+                for i=1:map.N
+                    if same_pattern( cc{1}{i} , pattern{pat} )
+                        nums(pat) = i;
+                        break;
+                    end
+                end
+            
+            end
+            
+            if sum(nums == -1) ~=0
+               error("pattern not found") 
+            end
+            
+            
+            %remove target from map to the back and adapt order of target
+            rem_map = map;
+            
+            
+            
+            for pat = 1:num_pats
+                num = nums(pat);
+                rem_map = obj.remove_elem(num, rem_map);
+                
+            end
+            
+            target_rot = rotate_rhs(residual_target,nums); %put part in back
+            
+            function C= rotate_rhs(B,nums)
+                perm = 1:size(size(B),2);
+                perm(nums)=[];
+                perm = [perm,nums'];
+
+                C = permute(B, perm );
+            end
+            
+            target_rot = reshape(target_rot, [] ,obj.dim^(2*num_pats));
+            dd = size(target_rot,1);
+            
+            %cast to A*x=b
+            [A,~] = obj.contract_partial(num, rem_map, {cc});
+            A_res = reshape(A,dd,[]);
+            
+            x = lsqminnorm(A_res,target_rot);
+            
+           
+            %determine appropriate size of differnten PEPO cells and
+            %connections between them
+            dims = cell(1,num_pats  );
+            
+            dim_arr = zeros(1,num_pats);
+            
+            for n1=1:num_pats
+               p = pattern{n1};
+               ll = map.leg_list{nums(n1)}(3:6);
+               
+               dd = 1;
+               
+               for j=1:4
+                   if mod(j,2)==1
+                       d = obj.virtual_level_sizes_horiz( p(j)+1 );
+                   else
+                      d= obj.virtual_level_sizes_vert( p(j)+1 );
+                   end
+
+                   dims{n1} = [dims{n1}, d];
+                   dd=dd*d;
+               end
+               
+               dims{n1} = [obj.dim,obj.dim,dims{n1}];
+               
+               dim_arr(n1) =  dd;
+            end
+            
+            bond_counter = 0;
+            
+            bond_pairs = {};
+            
+            for n1=1:num_pats %look for bonds between extracted x
+                num = nums(n1);
+                for j=1:4
+                    if ll(j)>0
+                        
+                         switch j
+                           case 1
+                               if ~isempty(rem_map.ext_h_bond_l_lookup{num})
+                                   bond_counter = bond_counter +1;
+                                   
+                                   bond = map.h_bond_l_lookup{num};
+                                   pair = map.h_bonds{bond};
+                                  other = pair( pair ~= num );
+                                   
+                                   n2 = find(nums==other);
+                                   
+                                   
+                                   dim1= dim_arr(n1);
+                                   dim2 = dim_arr(n2);
+                                   jdim1 = dims{n1}(2+1);
+                                   jdim2 = dims{n2}(2+3);
+                                   
+                                   dim_arr(n1) = dim1/jdim1;
+                                   dim_arr(n2) = dim2/jdim2;
+                                   dims{n1}(3) = -bond_counter;
+                                   dims{n2}(5) = -bond_counter;
+                                   
+                                   bond_pairs{bond_counter} = pair;
+                                   
+                                   
+                               end
+                           case 2
+                               if ~isempty(rem_map.ext_v_bond_u_lookup{num})
+                                   bond_counter = bond_counter +1;
+                                   
+                                   bond = map.v_bond_u_lookup{num};
+                                   pair = map.v_bonds{bond};
+                                   other = pair( pair ~= num );
+                                   
+                                   n2 = find(nums==other);
+                                   
+                                   dim1= dim_arr(n1);
+                                   dim2 = dim_arr(n2);
+                                   jdim1 = dims{n1}(2+2);
+                                   jdim2 = dims{n2}(2+4);
+                                   
+                                   dim_arr(n1) = dim1/jdim1;
+                                   dim_arr(n2) = dim2/jdim2;
+                                   dims{n1}(2+2) = -bond_counter;
+                                   dims{n2}(2+4) = -bond_counter;
+                                   
+                                   bond_pairs{bond_counter} = pair;
+                                   
+                                   
+                               end
+                           case 3
+                               if ~isempty(rem_map.ext_h_bond_r_lookup{num})
+                                   bond_counter = bond_counter +1;
+                                   
+                                   bond = map.h_bond_r_lookup{num};
+                                   pair = map.h_bonds{bond};
+                                   other = pair( pair ~= num );
+                                   
+                                   n2 = find(nums==other);
+                                   
+                                   dim1= dim_arr(n1);
+                                   dim2 = dim_arr(n2);
+                                   jdim1 = dims{n1}(2+3);
+                                   jdim2 = dims{n2}(2+1);
+                                   
+                                   dim_arr(n1) = dim1/jdim1;
+                                   dim_arr(n2) = dim2/jdim2;
+                                   dims{n1}(2+3) = -bond_counter;
+                                   dims{n2}(2+1) = -bond_counter;
+                                   
+                                   bond_pairs{bond_counter} = pair;
+                                   
+                               end
+                           case 4
+                               if ~isempty(rem_map.ext_v_bond_d_lookup{num})
+                                   bond_counter = bond_counter +1;
+                                   
+                                   bond = map.v_bond_d_lookup{num};
+                                   pair = map.v_bonds{bond};
+                                   other = pair( pair ~= num );
+                                   
+                                   n2 = find(nums==other);
+                                   
+                                   dim1= dim_arr(n1);
+                                   dim2 = dim_arr(n2);
+                                   jdim1 = dims{n1}(2+4);
+                                   jdim2 = dims{n2}(2+2);
+                                   
+                                   dim_arr(n1) = dim1/jdim1;
+                                   dim_arr(n2) = dim2/jdim2;
+                                   dims{n1}(2+4) = -bond_counter;
+                                   dims{n2}(2+2) = -bond_counter;
+                                   
+                                   bond_pairs{bond_counter} = pair;
+                                   
+                               end
+                         end
+
+                    end
+                end
+            end
+                
+           perm_vect = site_ordering_permute(num_pats,1);
+            
+           x = permute(reshape( x,[dim_arr,dimension_vector(obj.dim^2,num_pats)]   ), perm_vect);  
+           
+           %now split across each bond with svd
+           
+           switch bond_counter
+               case 0
+                   x_cell = { reshape(x,dims{1})};
+               case 1
+                    pair = bond_pairs{1};
+
+                    num1 = pair(1);
+                    num2 = pair(2);
+
+                    i1 = find(nums==num1) ;
+                    i2 = find(nums==num2) ;
+                    
+                    dims1 = dims{i1};
+                    dims2 = dims{i2};
+
+                    mask1 = dims1 == -1;
+                    mask2 = dims2 == -1;
+
+                    d1 = prod(  dims1(~mask1) );
+                    d2 = prod(  dims2(~mask2) );
+
+                     assert( d1==d2 ) 
+                    
+                    n1 = find( mask1 );
+                    n2 = find( mask2 );
+
+                    dim1_alt = [  prod(dims1(1:n1-1)), prod(dims1(n1+1:end)) ];
+                    dim2_alt = [  prod(dims2(1:n2-1)), prod(dims2(n2+1:end)) ];
+
+                    [U,S,V] = svd(  reshape( x ,d1,d1) );
+
+                    sqrt_S = diag(diag(S).^0.5);
+
+                    l = permute( reshape(U*sqrt_S, dim1_alt(1),dim1_alt(2),[] ), [1,3,2]);
+                    r = permute( reshape(sqrt_S*V',[],dim2_alt(1),dim2_alt(2) ), [2,1,3]); 
+                    
+                    dims1(mask1) = size(l,2);
+                    dims2(mask2) = size(r,2);
+                    
+                    x_cell{ i1 } = reshape( l, dims1);
+                    x_cell{ i2 } = reshape( r, dims2);
+               otherwise
+                   error("not implemted")
+                   
+           end
+               
+           
+           
+        end
+            
         function H = H_exp(obj,map,prefactor)
             
             if nargin<3
@@ -883,10 +1349,15 @@ classdef PEPO
             addParameter(p,'max_index',obj.max_index)
             addParameter(p,'matrix',0)
             addParameter(p,'fixed',zeros(map.internal_legs,1)-1)
+            addParameter(p,'pattern',{}, @(x) iscell(x)) %additional allowed patterns 
             parse(p,opts)
             
             fixed_mask = p.Results.fixed ~=-1;
             num_fixed = sum(fixed_mask);
+            
+            patterns = p.Results.pattern;
+            num_patterns = size(patterns,2);
+            
             
 
             d=obj.dim;
@@ -936,6 +1407,15 @@ classdef PEPO
                         end
                         
                         O = isempty(obj.PEPO_cell{legs(1)+1,legs(2)+1,legs(3)+1,legs(4)+1});
+                        
+                        if O == 1
+                            for patnum = 1:num_patterns
+                                if same_pattern(legs, patterns{patnum}  )
+                                    O=0;
+                                    break
+                                end
+                            end
+                        end
                     end  
                     
                     if O==1
@@ -988,15 +1468,18 @@ classdef PEPO
                patterns = [];
             end
             
+            
             num_patterns = size(patterns,2);
          
             
-            tensors=cell(1,map.N);
+            tensors=cell(1, map.N);
             for n=1:map.N
+                
+
                 leg = legs{n};
 
                 matched_pattern = 0;
-                
+
                 for ii=1:num_patterns
                     if same_pattern(leg,patterns{ii})==1
                         tensors{n} = xs{ii};
@@ -1004,7 +1487,7 @@ classdef PEPO
                         break;
                     end
                 end
-                
+
                 if matched_pattern == 0
                     if map.is_x_border(n)
                        tensors{n} = obj.boundary_matrix_x{leg(1)+1,leg(2)+1};
@@ -1014,18 +1497,224 @@ classdef PEPO
                         tensors{n} = obj.PEPO_cell{leg(1)+1,leg(2)+1,leg(3)+1,leg(4)+1};
                     end
                 end
+                
 
             end
         end
 
         function [A,x0_shape]= contract_partial(obj,num, map, con_cells , x, pattern )  
 
-            %xsizes: how to split x into different components 
             %patterns: match x with pattern given pattern for subs
 
             
-            % create new contraction list without num and legs connected to
-            % num as last indices
+            
+            
+            seq = map.seq;
+            final_order = map.final_order;
+            leg_list = map.leg_list;
+            
+% %             
+% %             % create new contraction list without num and legs connected to
+% %             % num as last indices
+% %             l=map.h_bond_l_lookup{num};
+% %             r=map.h_bond_r_lookup{num};
+% %             u=map.v_bond_u_lookup{num};
+% %             d=map.v_bond_d_lookup{num};
+% % 
+% % 
+% %             con_list_cpy = map.leg_list;
+% % 
+% %             ii = 0;
+% % 
+% %             if ~isempty(l)
+% %                 ii = ii+1; 
+% %                 pair = map.h_bonds{l};
+% %                 other = pair(1);
+% %                 
+% %                 if map.is_x_border(other)
+% %                     con_list_cpy{other}(2) = -(map.external_legs+ii);
+% %                 else
+% %                     con_list_cpy{other}(2+3) = -(map.external_legs+ii);
+% %                 end
+% % 
+% %             end
+% % 
+% %             if ~isempty(u)
+% %                 ii = ii+1; 
+% %                 pair = map.v_bonds{u};
+% %                 other = pair(1);
+% %                 if map.is_y_border(other)
+% %                     con_list_cpy{other}(2) = -(map.external_legs+ii);
+% %                 else
+% %                     con_list_cpy{other}(2+4) = -(map.external_legs+ii);
+% %                 end
+% %             end
+% % 
+% %             if ~isempty(r)
+% %                 ii = ii+1; 
+% %                 pair = map.h_bonds{r};
+% %                 other = pair(2);
+% %                 if map.is_x_border(other)
+% %                     con_list_cpy{other}(1) = -(map.external_legs+ii);
+% %                 else
+% %                     con_list_cpy{other}(2+1) = -(map.external_legs+ii);
+% %                 end
+% %             end
+% % 
+% %             if ~isempty(d)
+% %                 ii = ii+1; 
+% %                 pair = map.v_bonds{d};
+% %                 other = pair(2);
+% %                 if map.is_y_border(other)
+% %                     con_list_cpy{other}(1) = -(map.external_legs+ii);
+% %                 else
+% %                     con_list_cpy{other}(2+2) = -(map.external_legs+ii);
+% %                 end
+% %             end
+% % 
+% %             num_legs_cpy = con_list_cpy{num};
+% % 
+% %             x0_list = con_list_cpy{ num};
+% %             con_list_cpy( num) = [];
+% % 
+% % 
+% %             final_order = -1:-1: -(map.external_legs+ii);
+% %             seq = 1:map.internal_legs; %contraction sequence
+% % 
+% % 
+% %             final_external_missing =sort( - num_legs_cpy(num_legs_cpy<0),'descend');
+% %             final_internal_missing = sort( num_legs_cpy(num_legs_cpy>0),'descend');
+% % 
+% %             for l = 1:size(final_external_missing,2)
+% %                 final_order(  final_external_missing(l)  )= [];
+% %             end
+% % 
+% %             for l = 1:size(final_internal_missing,2)
+% %                 seq(  final_internal_missing(l)  )= [];
+% %             end
+% %             
+           
+
+            % do actual contractions
+            A = [];
+            
+            mask = map.leg_list_mask;
+            num_removed = sum(~mask);
+            
+           
+            
+            for con_cell_index =1:size(con_cells,2)
+                legs = con_cells{con_cell_index}{1};
+
+                if nargin <5
+                    temp_list = fetch_PEPO_cells(obj,map,legs);
+                else
+                    temp_list = fetch_PEPO_cells(obj,map,legs,pattern,x);
+                end
+
+                x0 = temp_list(~mask); 
+                x0_shape = size(x0);
+
+                temp_list(~mask) = []; %remove x0
+                leg_list= leg_list(mask);
+
+                 if map.N-num_removed == 0
+                    T=[1];
+                 else
+                    T=ncon( temp_list,leg_list,seq,final_order  );
+                 end
+                 
+                if isempty(A)
+                    A = T;
+                else
+                    A=A+T;
+                end
+
+            end
+
+           
+            
+            switch num_removed
+                case 1
+                    %put in site ordering
+                    if map.is_x_border(num) || map.is_x_border(num)
+                        perm_vector = [site_ordering_permute(map.N2); ((2*map.N2+1):size(size(A),2)).']; 
+                        A = reshape( permute(A, perm_vector)  , [],prod(x0_shape(1:2)));
+                    else
+                        a_size = size(A);
+
+                      
+                        
+                        x0_list = map.leg_list{num};
+                        
+                        ext_legs = x0_list(3:end);
+                        smallest_ind = min(-ext_legs( ext_legs<0 ));
+
+                        idx = find(final_order == -( smallest_ind -1));
+
+                        num_removed = sum(~map.leg_list_mask);
+                        
+                        num1=2*(  map.N2-num_removed );
+                        num2=idx;
+                        num3 = size(size(A),2)-map.ii;
+
+                        size1 = a_size(1:num1);%ij indices 
+                        size2 = a_size(num1+1:num2); %external legs before
+                        size3 = a_size(num2+1:num3); %external legs after
+                        size4 = a_size(num3+1:end); %bond to x0
+
+                        perm_vector = [site_ordering_permute(map.N2-1); ((2*map.N2-1):size(size(A),2)).']; 
+                        A = reshape( permute(A, perm_vector)  ,prod(size1),prod(size2),1,prod(size3), prod(size4) );
+                    end
+                case 2
+                    if map.N-num_removed ~= 0
+                         perm_vector = [site_ordering_permute(map.N2-num_removed); (( 2*(map.N2-num_removed)+1 ):size(size(A),2)).'];
+
+                        A = permute(A, perm_vector);
+                
+                    end
+                   
+                    
+                otherwise
+                    error("not implemented")
+            end
+
+        end
+        
+        function map2 = remove_elem(obj,num,map)
+           %removes element from map and puts indices in the back
+           %original contracted indces are still contract when both
+           %elements are removed
+            
+             map2 = map;
+             
+             if ~isfield(map, 'ext_h_bond_l_lookup')
+                map2.ext_h_bond_l_lookup = cell(map.N,1);
+                map2.ext_h_bond_r_lookup = cell(map.N,1);
+                map2.ext_v_bond_u_lookup = cell(map.N,1);
+                map2.ext_v_bond_d_lookup = cell(map.N,1);
+             end
+             
+             
+            
+             if ~isfield(map, 'external_orig')
+                 external_orig = map.external_legs;
+                 map2.external_orig = external_orig;
+             else
+                 external_orig = map.external_orig;
+             end
+             
+             
+             
+             if ~isfield(map, 'final_order')
+                max_occupied = map.external_legs;
+             else
+                max_occupied = max( -map.final_order);
+             end
+             
+             
+             
+            
             l=map.h_bond_l_lookup{num};
             r=map.h_bond_r_lookup{num};
             u=map.v_bond_u_lookup{num};
@@ -1036,65 +1725,144 @@ classdef PEPO
 
             ii = 0;
 
+            h_bonds_missing = [];
+            v_bonds_missing = [];
+            
             if ~isempty(l)
                 ii = ii+1; 
                 pair = map.h_bonds{l};
+                
+                map2.h_bond_l_lookup{num} = [];
+                map2.num_h_bonds = map2.num_h_bonds-1;
+                h_bonds_missing = [h_bonds_missing,l];
+                
                 other = pair(1);
                 
+                map2.h_bond_r_lookup{other} = [];
+                
                 if map.is_x_border(other)
-                    con_list_cpy{other}(2) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2) = -(max_occupied +ii);
                 else
-                    con_list_cpy{other}(2+3) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2+3) = -(max_occupied +ii);
                 end
-
+               
             end
 
             if ~isempty(u)
                 ii = ii+1; 
                 pair = map.v_bonds{u};
+                
+                map2.v_bond_u_lookup{num}=[];
+                map2.num_v_bonds = map2.num_v_bonds-1;
+                v_bonds_missing = [v_bonds_missing,u];
+                
                 other = pair(1);
+                
+                map2.v_bond_d_lookup{other} = [];
+                
+               
                 if map.is_y_border(other)
-                    con_list_cpy{other}(2) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2) = -(max_occupied +ii);
                 else
-                    con_list_cpy{other}(2+4) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2+4) = -(max_occupied +ii);
                 end
+                
             end
 
             if ~isempty(r)
                 ii = ii+1; 
                 pair = map.h_bonds{r};
+                
+                map2.h_bond_r_lookup{num} = [];
+                map2.num_h_bonds = map2.num_h_bonds-1;
+                h_bonds_missing = [h_bonds_missing,r];
+                
                 other = pair(2);
+                
+                map2.h_bond_l_lookup{other} = [];
+                
+               
                 if map.is_x_border(other)
-                    con_list_cpy{other}(1) = -(map.external_legs+ii);
+                    con_list_cpy{other}(1) = -(max_occupied +ii);
                 else
-                    con_list_cpy{other}(2+1) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2+1) = -(max_occupied +ii);
                 end
+                
             end
 
             if ~isempty(d)
                 ii = ii+1; 
                 pair = map.v_bonds{d};
+                
+                map2.v_bond_u_lookup{num}=[];
+                map2.num_v_bonds = map2.num_v_bonds-1;
+                h_bonds_missing = [h_bonds_missing,d];
+                
                 other = pair(2);
+                
+                map2.v_bond_d_lookup{other} = [];
+                
+
                 if map.is_y_border(other)
-                    con_list_cpy{other}(1) = -(map.external_legs+ii);
+                    con_list_cpy{other}(1) = -(max_occupied +ii);
                 else
-                    con_list_cpy{other}(2+2) = -(map.external_legs+ii);
+                    con_list_cpy{other}(2+2) = -(max_occupied +ii);
                 end
+             
             end
 
+            leg_list_num = map.leg_list{num}; %check whether it has a bond with already removed element
+            for i = 1:4
+               if leg_list_num(2+i)< -external_orig
+                   switch i
+                       case 1
+                           map2.ext_h_bond_l_lookup{num}=true;
+                       case 2
+                           map2.ext_v_bond_u_lookup{num}=true;
+                       case 3
+                           map2.ext_h_bond_r_lookup{num}=true;
+                       case 4
+                           map2.ext_v_bond_d_lookup{num}=true;
+                   end
+               end
+            end
+            
+            
             num_legs_cpy = con_list_cpy{num};
 
-            x0_list = con_list_cpy{ num};
-            con_list_cpy( num) = [];
-
-
-            final_order = -1:-1: -(map.external_legs+ii);
-            seq = 1:map.internal_legs; %contraction sequence
-
-
-            final_external_missing =sort( - num_legs_cpy(num_legs_cpy<0),'descend');
-            final_internal_missing = sort( num_legs_cpy(num_legs_cpy>0),'descend');
-
+            if ~isfield(map, 'leg_list_mask')
+                map2.leg_list_mask = ones(map.N,1)==1;
+                map2.leg_list_mask(num) = 0;
+            else
+                map2.leg_list_mask = map.leg_list_mask;
+                map2.leg_list_mask(num) = 0;
+            end
+            
+            %x0_list = con_list_cpy{ num};
+            %con_list_cpy( num) = [];
+            
+            
+            if ~isfield(map, 'final_external_missing')
+                final_external_missing=[];
+            else
+                final_external_missing= map.final_external_missing;
+            end
+            
+            if ~isfield(map, 'final_internal_missing')
+                final_internal_missing=[];
+            else
+                final_internal_missing= map.final_internal_missing;
+            end
+            
+            
+            final_order = -1:-1: -(max_occupied+ii);
+            seq = 1:(map.internal_legs + numel(final_internal_missing) )  ; %contraction sequence
+            
+            
+            final_external_missing =  sort( [final_external_missing, - num_legs_cpy(num_legs_cpy<0)],'descend');
+            final_internal_missing = sort( [final_internal_missing, num_legs_cpy(num_legs_cpy>0)],'descend');
+            
+            
             for l = 1:size(final_external_missing,2)
                 final_order(  final_external_missing(l)  )= [];
             end
@@ -1103,64 +1871,35 @@ classdef PEPO
                 seq(  final_internal_missing(l)  )= [];
             end
             
+            %repackage in a new map
+           
+            map2.internal_legs = map2.internal_legs-ii;
+            map2.external_legs = map2.external_legs-4+ii;
+            
+            map2.h_bond_l_lookup{num}= [];
+            map2.h_bond_r_lookup{num}= [];
+            map2.v_bond_u_lookup{num}= [];
+            map2.v_bond_d_lookup{num}= [];
+            
+            map2.final_external_missing=final_external_missing;
+            map2.final_internal_missing=final_internal_missing;
+            
+            map2.final_order = final_order;
+            map2.seq = seq;
             
             
-
-            % do actual contractions
-            A = [];
+            %map2.h_bonds(h_bonds_missing) = [0,0];
+            %map2.v_bonds(v_bonds_missing) = [];
             
+            map2.leg_list =  con_list_cpy;
             
-            for con_cell_index =1:size(con_cells,2)
-                legs = con_cells{con_cell_index}{1};
-                
-                if nargin <5
-                    temp_list = fetch_PEPO_cells(obj,map,legs);
-                else
-                    temp_list = fetch_PEPO_cells(obj,map,legs,pattern,x);
-                end
-                
-                x0 = temp_list{num}; 
-                x0_shape = size(x0);
-                
-                temp_list(num) = []; %remove x0
-                
-                if isempty(A)
-                    A = ncon( temp_list,con_list_cpy,seq,final_order  );
-                else
-                    
-                    A=A+ncon( temp_list,con_list_cpy,seq,final_order  );
-                end
-                
-            end
-
-            
-            
-            %put in site ordering
-            if map.is_x_border(num) || map.is_x_border(num)
-                perm_vector = [site_ordering_permute(map.N2); ((2*map.N2+1):size(size(A),2)).']; 
-                A = reshape( permute(A, perm_vector)  , [],prod(x0_shape(1:2)));
+            if ~isfield(map,"ii")
+                map2.ii = ii;
             else
-                a_size = size(A);
-
-                ext_legs = x0_list(3:end);
-                smallest_ind = min(-ext_legs( ext_legs<0 ));
-                
-                idx = find(final_order == -( smallest_ind -1));
-                
-                num1=2*(map.N2-1);
-                num2=idx;
-                num3 = size(size(A),2)-ii;
-                
-                size1 = a_size(1:num1);%ij indices 
-                size2 = a_size(num1+1:num2); %external legs before
-                size3 = a_size(num2+1:num3); %external legs after
-                size4 = a_size(num3+1:end); %bond to x0
-                
-                perm_vector = [site_ordering_permute(map.N2-1); ((2*map.N2-1):size(size(A),2)).']; 
-                A = reshape( permute(A, perm_vector)  ,[prod(size1),prod(size2),1,prod(size3),prod(size4) ]);
+                map2.ii = map2.ii + ii;
             end
-
-        end
+            
+        end        
         
         function [F,G] = get_value_and_grad(obj,maps,con_cells_cell,patterns,targets,x0,x_sizes)
             
@@ -1204,7 +1943,7 @@ classdef PEPO
                 
 
                 %could be parforred
-                parfor con_cell_index =1:size(con_cells,2)
+                for con_cell_index =1:size(con_cells,2)
 
 
                     legs = con_cells{con_cell_index}{1};
@@ -1214,7 +1953,7 @@ classdef PEPO
                     %F_sub = F_sub + reshape(  permute(A1,site_ordering_permute(map.N2)), size(target));
 
                     
-                    perm_vect = [site_ordering_permute(map.N2), 2*map.N2+1:  size(size(A1),2) ] ;
+                    perm_vect = [site_ordering_permute(map.N2); (2*map.N2+1:  size(size(A1),2))' ];
                     
                     F_sub_buffer{con_cell_index} = reshape( permute(A1,perm_vect), size(target));
                     
@@ -1240,7 +1979,10 @@ classdef PEPO
 
                                 for ii = 1:size(legs,2)
                                     if  same_pattern(legs{ii}, patterns{ pat_num} )
-                                        [Ai,~]=contract_partial(obj,ii, map, con_cells(con_cell_index) , x_cell,patterns  ) ;
+                                        
+                                        map2 = obj.remove_elem(ii,map);
+                                        
+                                        [Ai,~]=contract_partial(obj,ii,  map2 , con_cells(con_cell_index) , x_cell,patterns  ) ;
                                         Grad_total = Grad_total + Ai;
                                     end
                                 end
@@ -1269,8 +2011,9 @@ classdef PEPO
                                         
                                         external_sizes = numel(target)/d2^(map.N2);
                                         
+                                        map2 = obj.remove_elem(ii,map);
                                         
-                                        [Ai,~]=contract_partial(obj,ii, map, con_cells(con_cell_index) , x_cell,patterns  ) ;
+                                        [Ai,~]=contract_partial(obj,ii, map2, con_cells(con_cell_index) , x_cell,patterns  ) ;
 
                                         size_x = size_x_red(2:5);
                                         non_connected = map.leg_list{ii}<0;
@@ -1432,7 +2175,11 @@ classdef PEPO
                 
                 for con_cell_index =1:size(con_cells,2)
                     legs = con_cells{con_cell_index}{1};
+                    
+                  
+                    
                     for pat_num = 1:num_x
+
                         for ii = 1:size(legs,2)
                             if  same_pattern(legs{ii}, patterns{ pat_num} )
                                 has_matched_pattern=1;
@@ -1442,6 +2189,7 @@ classdef PEPO
                         if has_matched_pattern
                             break;
                         end
+                        
                     end
                     
                     if has_matched_pattern %keep in new list
@@ -1451,7 +2199,10 @@ classdef PEPO
                         temp_list_1 = fetch_PEPO_cells(obj,map,legs);
                         
                         A1  = ncon( temp_list_1,map.leg_list);
-                        target = target - reshape(  permute(A1,site_ordering_permute(map.N2)), size(target));
+                        perm_vect = [site_ordering_permute(map.N2); (2*map.N2+1:  size(size(A1),2))' ];
+
+                        
+                        target = target - reshape( permute(A1,perm_vect), size(target));
                         
                     end
                 end
@@ -1460,8 +2211,9 @@ classdef PEPO
                 targets{sub_prob} = target;
                 
             end
+            
+                      
         end
-        
         
         function M = contract_network(obj,map, opts)
             %generate all index sets for a given configuration
@@ -1599,15 +2351,7 @@ classdef PEPO
 
             
         end
-        
-        function get_reflection(obj)
-            a=ncon( {obj.PEPO_cell{1,1,1,2}},{[1,1,-1,-2,-3,-4]})-ncon( {obj.PEPO_cell{1,2,1,1}},{[1,1,-1,-4,-3,-2]});
-            b=ncon( {obj.PEPO_cell{1,1,2,1}},{[1,1,-1,-2,-3,-4]})-ncon( {obj.PEPO_cell{2,1,1,1}},{[1,1,-3,-2,-1,-4]});
-
-            disp(a);
-            
-        end
-        
+       
         function [err,prefact] = calculate_error(obj,nummap,opts)
             [map,b_map ] = PEPO.create_map(nummap,opts);
             
@@ -1973,7 +2717,7 @@ classdef PEPO
             end
             
         end
-        
+
         function [mag, corr_length,delta] = get_expectation (obj,X,chimax)
             [A,B,G,lambda]  = vumps(obj,chimax);
             
@@ -2023,15 +2767,12 @@ classdef PEPO
             
             delta = eps_i(4+1)-eps_i(2+1); %same as https://arxiv.org/pdf/1907.08603.pdf
         end
-        
     end
     
     methods (Access= private, Static=true)
-        
         function x = to_vumps_order(x)
            x = ncon({x},{ [-2,-3,-4,-1]}  );
         end
-        
     end
     
     methods (Static=true)
@@ -2343,6 +3084,83 @@ classdef PEPO
             end
             
         end
+        
+        function [con_cells_1, con_cells_2]= split_con_cells(map,con_cells)
+            
+             con_cells_1 = {};
+             con_cells_2 = {};
+             
+            
+             for i =1:size(con_cells,2)
+                 con_cell = con_cells{i}{1};
+                 n_cells = size(con_cell,2);
+                 neighbour = zeros( n_cells,1 );
+                 
+                 for j=1:n_cells
+                     neighbour(j) = sum( con_cell{j} ~= 0 ) ;
+                 end
+                 
+                 end_points = find(neighbour==1);
+                 
+                 covered = neighbour;
+                
+                 
+                 for j=1:size(end_points,1)
+                     curr_point = end_points(j);
+                     n=1;
+                     
+                     bool = 1;
+                     
+                     
+                     while bool
+                        cell = con_cell{curr_point};
+                        
+                        loc = find(cell==n);
+                        
+                        if isempty(loc)
+                            
+                            bool = 0;
+
+                        else
+                            covered( curr_point ) = 0;
+                            
+                            switch loc
+                                case 1
+                                    bond = map.h_bond_l_lookup{curr_point};
+                                    other = map.h_bonds{bond};
+                                case 2
+                                    bond = map.v_bond_u_lookup{curr_point};
+                                    other = map.v_bonds{bond};
+                                case 3
+                                    bond = map.h_bond_r_lookup{curr_point};
+                                    other = map.h_bonds{bond};
+                                case 4
+                                    bond = map.v_bond_d_lookup{curr_point};
+                                    other = map.v_bonds{bond};
+                            end
+                            
+                            curr_point = other( other ~= curr_point );
+                            
+                        end
+                         
+                         
+                        n=n+1; 
+                     end
+                     
+                     
+                 end
+                 
+                 good_cell = sum(covered~=0) <= 1;
+                 
+                 if good_cell 
+                     con_cells_1{end+1} = con_cells{i};
+                 else
+                     con_cells_2{end+1} = con_cells{i};
+                 end
+                
+             end
+             
+        end
     end
 end
 
@@ -2386,18 +3204,36 @@ r = rem(s,d);
 s = (s-r)/d;
 end
 
-function p = site_ordering_permute(n)
+function p = site_ordering_permute(n,alt)
+
+if nargin<2
+   alt = 0; 
+end
+
 % changes from |left i1 i2 ... j1 j2.. right> to |left i1 j1 i2 j2 ...
 % right>
 p = zeros(2*n,1);
 %p(1)=1;
 %p(2*n+2)=2*n+2;
-for i = 1:n
-    p(2*i-1)=i;
+if alt ==0
+
+    for i = 1:n
+        p(2*i-1)=i;
+    end
+    for i = 1:n
+        p(2*i) = n+i ;
+    end
+    
+    
+else
+    for i = 1:n
+        p(2*i)=i;
+    end
+    for i = 1:n
+        p(2*i-1) = n+i ;
+    end
 end
-for i = 1:n
-    p(2*i) = n+i ;
-end
+    
 end
 
 function bool = same_pattern(leg1,leg2)
@@ -2423,7 +3259,6 @@ function x_cell = split_x (x,x_sizes)
             
 end
 
-
 function [U2,S2,V2] = expand_svd(U,S,V,n)
     dim = size(S,1);
     U2=zeros(dim,dim+n);
@@ -2442,12 +3277,4 @@ function [U2,S2,V2] = expand_svd(U,S,V,n)
     end
 end
 
-function C= rotate_rhs(B,num,physical_dims)
-    %B = reshape(B,physical_dims);
 
-    perm = 1:size(size(B),2);
-    perm(num)=[];
-    perm = [perm,num];
-  
-    C = permute(B, perm );
-end
