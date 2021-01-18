@@ -1,0 +1,9 @@
+{
+    "matlab.matlabpath": "/usr/local/Polyspace/R2020a/bin/glnxa64/MATLAB",
+    "matlab.mlintpath": "/usr/local/Polyspace/R2020a/bin/glnxa64/mlint",
+    "matlab-interactive-terminal.CursorBack": true,
+    "matlab-interactive-terminal.unicodeSwitch": true,
+
+    "editor.formatOnSave": true,
+    "matlab-interactive-terminal.pythonPath": "/usr/bin/python3.7"
+}
