@@ -28,3 +28,5 @@
 
 *.fls
 *.tdo
+src_2D/.vscode/launch.json
+src_2D/.vscode/settings.json
