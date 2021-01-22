@@ -6,7 +6,7 @@
 
 %function test_PEPO
 
-function test2
+function test
 
     disp('dd')
     fprintf("\n")
@@ -55,9 +55,9 @@ function test2
 
         pepo = PEPO(d, -beta * H_1_tensor, ...
             -beta * H_2_tensor, ...
-            pepo_order, 1, opts);
+            pepo_order, @make_PEPO_1D, opts);
 
-        [err, prefact] = pepo.calculate_error(1:10, struct("numbered", true, "h_cyclic", 0));
+        [err, prefact] = calculate_error(pepo, 1:10, struct("numbered", true, "h_cyclic", 0));
 
         fprintf(" beta %.4e err %.4e \n", beta, err);
         err_arr(i) = abs(err);

@@ -6,9 +6,9 @@ function [err, prefact] = calculate_error(obj, nummap, opts)
     H_matrix = H_exp(obj, map, obj.nf);
 
     if ~isempty(obj.PEPO_matrix)
-        Contraction = contract_network(obj,map, struct('max_index', obj.max_index, "matrix", 1));
+        Contraction = contract_network(obj, map, struct('max_index', obj.max_index, "matrix", 1));
     else
-        Contraction = contract_network(obj,b_map, struct('max_index', obj.max_index));
+        Contraction = contract_network(obj, b_map, struct('max_index', obj.max_index));
     end
 
     b = reshape(H_matrix, [d^(map.N2), d^(map.N2)]);

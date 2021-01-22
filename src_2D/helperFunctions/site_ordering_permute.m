@@ -32,4 +32,3 @@ function p = site_ordering_permute(n, alt)
     end
 
 end
-

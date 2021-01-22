@@ -63,4 +63,3 @@ function [con_cells_cell2, targets] = optimize_con_cells(obj, maps, con_cells_ce
     end
 
 end
-

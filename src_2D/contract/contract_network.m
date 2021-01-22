@@ -19,7 +19,7 @@ function M = contract_network(obj, map, opts)
             vect = iset{2};
             legs = iset{1};
 
-            tensors = fetch_PEPO_cells(obj,map, legs);
+            tensors = fetch_PEPO_cells(obj, map, legs);
 
             M = M + ncon(tensors, map.leg_list);
 

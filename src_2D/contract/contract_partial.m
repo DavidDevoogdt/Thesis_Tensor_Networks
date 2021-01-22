@@ -171,4 +171,3 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
     end
 
 end
-

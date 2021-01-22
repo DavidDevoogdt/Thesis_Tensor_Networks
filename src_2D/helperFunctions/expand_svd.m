@@ -16,4 +16,3 @@ function [U2, S2, V2] = expand_svd(U, S, V, n)
     end
 
 end
-
