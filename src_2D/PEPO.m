@@ -47,19 +47,19 @@ classdef PEPO
             else
                 max_index = order / 2;
             end
-
+            obj.max_index = max_index;
             obj.order = order;
+            obj.cycle_index = Inf;
 
             obj.PEPO_cell = cell(max_index + 1, max_index + 1, max_index + 1, max_index + 1);
             obj.boundary_matrix_x = cell(max_index + 1, max_index + 1);
             obj.boundary_matrix_y = cell(max_index + 1, max_index + 1);
             obj.boundary_matrix_x{1, 1} = reshape([1], 1, 1);
             obj.boundary_matrix_y{1, 1} = reshape([1], 1, 1);
+            obj.virtual_level_sizes_horiz = [1];
+            obj.virtual_level_sizes_vert = [1];
 
-            obj.max_index = max_index;
-
-            obj.cycle_index = Inf;
-
+            %parse opts
             p = inputParser;
             addParameter(p, 'testing', 0)
             addParameter(p, 'visualise', 0)
@@ -69,13 +69,16 @@ classdef PEPO
             obj.visualise = p.Results.visualise;
 
             %calculate ln of normailisation fac
-
             map = create_map(1:2, numopts);
             [~, nf2] = H_exp(obj, map, 0, true);
-
             obj.nf = nf2;
 
+            obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
+
+            %non generic PEPO code
             obj = make_PEPO_handle(obj);
+
+            obj = cell2matrix(obj); %save matrix form
 
         end
 
