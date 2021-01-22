@@ -59,11 +59,17 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
             ext_legs = x0_list(3:end);
             smallest_ind = min(-ext_legs(ext_legs < 0));
 
-            idx = find(final_order == -(smallest_ind -1));
-
             num_removed = sum(~map.leg_list_mask);
-
             num1 = 2 * (map.N2 - num_removed);
+
+            if ~isempty(smallest_ind )
+            idx = find(final_order == -(smallest_ind -1));
+            else
+                idx = num1;
+            end
+
+
+
             num2 = idx;
             num3 = size(size(A), 2) - map.ii;
 
