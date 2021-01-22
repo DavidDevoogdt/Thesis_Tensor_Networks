@@ -1,4 +1,4 @@
-function [A, B, G1, lambda1] = vumps(obj, chimax)
+function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
 
     %todo check these params
     opts.charges = 'regular';
@@ -26,8 +26,8 @@ function [A, B, G1, lambda1] = vumps(obj, chimax)
 
     T = obj.PEPO_matrix;
 
-    hdim = size(T, 3);
-    vdim = size(T, 4);
+    %hdim = size(T, 3);
+    %vdim = size(T, 4);
 
     %upper vumps zipper
     M = ncon({T}, {[1, 1, -1, -2, -3, -4]});
@@ -59,7 +59,7 @@ function [A, B, G1, lambda1] = vumps(obj, chimax)
         x = TensorContract({x, GL, m, GR}, {[1, 2, 5], [1, 3, -1], [-2, 4, 2, 3], [-3, 4, 5]});
     end
 
-    [B, lambda2, err2] = TensorEigs(@(x) vumps_under(x), TensorConj(Ac), 1, 'lm', opts);
+    [B, ~, ~] = TensorEigs(@(x) vumps_under(x), TensorConj(Ac), 1, 'lm', opts);
 
     %[B_l,C_l,~]=TensorDecRight(Bc,'polar');
 

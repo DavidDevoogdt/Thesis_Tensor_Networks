@@ -8,7 +8,6 @@ function y = encode_index_array(n, len, max_num)
         y(i) = r;
         i = i + 1;
     end
-
 end
 
 function [s, r] = readOne(s, d)

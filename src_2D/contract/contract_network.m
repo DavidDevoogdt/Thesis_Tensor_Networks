@@ -16,13 +16,12 @@ function M = contract_network(obj, map, opts)
 
         for i = 1:size(correct_index_sets, 2)
             iset = correct_index_sets{i};
-            vect = iset{2};
+            %vect = iset{2};
             legs = iset{1};
 
             tensors = fetch_PEPO_cells(obj, map, legs);
 
             M = M + ncon(tensors, map.leg_list);
-
         end
 
     else

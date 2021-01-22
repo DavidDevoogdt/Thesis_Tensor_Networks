@@ -12,7 +12,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
     patterns = p.Results.pattern;
     num_patterns = size(patterns, 2);
 
-    d = obj.dim;
 
     contraction_cell = cell(0, 1);
     contraction_cell_counter = 0;
@@ -38,7 +37,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
                     if leg_num > 0
                         legs(j) = vect(leg_num);
                     end
-
                 end
 
                 if map.is_x_border(i)
@@ -46,7 +44,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
                 else
                     O = isempty(obj.boundary_matrix_y{legs(1) + 1, legs(2) + 1});
                 end
-
             else
 
                 legs = [0, 0, 0, 0];
@@ -57,24 +54,19 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
                     if leg_num > 0
                         legs(j) = vect(leg_num);
                     end
-
                 end
 
                 O = isempty(obj.PEPO_cell{legs(1) + 1, legs(2) + 1, legs(3) + 1, legs(4) + 1});
 
                 if O == 1
-
                     for patnum = 1:num_patterns
 
                         if same_pattern(legs, patterns{patnum})
                             O = 0;
                             break
                         end
-
                     end
-
                 end
-
             end
 
             if O == 1
@@ -88,7 +80,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
             end
 
             tensor_list_indices{i} = legs;
-
         end
 
         if correct_index_set
@@ -97,7 +88,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
             contraction_cell{contraction_cell_counter} = {tensor_list_indices, vect};
 
         end
-
     end
 
     c_index = obj.cycle_index;
@@ -113,15 +103,13 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
         fprintf("new");
 
         for n = 0:(obj.cycle_index)^(map.internal_legs - num_fixed) - 1
-            [contraction_cell, contraction_cell_counter, vect, correct_index_set] = con_tensors(contraction_cell, contraction_cell_counter, 0, n, obj.cycle_index - 1);
+            [contraction_cell, contraction_cell_counter, ~] = con_tensors(contraction_cell, contraction_cell_counter, 0, n, obj.cycle_index - 1);
         end
 
         fprintf("cycle_ind");
 
         for n = 0:((p.Results.max_index - obj.cycle_index) +1)^(map.internal_legs - num_fixed) - 1
-            [contraction_cell, contraction_cell_counter, vect, correct_index_set] = con_tensors(contraction_cell, contraction_cell_counter, c_index, n, p.Results.max_index - obj.cycle_index);
+            [contraction_cell, contraction_cell_counter, ~] = con_tensors(contraction_cell, contraction_cell_counter, c_index, n, p.Results.max_index - obj.cycle_index);
         end
-
     end
-
 end

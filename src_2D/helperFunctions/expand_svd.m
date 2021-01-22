@@ -14,5 +14,4 @@ function [U2, S2, V2] = expand_svd(U, S, V, n)
         S2 = S(1:dim + n, 1:dim + n);
 
     end
-
 end

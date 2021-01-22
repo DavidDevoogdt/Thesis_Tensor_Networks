@@ -1,4 +1,4 @@
-function map2 = remove_elem(obj, num, map)
+function map2 = remove_elem( num, map)
     %removes element from map and puts indices in the back
     %original contracted indces are still contract when both
     %elements are removed
@@ -34,8 +34,8 @@ function map2 = remove_elem(obj, num, map)
 
     ii = 0;
 
-    h_bonds_missing = [];
-    v_bonds_missing = [];
+    %h_bonds_missing = [];
+    %v_bonds_missing = [];
 
     if ~isempty(l)
         ii = ii + 1;
@@ -43,7 +43,7 @@ function map2 = remove_elem(obj, num, map)
 
         map2.h_bond_l_lookup{num} = [];
         map2.num_h_bonds = map2.num_h_bonds - 1;
-        h_bonds_missing = [h_bonds_missing, l];
+        %h_bonds_missing = [h_bonds_missing, l];
 
         other = pair(1);
 
@@ -54,7 +54,6 @@ function map2 = remove_elem(obj, num, map)
         else
             con_list_cpy{other}(2 + 3) = -(max_occupied +ii);
         end
-
     end
 
     if ~isempty(u)
@@ -63,7 +62,7 @@ function map2 = remove_elem(obj, num, map)
 
         map2.v_bond_u_lookup{num} = [];
         map2.num_v_bonds = map2.num_v_bonds - 1;
-        v_bonds_missing = [v_bonds_missing, u];
+        %v_bonds_missing = [v_bonds_missing, u];
 
         other = pair(1);
 
@@ -74,7 +73,6 @@ function map2 = remove_elem(obj, num, map)
         else
             con_list_cpy{other}(2 + 4) = -(max_occupied +ii);
         end
-
     end
 
     if ~isempty(r)
@@ -83,7 +81,7 @@ function map2 = remove_elem(obj, num, map)
 
         map2.h_bond_r_lookup{num} = [];
         map2.num_h_bonds = map2.num_h_bonds - 1;
-        h_bonds_missing = [h_bonds_missing, r];
+        %h_bonds_missing = [h_bonds_missing, r];
 
         other = pair(2);
 
@@ -94,7 +92,6 @@ function map2 = remove_elem(obj, num, map)
         else
             con_list_cpy{other}(2 + 1) = -(max_occupied +ii);
         end
-
     end
 
     if ~isempty(d)
@@ -103,7 +100,7 @@ function map2 = remove_elem(obj, num, map)
 
         map2.v_bond_u_lookup{num} = [];
         map2.num_v_bonds = map2.num_v_bonds - 1;
-        h_bonds_missing = [h_bonds_missing, d];
+        %h_bonds_missing = [h_bonds_missing, d];
 
         other = pair(2);
 
@@ -133,9 +130,7 @@ function map2 = remove_elem(obj, num, map)
                 case 4
                     map2.ext_v_bond_d_lookup{num} = true;
             end
-
         end
-
     end
 
     num_legs_cpy = con_list_cpy{num};
@@ -203,5 +198,4 @@ function map2 = remove_elem(obj, num, map)
     else
         map2.ii = map2.ii + ii;
     end
-
 end

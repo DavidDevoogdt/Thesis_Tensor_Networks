@@ -54,10 +54,10 @@ classdef PEPO
             obj.PEPO_cell = cell(max_index + 1, max_index + 1, max_index + 1, max_index + 1);
             obj.boundary_matrix_x = cell(max_index + 1, max_index + 1);
             obj.boundary_matrix_y = cell(max_index + 1, max_index + 1);
-            obj.boundary_matrix_x{1, 1} = reshape([1], 1, 1);
-            obj.boundary_matrix_y{1, 1} = reshape([1], 1, 1);
-            obj.virtual_level_sizes_horiz = [1];
-            obj.virtual_level_sizes_vert = [1];
+            obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
+            obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
+            obj.virtual_level_sizes_horiz = 1;
+            obj.virtual_level_sizes_vert = 1;
 
             %parse opts
             p = inputParser;
@@ -81,7 +81,5 @@ classdef PEPO
             obj = cell2matrix(obj); %save matrix form
 
         end
-
     end
-
 end

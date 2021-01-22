@@ -43,25 +43,18 @@ function obj = cell2matrix(obj)
 
     %move all existing tensors to matrix
     for i1 = 1:obj.max_index + 1
-
         for i2 = 1:obj.max_index + 1
-
             for i3 = 1:obj.max_index + 1
-
                 for i4 = 1:obj.max_index + 1
                     %trace the spins for the environment
                     cell = obj.PEPO_cell{i1, i2, i3, i4};
 
-                    if length(cell) ~= 0
+                    if ~isempty(cell)
                         T(:, :, getH(i1), getV(i2), getH(i3), getV(i4)) = obj.PEPO_cell{i1, i2, i3, i4}; %ncon(  { obj.PEPO_cell{i1,i2,i3,i4} } , {[1,1,-1,-2,-3,-4]} );
                     end
-
                 end
-
             end
-
         end
-
     end
 
     obj.PEPO_matrix = T;

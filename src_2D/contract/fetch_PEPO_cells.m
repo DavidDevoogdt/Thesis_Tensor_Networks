@@ -21,13 +21,11 @@ function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
         matched_pattern = 0;
 
         for ii = 1:num_patterns
-
             if same_pattern(leg, patterns{ii}) == 1
                 tensorsn = xs{ii};
                 matched_pattern = 1;
                 break;
             end
-
         end
 
         if matched_pattern == 0
@@ -39,10 +37,8 @@ function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
             else
                 tensorsn = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
             end
-
         end
 
         tensors{n} = tensorsn / mult_fact;
     end
-
 end

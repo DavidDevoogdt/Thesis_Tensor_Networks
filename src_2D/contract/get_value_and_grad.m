@@ -75,14 +75,12 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
 
                             if same_pattern(legs{ii}, patterns{pat_num})
 
-                                map2 = obj.remove_elem(ii, map);
+                                map2 = remove_elem(ii, map);
 
                                 [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, patterns);
                                 Grad_total = Grad_total + Ai;
                             end
-
                         end
-
                     else
                         size_x_red = size(x, [1, 2, 3, 4, 5, 6]);
                         d2 = obj.dim^2;
@@ -95,7 +93,6 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
                         num = 0;
 
                         for ii = 1:size(legs, 2)
-
                             if same_pattern(legs{ii}, patterns{pat_num})
 
                                 index_before = num;
@@ -103,7 +100,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
 
                                 external_sizes = numel(target) / d2^(map.N2);
 
-                                map2 = obj.remove_elem(ii, map);
+                                map2 = remove_elem(ii, map);
 
                                 [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, patterns);
 
@@ -130,61 +127,44 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
                                         Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) = Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) ...
                                             + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, :);
                                     end
-
                                 elseif isequal([0, 1, 1, 1], non_connected)
-
                                     for iii = 1:size_x_red(1)
-
                                         for iiii = 1:size_curr
-                                            [i1, i2, i3, i4] = ind2sub(size_x_external, iiii);
+                                            [~, i2, i3, i4] = ind2sub(size_x_external, iiii);
 
                                             Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) ...
                                                 + Ai_res(:, 1, :, :, 1, :, 1, :, 1, 1, 1);
                                         end
-
                                     end
-
                                 elseif isequal([1, 1, 0, 1], non_connected)
-
                                     for iii = 1:size_x_red(1)
-
                                         for iiii = 1:size_curr
-                                            [i1, i2, i3, i4] = ind2sub(size_x_external, iiii);
+                                            [i1, i2, ~, i4] = ind2sub(size_x_external, iiii);
                                             Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) ...
                                                 + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, 1);
                                         end
-
                                     end
-
                                 elseif isequal([0, 1, 0, 1], non_connected)
-
                                     for iii = 1:size_x_red(1)
-
                                         for iiii = 1:size_curr
-                                            [i1, i2, i3, i4] = ind2sub(size_x_external, iiii);
+                                            [~, i2, ~, i4] = ind2sub(size_x_external, iiii);
 
                                             Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) ...
                                                 + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, 1);
                                         end
-
                                     end
-
                                 else
-                                    non_connected
                                     error("not implemented")
 
                                 end
 
                                 Grad_total = reshape(Grad_total, grad_total_size);
-
                             end
 
                             if size(legs{ii}, 2) == 4%not boundary matrix
                                 num = num + 1;
                             end
-
                         end
-
                     end
 
                     G_sub_cell{pat_num} = G_sub_cell{pat_num} +reshape(Grad_total, size(G_sub_cell{pat_num}));
@@ -202,9 +182,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
                 end
 
                 G_sub_buffer{con_cell_index} = G_sub_local;
-
             end
-
         end
 
         F_sub = -target;
@@ -219,7 +197,6 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
             if nargout_val > 1
                 G_sub = G_sub + G_sub_buffer{con_cell_index};
             end
-
         end
 
         %put back toghether
@@ -228,7 +205,6 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
         if nargout_val > 1
             G_cell{sub_prob} = G_sub;
         end
-
     end
 
     F = zeros(F_total_size, 1);
@@ -248,7 +224,5 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
         end
 
         curr = curr + num_elem;
-
     end
-
 end

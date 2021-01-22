@@ -10,5 +10,4 @@ function x_cell = split_x (x, x_sizes)
         x_cell{i} = reshape(x(curr + 1:curr + num_elem), x_sizes{i});
         curr = curr + num_elem;
     end
-
 end

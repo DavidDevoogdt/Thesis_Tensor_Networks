@@ -20,7 +20,7 @@ function test
     I_tensor = eye(2);
 
     J = 1;
-    g = 0.5
+    g = 0.5;
     %
     H_1_tensor = -J * g * S_x;
     H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
@@ -57,7 +57,7 @@ function test
             -beta * H_2_tensor, ...
             pepo_order, @make_PEPO_1D, opts);
 
-        [err, prefact] = calculate_error(pepo, 1:10, struct("numbered", true, "h_cyclic", 0));
+        [err, ~] = calculate_error(pepo, 1:10, struct("numbered", true, "h_cyclic", 0));
 
         fprintf(" beta %.4e err %.4e \n", beta, err);
         err_arr(i) = abs(err);

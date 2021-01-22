@@ -18,13 +18,13 @@ function obj = make_PEPO_1D(obj)
             pattern = {[m - 1, 0, m, 0], [m, 0, m - 1, 0]};
         end
 
-        [obj, target, res_target, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+        [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
         e1 = calculate_error(obj, 1:n + 1, obj.numopts);
         e2 = svds(target, 1);
         fprintf("n=%d residual = %.4e  tar %.4e d_nf %.4e  \n", n, e1, e2, exp(ln_prefact - obj.nf));
 
-        if rank_x == 0
+        if rank_x == 0 %ineffective step, truncate
 
             if mod(n, 2) ~= 1
                 obj.virtual_level_sizes_horiz = obj.virtual_level_sizes_horiz(1:end - 1);
@@ -35,7 +35,5 @@ function obj = make_PEPO_1D(obj)
             obj.max_index = obj.current_max_index;
             break;
         end
-
     end
-
 end

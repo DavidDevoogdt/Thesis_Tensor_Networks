@@ -18,9 +18,7 @@ function p = site_ordering_permute(n, alt)
         for i = 1:n
             p(2 * i) = n + i;
         end
-
     else
-
         for i = 1:n
             p(2 * i) = i;
         end
@@ -28,7 +26,5 @@ function p = site_ordering_permute(n, alt)
         for i = 1:n
             p(2 * i - 1) = n + i;
         end
-
     end
-
 end

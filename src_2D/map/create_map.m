@@ -39,7 +39,6 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
         counter = 1;
         %boundary matrices have highest numbers
         for x = 1:n - 1
-
             for y = 1:m - 1
 
                 if pos_map(y, x) == 1
@@ -47,29 +46,23 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
                     map.pos_lookup{counter} = [y, x];
                     counter = counter +1;
                 end
-
             end
-
         end
 
         for y = 1:m - 1
-
             if pos_map(y, n) == 1
                 pos_map(y, n) = counter;
                 map.pos_lookup{counter} = [y, n];
                 counter = counter +1;
             end
-
         end
 
         for x = 1:n
-
             if pos_map(m, x) == 1
                 pos_map(m, x) = counter;
                 map.pos_lookup{counter} = [m, x];
                 counter = counter +1;
             end
-
         end
 
         N = counter - 1;
@@ -77,9 +70,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
         N = 0;
 
         for x = 1:n
-
             for y = 1:m
-
                 if pos_map(y, x) ~= 0
                     counter = pos_map(y, x);
                     %pos_map(y,x) = counter;
@@ -88,13 +79,9 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
                     if counter > N
                         N = counter;
                     end
-
                 end
-
             end
-
         end
-
     end
 
     %N number of physical sites
@@ -127,14 +114,12 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
         x = coor(2); y = coor(1);
 
         if x == n
-
             if opts.h_cyclic == 1
                 next_x = 1;
                 map.is_x_border(n) = 1;
             else
                 continue; %skip this round
             end
-
         else
             next_x = x + 1;
         end
@@ -156,7 +141,6 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
 
             %fprintf( "hor %d-%d\n",pos_map(y,x), pos_map(y,x+1));
         end
-
     end
 
     map.num_h_bonds = internal_counter - 1;
@@ -168,14 +152,12 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
         x = coor(2); y = coor(1);
 
         if y == m
-
             if opts.v_cyclic == 1
                 next_y = 1;
                 map.is_y_border(n) = 1;
             else
                 continue; %skip this round
             end
-
         else
             next_y = y + 1;
         end
@@ -198,7 +180,6 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
 
             %fprintf( "vert %d-%d\n",pos_map(y,x), pos_map(y+1,x));
         end
-
     end
 
     map.num_v_bonds = internal_counter - map.num_h_bonds - 1;
@@ -243,20 +224,14 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     %number all other indices
 
     for i = 1:N
-
         if map.is_x_border(i) == 0 && map.is_y_border(i) == 0
-
             for j = 3:6
-
                 if leg_list{i}(j) == 0
                     leg_list{i}(j) = -external_counter;
                     external_counter = external_counter + 1;
                 end
-
             end
-
         end
-
     end
 
     map.external_legs = external_counter - 1;
@@ -265,7 +240,6 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     map.map = "true";
 
     if internal == 0
-
         if opts.h_cyclic || opts.v_cyclic
             map2 = PEPO.create_map(map.num_map(1:end - opts.v_cyclic, 1:end - opts.h_cyclic), opts, 1);
 
@@ -280,10 +254,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
             boundary_map = map;
             return; %normal non cyclic map
         end
-
     else
-
         return;
     end
-
 end

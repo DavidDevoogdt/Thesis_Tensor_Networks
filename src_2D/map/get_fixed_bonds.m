@@ -24,7 +24,5 @@ function fixed_bonds = get_fixed_bonds(map, bonds)
 
         pot_bond_v{1} = map.v_bond_u_lookup{n1};
         pot_bond_v{2} = map.v_bond_u_lookup{n2};
-
     end
-
 end

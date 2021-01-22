@@ -1,5 +1,5 @@
 function [mag, corr_length, delta] = PEPO_get_expectation (obj, X, chimax)
-    [A, B, G, lambda] = vumps(obj, chimax);
+    [A, B, G, ~] = vumps(obj, chimax);
 
     T = obj.PEPO_matrix;
 
@@ -36,7 +36,7 @@ function [mag, corr_length, delta] = PEPO_get_expectation (obj, X, chimax)
 
     opts.krylovdim = 100; opts.tol = 1e-14;
 
-    [rho, f] = TensorEigs(@(x) transfer_up(x), A{4}, 5, 'lm', opts);
+    [~, f] = TensorEigs(@(x) transfer_up(x), A{4}, 5, 'lm', opts);
 
     eps_i = -log(abs(f));
     corr_length = eps_i(1 + 1) - eps_i(1);

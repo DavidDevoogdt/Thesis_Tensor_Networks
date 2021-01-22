@@ -48,14 +48,11 @@ function [con_cells_1, con_cells_2] = split_con_cells(map, con_cells)
                             bond = map.v_bond_d_lookup{curr_point};
                             other = map.v_bonds{bond};
                     end
-
                     curr_point = other(other ~= curr_point);
-
                 end
 
                 n = n + 1;
             end
-
         end
 
         good_cell = sum(covered ~= 0) <= 1;
@@ -65,7 +62,5 @@ function [con_cells_1, con_cells_2] = split_con_cells(map, con_cells)
         else
             con_cells_2{end + 1} = con_cells{i};
         end
-
     end
-
 end

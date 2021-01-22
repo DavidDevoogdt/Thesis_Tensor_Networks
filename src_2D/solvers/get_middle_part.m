@@ -10,7 +10,7 @@ function part = get_middle_part(obj, inv_maps, map, perm)
 
     d = obj.dim;
 
-    [map, b_map] = create_map(map, obj.numopts);
+    [map, ~] = create_map(map, obj.numopts);
 
     Tensor = obj.H_exp(map, obj.nf) - obj.contract_network(map, struct('max_index', obj.current_max_index));
 
@@ -173,7 +173,7 @@ function part = get_middle_part(obj, inv_maps, map, perm)
         tensorarr = cell(1, 4);
 
         for ii = 1:4
-            tensorarr{ii} = [1];
+            tensorarr{ii} = 1;
         end
 
     end
@@ -235,8 +235,10 @@ function part = get_middle_part(obj, inv_maps, map, perm)
 
     if obj.testing
         Z = ncon({tensorarr{1}, tensorarr{2}, Tensor_site, tensorarr{3}, tensorarr{4}}, {[-1, 1], [-2, 2], [1, 2, -3, 3, 4], [3, -4], [4, -5]});
-
+        
+        
         ZZ = Z - Tensor_site_cpy;
+        print(ZZ)
     end
 
     if perm
