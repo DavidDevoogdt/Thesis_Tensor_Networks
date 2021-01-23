@@ -11,16 +11,7 @@ function obj = make_PEPO_2D_A(obj)
     n=2;
     [map, ~] = create_map(1:n, obj.numopts);
     pattern = {[0,0,1,0],[1,0,0,0]};
-
     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-
-    %copy to vertical cells
-%     n=2;
-%     [map, ~] = create_map([1:n]', obj.numopts);
-%     pattern = {[0,1,0,0],[0,0,0,1]};
-% 
-%     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-
 
     obj.PEPO_cell{1, 2, 1, 1} = reshape(  obj.PEPO_cell{2, 1, 1, 1}  , [d, d, 1,  d^2,1, 1]); %right
     obj.PEPO_cell{1, 1, 1, 2} = reshape(  obj.PEPO_cell{1, 1, 2, 1}  , [d, d, 1,  1,1, d^2]); %right
@@ -108,62 +99,94 @@ function obj = make_PEPO_2D_A(obj)
     end
 
     %%%%%%%%%%%%%% LEVEL 2 %%%%%%%%%%%%%%
-    % obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^4];
-    % obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_horiz, d^4];
-    % obj.current_max_index = 2;
-    % %--1--|--2--|--1 and variants
-    % [map, ~] = create_map(1:4, obj.numopts);
-    % pattern = {[1,0,2,0],[2,0,1,0]};
-    % [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^4];
+    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_horiz, d^4];
+    obj.current_max_index = 2;
+    
+    %%%%--1--|--2--|--1 and variants%%%%
+    [map, ~] = create_map(1:4, obj.numopts);
+    pattern = {[1,0,2,0],[2,0,1,0]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
-    % %copy to vertical cells
-    % obj.PEPO_cell{1, 3, 1, 2} = reshape(  obj.PEPO_cell{3, 1, 2, 1}  , [d, d, 1,  d^4,1, d^2]); %right
-    % obj.PEPO_cell{1, 2, 1, 3} = reshape(  obj.PEPO_cell{2, 1, 3, 1}  , [d, d, 1,  d^2,1, d^4]); %right
+    %%horizontal%%
+    %equivalent 
+    obj.PEPO_cell{3, 1, 1, 2} = reshape(  obj.PEPO_cell{3, 1, 2, 1}  , [d, d, d^4,1,1, d^2]); 
+    obj.PEPO_cell{1, 2, 3, 1} = reshape(  obj.PEPO_cell{2, 1, 3, 1}  , [d, d, 1,  d^2, d^4,1]); 
+    %inequivalent
+    [map, ~] = create_map( [1,2,4;
+                            3,0,0] , obj.numopts);
+    pattern = {[0,0,2,1]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map( [0,0,4;
+                            1,2,3] , obj.numopts);
+    pattern = {[2,1,0,0]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
-    % if obj.testing == 1
-    %     err = calculate_error(obj, 1:4, obj.numopts)
-    %     err = calculate_error(obj, (1:4)', obj.numopts)
-    % end
-    % %--2--|--2-- and variants
+    if obj.testing == 1
+        err = calculate_error(obj, 1:4, obj.numopts)
+        err = calculate_error(obj, [0,0,4;1,2,3], obj.numopts)
+        err = calculate_error(obj, [1,2,4;3,0,0], obj.numopts)
+    end
+    
+    
+    %%vertical%%
+    %copy regular sites horizontal
+    obj.PEPO_cell{1, 3, 1, 2} = reshape(  obj.PEPO_cell{3, 1, 2, 1}  , [d, d, 1,  d^4,1, d^2]); 
+    obj.PEPO_cell{1, 2, 1, 3} = reshape(  obj.PEPO_cell{2, 1, 3, 1}  , [d, d, 1,  d^2,1, d^4]); 
+    %equivalent vertical
+    obj.PEPO_cell{1, 3, 2, 1} = reshape(  obj.PEPO_cell{1, 3, 1, 2}  , [d, d, 1,  d^4, d^2,1]);
+    obj.PEPO_cell{2, 1, 1, 3} = reshape(  obj.PEPO_cell{1, 2, 1, 3}  , [d, d, d^2,1,1, d^4]); 
+    %inquivalent vert
+    [map, ~] = create_map( [1,2;
+                            3,0;
+                            4,0] , obj.numopts);
+    pattern = {[0,0,1,2]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map( [0,2;
+                            0,1;
+                            3,4] , obj.numopts);
+    pattern = {[1,2,0,0]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    
+    if obj.testing == 1
+        err = calculate_error(obj, [1,2;3,0;4,0], obj.numopts)
+        err = calculate_error(obj, [0,2;0,1; 3,4], obj.numopts)
+        err = calculate_error(obj, (1:4)', obj.numopts)
+    end
+    %%%%--2--|--2-- and variants%%%%
 
-    % [map, ~] = create_map(1:5, obj.numopts);
-    % pattern = {[2,0,2,0]};
-    % [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    [map, ~] = create_map(1:5, obj.numopts);
+    pattern = {[2,0,2,0]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
-    % block_22 = obj.PEPO_cell{3,1,3,1};
+    block_22 = obj.PEPO_cell{3,1,3,1};
 
-    % %copy to equivalent blocks
-    % obj.PEPO_cell{3, 1, 1, 3} = reshape(block_22, [d, d, d^4, 1, 1, d^4]);
-    % obj.PEPO_cell{1, 3, 3, 1} = reshape(block_22, [d, d, 1, d^4, d^4, 1]);
-    % obj.PEPO_cell{1, 3, 1, 3} = reshape(block_22, [d, d, 1, d^4, 1, d^4]);
+    %copy to equivalent blocks
+    obj.PEPO_cell{3, 1, 1, 3} = reshape(block_22, [d, d, d^4, 1, 1, d^4]);
+    obj.PEPO_cell{1, 3, 3, 1} = reshape(block_22, [d, d, 1, d^4, d^4, 1]);
+    obj.PEPO_cell{1, 3, 1, 3} = reshape(block_22, [d, d, 1, d^4, 1, d^4]);
+    %inequivalent
+    [map, ~] = create_map([0,3,4,5;1,2,0,0], obj.numopts);
+    pattern = {[0,0,2,2]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+     %inequivalent
+    [map, ~] = create_map([0,0,4,5;1,2,3,0], obj.numopts);
+    pattern = {[2,2,0,0]};
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    
 
-
-
-
-    % if obj.testing == 1
-    %     calculate_error(obj,[1 2 3;0 0 4; 0 0 5], obj.numopts) 
-    %     calculate_error(obj,[1 2 3 4 5], obj.numopts)
-    %     calculate_error(obj,[1 2 3 0;0 0 4 5], obj.numopts)
-    %     calculate_error(obj,[2,3,4,1;0,0,0,5], obj.numopts)
-    %     calculate_error(obj,[2,3,4,1;5,0,0,0], obj.numopts)
-    % end
-
-    % %special 1
-    % [map, ~] = create_map([1,2;
-    %                        3,0], obj.numopts);
-    % pattern = {[0,0,1,1]};                       
-    % [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-
-    % %special 2
-    % [map, ~] = create_map([0,2;
-    %                        3,1], obj.numopts);
-    % pattern = {[1,1,0,0]}; 
-    % [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-
-    % if obj.testing == 1
-    %     calculate_error(obj,[1,2;3,0], obj.numopts)
-    %     calculate_error(obj,[0,2; 3,1], obj.numopts)
-    % end
+    if obj.testing == 1
+        calculate_error(obj,[1 2 3;0 0 4; 0 0 5], obj.numopts) 
+        calculate_error(obj,[1 2 3 4 5], obj.numopts)
+        calculate_error(obj,[1 2 3 0;0 0 4 5], obj.numopts)
+        calculate_error(obj,[2,3,4,1;0,0,0,5], obj.numopts)
+        calculate_error(obj,[2,3,4,1;5,0,0,0], obj.numopts)
+        
+        calculate_error(obj,[0,3,4,5;1,2,0,0], obj.numopts)
+        calculate_error(obj,[0,0,4,5;1,2,3,0], obj.numopts)
+    end
 
 
     %%%%%%%%%%%%%% loops %%%%%%%%%%%%%%
@@ -192,7 +215,6 @@ function obj = make_PEPO_2D_A(obj)
 
     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
 
-   %[obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim)
 
     if obj.testing == 1
         calculate_error(obj,[1,2,5;3,4,6], obj.numopts)
@@ -204,9 +226,22 @@ function obj = make_PEPO_2D_A(obj)
  
      [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
  
-    %[obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim)
  
      if obj.testing == 1
          calculate_error(obj,[1,2;3,4;5,6], obj.numopts)
      end
+     
+     %2by2 square
+%      [map, ~] = create_map([1,2,3;4,5,6;7,8,9], obj.numopts);
+%      pattern = {[level,level,level,level] };
+%  
+%      %[obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
+%      [obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
+%      
+%      
+ 
+%      if obj.testing == 1
+%          calculate_error(obj,[1,2,3;4,5,6;7,8,9], obj.numopts)
+%      end
+     
 end

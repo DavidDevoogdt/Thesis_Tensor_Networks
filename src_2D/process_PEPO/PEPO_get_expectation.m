@@ -1,5 +1,5 @@
 function [mag, corr_length, delta] = PEPO_get_expectation (obj, X, chimax)
-    [A, B, G, ~] = vumps(obj, chimax);
+    [A, B, G, ~] = PEPO_vumps(obj, chimax);
 
     T = obj.PEPO_matrix;
 

@@ -20,7 +20,7 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, map, pattern, ln_pref
 
     con_cells = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
 
-    x_cell = solve_non_lin(obj, pattern, {map}, {target_site}, {con_cells}, struct(), ln_prefact  )
+    x_cell = solve_non_lin(obj, pattern, {map}, {target_site}, {con_cells}, struct(), ln_prefact  );
 
 
     for i = 1:size(pattern, 2)
