@@ -37,8 +37,9 @@ function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
             else
                 tensorsn = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
             end
-        end
 
-        tensors{n} = tensorsn / mult_fact;
+            tensorsn = tensorsn / mult_fact;
+        end
+        tensors{n} = tensorsn;
     end
 end

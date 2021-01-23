@@ -15,6 +15,13 @@ function obj = make_PEPO_2D_A(obj)
     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
     %copy to vertical cells
+%     n=2;
+%     [map, ~] = create_map([1:n]', obj.numopts);
+%     pattern = {[0,1,0,0],[0,0,0,1]};
+% 
+%     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+
     obj.PEPO_cell{1, 2, 1, 1} = reshape(  obj.PEPO_cell{2, 1, 1, 1}  , [d, d, 1,  d^2,1, 1]); %right
     obj.PEPO_cell{1, 1, 1, 2} = reshape(  obj.PEPO_cell{1, 1, 2, 1}  , [d, d, 1,  1,1, d^2]); %right
 
@@ -162,39 +169,44 @@ function obj = make_PEPO_2D_A(obj)
     %%%%%%%%%%%%%% loops %%%%%%%%%%%%%%
     obj.current_max_index = obj.current_max_index+1;
     level =obj.current_max_index;
-    loop_dim = d^2+1;
+    loop_dim = d^2+4;
     %obj.cycle_index = level;
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, loop_dim];
     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_horiz, loop_dim];
 
-    [map, ~] = create_map([4,2;3,1], obj.numopts);
-
-    obj.PEPO_cell{level+1,level+1,1,1}=rand([d,d,loop_dim,loop_dim,1,1]);
-    obj.PEPO_cell{level+1,1,1,level+1}=rand([d,d,loop_dim,1,1,loop_dim]);
-    obj.PEPO_cell{1,level+1,level+1,1}=rand([d,d,1,loop_dim,loop_dim,1]);
-    obj.PEPO_cell{1,1,level+1,level+1}=rand([d,d,1,1,loop_dim,loop_dim]);
-
-    % 4 corner pieces
+    %simple loop
+    [map, ~] = create_map([1,2;3,4], obj.numopts);
     pattern = {[level,level,0,0],[level,0,0,level],[0,level,level,0],[0,0,level,level] };
 
-    [target, ln_prefact] = H_exp(obj, map, ln_prefact, true);
-    target_site = reshape(permute(target, site_ordering_permute(map.N)), dimension_vector(d^2, map.N));
-    target = reshape(target, [d^map.N, d^map.N]);
+    [obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
 
-    mul_factor = exp(ln_prefact - obj.nf);
-
-    con_cells = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
-
-    x_cell = solve_non_lin(obj, pattern, {map}, {target_site}, {con_cells}, struct(), ln_prefact  )
-
-    obj.PEPO_cell{level+1,level+1,1,1}= x_cell{1};
-    obj.PEPO_cell{level+1,1,1,level+1}= x_cell{2};
-    obj.PEPO_cell{1,level+1,level+1,1}= x_cell{3};
-    obj.PEPO_cell{1,1,level+1,level+1}= x_cell{4};
 
     if obj.testing == 1
         calculate_error(obj,[1,2;3,4], obj.numopts)
     end
 
+    %6 loop horizontal
+    [map, ~] = create_map([1,4,5;3,2,6], obj.numopts);
+    pattern = {[level,level,level,0],[level,0,level,level] };
+
+    [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
+
+   %[obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim)
+
+    if obj.testing == 1
+        calculate_error(obj,[1,2,5;3,4,6], obj.numopts)
+    end
+
+     %6 loop vertical
+     [map, ~] = create_map([1,2;3,4;5,6], obj.numopts);
+     pattern = {[0,level,level,level],[level,level,0,level] };
+ 
+     [obj, ~, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim);
+ 
+    %[obj, ln_prefact]= solve_non_lin_and_assign(obj, map, pattern, ln_prefact,loop_dim)
+ 
+     if obj.testing == 1
+         calculate_error(obj,[1,2;3,4;5,6], obj.numopts)
+     end
 end

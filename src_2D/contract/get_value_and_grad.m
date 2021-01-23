@@ -188,7 +188,43 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
                                             Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) ...
                                                 + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, :);
                                         end
-                                    end    
+                                    end      
+                                elseif isequal([0, 0, 0, 1], non_connected)
+                                    for iii = 1:size_x_red(1)
+                                        for iiii = 1:size_curr
+                                            [~, ~,~, i4] = ind2sub(size_x_external, iiii);
+
+                                            Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) ...
+                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, 1);
+                                        end
+                                    end 
+                                elseif isequal([0, 0, 1, 0], non_connected)
+                                    for iii = 1:size_x_red(1)
+                                        for iiii = 1:size_curr
+                                            [~, ~,i3, ~] = ind2sub(size_x_external, iiii);
+
+                                            Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, :,  i3, :) ...
+                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :,  1, :);
+                                        end
+                                    end 
+                                elseif isequal([0, 1, 0, 0], non_connected)
+                                    for iii = 1:size_x_red(1)
+                                        for iiii = 1:size_curr
+                                            [~, i2,~, ~] = ind2sub(size_x_external, iiii);
+
+                                            Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, :,i2, :, :) ...
+                                                + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, :);
+                                        end
+                                    end  
+                                elseif isequal([1, 0, 0, 0], non_connected)
+                                    for iii = 1:size_x_red(1)
+                                        for iiii = 1:size_curr
+                                            [i1, ~,~, ~] = ind2sub(size_x_external, iiii);
+
+                                            Grad_total(:, iii, :, :, iiii, :, iii, i1,:, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1,:, :, :) ...
+                                                + Ai_res(:, 1, :, :, 1, :, 1, 1, :, :, :);
+                                        end
+                                    end                   
                                 else
                                     error("not implemented")
 

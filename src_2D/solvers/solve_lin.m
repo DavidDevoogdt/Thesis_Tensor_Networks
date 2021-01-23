@@ -1,4 +1,4 @@
-function [x_cell, residual_target, rank_x] = solve_lin(obj, pattern, map, con_cells, target, lnprefact)
+function [x_cell, residual_target, rank_x,res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact,loop_dim)
     
     if nargin < 6
         lnprefact = obj.nf;
@@ -17,6 +17,7 @@ function [x_cell, residual_target, rank_x] = solve_lin(obj, pattern, map, con_ce
 
     residual_target = target2{1};
     cc = con_cells_cell2{1}{1};
+    res_con =  con_cells_cell2{1};
 
     %get locaton of patterns
     num_pats = size(pattern, 2);
@@ -71,6 +72,9 @@ function [x_cell, residual_target, rank_x] = solve_lin(obj, pattern, map, con_ce
 
     % split into cells
     x = permute(reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]), site_ordering_permute(num_pats, 1));
-    x_cell = svd_x_cell(x,dims,bond_pairs,nums);
+    x_cell = svd_x_cell(x,dims,bond_pairs,nums,loop_dim);
 
+  
+    
+    
 end
