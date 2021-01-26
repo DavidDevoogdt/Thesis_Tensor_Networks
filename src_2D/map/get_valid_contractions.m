@@ -12,7 +12,6 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
     patterns = p.Results.pattern;
     num_patterns = size(patterns, 2);
 
-
     contraction_cell = cell(0, 1);
     contraction_cell_counter = 0;
 

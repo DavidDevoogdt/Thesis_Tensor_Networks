@@ -2,7 +2,7 @@ function [H_exp, lnprefact] = H_exp(obj, map, lnprefact, improve_ln_pre_factor)
 
     H_mat = H_matrix(obj, map);
 
-    d =obj.dim;
+    d = obj.dim;
 
     if nargin < 3
         lnprefact = obj.nf;
@@ -11,7 +11,6 @@ function [H_exp, lnprefact] = H_exp(obj, map, lnprefact, improve_ln_pre_factor)
     if nargin < 4
         improve_ln_pre_factor = false;
     end
-
 
     d_log_nf = 1;
 

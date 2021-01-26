@@ -1,6 +1,6 @@
-function [dims,dim_arr,bond_pairs] = removed_elems_dims(obj,num_pats,map,rem_map,pattern,nums)
-  
-  %determine appropriate size of differnten PEPO cells and
+function [dims, dim_arr, bond_pairs] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums)
+
+    %determine appropriate size of differnten PEPO cells and
     %connections between them
     dims = cell(1, num_pats);
 

@@ -1,4 +1,4 @@
-function map2 = remove_elem( num, map)
+function map2 = remove_elem(num, map)
     %removes element from map and puts indices in the back
     %original contracted indces are still contract when both
     %elements are removed

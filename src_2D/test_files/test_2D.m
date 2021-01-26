@@ -40,11 +40,11 @@ function test
     opts.testing = 0;
     opts.visualise = 0;
 
-    pepo_order = 6;
+    pepo_order = 4;
 
     %T = 10.^( -2:0.5:5 )   ;
 
-    beta_arr = 10.^(-3:0.5:2);
+    beta_arr = 10.^( log10(0.7)  :1:2);
     %beta_arr=1./T;
 
     beta_len = size(beta_arr, 2);
@@ -55,7 +55,7 @@ function test
 
         pepo = PEPO(d, -beta * H_1_tensor, ...
             -beta * H_2_tensor, ...
-            pepo_order, @make_PEPO_1D, opts);
+            pepo_order, @make_PEPO_2D_A, opts);
 
         [err, ~] = calculate_error(pepo, 1:10, struct("numbered", true, "h_cyclic", 0));
 

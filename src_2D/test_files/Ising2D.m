@@ -1,4 +1,4 @@
-[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(1e-1, 0.9, 1, 5, 0.1, 0.1, 0);
+[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(1e-1, 1.0, 1.6, 5, 0.1, 0.1, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 plot_onsager(m_arr, T_arr, 1, 0.001)
@@ -29,14 +29,14 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
     H_1_tensor = -J * g * S_x;
     H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
 
-    opts.testing = 1;
+    opts.testing = 0;
     opts.visualise = 0;
 
     pos_map = [0, 0, 1, 1;
-            1, 1, 1, 1;
-            0, 0, 1, 1];
+                1, 1, 1, 1;
+                0, 0, 1, 1];
 
-    map = PEPO.create_map(pos_map);
+    map = create_map(pos_map);
 
     T_c = 2 * J / (log(1 + sqrt(2)));
 
@@ -79,9 +79,11 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
             marek = 1;
 
         else
-            pepo = PEPO(d, -beta * H_1_tensor, -beta * H_2_tensor, 5, 1, opts);
+            pepo = PEPO(d, -beta * H_1_tensor, -beta * H_2_tensor, 5, @make_PEPO_2D_A, opts);
 
-            [mag, inv_corr_length, marek] = pepo.get_expectation(S_z, chi);
+
+            
+            [mag, inv_corr_length, marek] = PEPO_get_expectation(pepo,S_z, chi);
 
             corr_len = 1 / inv_corr_length;
 

@@ -235,8 +235,7 @@ function part = get_middle_part(obj, inv_maps, map, perm)
 
     if obj.testing
         Z = ncon({tensorarr{1}, tensorarr{2}, Tensor_site, tensorarr{3}, tensorarr{4}}, {[-1, 1], [-2, 2], [1, 2, -3, 3, 4], [3, -4], [4, -5]});
-        
-        
+
         ZZ = Z - Tensor_site_cpy;
         print(ZZ)
     end

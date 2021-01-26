@@ -24,7 +24,7 @@ function obj = make_PEPO_1D(obj)
         e2 = svds(target, 1);
         fprintf("n=%d residual = %.4e  tar %.4e d_nf %.4e  \n", n, e1, e2, exp(ln_prefact - obj.nf));
 
-        if rank_x == 0 %ineffective step, truncate
+        if rank_x == 0%ineffective step, truncate
 
             if mod(n, 2) ~= 1
                 obj.virtual_level_sizes_horiz = obj.virtual_level_sizes_horiz(1:end - 1);

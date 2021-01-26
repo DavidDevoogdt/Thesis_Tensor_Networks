@@ -31,7 +31,7 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
         leg_list = leg_list(mask);
 
         if map.N - num_removed == 0
-            T=1;
+            T = 1;
         else
             T = ncon(temp_list, leg_list, seq, final_order);
         end
@@ -44,9 +44,9 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
 
     end
 
-   if  num_removed == 1
+    if num_removed == 1
 
-        %reorder such that gradient is easy to compute 
+        %reorder such that gradient is easy to compute
         %format: [physical indices before,1,physical indices after, external legs before,1,external legs after, bonds to x ]
         if map.is_x_border(num) || map.is_x_border(num)
             perm_vector = [site_ordering_permute(map.N2); ((2 * map.N2 + 1):size(size(A), 2)).'];
@@ -62,13 +62,11 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
             num_removed = sum(~map.leg_list_mask);
             num1 = 2 * (map.N2 - num_removed);
 
-            if ~isempty(smallest_ind )
-            idx = find(final_order == -(smallest_ind -1));
+            if ~isempty(smallest_ind)
+                idx = find(final_order == -(smallest_ind -1));
             else
                 idx = num1;
             end
-
-
 
             num2 = idx;
             num3 = size(size(A), 2) - map.ii;

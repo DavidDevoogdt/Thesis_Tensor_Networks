@@ -2,7 +2,7 @@ function H_matrix = H_matrix(obj, map)
 
     d = obj.dim;
     H_1 = obj.H_1_tensor;
-    H_2 = obj.H_2_tensor; 
+    H_2 = obj.H_2_tensor;
 
     H = zeros(dimension_vector(d, 2 * map.N));
 
@@ -97,4 +97,3 @@ function H_matrix = H_matrix(obj, map)
 
     H_matrix = reshape(H, [d^(map.N), d^(map.N)]);
 end
-
