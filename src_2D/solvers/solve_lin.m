@@ -1,9 +1,13 @@
-function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, loop_dim)
+function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, loop_dim,loop)
 
     if nargin < 6
         lnprefact = obj.nf;
     end
 
+    if nargin < 8
+        loop = 0;
+    end
+    
     %bring all parts without the PEPO cells to solve to the target
     [con_cells_cell2, target2] = optimize_con_cells(obj, {map}, {con_cells}, pattern, {target}, lnprefact);
 
@@ -45,9 +49,13 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     [dims, dim_arr, bond_pairs] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
 
-    method = 1;
+    
+    method = nargin < 6 ;
 
-    if method == 1%invert leg per leg
+    inv_eps = 1e-13;
+
+
+    if loop == 0%invert leg per leg
 
         %x_sol =  residual_target;
 
@@ -109,22 +117,12 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
             target_rot = permute(residual_target, perm_vect);
             target_rot = reshape(target_rot, perm_dims);
 
-            x = lin_solver_core(A_list, target_rot);
-
-            %             sizes = size(x);
-            %             ressize = zeros(2*num_pats,1);
-            %             for i = 1:num_pats
-            %                 ressize(i) = prod( sizes(leg_num==i  ));
-            %                 ressize(num_pats+i) = obj.dim^2;
-            %             end
-            %
-            %             x = reshape(x, ressize );
+            x = lin_solver_core(A_list, target_rot, inv_eps);
 
         else
             x = residual_target;
         end
-
-        else% do it all at once
+    else % do it all at once
         %remove target from map to the back and adapt order of target
 
         target_rot = permute_rhs(residual_target, nums); %put part in back
@@ -136,10 +134,11 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
         [A, ~] = contract_partial(obj, num, rem_map, {cc}, lnprefact);
         A_res = reshape(A, dd, []);
         %works always,but potentially slow
-        dA = decomposition(A_res, 'cod', 'RankTolerance', 1e-12, 'CheckCondition', false);
+        dA = decomposition(A_res, 'cod', 'RankTolerance', inv_eps, 'CheckCondition', false);
         x = dA \ target_rot;
 
     end
+
 
     x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
     x = permute(x, site_ordering_permute(num_pats, 1));
