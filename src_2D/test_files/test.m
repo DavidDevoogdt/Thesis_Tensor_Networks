@@ -19,6 +19,9 @@ function test
     S_z = [1, 0; 0, -1];
     I_tensor = eye(2);
 
+    handle = @make_PEPO_1D;
+    %handle = @make_PEPO_1D_double;
+
     J = 1;
     g = 0.5;
     %
@@ -33,18 +36,18 @@ function test
 
     %
     %     H_2_tensor = -ncon({S_x, S_x}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_y, S_y}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_z, S_z}, {[-1, -3], [-2, -4]});
-    %    H_1_tensor = zeros(d);
+    %         -ncon({S_y, S_y}, {[-1, -3], [-2, -4]}) ...
+    %         -ncon({S_z, S_z}, {[-1, -3], [-2, -4]});
+    %     H_1_tensor = zeros(d);
 
     opts.testing = 0;
     opts.visualise = 0;
 
-    pepo_order = 6;
+    pepo_order = 5;
 
     %T = 10.^( -2:0.5:5 )   ;
 
-    beta_arr = 10.^(-3:0.5:2);
+    beta_arr = 10.^(-3:0.2:2);
     %beta_arr=1./T;
 
     beta_len = size(beta_arr, 2);
@@ -55,7 +58,7 @@ function test
 
         pepo = PEPO(d, -beta * H_1_tensor, ...
             -beta * H_2_tensor, ...
-            pepo_order, @make_PEPO_1D, opts);
+            pepo_order, handle, opts);
 
         [err, ~] = calculate_error(pepo, 1:10, struct("numbered", true, "h_cyclic", 0));
 

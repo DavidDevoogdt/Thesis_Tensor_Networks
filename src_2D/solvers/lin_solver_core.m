@@ -53,6 +53,8 @@ function X = lin_solver_core(A_list, target, inv_eps)
         dA = decomposition(R(~mask, ~mask), 'triangular');
 
         X(~mask, :) = dA \ B2(~mask, :);
+        
+        nx = X*X';
 
         mmx = max(max(abs(X)))
         %mmb =  max(abs(B2))
@@ -70,12 +72,12 @@ function X = lin_solver_core(A_list, target, inv_eps)
         %         X(~mask, :) = dA \ B2(~mask, :);
         %         mmx = max(max(abs(X)))
 
-        if mmx > 1
-            tol = tol * 1e2;
+        %if mmx > 1
+        %    tol = tol * 1e2;
 
-        else
+        %else
             break
-        end
+        %end
 
     end
     %rank =svds(X,1)

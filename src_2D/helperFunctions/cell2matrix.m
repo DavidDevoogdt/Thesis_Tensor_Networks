@@ -3,12 +3,13 @@ function obj = cell2matrix(obj)
     d = obj.dim;
 
     size_arr_horiz = obj.virtual_level_sizes_horiz;
+    h_size = numel(size_arr_horiz) + 1;
 
-    start_index_H = zeros(obj.max_index + 2, 1);
+    start_index_H = zeros(h_size, 1);
     start_index_H(1) = 1;
     ind = 1;
 
-    for i = 2:obj.max_index + 2
+    for i = 2:h_size
         ind = ind + size_arr_horiz(i - 1);
         start_index_H(i) = ind;
     end
@@ -20,12 +21,13 @@ function obj = cell2matrix(obj)
     end
 
     size_arr_vert = obj.virtual_level_sizes_vert;
+    v_size = numel(size_arr_vert) + 1;
 
-    start_index_V = zeros(obj.max_index + 2, 1);
+    start_index_V = zeros(v_size, 1);
     start_index_V(1) = 1;
     ind = 1;
 
-    for i = 2:obj.max_index + 2
+    for i = 2:v_size
         ind = ind + size_arr_vert(i - 1);
         start_index_V(i) = ind;
     end
@@ -42,10 +44,10 @@ function obj = cell2matrix(obj)
     %T = reshape(sparsem, [d,d,totaldimensionH,totaldimensionV,totaldimensionH,totaldimensionV]);
 
     %move all existing tensors to matrix
-    for i1 = 1:obj.max_index + 1
-        for i2 = 1:obj.max_index + 1
-            for i3 = 1:obj.max_index + 1
-                for i4 = 1:obj.max_index + 1
+    for i1 = 1:h_size - 1
+        for i2 = 1:v_size - 1
+            for i3 = 1:h_size - 1
+                for i4 = 1:v_size - 1
                     %trace the spins for the environment
                     cell = obj.PEPO_cell{i1, i2, i3, i4};
 

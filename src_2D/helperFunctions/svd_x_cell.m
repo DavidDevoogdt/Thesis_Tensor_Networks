@@ -26,7 +26,7 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
             d1 = prod(dims1(~mask1));
             d2 = prod(dims2(~mask2));
 
-            assert(d1 == d2)
+            %assert(d1 == d2)
 
             n1 = find(mask1);
             n2 = find(mask2);
@@ -34,35 +34,51 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
             dim1_alt = [prod(dims1(1:n1 - 1)), prod(dims1(n1 + 1:end))];
             dim2_alt = [prod(dims2(1:n2 - 1)), prod(dims2(n2 + 1:end))];
 
-            x_res = reshape(x, d1, d1);
+            x_res = reshape(x, d1, d2);
 
             [U, S, V] = svd(x_res);
 
             %err = U*S*V'-x_res;
             %err = U*S_l*S_r*V'-x_res;
 
-            sqrt_S = diag(diag(S).^0.5);
+            if d1 ~= d2
+                if split_dim ~= -1
+                    error("not implemented")
+                end
 
-            s_dim = size(sqrt_S, 1);
-
-            if split_dim ~= -1
-                sqrt_S_red = sqrt_S(1:split_dim, 1:split_dim);
-                S_l = eye(s_dim, split_dim) * sqrt_S_red;
-                S_r = sqrt_S_red * eye(split_dim, s_dim);
-
-                ds = diag(S);
-                err = sum(ds(split_dim + 1:end));
+                if d1 > d2
+                    L = U * S;
+                    R = V';
+                else
+                    L = U;
+                    R = S * V';
+                end
 
             else
-                S_l = sqrt_S;
-                S_r = sqrt_S;
+                sqrt_S = diag(diag(S).^0.5);
+                s_dim = size(sqrt_S, 1);
+
+                if split_dim ~= -1
+                    sqrt_S_red = sqrt_S(1:split_dim, 1:split_dim);
+                    S_l = eye(s_dim, split_dim) * sqrt_S_red;
+                    S_r = sqrt_S_red * eye(split_dim, s_dim);
+
+                    ds = diag(S);
+                    err = sum(ds(split_dim + 1:end));
+
+                else
+                    S_l = sqrt_S;
+                    S_r = sqrt_S;
+                end
+                L = U * S_l;
+                R = S_r * V';
             end
 
             parity = mod(find(mask1), 2); %order of multiplication
 
             if parity == 1
-                l = permute(reshape(U * S_l, dim1_alt(1), dim1_alt(2), []), [1, 3, 2]);
-                r = permute(reshape(S_r * V', [], dim2_alt(1), dim2_alt(2)), [2, 1, 3]);
+                l = permute(reshape(L, dim1_alt(1), dim1_alt(2), []), [1, 3, 2]);
+                r = permute(reshape(R, [], dim2_alt(1), dim2_alt(2)), [2, 1, 3]);
 
                 dims1(mask1) = size(l, 2);
                 dims2(mask2) = size(r, 2);
@@ -71,8 +87,8 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
                 x_cell{i2} = reshape(r, dims2);
 
             else
-                l = permute(reshape(U * S_l, dim2_alt(1), dim2_alt(2), []), [1, 3, 2]);
-                r = permute(reshape(S_r * V', [], dim1_alt(1), dim1_alt(2)), [2, 1, 3]);
+                l = permute(reshape(L, dim2_alt(1), dim2_alt(2), []), [1, 3, 2]);
+                r = permute(reshape(R, [], dim1_alt(1), dim1_alt(2)), [2, 1, 3]);
 
                 dims1(mask1) = size(r, 2);
                 dims2(mask2) = size(l, 2);
