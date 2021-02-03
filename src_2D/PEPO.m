@@ -42,14 +42,22 @@ classdef PEPO
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
 
+            %parse opts
+            p = inputParser;
+            addParameter(p, 'testing', 0)
+            addParameter(p, 'visualise', 0)
+            addParameter(p, 'double', 1)
+            parse(p, opts)
+
             if mod(order, 2)
                 max_index = (order - 1) / 2;
             else
                 max_index = order / 2;
             end
-            obj.max_index = max_index;
-            obj.order = order;
-            obj.cycle_index = Inf;
+
+            if p.Results.double == 1
+                max_index = 2 * max_index + 1;
+            end
 
             obj.PEPO_cell = cell(max_index + 1, max_index + 1, max_index + 1, max_index + 1);
             obj.boundary_matrix_x = cell(max_index + 1, max_index + 1);
@@ -59,11 +67,10 @@ classdef PEPO
             obj.virtual_level_sizes_horiz = 1;
             obj.virtual_level_sizes_vert = 1;
 
-            %parse opts
-            p = inputParser;
-            addParameter(p, 'testing', 0)
-            addParameter(p, 'visualise', 0)
-            parse(p, opts)
+            obj.max_index = max_index;
+
+            obj.order = order;
+            obj.cycle_index = Inf;
 
             obj.testing = p.Results.testing;
             obj.visualise = p.Results.visualise;
@@ -73,7 +80,9 @@ classdef PEPO
             [~, nf2] = H_exp(obj, map, 0, true);
             obj.nf = nf2;
 
-            obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
+            %obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
+
+            obj.PEPO_cell{1, 1, 1, 1} = reshape(expm(H_1_tensor) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
 
             %non generic PEPO code
             obj = make_PEPO_handle(obj);
