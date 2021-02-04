@@ -1,4 +1,4 @@
-[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(1e-1, 1.0, 1.6, 5, 0.1, 0.1, 0);
+[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.4, 1.0, 1 , 3, 0.05, 0.02, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 plot_onsager(m_arr, T_arr, 1, 0.001)
@@ -17,6 +17,8 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
 
     d = 2;
 
+    handle = @make_PEPO_2D_B;
+    
     %hamiltonian setup
     S_x = [0, 1; 1, 0];
     S_y = [0, -1i; 1i, 0];
@@ -79,7 +81,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
             marek = 1;
 
         else
-            pepo = PEPO(d, -beta * H_1_tensor, -beta * H_2_tensor, 5, @make_PEPO_2D_A, opts);
+            pepo = PEPO(d, -beta * H_1_tensor, -beta * H_2_tensor, 5, handle, opts);
 
 
             

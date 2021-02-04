@@ -19,7 +19,7 @@ function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
     %opts.method = 'qr';
 
     opts.plot = 'on';
-    opts.maxit = 1000;
+    opts.maxit = 200;
     opts.tolfixed = 1e-12;
 
     %put into vumps format

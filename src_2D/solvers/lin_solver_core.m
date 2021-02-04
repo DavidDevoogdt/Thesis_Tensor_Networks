@@ -41,47 +41,17 @@ function X = lin_solver_core(A_list, target, inv_eps)
     tol = max(size(R)) * eps(norm(t));
     tol = max(tol, inv_eps);
 
-    while true
-
-        mask = abs(diag(R)) < tol;
-        if sum(mask) ~= 0
-            sum(mask);
-        end
-
-        X = zeros(R_dim, phys_dim);
-
-        dA = decomposition(R(~mask, ~mask), 'triangular');
-
-        X(~mask, :) = dA \ B2(~mask, :);
-        
-        nx = X*X';
-
-        mmx = max(max(abs(X)))
-        %mmb =  max(abs(B2))
-        %
-        %         tol = 1e-8;
-        %         mask = abs(diag(R)) < tol;
-        %         if sum(mask) ~= 0
-        %             sum(mask)
-        %         end
-        %
-        %         X = zeros(R_dim, phys_dim);
-        %
-        %         dA = decomposition(R(~mask, ~mask), 'triangular');
-        %
-        %         X(~mask, :) = dA \ B2(~mask, :);
-        %         mmx = max(max(abs(X)))
-
-        %if mmx > 1
-        %    tol = tol * 1e2;
-
-        %else
-            break
-        %end
-
+    mask = abs(diag(R)) < tol;
+    if sum(mask) ~= 0
+        sum(mask);
     end
-    %rank =svds(X,1)
-    
+
+    X = zeros(R_dim, phys_dim);
+    R = decomposition(R(~mask, ~mask), 'triangular');
+    X(~mask, :) = R \ B2(~mask, :);
+
+    fprintf('%.4e ', max(max(abs(X))));
+
     X = reshape(X, target_size_orig);
 
 end

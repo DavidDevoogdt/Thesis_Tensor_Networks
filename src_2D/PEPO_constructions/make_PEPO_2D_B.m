@@ -155,6 +155,7 @@ function obj = make_PEPO_2D_B(obj)
     %%%%%%%%%%%%%% Block with 3/4 legs %%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    fprintf('| ')
     %copy all single blocks to corresponding primed level, and divide by 2
     %to account for double blocks
     nonempty_ind = find(~cellfun('isempty', obj.PEPO_cell));
@@ -373,6 +374,58 @@ function obj = make_PEPO_2D_B(obj)
                         0, 6], obj.numopts);
     pattern = {[1, 2, 0, 2 + prime_level]};
     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    % onder rechts
+    [map, ~] = create_map([4, 0, 0;
+                        3, 1, 2;
+                        5, 0, 0;
+                        6, 0, 0], obj.numopts);
+    pattern = {[0, 1, 2 + prime_level, 2 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([4, 3, 1, 2;
+                        0, 5, 0, 0;
+                        0, 6, 0, 0], obj.numopts);
+    pattern = {[1, 0, 2 + prime_level, 2 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %onder links
+    [map, ~] = create_map([0, 0, 4;
+                        3, 1, 2;
+                        0, 0, 5;
+                        0, 0, 6], obj.numopts);
+    pattern = {[2, 1, 0, 2 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([4, 3, 1, 2;
+                        0, 0, 5, 0;
+                        0, 0, 6, 0], obj.numopts);
+    pattern = {[2, 0, 1 + prime_level, 2 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %boven links
+    [map, ~] = create_map([0, 0, 4;
+                        0, 0, 2;
+                        3, 1, 5;
+                        0, 0, 6], obj.numopts);
+    pattern = {[2, 2, 0, 1 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([0, 0, 4, 0;
+                        0, 0, 2, 0;
+                        3, 1, 5, 6; ], obj.numopts);
+    pattern = {[2, 2, 1 + prime_level, 0]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %boven rechts
+    [map, ~] = create_map([0, 6, 0, 0;
+                        0, 5, 0, 0;
+                        4, 3, 1, 2; ], obj.numopts);
+    pattern = {[1, 2, 2 + prime_level, 0]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([6, 0, 0;
+                        5, 0, 0;
+                        3, 1, 2;
+                        4, 0, 0; ], obj.numopts);
+    pattern = {[0, 2, 2 + prime_level, 1 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
     if obj.testing == 1
         calculate_error(obj, [1, 2, 3, 4, 5; 0, 0, 6, 0, 0], obj.numopts)
@@ -384,11 +437,39 @@ function obj = make_PEPO_2D_B(obj)
 
     end
 
-    %% 2 2 levels + 2 1 level
+    %% 2 2 levels + 2 1 level 4*3/2=6
     [map, ~] = create_map([0, 0, 6, 0, 0;
                         1, 2, 3, 4, 5;
                         0, 0, 7, 0, 0], obj.numopts);
     pattern = {[2, 1, 2 + prime_level, 1 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([0, 0, 5, 0;
+                        0, 0, 6, 0;
+                        1, 2, 3, 4;
+                        0, 0, 7, 0], obj.numopts);
+    pattern = {[2, 2, 1 + prime_level, 1 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([0, 5, 0, 0;
+                        0, 6, 0, 0;
+                        1, 2, 3, 4;
+                        0, 7, 0, 0], obj.numopts);
+    pattern = {[1, 2, 2 + prime_level, 1 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([0, 0, 5, 0;
+                        1, 2, 6, 4;
+                        0, 0, 3, 0;
+                        0, 0, 7, 0], obj.numopts);
+    pattern = {[2, 1, 1 + prime_level, 2 + prime_level]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    [map, ~] = create_map([0, 5, 0, 0;
+                        1, 2, 6, 4;
+                        0, 3, 0, 0;
+                        0, 7, 0, 0], obj.numopts);
+    pattern = {[1, 1, 2 + prime_level, 2 + prime_level]};
     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
     %
     [map, ~] = create_map([0, 1, 0;
@@ -439,7 +520,7 @@ function obj = make_PEPO_2D_B(obj)
 
     end
 
-    %3 2 legs and 1 leg
+    %% 3 2 legs and 1 leg %works but takes a few second
     [map, ~] = create_map([0, 0, 8, 0, 0;
                         1, 2, 3, 4, 5;
                         0, 0, 6, 0, 0
@@ -474,19 +555,19 @@ function obj = make_PEPO_2D_B(obj)
         calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
     end
     %%
-    % 4 2 legs
-
-    [map, ~] = create_map([0, 0, 1, 0, 0;
-                        0, 0, 2, 0, 0;
-                        7, 3, 4, 8, 9;
-                        0, 0, 5, 0, 0;
-                        0, 0, 6, 0, 0], obj.numopts);
-    pattern = {[2, 2, 2 + prime_level, 2 + prime_level]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-
-    if obj.testing == 1
-        calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
-    end
+    % 4 2 leg requires to much ram
+    %     [map, ~] = create_map([0, 0, 1, 0, 0;
+    %                         0, 0, 2, 0, 0;
+    %                         7, 3, 4, 8, 9;
+    %                         0, 0, 5, 0, 0;
+    %                         0, 0, 6, 0, 0], obj.numopts);
+    %     pattern = {[2, 2, 2 + prime_level, 2 + prime_level]};
+    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %
+    %     if obj.testing == 1
+    %         calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
+    %     end
+    %%
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% LOOPS %%%%%%%%%%%%%%
@@ -502,7 +583,7 @@ function obj = make_PEPO_2D_B(obj)
     %obj.cycle_index = level;
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, loop_dim];
-    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_horiz, loop_dim];
+    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, loop_dim];
 
     %simple loop
     [map1, ~] = create_map([1, 2; 3, 4], obj.numopts);
