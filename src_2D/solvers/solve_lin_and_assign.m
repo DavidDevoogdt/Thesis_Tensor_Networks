@@ -1,4 +1,4 @@
-function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, loop_dim,loop)
+function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, loop_dim, loop)
     if nargin < 5
         loop_dim = -1;
         loop = 0;
@@ -13,11 +13,12 @@ function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assig
 
     con_cells = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
 
-    [x_cell, res_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, loop_dim,loop);
+    [x_cell, res_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, loop_dim, loop);
 
     if rank_x ~= 0
         for i = 1:size(x_cell, 2)
             obj.PEPO_cell{pattern{i}(1) + 1, pattern{i}(2) + 1, pattern{i}(3) + 1, pattern{i}(4) + 1} = x_cell{i} * mul_factor;
+            fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
         end
     end
 
@@ -27,6 +28,7 @@ function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assig
         temp_list_1 = fetch_PEPO_cells(obj, map, res_con{1}{1}, ln_prefact_out);
         A1 = ncon(temp_list_1, map.leg_list);
         diff = A1 - res_target;
+        svds(reshape(diff, [d^map.N, d^map.N]))
     end
 
     target = reshape(target, [d^map.N, d^map.N]);

@@ -50,7 +50,7 @@ function X = lin_solver_core(A_list, target, inv_eps)
     R = decomposition(R(~mask, ~mask), 'triangular');
     X(~mask, :) = R \ B2(~mask, :);
 
-    fprintf('%.4e ', max(max(abs(X))));
+    %fprintf('%.4e ', max(max(abs(X))));
 
     X = reshape(X, target_size_orig);
 

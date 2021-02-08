@@ -52,7 +52,7 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
         tensor_list{i} = T2;
     end
 
-    M = ncon(tensor_list, map.leg_list);
+    M = ncon_optim(tensor_list, map.leg_list);
     val_con = find(M);
 
     contraction_cell = cell(1, numel(val_con));

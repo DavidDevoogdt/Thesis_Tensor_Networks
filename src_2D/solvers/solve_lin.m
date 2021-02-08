@@ -1,4 +1,4 @@
-function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, loop_dim,loop)
+function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, loop_dim, loop)
 
     if nargin < 6
         lnprefact = obj.nf;
@@ -7,7 +7,7 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
     if nargin < 8
         loop = 0;
     end
-    
+
     %bring all parts without the PEPO cells to solve to the target
     [con_cells_cell2, target2] = optimize_con_cells(obj, {map}, {con_cells}, pattern, {target}, lnprefact);
 
@@ -49,11 +49,9 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     [dims, dim_arr, bond_pairs] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
 
-    
-    method = nargin < 6 ;
+    method = nargin < 6;
 
-    inv_eps = 1e-13;
-
+    inv_eps = 1e-14;
 
     if loop == 0%invert leg per leg
 
@@ -134,11 +132,12 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
         [A, ~] = contract_partial(obj, num, rem_map, {cc}, lnprefact);
         A_res = reshape(A, dd, []);
         %works always,but potentially slow
-        dA = decomposition(A_res, 'cod', 'RankTolerance', inv_eps, 'CheckCondition', false);
+
+        dA = decomposition(A_res, 'qr', 'RankTolerance', inv_eps, 'CheckCondition', false);
         x = dA \ target_rot;
 
+        %x = lsqminnorm(A_res,target_rot,inv_eps);
     end
-
 
     x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
     x = permute(x, site_ordering_permute(num_pats, 1));

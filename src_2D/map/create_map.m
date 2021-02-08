@@ -8,6 +8,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
         opts.numbered = 0;
         opts.v_cyclic = 0;
         opts.h_cyclic = 0;
+        opts.boundary_matrix = 0;
     end
 
     if nargin < 3
@@ -24,6 +25,10 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
 
     if ~isfield(opts, 'h_cyclic')
         opts.h_cyclic = 0;
+    end
+    
+    if ~isfield(opts, 'boundary_matrix')
+        opts.boundary_matrix = 0;
     end
 
     %number the location of operators from up to down and left to
@@ -185,7 +190,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     map.num_v_bonds = internal_counter - map.num_h_bonds - 1;
     map.internal_legs = internal_counter - 1;
 
-    if internal == 0
+    if internal == 0 && opts.boundary_matrix == 1
 
         total_borders = sum(map.is_x_border) + sum(map.is_y_border);
         map.N2 = map.N - total_borders;
@@ -240,7 +245,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     map.map = "true";
 
     if internal == 0
-        if opts.h_cyclic || opts.v_cyclic
+        if opts.boundary_matrix==1
             map2 = PEPO.create_map(map.num_map(1:end - opts.v_cyclic, 1:end - opts.h_cyclic), opts, 1);
 
             boundary_map = map;

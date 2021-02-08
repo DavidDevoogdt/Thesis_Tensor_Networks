@@ -59,9 +59,9 @@ classdef PEPO
                 max_index = 2 * max_index + 1;
             end
 
-            obj.PEPO_cell = cell(max_index + 1, max_index + 1, max_index + 1, max_index + 1);
-            obj.boundary_matrix_x = cell(max_index + 1, max_index + 1);
-            obj.boundary_matrix_y = cell(max_index + 1, max_index + 1);
+            obj.PEPO_cell = cell(max_index + 2, max_index + 2, max_index + 2, max_index + 2);
+            obj.boundary_matrix_x = cell(max_index + 1, max_index + 2);
+            obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
             obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
             obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
             obj.virtual_level_sizes_horiz = 1;
@@ -81,7 +81,6 @@ classdef PEPO
             obj.nf = nf2;
 
             %obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
-
             obj.PEPO_cell{1, 1, 1, 1} = reshape(expm(H_1_tensor) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
 
             %non generic PEPO code

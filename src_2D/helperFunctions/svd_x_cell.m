@@ -41,47 +41,34 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
             %err = U*S*V'-x_res;
             %err = U*S_l*S_r*V'-x_res;
 
-            if d1 ~= d2
-                if split_dim ~= -1
-                    error("not implemented")
-                end
-
-                if d1 > d2
-                    L = U * S;
-                    R = V';
+            if split_dim == -1
+                
+                if d1==d2
+                     split_dim = d1;
                 else
-                    L = U;
-                    R = S * V';
+                   error("provide split dimension") 
                 end
-
-            else
-                sqrt_S = diag(diag(S).^0.5);
-                s_dim = size(sqrt_S, 1);
-
-                if split_dim ~= -1
-                    sqrt_S_red = sqrt_S(1:split_dim, 1:split_dim);
-                    S_l = eye(s_dim, split_dim) * sqrt_S_red;
-                    S_r = sqrt_S_red * eye(split_dim, s_dim);
-
-                    ds = diag(S);
-                    err = sum(ds(split_dim + 1:end));
-
-                else
-                    S_l = sqrt_S;
-                    S_r = sqrt_S;
-                end
-                L = U * S_l;
-                R = S_r * V';
             end
+                
+            PU = eye( size(U,1), split_dim) ;
+            PR = eye( split_dim, size(V,1)) ;
+            DS =diag(S);
+            sqrt_S = diag( DS(1:split_dim).^0.5  );
+            
+            L = U * PU*sqrt_S;
+            R = sqrt_S*PR*V';
+            
+            err = L*R- x_res ;
+        
+            
+            parity = find(mask1)>4; %order of multiplication
 
-            parity = mod(find(mask1), 2); %order of multiplication
-
-            if parity == 1
+            if parity == 1 %in right order
                 l = permute(reshape(L, dim1_alt(1), dim1_alt(2), []), [1, 3, 2]);
                 r = permute(reshape(R, [], dim2_alt(1), dim2_alt(2)), [2, 1, 3]);
 
-                dims1(mask1) = size(l, 2);
-                dims2(mask2) = size(r, 2);
+                dims1(mask1) = split_dim;
+                dims2(mask2) = split_dim;
 
                 x_cell{i1} = reshape(l, dims1);
                 x_cell{i2} = reshape(r, dims2);
@@ -90,8 +77,8 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
                 l = permute(reshape(L, dim2_alt(1), dim2_alt(2), []), [1, 3, 2]);
                 r = permute(reshape(R, [], dim1_alt(1), dim1_alt(2)), [2, 1, 3]);
 
-                dims1(mask1) = size(r, 2);
-                dims2(mask2) = size(l, 2);
+                dims1(mask1) = split_dim;
+                dims2(mask2) = split_dim;
 
                 x_cell{i1} = reshape(r, dims1);
                 x_cell{i2} = reshape(l, dims2);

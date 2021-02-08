@@ -1,4 +1,8 @@
-function obj = cell2matrix(obj)
+function obj = cell2matrix(obj,sparse)
+
+    if nargin < 2
+        sparse =0;
+    end
 
     d = obj.dim;
 
@@ -38,11 +42,13 @@ function obj = cell2matrix(obj)
         y = start_index_V(i):start_index_V(i + 1) - 1;
     end
 
-    T = zeros(d, d, totaldimensionH, totaldimensionV, totaldimensionH, totaldimensionV);
-
-    %sparsem = ndSparse(sparse(d^2, totaldimensionH^2*totaldimensionV^2));
-    %T = reshape(sparsem, [d,d,totaldimensionH,totaldimensionV,totaldimensionH,totaldimensionV]);
-
+    if sparse == 0
+        T = zeros(d, d, totaldimensionH, totaldimensionV, totaldimensionH, totaldimensionV);
+    else
+        sparsem = ndSparse(sparse(d^2, totaldimensionH^2 * totaldimensionV^2));
+        T = reshape(sparsem, [d, d, totaldimensionH, totaldimensionV, totaldimensionH, totaldimensionV]);
+    end
+    
     %move all existing tensors to matrix
     for i1 = 1:h_size - 1
         for i2 = 1:v_size - 1

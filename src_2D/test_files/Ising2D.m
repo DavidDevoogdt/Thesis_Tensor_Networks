@@ -1,4 +1,4 @@
-[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.4, 1.0, 1 , 3, 0.05, 0.02, 0);
+%[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(1.0, 1, 2.5, 10, 0.1, 0.05, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 plot_onsager(m_arr, T_arr, 1, 0.001)
@@ -17,8 +17,9 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
 
     d = 2;
 
-    handle = @make_PEPO_2D_B;
-    
+    handle = @make_PEPO_2D_A;
+    opts.double = 0;
+
     %hamiltonian setup
     S_x = [0, 1; 1, 0];
     S_y = [0, -1i; 1i, 0];
@@ -35,8 +36,8 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
     opts.visualise = 0;
 
     pos_map = [0, 0, 1, 1;
-                1, 1, 1, 1;
-                0, 0, 1, 1];
+            1, 1, 1, 1;
+            0, 0, 1, 1];
 
     map = create_map(pos_map);
 
@@ -83,9 +84,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
         else
             pepo = PEPO(d, -beta * H_1_tensor, -beta * H_2_tensor, 5, handle, opts);
 
-
-            
-            [mag, inv_corr_length, marek] = PEPO_get_expectation(pepo,S_z, chi);
+            [mag, inv_corr_length, marek] = PEPO_get_expectation(pepo, S_z, chi);
 
             corr_len = 1 / inv_corr_length;
 
@@ -106,7 +105,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
         corr_arr(i) = corr_len;
         marek_arr(i) = marek;
 
-        if m < 1e-5
+        if m < 1e-3
             deadcounter = deadcounter -1;
 
             if deadcounter == 0
