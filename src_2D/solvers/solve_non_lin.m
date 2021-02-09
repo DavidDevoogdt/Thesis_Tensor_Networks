@@ -4,6 +4,9 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
     addParameter(p, 'Gradient', true)
     addParameter(p, 'maxit', 200)
     addParameter(p, 'Display', 'None')
+    addParameter(p,  'PlotFcn','None')
+    %addParameter(p, 'Algoritm', 'levenberg-marquardt')
+    addParameter(p, 'Algoritm', 'trust-region')
     parse(p, opts)
 
     if nargin < 7
@@ -11,13 +14,15 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
     end
 
     options = optimoptions('fsolve', 'Display', p.Results.Display, ...
-        'Algorithm', 'levenberg-marquardt', ...
+        'Algorithm', p.Results.Algoritm, ...
         'MaxIterations',p.Results.maxit,...
         'SpecifyObjectiveGradient', p.Results.Gradient, ...
         'FunctionTolerance', 1e-40, ...
-        'StepTolerance', 1e-10);
+        'StepTolerance', 1e-10,...
+        'PlotFcn', 'optimplotfirstorderopt',...
+        'OptimalityTolerance',1e-30); %for trust region
 
-    %'PlotFcn', 'optimplotfirstorderopt',...
+    %
 
         num_patterns = size(patterns, 2);
 
@@ -40,6 +45,13 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
         [con_cells, targets] = optimize_con_cells(obj, maps, con_cells, patterns, targets, lnprefact);
     end
 
+    if p.Results.Algoritm == "trust-region"
+        [~,g]= get_value_and_grad(obj, maps, con_cells, patterns, targets, begin_vec, x_sizes, lnprefact);  
+        j_pat = (g~=0)*1;
+        options = optimoptions(options,'JacobPattern',j_pat, 'SubproblemAlgorithm','cg') ;
+    end
+    
+    
     x = fsolve(@(x) get_value_and_grad(obj, maps, con_cells, patterns, targets, x, x_sizes, lnprefact), begin_vec, options);
 
     x_cell = split_x (x, x_sizes);

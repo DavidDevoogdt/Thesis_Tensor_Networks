@@ -1,4 +1,4 @@
-%[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(1.0, 1, 2.5, 10, 0.1, 0.05, 0);
+[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.1, 1, 2.5, 10, 0.1, 0.05, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 plot_onsager(m_arr, T_arr, 1, 0.001)
