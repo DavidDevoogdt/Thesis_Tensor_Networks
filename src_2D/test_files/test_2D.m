@@ -23,7 +23,7 @@ function test
     %handle =  @make_PEPO_2D_B;opts.double = 1;
     
     J = 1;
-    g = 0.2;
+    g = 0.01;
     %
     H_1_tensor = -J * g * S_x;
     H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
@@ -48,7 +48,7 @@ function test
 
     %T = 10.^( -2:0.5:5 )   ;
 
-    beta_arr = 10.^( log10(2)  :0.2:1);
+    beta_arr = 10.^( log10(1.1)  :0.2:1);
     %beta_arr=1./T;
 
     beta_len = size(beta_arr, 2);

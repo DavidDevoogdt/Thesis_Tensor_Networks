@@ -14,7 +14,7 @@ function M = contract_network(obj, map, opts)
     if p.Results.matrix == 0
         correct_index_sets = get_valid_contractions(obj, map, opts);
 
-        for i = 1:size(correct_index_sets, 2)
+        for i = 1:numel(correct_index_sets)
             iset = correct_index_sets{i};
             %vect = iset{2};
             legs = iset{1};

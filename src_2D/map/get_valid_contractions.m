@@ -1,4 +1,4 @@
-function contraction_cell = get_valid_contractions(obj, map, opts)
+function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     p = inputParser;
     addParameter(p, 'max_index', obj.max_index)
     %addParameter(p, 'matrix', 0)
@@ -7,77 +7,174 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
     parse(p, opts)
 
     tensor_list = cell(1, map.N);
+    tensor_list_pat = cell(1, map.N);
+
     patterns = p.Results.pattern;
     num_patterns = size(patterns, 2);
 
-    ie = ndSparse(~cellfun(@isempty, obj.PEPO_cell));
+    ie = ndSparse(~cellfun(@isempty, obj.PEPO_cell)) * 1.0;
+
+    iepat = ie;
 
     for pat_num = 1:num_patterns
         pat = patterns{pat_num};
         ie(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 1;
+        iepat(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 0; %remove in case already here
     end
 
     lookup = cell(size(map.leg_list));
     lookupSize = zeros(map.N, 1);
 
-    for i = 1:map.N
+    con_cell_cell = cell(1, numel(obj.bounds));
+    pat_cells_cell = cell(1, numel(obj.bounds));
 
-        T = ie;
-        connections = map.leg_list{i};
+    total_counter = 0;
+    
+    for b = 1:numel(obj.bounds)
 
-        %only keep sublevel 0 for the given tensors
-        if connections(1 + 2) < 0
-            T = T(1, :, :, :);
+        bound = obj.bounds(b);
+
+
+        for i = 1:map.N
+
+            T = ie;
+            Tpat = iepat;
+
+            connections = map.leg_list{i};
+
+            %only keep sublevel 0 for the given tensors
+            if connections(1 + 2) < 0
+                T = T(bound, :, :, :);
+                Tpat = Tpat(bound, :, :, :);
+            end
+
+            if connections(2 + 2) < 0
+                T = T(:, bound, :, :);
+                Tpat = Tpat(:, bound, :, :);
+            end
+
+            if connections(3 + 2) < 0
+                T = T(:, :, bound, :);
+                Tpat = Tpat(:, :, bound, :);
+            end
+
+            if connections(4 + 2) < 0
+                T = T(:, :, :, bound);
+                Tpat = Tpat(:, :, :, bound);
+            end
+
+            % %only keep sublevel 0 for the given tensors
+            % if connections(1 + 2) < 0
+            %     T = ncon(   { bound_vect,  T}, { [-1,1],[1,-2,-3,-4]  } )  ;
+            %     Tpat = ncon(   {bound_vect,  Tpat},{ [-1,1],[1,-2,-3,-4]  } )  ;
+
+            % end
+
+            % if connections(2 + 2) < 0
+            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,1,-3,-4]  } )  ;
+            %     Tpat = ncon(   { bound_vect,  Tpat},{ [-1,1],[-2,1,-3,-4]  } )  ;
+            % end
+
+            % if connections(3 + 2) < 0
+            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,-3,1,-4]  } )  ;
+            %     Tpat = ncon(   { bound_vect,  Tpat},{ [-1,1],[-2,1,-3,-4]  } )  ;
+            % end
+
+            % if connections(4 + 2) < 0
+            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,-3,-4,1]  } )  ;
+            %     Tpat = ncon(  { bound_vect,  Tpat},{ [-1,1],[-2,-3,-4,1]  } )  ;
+            % end
+
+            A = find(T);
+            nA = numel(A);
+            lookup{i} = A;
+            lookupSize(i) = nA;
+
+            T2 = sparse(1:nA, A, ones(nA, 1), nA, numel(T));
+            T2 = ndSparse(T2, [nA, 1, size(T)]);
+            tensor_list{i} = T2;
+
+            if nargout > 1
+                Apat = find(Tpat);
+
+                c = ismember(A, Apat);
+
+                T2pat = T2;
+                if sum(~c) ~= 0
+                    T2pat(~c, :) = T2pat(~c, :, :, :, :, :) * 0;
+                end
+
+                T2pat = ndSparse(T2pat, [nA, 1, size(T)]);
+                tensor_list_pat{i} = T2pat;
+            end
+
         end
 
-        if connections(2 + 2) < 0
-            T = T(:, 1, :, :);
+        M = ncon_optim(tensor_list, map.leg_list);
+        val_con = find(M);
+
+        if nargout > 1
+            M_pat = ncon_optim(tensor_list_pat, map.leg_list);
+            val_con_pat = find(M_pat);
+
+            pat_cells_cell{b} = ~ismember(val_con, val_con_pat);
+
         end
 
-        if connections(3 + 2) < 0
-            T = T(:, :, 1, :);
+        contraction_cell = cell(1, numel(val_con));
+        contraction_cell_counter = 1;
+
+        for i = 1:numel(val_con)
+            con_cell = cell(1, map.N);
+
+            indices = cell(map.N, 1);
+            [indices{:}] = ind2sub(lookupSize, val_con(i));
+
+            for ii = 1:map.N
+
+                real_index = lookup{ii}(indices{ii});
+
+                st = [size(tensor_list{ii},3),size(tensor_list{ii},4),size(tensor_list{ii},5),size(tensor_list{ii},6)];
+
+                s = cell(4, 1);
+
+                [s{:}] = ind2sub(st, real_index);
+
+                mask = st == 1;
+                aa = find(mask);
+                for l = 1:numel(aa)
+                    s{aa(l)} = bound;
+                end
+
+                con_cell{ii} = [s{:}] - 1; %start indexing at 0
+            end
+
+            contraction_cell{contraction_cell_counter} = {con_cell, 'todo'};
+            contraction_cell_counter = contraction_cell_counter + 1;
         end
 
-        if connections(4 + 2) < 0
-            T = T(:, :, :, 1);
-        end
-
-        A = find(T);
-        nA = numel(A);
-        lookup{i} = A;
-        lookupSize(i) = nA;
-
-        T2 = sparse(1:nA, A, ones(nA, 1), nA, numel(T));
-        T2 = ndSparse(T2, [nA, 1, size(T)]);
-        tensor_list{i} = T2;
+        con_cell_cell{b}= contraction_cell ;
+        
+        total_counter = total_counter+contraction_cell_counter-1;
     end
 
-    M = ncon_optim(tensor_list, map.leg_list);
-    val_con = find(M);
-
-    contraction_cell = cell(1, numel(val_con));
-    contraction_cell_counter = 1;
-
-    for i = 1:numel(val_con)
-        con_cell = cell(1, map.N);
-
-        indices = cell(map.N, 1);
-        [indices{:}] = ind2sub(lookupSize, val_con(i));
-
-        for ii = 1:map.N
-
-            real_index = lookup{ii}(indices{ii});
-
-            st = size(tensor_list{ii});
-
-            [s1, s2, s3, s4] = ind2sub(st(3:end), real_index);
-            con_cell{ii} = [s1, s2, s3, s4] - 1; %start indexing at 0
-        end
-
-        contraction_cell{contraction_cell_counter} = {con_cell, 'todo'};
-        contraction_cell_counter = contraction_cell_counter + 1;
+    contraction_cell = cell(total_counter,1);
+    pat_cells = zeros(total_counter,1)==1;
+    
+    counter = 1;
+    
+    for i = 1:numel(obj.bounds)
+        num = numel( con_cell_cell{i} );
+        contraction_cell(counter:counter+num-1) =  con_cell_cell{i};
+        
+        m = find(pat_cells_cell{i})+counter-1;
+        
+        pat_cells( m )  = 1;
+        counter = counter+num;
+    
     end
-
+    
+    
     %% old (slow) version
 
     %     %%%%%%%%% previous results
@@ -188,4 +285,7 @@ function contraction_cell = get_valid_contractions(obj, map, opts)
     %         end
     %     end
     %     toc
+    
+    
+    
 end

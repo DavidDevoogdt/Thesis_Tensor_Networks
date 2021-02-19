@@ -20,7 +20,7 @@ function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
 
     opts.plot = 'on';
     opts.maxit = 200;
-    opts.tolfixed = 1e-12;
+    opts.tolfixed = 1e-8;
 
     %put into vumps format
 

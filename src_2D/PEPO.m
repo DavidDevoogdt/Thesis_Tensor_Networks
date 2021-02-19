@@ -24,6 +24,8 @@ classdef PEPO
         cycle_index
         boundary_matrix_x
         boundary_matrix_y
+        boundary_vect
+        bounds
         order
     end
 
@@ -59,11 +61,15 @@ classdef PEPO
                 max_index = 2 * max_index + 1;
             end
 
-            obj.PEPO_cell = cell(max_index + 6, max_index + 6, max_index + 6, max_index + 6);
+            obj.PEPO_cell = cell(max_index + 8, max_index + 8, max_index + 8, max_index + 8);
             obj.boundary_matrix_x = cell(max_index + 1, max_index + 2);
             obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
             obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
             obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
+            
+          
+            
+            
             obj.virtual_level_sizes_horiz = 1;
             obj.virtual_level_sizes_vert = 1;
 
@@ -80,12 +86,15 @@ classdef PEPO
             [~, nf2] = H_exp(obj, map, 0, true);
             obj.nf = nf2;
 
-            %obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
-            obj.PEPO_cell{1, 1, 1, 1} = reshape(expm(H_1_tensor) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
-
+            obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
+            
             %non generic PEPO code
+            
+            tic
             obj = make_PEPO_handle(obj);
-
+            toc
+            
+            
             obj = cell2matrix(obj); %save matrix form
 
         end

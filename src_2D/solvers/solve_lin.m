@@ -51,7 +51,7 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     method = nargin < 6;
 
-    inv_eps = 1e-14;
+    inv_eps = 1e-10;
 
     if loop == 0%invert leg per leg
 

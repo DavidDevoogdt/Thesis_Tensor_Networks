@@ -1,4 +1,4 @@
-function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, loop_dim, loop)
+function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, loop_dim, loop,all_con_cells, pat_cells)
     if nargin < 5
         loop_dim = -1;
         loop = 0;
@@ -11,7 +11,15 @@ function [obj, target, res_target, ln_prefact_out, rank_x] = solve_lin_and_assig
 
     mul_factor = exp(ln_prefact_out - obj.nf);
 
-    con_cells = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
+    
+    if nargin<7
+        [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
+    end
+    
+    target_site = contract_con_cells(obj, map, ln_prefact_out, target_site, all_con_cells(~pat_cells));
+    con_cells = all_con_cells(pat_cells);
+
+    %con_cells = all_con_cells;
 
     [x_cell, res_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, loop_dim, loop);
 

@@ -1,7 +1,9 @@
-[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.1, 1, 2.5, 10, 0.1, 0.05, 0);
+chi = 5
+
+%[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.7, 1, 1.5, chi, 0.1, 0.05, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
-plot_onsager(m_arr, T_arr, 1, 0.001)
+plot_onsager(m_arr, T_arr, 1, 0.001,chi)
 
 function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi, aim_dx, aim_dy, onsager)
 
@@ -125,7 +127,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
 
 end
 
-function plot_onsager(m_arr, T_arr, J, g)
+function plot_onsager(m_arr, T_arr, J, g,chi)
 
     %print(f);
 
@@ -140,23 +142,24 @@ function plot_onsager(m_arr, T_arr, J, g)
 
     plot(T_onsager, m_onsager(T_onsager, J));
 
-    [f, gof] = fit_data(0.7, 1e-1, m_arr, T_arr);
+    %[f, gof] = fit_data(0.5, 1e-3, m_arr, T_arr);
 
-    fitfun = @(t) f.a * ((f.Tc - t) ./ f.Tc).^f.beta;
+    %fitfun = @(t) f.a * ((f.Tc - t) ./ f.Tc).^f.beta;
     %[f,gof] = fit_data(0.3,1e-8,   m_onsager(T_onsager,J),T_onsager  );
     %fitfun = @(t) ( (f.Tc-t)./f.Tc).^f.beta ;
 
-    fprintf('dbeta %.4e dTc %.4f\n', abs(f.beta - 1/8), abs(f.Tc - 2 * J / (log(1 + sqrt(2)))));
+    %fprintf('dbeta %.4e dTc %.4f\n', abs(f.beta - 1/8), abs(f.Tc - 2 * J / (log(1 + sqrt(2)))));
 
-    plot(T_arr, fitfun(T_arr));
+    %plot(T_arr, fitfun(T_arr));
 
     ylim([0, 1]);
 
-    title(sprintf("2D transverse Ising, g=%.4f ", g));
+    title(sprintf("2D transverse Ising, g=%.4f, chi=%d ", g,chi));
     xlabel("$\frac{k T}{J}$", "Interpreter", "Latex");
     ylabel("$\left < m \right >$", "Interpreter", "Latex");
 
-    legend('simul', 'onsager', 'fit')
+    lgd = legend('simul', 'onsager', 'fit')
+    lgd.Location = 'southwest';
 
     hold off
 

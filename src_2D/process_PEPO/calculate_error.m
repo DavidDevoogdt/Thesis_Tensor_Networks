@@ -1,11 +1,15 @@
-function [err, prefact] = calculate_error(obj, nummap, opts)
+function [err, prefact] = calculate_error(obj, nummap, opts,matrix)
+    if nargin<4
+        matrix = 0;
+    end
+
     [map, b_map] = create_map(nummap, opts);
 
     d = obj.dim;
 
     H_matrix = H_exp(obj, map, obj.nf);
 
-    if ~isempty(obj.PEPO_matrix)
+    if matrix==1
         Contraction = contract_network(obj, map, struct('max_index', obj.max_index, "matrix", 1));
     else
         Contraction = contract_network(obj, b_map, struct('max_index', obj.max_index));
