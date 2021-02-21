@@ -1,6 +1,6 @@
 function target2 = contract_con_cells(obj, map, ln_prefactor, target2, con_cells, workers)
     if nargin < 6
-        workers = 8;
+        workers = 4;
     end
 
     n = numel(con_cells);
@@ -12,7 +12,7 @@ function target2 = contract_con_cells(obj, map, ln_prefactor, target2, con_cells
 
     targets = cell(workers, 1);
 
-    parfor j = 1:workers
+    for j = 1:workers
         target = zeros(size(target2));
 
         start_val = start_vals(j);

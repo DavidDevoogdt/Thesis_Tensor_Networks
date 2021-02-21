@@ -1,9 +1,11 @@
-chi = 5
+chi = 5;
 
-%[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.7, 1, 1.5, chi, 0.1, 0.05, 0);
+g=2.8;
+
+[m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(0.7, 1, g, chi, 0.1, 0.05, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
-plot_onsager(m_arr, T_arr, 1, 0.001,chi)
+plot_onsager(m_arr, T_arr, 1,g,chi)
 
 function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi, aim_dx, aim_dy, onsager)
 
@@ -63,7 +65,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
 
     scale_factor_dy = aim_dx / aim_dy;
 
-    deadcounter = 2;
+    deadcounter = 4;
 
     for i = 1:maxit
         p = polyfit(T_0, m_0, 2);
@@ -107,7 +109,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, name] = calc_ising_2d(T0, J, g, chi
         corr_arr(i) = corr_len;
         marek_arr(i) = marek;
 
-        if m < 1e-3
+        if m < 1e-4
             deadcounter = deadcounter -1;
 
             if deadcounter == 0

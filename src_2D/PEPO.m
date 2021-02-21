@@ -27,6 +27,7 @@ classdef PEPO
         boundary_vect
         bounds
         order
+        inv_eps
     end
 
     methods
@@ -34,6 +35,8 @@ classdef PEPO
         function obj = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
             numopts.numbered = 1;
             obj.numopts = numopts;
+            
+            
 
             cycleopts.numbered = 1;
             cycleopts.v_cyclic = 0;
@@ -49,8 +52,12 @@ classdef PEPO
             addParameter(p, 'testing', 0)
             addParameter(p, 'visualise', 0)
             addParameter(p, 'double', 1)
+            addParameter(p, 'inv_eps', 1e-15)
             parse(p, opts)
 
+            obj.inv_eps= p.Results.inv_eps;
+            
+            
             if mod(order, 2)
                 max_index = (order - 1) / 2;
             else

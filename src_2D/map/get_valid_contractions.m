@@ -6,11 +6,10 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     addParameter(p, 'pattern', {}, @(x) iscell(x))%additional allowed patterns
     parse(p, opts)
 
-    tensor_list = cell(1, map.N);
-    tensor_list_pat = cell(1, map.N);
+
 
     patterns = p.Results.pattern;
-    num_patterns = size(patterns, 2);
+    num_patterns = numel(patterns);
 
     ie = ndSparse(~cellfun(@isempty, obj.PEPO_cell)) * 1.0;
 
@@ -19,6 +18,8 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     for pat_num = 1:num_patterns
         pat = patterns{pat_num};
         ie(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 1;
+        
+        
         iepat(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 0; %remove in case already here
     end
 
@@ -33,7 +34,8 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     for b = 1:numel(obj.bounds)
 
         bound = obj.bounds(b);
-
+        tensor_list = cell(1, map.N);
+        tensor_list_pat = cell(1, map.N);
 
         for i = 1:map.N
 

@@ -18,7 +18,7 @@ function [con_cells_cell2, targets] = optimize_con_cells(obj, maps, con_cells_ce
 
         num_x = size(patterns, 2);
 
-        for con_cell_index = 1:size(con_cells, 2)
+        for con_cell_index = 1:numel(con_cells)
             legs = con_cells{con_cell_index}{1};
 
             has_matched_pattern = 0;

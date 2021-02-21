@@ -7,6 +7,7 @@ function M = contract_network(obj, map, opts)
     addParameter(p, 'max_index', obj.max_index)
     addParameter(p, 'matrix', 0)
     addParameter(p, 'fixed', zeros(map.internal_legs, 1) - 1)
+    addParameter(p, 'lnprefact',obj.nf);
     parse(p, opts)
 
     M = zeros(dimension_vector(obj.dim, 2 * map.N2));
@@ -19,7 +20,7 @@ function M = contract_network(obj, map, opts)
             %vect = iset{2};
             legs = iset{1};
 
-            tensors = fetch_PEPO_cells(obj, map, legs);
+            tensors = fetch_PEPO_cells(obj, map, legs,p.Results.lnprefact);
 
             M = M + ncon(tensors, map.leg_list);
         end
@@ -27,8 +28,10 @@ function M = contract_network(obj, map, opts)
     else
         tensor_list = cell(1, map.N);
 
+        mult_fact = exp(p.Results.lnprefact - obj.nf);
+
         for i = 1:map.N
-            T = obj.PEPO_matrix;
+            T = obj.PEPO_matrix/mult_fact;
             connections = map.leg_list{i};
             %only keep sublevel 0 for the given tensors
             if connections(1 + 2) < 0
