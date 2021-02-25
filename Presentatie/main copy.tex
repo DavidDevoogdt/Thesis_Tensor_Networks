@@ -1,0 +1,379 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass[aspectratio=169]{beamer}
+%\usetheme{Simple}
+
+
+
+\usepackage{lmodern}
+ \setbeamercovered{transparent}
+ \usetheme[width=4\baselineskip,hideothersubsections]{Berkeley}
+
+ \setbeamerfont{section in sidebar}{size=\scriptsize}
+ \setbeamerfont{subsection in sidebar}{size=\tiny}
+
+ \usepackage{tikz}
+ \usetikzlibrary{external}
+ 
+
+ \usepackage{braket}
+
+% \usepackage{graphicx} % Allows including images
+
+% \usepackage{subcaption} % Subfigure environment 
+% \usepackage{gensymb}
+
+ \usepackage{amsmath} % Mathematical symbols
+\usepackage{amssymb} % Symbols
+
+% \usepackage{caption}% Captions onder figuur gecentreerd
+% %\usepackage[toc,page]{appendix}
+% \usepackage{subcaption} % Subfigure environment 
+% \usepackage{float}
+
+ \usepackage{etoolbox} %for if empty functionality
+ \usepackage{ifthen}
+
+% %break long urls at a - and not only at . or /
+ \usepackage{hyperref}
+
+% \usepackage{verbatim}
+% \usepackage{siunitx} % Elegant eenheden zetten
+% \usepackage[version=3]{mhchem} % ingeven van chemische fomules
+\usepackage{cleveref} % Paragraaf tekens
+% \usepackage{longtable}
+% %\usepackage{lscape}
+% \usepackage[T1]{fontenc}
+ \usepackage{amsfonts}
+ \usepackage{mathtools}
+% \usepackage{grffile}%double dot in figure name
+% \usepackage{lipsum}
+% \usepackage{siunitx}
+% \usepackage{xcolor}
+% \usepackage{sectsty}
+ \usepackage{booktabs}
+ \usepackage{physics}
+% \usepackage{leftidx}
+ \usepackage[utf8]{inputenc}
+% \usepackage{gensymb} % /textdegree
+\input{macros.tex}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+% The title
+\title[]{PEPO cluster expansion of Tensor Exponential  }
+\subtitle{Subtitle}
+
+\author[] {David Devoogdt}
+\institute[UGent] % Your institution may be shorthand to save space
+{
+    % Your institution for the title page
+    Faculty of Engineering and Architecture \\
+    Ghent University 
+    \vskip 3pt
+}
+\date{\today} % Date, can be changed to a custom date
+
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+
+
+\begin{document}
+
+\begin{frame}
+    % Print the title page as the first slide
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    % Print the title page as the first slide
+    \tableofcontents[hidesubsections]
+\end{frame}
+
+\AtBeginSection[]
+{
+    \begin{frame}<beamer>{Table of Contents}
+        \tableofcontents[currentsection,currentsubsection,
+            hideothersubsections,
+            sectionstyle=show/shaded,
+        ]
+    \end{frame}
+}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Intoduction}
+%------------------------------------------------
+%------------------------------------------------
+
+
+%------------------------------------------------
+\subsection{Problem Statement}
+%------------------------------------------------
+\begin{frame}{Statistical Quantum mechanics}
+    \begin{equation}
+        \hat{\rho} =  \frac{ e^{ - \beta \hat{H} } }{Z}
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            Z &= \Tr(  e^{ - \beta \hat{H} ) \\
+            \Braket{X} &= \Tr(\rho \hat{X})
+        \end{split}
+    \end{equation}
+\end{frame}
+
+
+
+%------------------------------------------------
+\subsection{Graphical notation}
+%------------------------------------------------
+
+\begin{frame}{Graphical notation}
+
+    \begin{equation}
+        \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
+    \end{equation}
+
+    \begin{equation}
+        \mpo{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_2$",}}{}{{"",}} =\mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}
+    \end{equation}
+
+    \begin{equation}
+        \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Graphical notation}
+    \begin{equation}
+        \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = &H_1 \otimes 1 \otimes 1 \\
+            +  &1 \otimes H_1  \otimes 1 \\
+            +  &1 \otimes 1 \otimes H_1   \\
+            +  &H_2 \otimes H_2 \otimes 1  \\
+            +  &1 \otimes H_2 \otimes H_2  \\
+        \end{split}
+    \end{equation}
+\end{frame}
+
+
+
+%------------------------------------------------
+\subsection{Cluster expansion}
+%------------------------------------------------
+\begin{frame}{General idea}
+    \begin{itemize}
+        \item represent as MPO/PEPO
+        \item cluster by size, not in $\beta$
+    \end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}}) \\
+            -&\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{General idea}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+            -&\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+            -&\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+            -&\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+
+%=  \exp \left(  -\beta \mpob{1}{{,,}}{}{}{}{{"H","H",}} \right)
+%=  \exp \left(  -\beta \mpob{2}{{,,}}{}{}{}{{"H","H",}} \right)
+
+
+
+\begin{frame}{Advantages}
+    \begin{itemize}
+        \item size extensive
+        \item symmetry
+    \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Solvers}
+%------------------------------------------------
+%------------------------------------------------
+
+%------------------------------------------------
+\subsection{Problem statement}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Structure framework}
+%------------------------------------------------
+\begin{frame}{map}
+
+\end{frame}
+
+\begin{frame}{map}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Numerical considerations}
+%------------------------------------------------
+\begin{frame}{Normalisation}
+
+\end{frame}
+
+\begin{frame}{Single tensor or cells}
+
+\end{frame}
+
+\begin{frame}{Fast cell contraction}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Linear solvers}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+\begin{frame}{Simplifying inverse?}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Non-linear solvers}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+\subsection{sequential linear solvers}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Construction 1D}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+
+%------------------------------------------------
+\subsection{Variant 1}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+\subsection{Variant 2}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+\subsection{Results}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\section{Construction 2D}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+    \begin{equation}
+        \exp H \left(  \pepob{2}{2}{{,,}}{{,,}}{{0,0,0,1}} \right)
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \begin{equation}
+        \pepob{2}{3}{{"1","2","3"}}{{"4","5","6","7",} }{}
+    \end{equation}
+\end{frame}
+
+
+%------------------------------------------------
+\subsection{Generalising 1D construction}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+\subsection{Loops}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\section{2D Ising Model}
+%------------------------------------------------
+%------------------------------------------------
+
+%------------------------------------------------
+\subsection{Overview}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+%------------------------------------------------
+\subsection{First results}
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Outlook}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{Bullet Points}
+
+\end{frame}
+
+\end{document}

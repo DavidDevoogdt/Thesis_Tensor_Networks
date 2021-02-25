@@ -1,0 +1,607 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass[aspectratio=169]{beamer}
+%\usetheme{Simple}
+
+\usepackage{listings}
+\usepackage{lmodern}
+ \setbeamercovered{transparent}
+ \usetheme[width=4\baselineskip,hideothersubsections]{Berkeley}
+
+ \setbeamerfont{section in sidebar}{size=\scriptsize}
+ \setbeamerfont{subsection in sidebar}{size=\tiny}
+
+ \usepackage{tikz}
+ \usetikzlibrary{external}
+ 
+
+ \usepackage{braket}
+
+% \usepackage{graphicx} % Allows including images
+
+% \usepackage{subcaption} % Subfigure environment 
+% \usepackage{gensymb}
+
+ \usepackage{amsmath} % Mathematical symbols
+\usepackage{amssymb} % Symbols
+
+% \usepackage{caption}% Captions onder figuur gecentreerd
+% %\usepackage[toc,page]{appendix}
+% \usepackage{subcaption} % Subfigure environment 
+% \usepackage{float}
+
+ \usepackage{etoolbox} %for if empty functionality
+ \usepackage{ifthen}
+
+% %break long urls at a - and not only at . or /
+ \usepackage{hyperref}
+
+% \usepackage{verbatim}
+% \usepackage{siunitx} % Elegant eenheden zetten
+% \usepackage[version=3]{mhchem} % ingeven van chemische fomules
+\usepackage{cleveref} % Paragraaf tekens
+% \usepackage{longtable}
+% %\usepackage{lscape}
+% \usepackage[T1]{fontenc}
+ \usepackage{amsfonts}
+ \usepackage{mathtools}
+% \usepackage{grffile}%double dot in figure name
+% \usepackage{lipsum}
+% \usepackage{siunitx}
+% \usepackage{xcolor}
+% \usepackage{sectsty}
+ \usepackage{booktabs}
+ \usepackage{physics}
+% \usepackage{leftidx}
+ \usepackage[utf8]{inputenc}
+% \usepackage{gensymb} % /textdegree
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+% The title
+\title[]{PEPO cluster expansion of Tensor Exponential  }
+\subtitle{Subtitle}
+
+\author[] {David Devoogdt}
+\institute[UGent] % Your institution may be shorthand to save space
+{
+    % Your institution for the title page
+    Faculty of Engineering and Architecture \\
+    Ghent University 
+    \vskip 3pt
+}
+\date{\today} % Date, can be changed to a custom date
+
+
+\input{macros.tex}
+\input{tikzsetup}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+
+
+\begin{document}
+
+\begin{frame}
+    % Print the title page as the first slide
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    % Print the title page as the first slide
+    \tableofcontents[hidesubsections]
+\end{frame}
+
+\AtBeginSection[]
+{
+    \begin{frame}<beamer>{Table of Contents}
+        \tableofcontents[currentsection,currentsubsection,
+            hideothersubsections,
+            sectionstyle=show/shaded,
+        ]
+    \end{frame}
+}
+
+\AtBeginSection[]{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Intoduction}
+%------------------------------------------------
+%------------------------------------------------
+
+
+%------------------------------------------------
+\subsection{Problem Statement}
+%------------------------------------------------
+\begin{frame}{Statistical Quantum mechanics}
+    \begin{equation}
+        \hat{\rho} =  \frac{ e^{ - \beta \hat{H} } }{Z}
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            Z &= \Tr(  e^{ - \beta \hat{H} } ) \\
+            \Braket{X} &= \Tr(\rho \hat{X})
+        \end{split}
+    \end{equation}
+\end{frame}
+
+
+
+%------------------------------------------------
+\subsection{Graphical notation}
+%------------------------------------------------
+
+\begin{frame}{Graphical notation}
+
+    \begin{equation}
+        \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
+    \end{equation}
+
+    \begin{equation}
+        \mpo{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_2$",}}{}{{"",}} =\mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}
+    \end{equation}
+
+    \begin{equation}
+        \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Graphical notation}
+    \begin{equation}
+        \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = &H_1 \otimes 1 \otimes 1 \\
+            +  &1 \otimes H_1  \otimes 1 \\
+            +  &1 \otimes 1 \otimes H_1   \\
+            +  &H_2 \otimes H_2 \otimes 1  \\
+            +  &1 \otimes H_2 \otimes H_2  \\
+        \end{split}
+    \end{equation}
+\end{frame}
+
+
+
+%------------------------------------------------
+\subsection{Cluster expansion}
+%------------------------------------------------
+\begin{frame}{General idea}
+    \begin{itemize}
+        \item represent as MPO/PEPO
+        \item cluster by size, not in $\beta$
+    \end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}}) \\
+            - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{General idea}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+            -&\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+            -&\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+            -&\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+
+%=  \exp \left(  -\beta \mpob{1}{{,,}}{}{}{}{{"H","H",}} \right)
+%=  \exp \left(  -\beta \mpob{2}{{,,}}{}{}{}{{"H","H",}} \right)
+
+
+
+\begin{frame}{Advantages}
+    \begin{itemize}
+        \item size extensive
+        \item symmetry
+    \end{itemize}
+\end{frame}
+
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Construction 1D}
+%------------------------------------------------
+%------------------------------------------------
+
+%------------------------------------------------
+\subsection{Variant A}
+%------------------------------------------------
+
+\begin{frame}{Variant A}
+    \begin{equation}
+        \begin{split}
+            &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+            &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+            &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
+            &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}\\
+            &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}}\\
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Variant B}
+%------------------------------------------------
+\begin{frame}{Variant B}
+
+
+    \begin{equation}
+        \begin{split}
+            &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+            &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+            &\mpob{3}{ {,"1","2",}  }{}{}{}{{,,,}}\\
+            &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
+            &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}\\
+        \end{split}
+    \end{equation}
+
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Variant C}
+%------------------------------------------------
+\begin{frame}{Variant C}
+
+    \begin{equation}
+        \begin{split}
+            &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+            &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+            &\mpob{3}{ {,"1","1'",}  }{}{}{}{{,,,}}\\
+            &\mpob{4}{ {,"1","2","1'",}  }{}{}{}{{,,,,,}}\\
+            &\mpob{5}{ {,"1","2","2'","1'",}  }{}{}{}{{,,,,,}}\\
+        \end{split}
+    \end{equation}
+
+\end{frame}
+%-----------
+
+%------------------------------------------------
+\subsection{Comparison}
+%------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+        \item bond dimension
+        \item "unwanted" chains
+    \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Results}
+%------------------------------------------------
+\begin{frame}{Error measure}
+
+    \begin{itemize}
+        \item cyclic
+        \item relative
+        \item 12 sites
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \begin{figure}
+        \includegraphics[scale=0.6]{Figures/1D_ising.pdf}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}
+    \begin{figure}
+        \includegraphics[scale=0.6]{Figures/1D_heis.pdf}
+    \end{figure}
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Construction 2D}
+%------------------------------------------------
+%------------------------------------------------
+
+%------------------------------------------------
+\subsection{ Linear blocks}
+%------------------------------------------------
+
+
+\begin{frame}{Construction 2D: Linear blocks}
+    \begin{equation}
+        \mpob{1}{ {,}  }{}{}{}{{,,}}
+    \end{equation}
+
+    \begin{equation}
+        \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}}  \pepob{2}{2}{{,,}}{{"1",,}}{{0,1,0,1}}
+    \end{equation}
+
+
+
+\end{frame}
+
+
+\begin{frame}{Construction 2D: Linear blocks}
+    \begin{equation}
+        \begin{split}
+            \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,0,0,1}}  \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,0,1,0}}\pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,1,0,0}} \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{1,0,0,0}}\\
+            \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,1,1}} \pepob{2}{3}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,1,0,1,0,1}}
+        \end{split}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Construction 2D: Linear blocks}
+    \begin{equation}
+        \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}}
+    \end{equation}
+
+    \begin{equation}
+        \pepob{3}{3}{{"1","1","1","1","1","1",}}{{"1","1","1","1","1","1",}}{{1,0,1,0,0,0,1,0,1}}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Construction 2D: Linear blocks}
+    \begin{equation}
+        \begin{split}
+            \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \Rightarrow &\pepob{3}{2}{{"2","1","2","1",}}{{"1","1","1",,}}{{0,1,1,0,0,0}}\\
+            &\pepob{3}{2}{{"2","1",,}}{{"1","1",,,}}{{0,0,0,0,1,1}}
+        \end{split}
+    \end{equation}
+    And many more "linear" blocks
+\end{frame}
+
+%------------------------------------------------
+\subsection{Loops}
+%------------------------------------------------
+\begin{frame}{Loops}
+
+
+    \def \figone {{\pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}}}}
+    \def \figtwo {{\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}}}
+
+    \begin{equation}
+        \figtwo
+    \end{equation}
+
+    \begin{equation}
+        \pepob{3}{2}{{"$\beta$","$\beta'$","$\beta$","$\beta'$"}}{{"$\beta'$","$\alpha$","$\beta'$",,}}{{0,0,0,0,0,0}} \pepob{2}{3}{{"$\beta$","$\alpha$","$\beta$",,}}{{"$\beta'$","$\beta$","$\beta'$","$\beta'$"}}{{0,0,0,0,0,0}}
+    \end{equation}
+
+    \begin{itemize}
+        \item bond dim
+        \item solver: see later
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Unsolved}
+    \begin{equation}
+        \pepob{3}{3}{{,,,,,,,,}}{{,,,,,,,,}}{{0,0,1, 0,0,0, 1,0,0,0}} \pepob{3}{3}{{,,,,,,,,}}{{,,,,,,,,}}{{1,0,0, 0,0,0, 0,0,1}}
+    \end{equation}
+
+    Easy to solve on finite lattice, dificut in thermodynamic limit...
+\end{frame}
+
+
+% \exp -\beta H( & \pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}})\\
+%- \pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Solvers}
+%------------------------------------------------
+%------------------------------------------------
+
+
+
+%------------------------------------------------
+\subsection{Numerical considerations}
+%------------------------------------------------
+\begin{frame}{Numerical considerations}
+    Normalisation: PEPS $O \rightarrow O/ \alpha$
+    \begin{equation}
+        \frac{ \exp A } { \alpha^N }  =  \exp \left(   A- N \ln{\alpha} \cdot I \right)
+    \end{equation}
+
+    Avoid large values in tensor
+\end{frame}
+
+\begin{frame}{Fast cell contraction}
+    \begin{itemize}
+        \item Bottleneck: find all possible contractions of virtual levels
+        \item Solution: Construct sparse PEPO, contract geometry
+    \end{itemize}
+
+    \begin{figure}
+        \includegraphics[scale=0.8]{Figures/pepo_contraction.pdf}
+    \end{figure}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Problem statement}
+%------------------------------------------------
+\begin{frame}{Solver}
+    \begin{itemize}
+        \item "Linear" problems
+        \item non-linear problems
+    \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Linear solver}
+%------------------------------------------------
+
+\begin{frame}{Linear Solver}
+    \begin{figure}
+        \includegraphics[scale=0.6]{Figures/linprob.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Linear solver}
+    \begin{itemize}
+        \item types of inversion
+        \item numerical stability
+        \item implemented for any shape
+        \item if connected -> split with SVD
+    \end{itemize}
+
+    \begin{figure}
+        \includegraphics[scale=0.5]{Figures/mexample.png}
+    \end{figure}
+
+\end{frame}
+
+
+%------------------------------------------------
+\subsection{Non-linear solvers}
+%------------------------------------------------
+\begin{frame}{sequential linear}
+    \begin{itemize}
+        \item initialize randomly
+        \item use linear sovler for 1 tensor
+        \item fast
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{true non-linear solver}
+    \begin{itemize}
+        \item Matlab fsolve
+        \item exact jocobian
+        \item multiple patterns
+        \item multiple maps
+    \end{itemize}
+\end{frame}
+
+
+%------------------------------------------------
+%------------------------------------------------
+\section{2D Transversal Ising Model}
+%------------------------------------------------
+%------------------------------------------------
+
+
+%------------------------------------------------
+\subsection{Overview}
+%------------------------------------------------
+\begin{frame}{Overview}
+    \begin{equation}
+        \hat{H} = -J \left (  \sum_{<i j>} \sigma^x_i \sigma^x_j + \Gamma \sum_i \sigma^z_i \right )
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Overview}
+    \begin{figure}
+        \includegraphics[scale=0.5]{Figures/2disingphase.png}
+        \caption{figure taken from \cite{PhysRevB.93.155157}}
+    \end{figure}
+\end{frame}
+
+
+%------------------------------------------------
+\subsection{First results}
+%------------------------------------------------
+\begin{frame}{First results}
+    \begin{figure}
+        \includegraphics[scale=0.4]{Figures/g00.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{First results}
+    \begin{figure}
+        \includegraphics[scale=0.4]{Figures/g15.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{First results}
+    \begin{figure}
+        \includegraphics[scale=0.4]{Figures/g25.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{First results}
+    \begin{figure}
+        \includegraphics[scale=0.4]{Figures/g28.pdf}
+    \end{figure}
+\end{frame}
+
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Conclusion and outlook}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Working code for 1D and 2D
+        \item General solvers
+        \item Promising results in 1D and 2D
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Short term}
+    \begin{itemize}
+        \item Accurate estimate Transversal ising quantum critical point
+        \item Improve blocks for loops
+        \item
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Short term}
+    \begin{itemize}
+        \item Incorporate symmetries Hamiltonian
+        \item Look at other models
+        \item Generalize for other lattice geometries
+        \item Generalize to 3D
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{References}
+    \bibliographystyle{elsarticle-num}
+    \bibliography{bib}
+\end{frame}
+
+
+\end{document}

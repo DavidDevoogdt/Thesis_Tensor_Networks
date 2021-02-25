@@ -1,0 +1,449 @@
+%\def\temp{#1}\ifx\temp\empty
+%  <EMPTY>%
+%\else
+%  <NON EMPTY>%
+%\fi
+
+
+
+
+%use first argument is numbers of O's, second the labels, can be empty
+%\mpo{3}{ {0,1,2,3,4} }
+
+\newcommand{\combineTikz}[3]{
+    \begin{tikzpicture}[baseline={0-0.5*height("$=$")}]
+        \node (AA) at (0,0)  { #1   };
+        \node (AB) at ( {#3} ,0)  {  #2  };
+    \end{tikzpicture}
+}
+
+
+\newcommand{\mpo}[6]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=0.8]
+        %\def \NNodes {#1}
+        %\def \NodeName {#2}          
+        %\def \NameUp   {#3} 
+        %\def \NameDown  {#4}	
+
+        \def \legLength {0.6}
+        \def \radius {0.3}
+
+        \pgfmathsetmacro{\step}{2*\radius+\legLength}
+        \pgfmathsetmacro{\legpos}{\radius+\legLength}
+
+        \pgfmathsetmacro{\Nmax}{#1-1}
+
+        \foreach \N in {0,..., \Nmax }{
+                \pgfmathsetmacro{\p}{\N*\step}
+
+                % up and down labels
+                \def\temp{#3}\ifx\temp\empty
+                    \def \labelUp {}
+                \else
+                    \pgfmathsetmacro{\labelUp}{  {#3}[\N]  }
+                \fi
+
+                \def\tempp{#4}\ifx\tempp\empty
+                    \def \labeldown {}
+                \else
+                    \pgfmathsetmacro{\labeldown}{  {#4}[\N]  }
+                \fi
+
+
+                \def\aab{#5}\ifx\aab\empty
+                    \def \dotssite {0}
+                \else
+                    \pgfmathsetmacro{\dotssite}{  {#5}[\N]  }
+                \fi
+
+                \ifthenelse{\dotssite = 0}{
+
+                    \def\aac{#6}\ifx\aac\empty
+                        \def \nname {O}
+                    \else
+                        \pgfmathsetmacro{\nname}{  {#6}[\N]  }
+                    \fi
+
+
+
+                    \node[circle,draw, radius=\radius] (O\N) at (\p,0) {\nname};
+
+
+                    \ifthenelse{ \equal{\labelUp}{-}  }{
+                    }{
+                        \node[] (Ou\N) at (\p, \legpos ) { \labelUp };
+                        \draw (O\N) -- (Ou\N);
+                    }
+
+
+                    \ifthenelse{ \equal{\labeldown}{-}  }{
+                    }{
+                        \node[] (Od\N) at (\p,-\legpos) {\labeldown};
+                        \draw (O\N) -- (Od\N);
+                    }
+
+
+
+
+
+
+
+
+                }{
+                    \node[circle] (O\N) at (\p,0) { $\cdots$ };
+                }
+
+
+            }
+
+        \ifthenelse{  #1  =1  }{}{
+            \foreach \N in {1,...,\Nmax }{
+                    \pgfmathsetmacro{\M}{\N-1}
+                    \pgfmathsetmacro{\label}{ {#2}[\N]  }
+                    %\pgfmathsetmacro{\label}{ 5}
+
+                    \draw (O\M) --  node[above]  {\label} (O\N);
+                }
+        }
+
+        \pgfmathsetmacro{\labelo}{ {#2}[0]}
+        \pgfmathsetmacro{\labeli}{  {#2}[\Nmax+1]}
+
+        \node (N0) at (-\legpos,0) {};
+        \draw (N0) -- node[above] {\labelo} (O0);
+
+        \pgfmathsetmacro{\endpos}{\step*\Nmax+\legpos}
+
+        \node (Ne) at (\endpos,0) {};
+        \draw (Ne) -- node[above] {\labeli} (O\Nmax);
+
+        %\draw (O0) --  node[above] {1} (O1);
+
+
+    \end{tikzpicture}}
+
+
+
+\newcommand{\mpob}[6]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=0.8]
+        %\def \NNodes {#1}
+        %\def \NodeName {#2}          
+        %\def \NameUp   {#3} 
+        %\def \NameDown  {#4}	
+
+        \def \legLength {1.0}
+        \def \radius {0.1}
+
+        \pgfmathsetmacro{\step}{2*\radius+\legLength}
+        \pgfmathsetmacro{\legpos}{\radius+\legLength}
+
+        \pgfmathsetmacro{\Nmax}{#1-1}
+
+        \foreach \N in {0,..., \Nmax }{
+                \pgfmathsetmacro{\p}{\N*\step}
+
+                % up and down labels
+                \def\temp{#3}\ifx\temp\empty
+                    \def \labelUp {}
+                \else
+                    \pgfmathsetmacro{\labelUp}{  {#3}[\N]  }
+                \fi
+
+                \def\tempp{#4}\ifx\tempp\empty
+                    \def \labeldown {}
+                \else
+                    \pgfmathsetmacro{\labeldown}{  {#4}[\N]  }
+                \fi
+
+
+                \def\aab{#5}\ifx\aab\empty
+                    \def \dotssite {0}
+                \else
+                    \pgfmathsetmacro{\dotssite}{  {#5}[\N]  }
+                \fi
+
+                \def\aac{#6}\ifx\aac\empty
+                    \def \nname { "O" }
+                \else
+                    \pgfmathsetmacro{\nname}{  {#6}[\N]  }
+                \fi
+
+
+                %\node[] (O\N) at (\p,0) {\nname};
+                \node[circle,draw, radius=\radius] (O\N) at (\p,0) {\nname};
+
+            }
+
+        \ifthenelse{  #1  =1  }{}{
+            \foreach \N in {1,...,\Nmax }{
+                    \pgfmathsetmacro{\M}{\N-1}
+                    \pgfmathsetmacro{\label}{ {#2}[\N]  }
+                    %\pgfmathsetmacro{\label}{ 5}
+
+                    \draw (O\M) --  node[above]  {\label} (O\N);
+                }
+        }
+
+        % \pgfmathsetmacro{\labelo}{ {#2}[0]}
+        % \pgfmathsetmacro{\labeli}{  {#2}[\Nmax+1]}
+
+        % \node (N0) at (-\legpos,0) {};
+        % \draw (N0) -- node[above] {\labelo} (O0);
+
+        % \pgfmathsetmacro{\endpos}{\step*\Nmax+\legpos}
+
+        % \node (Ne) at (\endpos,0) {};
+        % \draw (Ne) -- node[above] {\labeli} (O\Nmax);
+
+        %\draw (O0) --  node[above] {1} (O1);
+
+
+    \end{tikzpicture}}
+
+
+\newcommand{\pepob}[5]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=0.8]
+        %\def \NNodes {#1}
+        %\def \NodeName {#2}          
+        %\def \NameUp   {#3} 
+        %\def \NameDown  {#4}	
+
+
+
+        \def \legLength {1.0}
+        \def \radius {0.1}
+
+        \pgfmathsetmacro{\step}{2*\radius+\legLength}
+        \pgfmathsetmacro{\legpos}{\radius+\legLength}
+
+        \pgfmathsetmacro{\Nmax}{#1-1}
+        \pgfmathsetmacro{\Mmax}{#2-1}
+
+        \foreach \N in {0,..., \Nmax }{
+                \pgfmathsetmacro{\p}{\N*\step}
+
+                \foreach \M in {0,..., \Mmax }{
+                        \pgfmathsetmacro{\k}{\M*\step}
+
+
+
+                        \pgfmathtruncatemacro{\s}{\M*(\Nmax+1)+\N   }
+
+                        \pgfmathsetmacro{\nname}{ ""  }
+
+
+                        \def\aab{#5}\ifx\aab\empty
+                            \def \so {0}
+                        \else
+                            \pgfmathsetmacro{\so}{  {#5}[\s]  }
+                        \fi
+
+                        \ifthenelse{\so = 0}{
+
+                            %\node[] (O\N) at (\p,0) {\nname};
+                            \node[circle,draw, radius=\radius] (O\s) at (\p,\k) {\nname};
+
+                        }
+                    }
+            }
+
+
+
+        \foreach \M in {0,..., \Mmax }{
+                \foreach \N in {1,...,\Nmax}{
+
+                        \pgfmathtruncatemacro{\s}{\M*(\Nmax+1)+\N   }
+
+                        \pgfmathtruncatemacro{\t}{\M*(\Nmax+1)+\N  -1 }
+
+                        \pgfmathtruncatemacro{\l}{\M*(\Nmax)+\N -1 }
+
+                        %\pgfmathsetmacro{\label}{ {#2}[\N]  }
+                        %\pgfmathsetmacro{\label}{ \l }
+                        \pgfmathsetmacro{\label}{ {#3}[\l]  }
+
+
+                        \def\aab{#5}\ifx\aab\empty
+                            \def \so {0}
+                        \else
+                            \pgfmathsetmacro{\so}{  {#5}[\s]  }
+                        \fi
+
+
+                        \def\aab{#5}\ifx\aab\empty
+                            \def \to {0}
+                        \else
+                            \pgfmathsetmacro{\to}{  {#5}[\t]  }
+                        \fi
+
+
+                        \pgfmathtruncatemacro{\st}{ \so+\to  }
+
+                        \ifthenelse{\st = 0}{
+                            \draw (O\t) --  node[above]  {\label} (O\s);
+                        }
+
+
+                    }
+            }
+
+        \foreach \N in {0,...,\Nmax }{
+                \foreach \M in {1,..., \Mmax }{
+
+                        \pgfmathtruncatemacro{\s}{\M*(\Nmax+1)+\N   }
+
+                        \pgfmathtruncatemacro{\t}{ (\M-1)*(\Nmax+1)+\N  }
+
+                        \pgfmathtruncatemacro{\l}{\N*\Mmax+\M  -1 }
+
+
+                        %\pgfmathsetmacro{\label}{ {#4}[\l]  }
+                        \pgfmathsetmacro{\label}{ {#4}[\l]  }
+
+
+                        \def\aab{#5}\ifx\aab\empty
+                            \def \so {0}
+                        \else
+                            \pgfmathsetmacro{\so}{  {#5}[\s]  }
+                        \fi
+
+
+                        \def\aab{#5}\ifx\aab\empty
+                            \def \to {0}
+                        \else
+                            \pgfmathsetmacro{\to}{  {#5}[\t]  }
+                        \fi
+
+
+
+                        \pgfmathtruncatemacro{\st}{ \so+\to  }
+
+                        \ifthenelse{\st = 0}{
+                            \draw (O\t) --  node[left]  {\label} (O\s);
+                        }
+                    }
+            }
+
+
+        % \pgfmathsetmacro{\labelo}{ {#2}[0]}
+        % \pgfmathsetmacro{\labeli}{  {#2}[\Nmax+1]}
+
+        % \node (N0) at (-\legpos,0) {};
+        % \draw (N0) -- node[above] {\labelo} (O0);
+
+        % \pgfmathsetmacro{\endpos}{\step*\Nmax+\legpos}
+
+        % \node (Ne) at (\endpos,0) {};
+        % \draw (Ne) -- node[above] {\labeli} (O\Nmax);
+
+        %\draw (O0) --  node[above] {1} (O1);
+
+        \pgfmathsetmacro{\s}{\Nmax*\step+0.5}
+        \pgfmathsetmacro{\t}{\Mmax*\step+0.5}
+
+        \draw[draw=none] (-0.5,-0.5) |- (\s,\t) |- cycle;
+
+    \end{tikzpicture}}
+
+
+\newcommand{\expH}[5]{ \begin{tikzpicture}[baseline={0-0.5*height("$=$")}]
+
+        \def \NNodes {#1};
+
+
+        \def\aaa{#2}\ifx\aaa\empty
+            \def \text { $e^{-\beta \hat{H}_{\NNodes} }$ }
+        \else
+            \def \text {#2}
+        \fi
+
+        \pgfmathwidth{ "\text" }
+        \def \textwidth { \pgfmathresult }
+
+
+        %\pgfmathsetmacro{\text}{width(\text)}
+
+        \def \legLength {0.6}
+        \def \radius {0.3} %fix to fit text inside for size 1
+        \def \boxHeight {0.4};
+
+        \pgfmathsetmacro{\step}{2*\radius+\legLength}
+        \pgfmathsetmacro{\legpos}{\radius+\legLength}
+        \pgfmathsetmacro{\dotpos}{\boxHeight+\legLength/2}
+
+        \pgfmathsetmacro{\Nmax}{\NNodes -1}
+
+
+
+        \pgfmathsetmacro{\boxsize}{ max ( \textwidth/1cm , \step*\Nmax )   + \radius}
+
+        %\pgfmathsetmacro{\boxsize}{ 5  )}
+        %\pgfmathsetlength{\boxsize}{ max( \textwidth,  \boxsize1  )}
+
+
+
+        %            \ifthenelse{#1=1}{
+        %                \def \left {-0.6}
+        %                \def \right {0.6}
+        %            }{
+        \def \left {-\radius}
+        \def \right {\boxsize}
+        %            }
+
+        \draw (\left,- \boxHeight ) rectangle (\right, \boxHeight ) [add reference =H] ;
+
+
+        \node  at (H center) { \text };
+
+        \foreach \N in {0,..., \Nmax }{
+                \pgfmathsetmacro{\p}{\N*\step}
+
+                % up and down labels
+                \def\temp{#3}\ifx\temp\empty
+                    \def \labelUp {}
+                \else
+                    \pgfmathsetmacro{\labelUp}{  {#3}[\N]  }
+                \fi
+
+                \def\tempp{#4}\ifx\tempp\empty
+                    \def \labeldown {}
+                \else
+                    \pgfmathsetmacro{\labeldown}{  {#4}[\N]  }
+                \fi
+
+
+                \node[] (O\N) at (\p,0) {};
+
+
+                \ifthenelse{ \equal{\labelUp}{...}  }{
+                    \node[] (Ou\N) at (\p, \dotpos ) {\labelUp};
+                }{
+                    \node[] (Ou\N) at (\p, \legpos ) {\labelUp};
+                    \draw (Ou\N) --  (Ou\N  |- H north);
+                }
+
+
+                \ifthenelse{ \equal{\labeldown}{...}  }{
+                    \node[] (Od\N) at (\p,-\dotpos ) {\labeldown};
+                }{
+                    \node[] (Od\N) at (\p,-\legpos) {\labeldown};
+                    \draw (Od\N) --  (Od\N  |- H south);
+                }
+            }
+
+        \def\tempt{#5}\ifx\tempt\empty
+
+        \else
+            \pgfmathsetmacro{\labelo}{ {#5}[0] }
+            \pgfmathsetmacro{\labeli}{  {#5}[1] }
+
+            \pgfmathsetmacro{\leftleg}{  \left - \legLength }
+            \pgfmathsetmacro{\rightleg}{  \right + \legLength }
+
+            \node (N0) at (\leftleg,0) {\labelo};
+            \draw (N0) -- ( N0  -| H west);
+
+            \node (Ne) at (\rightleg,0) {\labeli};
+            \draw (Ne) --  ( Ne  -| H east);
+        \fi
+
+
+    \end{tikzpicture} }
+
