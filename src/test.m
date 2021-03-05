@@ -257,6 +257,8 @@ function mpo_type_comparison_exact_generic_order
 
 simulatiemodellen = ["random", "random", "random", "t_ising","Heisenberg_2D",  "Heisenberg_2D_X", "random", "random"];
 %simulatiemodellen = ["Heisenberg_2D"];
+simulatiemodellen = [ "Heisenberg_2D","t_ising",  "Heisenberg_2D_X", "random", "random"];
+
 models_len = size(simulatiemodellen, 2);
 
 for round = 1:models_len
@@ -271,6 +273,13 @@ for round = 1:models_len
     %[simul,H_1_tensor,H_2_tensor,opt4,d] = models('t_ising',model_opts);
     [simul, H_1_tensor, H_2_tensor, opt4, d] = models(simulatiemodellen(round), model_opts);
 
+  
+    H_2_tensor = H_2_tensor+...
+                   0.5* reshape( ncon( {H_1_tensor,eye(d)}, {[-1,-3],[-2,-4]}), [d,d,d,d])+...
+                   0.5* reshape( ncon( {eye(d),H_1_tensor}, {[-1,-3],[-2,-4]}), [d,d,d,d]);
+     H_1_tensor = 0*eye(d);    
+
+    
     opt4.single_threshold = 1e-12;
     %
     %
@@ -295,7 +304,7 @@ for round = 1:models_len
     %
 
 
-    simul.Order_arr = [3,4,5,6];
+    simul.Order_arr = [3,4,5];
     simul.types = [2,4,5];
     simul.M = 8;
     simul.beta_arr = 10.^(-3:0.1:1.5);
