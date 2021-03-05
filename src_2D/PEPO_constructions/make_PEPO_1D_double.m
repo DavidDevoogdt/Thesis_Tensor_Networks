@@ -1,7 +1,9 @@
 function obj = make_PEPO_1D_double(obj)
     d = obj.dim;
     ln_prefact = obj.nf;
-
+    obj.boundary_vect = zeros(1, size(obj.PEPO_cell, 1));
+    obj.bounds = [1];
+    obj.boundary_vect(obj.bounds) = 1;
     
     
     m_i = floor(obj.order/2);
@@ -41,7 +43,7 @@ function obj = make_PEPO_1D_double(obj)
             end
         end
 
-        [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, d^(2*m),0);
 
         %e1 = calculate_error(obj, 1:n, obj.numopts);
         %e2 = svds(target, 1);

@@ -11,19 +11,24 @@ function M = contract_network(obj, map, opts)
     parse(p, opts)
 
     M = zeros(dimension_vector(obj.dim, 2 * map.N2));
+    %M2 = zeros(dimension_vector(obj.dim, 2 * map.N2));
 
     if p.Results.matrix == 0
-        correct_index_sets = get_valid_contractions(obj, map, opts);
-
-        for i = 1:numel(correct_index_sets)
-            iset = correct_index_sets{i};
-            %vect = iset{2};
-            legs = iset{1};
-
-            tensors = fetch_PEPO_cells(obj, map, legs,p.Results.lnprefact);
-
-            M = M + ncon(tensors, map.leg_list);
-        end
+%         correct_index_sets = get_valid_contractions(obj, map, opts);
+%         
+%         
+%         for i = 1:numel(correct_index_sets)
+%             iset = correct_index_sets{i};
+%             %vect = iset{2};
+%             legs = iset{1};
+% 
+%             tensors = fetch_PEPO_cells(obj, map, legs,p.Results.lnprefact);
+% 
+%             M = M + ncon(tensors, map.leg_list);
+%         end        
+        
+        con_cells = get_valid_contractions(obj, map, opts);
+        M = -contract_con_cells(obj, map, p.Results.lnprefact, M, con_cells,struct('permute',0));
 
     else
         tensor_list = cell(1, map.N);

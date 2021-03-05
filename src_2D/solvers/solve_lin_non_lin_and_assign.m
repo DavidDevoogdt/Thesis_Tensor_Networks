@@ -30,8 +30,9 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
         
     target_site =  -contract_con_cells(obj, map, ln_prefact_out, -target_site, con_cells);
 
-    fprintf("starting solver")
-    
+    if obj.testing == 1
+        fprintf("starting solver")
+    end
       
     if nargin>=6
         pcells = find(pat_cells);
@@ -74,7 +75,9 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
         end
 
         if err < p.Results.solved
-            fprintf('under threshold')
+            if p.Results.display == 1
+                fprintf('under threshold')
+            end
             break;
         end
 

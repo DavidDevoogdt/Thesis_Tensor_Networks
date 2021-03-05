@@ -35,8 +35,6 @@ classdef PEPO
         function obj = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
             numopts.numbered = 1;
             obj.numopts = numopts;
-            
-            
 
             cycleopts.numbered = 1;
             cycleopts.v_cyclic = 0;
@@ -52,12 +50,11 @@ classdef PEPO
             addParameter(p, 'testing', 0)
             addParameter(p, 'visualise', 0)
             addParameter(p, 'double', 1)
-            addParameter(p, 'inv_eps', 1e-15)
+            addParameter(p, 'inv_eps', 1e-12)
             parse(p, opts)
 
-            obj.inv_eps= p.Results.inv_eps;
-            
-            
+            obj.inv_eps = p.Results.inv_eps;
+
             if mod(order, 2)
                 max_index = (order - 1) / 2;
             else
@@ -73,10 +70,7 @@ classdef PEPO
             obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
             obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
             obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
-            
-          
-            
-            
+
             obj.virtual_level_sizes_horiz = 1;
             obj.virtual_level_sizes_vert = 1;
 
@@ -94,14 +88,13 @@ classdef PEPO
             obj.nf = nf2;
 
             obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
-            
+
             %non generic PEPO code
-            
-            tic
+
+            %tic
             obj = make_PEPO_handle(obj);
-            toc
-            
-            
+            %toc
+
             obj = cell2matrix(obj); %save matrix form
 
         end

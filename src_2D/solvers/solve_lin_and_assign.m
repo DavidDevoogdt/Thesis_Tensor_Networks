@@ -34,7 +34,10 @@ function [obj, target_site, res_target, ln_prefact_out, rank_x] = solve_lin_and_
     if rank_x ~= 0
         for i = 1:size(x_cell, 2)
             obj.PEPO_cell{pattern{i}(1) + 1, pattern{i}(2) + 1, pattern{i}(3) + 1, pattern{i}(4) + 1} = x_cell{i} * mul_factor;
-            fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
+            
+            if obj.testing == 1
+                fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
+            end
         end
     end
 

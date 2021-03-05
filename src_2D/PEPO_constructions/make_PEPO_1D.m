@@ -1,6 +1,9 @@
 function obj = make_PEPO_1D(obj)
     d = obj.dim;
     ln_prefact = obj.nf;
+     obj.boundary_vect = zeros(1, size(obj.PEPO_cell, 1));
+    obj.bounds = [1];
+    obj.boundary_vect(obj.bounds) = 1;
 
     for n = 2:obj.order
 
@@ -21,8 +24,8 @@ function obj = make_PEPO_1D(obj)
         [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
         e1 = calculate_error(obj, 1:n + 1, obj.numopts);
-        e2 = svds(target, 1);
-        fprintf("n=%d residual = %.4e  tar %.4e d_nf %.4e  \n", n, e1, e2, exp(ln_prefact - obj.nf));
+        %e2 = svds(target, 1);
+        fprintf("n=%d residual = %.4e   d_nf %.4e  \n", n, e1,  exp(ln_prefact - obj.nf));
 
         if rank_x == 0%ineffective step, truncate
 

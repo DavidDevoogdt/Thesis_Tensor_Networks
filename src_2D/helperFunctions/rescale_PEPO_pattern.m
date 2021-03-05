@@ -41,6 +41,8 @@ function obj = rescale_PEPO_pattern(obj, pattern, fact,num)
             pat = pattern{i} + 1;
             sizes(i) = max(  reshape( abs(obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)}),[],1)   );
         end
-       sizes
+        if obj.testing == 1
+            sizes
+        end
    end
 end
