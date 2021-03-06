@@ -172,28 +172,17 @@ function obj = make_PEPO_2D_A(obj)
 
     %%%%%%%%%%%%%% LEVEL 1 %%%%%%%%%%%%%%
     %% 1 block with 3 external 1 legs
-    %# 4
-    [map, ~] = create_map([0, 2, 0;
-                        3, 1, 4], obj.numopts);
-    pattern = {[1, 1, 1, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([3, 2, 4;
-                        0, 1, 0], obj.numopts);
-    pattern = {[1, 0, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([1, 0;
-                        2, 3;
-                        4, 0], obj.numopts);
-    pattern = {[0, 1, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 1;
-                        2, 3;
-                        0, 4], obj.numopts);
-    pattern = {[1, 1, 0, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    for k = 0:3
+
+        [map, pattern] = rotate([
+                            0, 1, 0;
+                            1, 1, 1], {
+        [1, 1, 1, 0]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    end
 
     if obj.testing == 1
         calculate_error(obj, [0, 2, 0; 3, 1, 4], obj.numopts)
@@ -202,9 +191,10 @@ function obj = make_PEPO_2D_A(obj)
         calculate_error(obj, [0, 1; 2, 3; 0, 4], obj.numopts)
     end
     %% 1 block with 4 external legs
-    [map, ~] = create_map([0, 1, 0;
-                        2, 3, 5;
-                        0, 4, 0], obj.numopts);
+    [map, ~] = create_map([
+                        0, 1, 0;
+                        1, 1, 1;
+                        0, 1, 0]);
     pattern = {[1, 1, 1, 1]};
     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
     if obj.testing == 1
@@ -213,82 +203,35 @@ function obj = make_PEPO_2D_A(obj)
 
     %%%%%%%%%%%%%% LEVEL 2 %%%%%%%%%%%%%%
 
-    %%
-    %1 2 and 2 1 levels
-    %#12
-    %horiz left
-    [map, ~] = create_map([2, 3, 4, 5;
-                        0, 1, 0, 0], obj.numopts);
-    pattern = {[1, 0, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 3, 0, 0;
-                        2, 1, 4, 5], obj.numopts);
-    pattern = {[1, 1, 2, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([3, 0, 0;
-                        2, 4, 5;
-                        1, 0, 0], obj.numopts);
-    pattern = {[0, 1, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %horiz right
-    [map, ~] = create_map([2, 3, 4, 5;
-                        0, 0, 1, 0], obj.numopts);
-    pattern = {[2, 0, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 3, 0;
-                        2, 1, 4, 5], obj.numopts);
-    pattern = {[2, 1, 1, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 3;
-                        2, 4, 5;
-                        0, 0, 1], obj.numopts);
-    pattern = {[2, 1, 0, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %% 1 2 a and 2 1 levels
+    for k = 0:3
 
-    %vert up
-    [map, ~] = create_map([1, 0;
-                        2, 3;
-                        4, 0;
-                        5, 0], obj.numopts);
-    pattern = {[0, 1, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 1;
-                        2, 3;
-                        0, 4;
-                        0, 5], obj.numopts);
-    pattern = {[1, 1, 0, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([2, 3, 1;
-                        0, 4, 0;
-                        0, 5, 0], obj.numopts);
-    pattern = {[1, 0, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %vert down
-    [map, ~] = create_map([1, 0;
-                        2, 0;
-                        4, 3;
-                        5, 0], obj.numopts);
-    pattern = {[0, 2, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 1;
-                        0, 3;
-                        2, 4;
-                        0, 5], obj.numopts);
-    pattern = {[1, 2, 0, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 3, 0;
-                        0, 4, 0;
-                        2, 5, 1], obj.numopts);
-    pattern = {[1, 2, 1, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+        [map, pattern] = rotate([
+                            1, 1, 1, 1;
+                            0, 1, 0, 0], {
+        [1, 0, 2, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            0, 1, 0, 0;
+                            1, 1, 1, 1], {
+        [1, 1, 2, 0]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            1, 0, 0;
+                            1, 1, 1;
+                            1, 0, 0], {
+        [0, 1, 2, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    end
 
     if obj.testing == 1
         calculate_error(obj, [0, 3, 0; 0, 4, 0; 2, 5, 1], obj.numopts)
@@ -298,169 +241,95 @@ function obj = make_PEPO_2D_A(obj)
     %% 1 2 a and 3 1 levels
     %4
     %horiz
-    [map, ~] = create_map([0, 5, 0, 0;
-                        1, 2, 3, 4;
-                        0, 6, 0, 0], obj.numopts);
-    pattern = {[1, 1, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 5, 0;
-                        1, 2, 3, 4;
-                        0, 0, 6, 0], obj.numopts);
-    pattern = {[2, 1, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %vert
-    [map, ~] = create_map([0, 4, 0;
-                        1, 2, 3;
-                        0, 5, 0;
-                        0, 6, 0], obj.numopts);
-    pattern = {[1, 1, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 4, 0;
-                        0, 2, 0;
-                        1, 5, 3;
-                        0, 6, 0], obj.numopts);
-    pattern = {[1, 2, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    for k = 0:3
+
+        [map, pattern] = rotate([
+                            0, 1, 0, 0;
+                            1, 1, 1, 1;
+                            0, 1, 0, 0], {
+        [1, 1, 2, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    end
 
     if obj.testing == 1
         calculate_error(obj, [0, 4, 0; 1, 2, 3; 0, 5, 0; 0, 6, 0], obj.numopts)
     end
 
     %% 2 2 levels + 1 a
-    %#12
-    [map, ~] = create_map([1, 2, 3, 4, 5;
-                        0, 0, 6, 0, 0], obj.numopts);
-    pattern = {[2, 0, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 3, 0, 0;
-                        1, 2, 6, 4, 5], obj.numopts);
-    pattern = {[2, 1, 2, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([1, 0;
-                        2, 0;
-                        3, 4;
-                        5, 0;
-                        6, 0], obj.numopts);
-    pattern = {[0, 2, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 1;
-                        0, 2;
-                        3, 4;
-                        0, 5;
-                        0, 6], obj.numopts);
-    pattern = {[1, 2, 0, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    % onder rechts
-    [map, ~] = create_map([4, 0, 0;
-                        3, 1, 2;
-                        5, 0, 0;
-                        6, 0, 0], obj.numopts);
-    pattern = {[0, 1, 2, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([4, 3, 1, 2;
-                        0, 5, 0, 0;
-                        0, 6, 0, 0], obj.numopts);
-    pattern = {[1, 0, 2, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %onder links
-    [map, ~] = create_map([0, 0, 4;
-                        3, 1, 2;
-                        0, 0, 5;
-                        0, 0, 6], obj.numopts);
-    pattern = {[2, 1, 0, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([4, 3, 1, 2;
-                        0, 0, 5, 0;
-                        0, 0, 6, 0], obj.numopts);
-    pattern = {[2, 0, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %boven links
-    [map, ~] = create_map([0, 0, 4;
-                        0, 0, 2;
-                        3, 1, 5;
-                        0, 0, 6], obj.numopts);
-    pattern = {[2, 2, 0, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 4, 0;
-                        0, 0, 2, 0;
-                        3, 1, 5, 6; ], obj.numopts);
-    pattern = {[2, 2, 1, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %boven rechts
-    [map, ~] = create_map([0, 6, 0, 0;
-                        0, 5, 0, 0;
-                        4, 3, 1, 2; ], obj.numopts);
-    pattern = {[1, 2, 2, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([6, 0, 0;
-                        5, 0, 0;
-                        3, 1, 2;
-                        4, 0, 0; ], obj.numopts);
-    pattern = {[0, 2, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    for k = 0:3
+
+        [map, pattern] = rotate([
+                            1, 1, 1, 1, 1;
+                            0, 0, 1, 0, 0], {
+        [2, 0, 2, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            1, 0, 0;
+                            1, 1, 1;
+                            1, 0, 0;
+                            1, 0, 0], {
+        [0, 1, 2, 2]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            1, 1, 1, 1;
+                            0, 1, 0, 0;
+                            0, 1, 0, 0], {
+        [1, 0, 2, 2]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    end
 
     if obj.testing == 1
         calculate_error(obj, [1, 2, 3, 4, 5; 0, 0, 6, 0, 0], obj.numopts)
         calculate_error(obj, [0, 1; 0, 2; 3, 4; 0, 5; 0, 6], obj.numopts)
 
-        %         calculate_error(obj, [0, 0, 3, 0, 0, 0;
-        %                         1, 2, 5, 6, 7, 8;
-        %                         0, 0, 0, 4, 0, 0], obj.numopts)
-
     end
 
     %% 2 2 levels + 2 1 a
     %3 4*3/2=6
-    [map, ~] = create_map([0, 0, 6, 0, 0;
-                        1, 2, 3, 4, 5;
-                        0, 0, 7, 0, 0], obj.numopts);
-    pattern = {[2, 1, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 5, 0;
-                        0, 0, 6, 0;
-                        1, 2, 3, 4;
-                        0, 0, 7, 0], obj.numopts);
-    pattern = {[2, 2, 1, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 5, 0, 0;
-                        0, 6, 0, 0;
-                        1, 2, 3, 4;
-                        0, 7, 0, 0], obj.numopts);
-    pattern = {[1, 2, 2, 1]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 5, 0;
-                        1, 2, 6, 4;
-                        0, 0, 3, 0;
-                        0, 0, 7, 0], obj.numopts);
-    pattern = {[2, 1, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 5, 0, 0;
-                        1, 2, 6, 4;
-                        0, 3, 0, 0;
-                        0, 7, 0, 0], obj.numopts);
-    pattern = {[1, 1, 2, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 1, 0;
-                        0, 2, 0;
-                        6, 3, 7;
-                        0, 4, 0;
-                        0, 5, 0], obj.numopts);
-    pattern = {[1, 2, 1, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    for k = 0:1
+        [map, pattern] = rotate([
+                            0, 0, 1, 0, 0;
+                            1, 1, 1, 1, 1;
+                            0, 0, 1, 0, 0], {
+        [2, 1, 2, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            0, 0, 1, 0;
+                            0, 0, 1, 0;
+                            1, 1, 1, 1;
+                            0, 0, 1, 0], {
+        [2, 2, 1, 1]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+        [map, pattern] = rotate([
+                            0, 1, 0, 0;
+                            1, 1, 1, 1;
+                            0, 1, 0, 0;
+                            0, 1, 0, 0], {
+        [1, 1, 2, 2]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    end
 
     if obj.testing == 1
         calculate_error(obj, [0, 0, 6, 0, 0; 1, 2, 3, 4, 5; 0, 0, 7, 0, 0], obj.numopts)
@@ -468,33 +337,17 @@ function obj = make_PEPO_2D_A(obj)
 
     %%
     % 3 2 levels
-    [map, ~] = create_map([1, 2, 3, 4, 5;
-                        0, 0, 6, 0, 0
-                        0, 0, 7, 0, 0], obj.numopts);
-    pattern = {[2, 0, 2, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 7, 0, 0;
-                        0, 0, 3, 0, 0;
-                        1, 2, 6, 4, 5], obj.numopts);
-    pattern = {[2, 2, 2, 0]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([1, 0, 0;
-                        2, 0, 0;
-                        3, 4, 7;
-                        5, 0, 0;
-                        6, 0, 0], obj.numopts);
-    pattern = {[0, 2, 2, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    [map, ~] = create_map([0, 0, 1;
-                        0, 0, 2;
-                        7, 3, 4;
-                        0, 0, 5;
-                        0, 0, 6], obj.numopts);
-    pattern = {[2, 2, 0, 2]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    for k = 0:3
+        [map, pattern] = rotate([
+                            1, 1, 1, 1, 1;
+                            0, 0, 1, 0, 0;
+                            0, 0, 1, 0, 0; ], {
+        [2, 0, 2, 2]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    end
 
     if obj.testing == 1
         calculate_error(obj, [1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
@@ -502,53 +355,34 @@ function obj = make_PEPO_2D_A(obj)
 
     end
 
-    %         %% 3 2 legs and 1 leg %works but takes a few second
-    %         [map, ~] = create_map([0, 0, 8, 0, 0;
-    %                             1, 2, 3, 4, 5;
-    %                             0, 0, 6, 0, 0
-    %                             0, 0, 7, 0, 0], obj.numopts);
-    %         pattern = {[2, 1, 2, 2]};
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %         %
-    %         [map, ~] = create_map([0, 0, 8, 0, 0;
-    %                             0, 0, 3, 0, 0;
-    %                             1, 2, 6, 4, 5
-    %                             0, 0, 7, 0, 0], obj.numopts);
-    %         pattern = {[2, 2, 2, 1]};
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %         %
-    %         [map, ~] = create_map([0, 1, 0, 0;
-    %                             0, 2, 0, 0;
-    %                             8, 3, 4, 7;
-    %                             0, 5, 0, 0;
-    %                             0, 6, 0, 0], obj.numopts);
-    %         pattern = {[1, 2, 2, 2]};
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %         %
-    %         [map, ~] = create_map([0, 0, 1, 0;
-    %                             0, 0, 2, 0;
-    %                             7, 3, 4, 8;
-    %                             0, 0, 5, 0;
-    %                             0, 0, 6, 0], obj.numopts);
-    %         pattern = {[2, 2, 1, 2]};
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    %         if obj.testing == 1
-    %             calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
-    %         end
+    % 3 2 levels
+    for k = 0:3
+        [map, pattern] = rotate([
+                            0, 0, 1, 0, 0;
+                            1, 1, 1, 1, 1;
+                            0, 0, 1, 0, 0;
+                            0, 0, 1, 0, 0; ], {
+        [2, 1, 2, 2]
+        }, k);
+        [map, ~] = create_map(map);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    end
+
     %%
     % 4 2 leg requires to much ram
-    %     [map, ~] = create_map([0, 0, 1, 0, 0;
-    %                         0, 0, 2, 0, 0;
-    %                         7, 3, 4, 8, 9;
-    %                         0, 0, 5, 0, 0;
-    %                         0, 0, 6, 0, 0], obj.numopts);
-    %     pattern = {[2, 2, 2 , 2 ]};
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %
-    %     if obj.testing == 1
-    %         calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
-    %     end
+    % [map, ~] = create_map([
+    %                     0, 0, 1, 0, 0;
+    %                     0, 0, 1, 0, 0;
+    %                     1, 1, 1, 1, 1;
+    %                     0, 0, 1, 0, 0;
+    %                     0, 0, 1, 0, 0], obj.numopts);
+    % pattern = {[2, 2, 2, 2]};
+    % [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    if obj.testing == 1
+        calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
+    end
     %%
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -590,13 +424,16 @@ function obj = make_PEPO_2D_A(obj)
     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
 
     alpha_dim = 10;
-    beta_dim = 16;
+    %beta_dim = 16;
 
-    lnlopts = struct('Display', 0, 'maxit', 1);
+    lnlopts = struct('Display', 1, 'maxit', 1);
     %obj.cycle_index = a;
 
-    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim, beta_dim];
-    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim, beta_dim];
+    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
+    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim];
+
+    %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim, beta_dim];
+    %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim, beta_dim];
 
     %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^2, d^2 alpha_dim];
     %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^2, d^2, alpha_dim];
@@ -624,106 +461,38 @@ function obj = make_PEPO_2D_A(obj)
 
     dbool = 0;
 
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[0, x, a, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+    for k = 0:3
 
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[x, 0, a, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    if dbool == 1
-        [map, ~] = create_map([
+        [map, pattern] = rotate([
+                            0, 1, 0, 0;
+                            0, 1, 1, 0;
+                            0, 1, 1, 0;
+                            0, 0, 0, 0], {
+        [0, x, a, a]
+        }, k);
+        [map, ~] = create_map(map);
+        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+
+        [map, pattern] = rotate([
+                            0, 0, 0, 0;
+                            1, 1, 1, 0;
+                            0, 1, 1, 0;
+                            0, 0, 0, 0], {
+        [x, 0, a, a]
+        }, k);
+        [map, ~] = create_map(map);
+        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+
+        [map, pattern] = rotate([
                             0, 1, 0, 0;
                             1, 1, 1, 0;
                             0, 1, 1, 0;
-                            0, 0, 0, 0]);
-        pattern = {[x, x, a, a]};
+                            0, 0, 0, 0], {
+        [x, x, a, a]
+        }, k);
+        [map, ~] = create_map(map);
         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
 
-    end
-
-    [map, ~] = create_map([
-                        0, 0, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[a, x, 0, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 1;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[a, 0, y, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 0, 1, 0;
-                            0, 1, 1, 1;
-                            0, 1, 1, 0;
-                            0, 0, 0, 0]);
-        pattern = {[a, x, y, a]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-    %
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 1;
-                        0, 0, 0, 0]);
-    pattern = {[a, a, y, 0]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 1, 0]);
-    pattern = {[a, a, 0, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 0, 0, 0;
-                            0, 1, 1, 0;
-                            0, 1, 1, 1;
-                            0, 0, 1, 0]);
-        pattern = {[a, a, y, y]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-    %
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 0, 0]);
-    pattern = {[0, a, a, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        1, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[x, a, a, 0]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 0, 0, 0;
-                            0, 1, 1, 0;
-                            1, 1, 1, 0;
-                            0, 1, 0, 0]);
-        pattern = {[x, a, a, y]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     end
 
     if obj.testing == 1
@@ -736,307 +505,143 @@ function obj = make_PEPO_2D_A(obj)
                         0, 1, 1], struct)
     end
 
-    %% double corrections
-    if obj.testing == 1
-        fprintf("\n single beta\n")
-    end
-    %up
-    [map, ~] = create_map([
-                        0, 0, 1, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[x, 0, b, a], [b, x, 0, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    obj = rescale_PEPO_pattern(obj, pattern);
+    %double corner pieces
 
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        1, 1, 1, 1;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[b, 0, y, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+    for k = 0:3
 
-    if dbool == 1
-        [map, ~] = create_map([
+        [map, pattern] = rotate([
                             0, 0, 1, 0;
-                            1, 1, 1, 1;
-                            0, 1, 1, 0;
-                            0, 0, 0, 0]);
-        pattern = {[b, x, y, a]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 1, 1;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[0, x, b, a]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 1, 0, 0;
-                            1, 1, 1, 1;
-                            0, 1, 1, 0;
-                            0, 0, 0, 0]);
-        pattern = {[x, x, b, a]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-    %left%%%%
-    [map, ~] = create_map([
-                        0, 0, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 1;
-                        0, 0, 0, 0]);
-    pattern = {[a, x, 0, b], [a, b, y, 0]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    obj = rescale_PEPO_pattern(obj, pattern);
-
-    [map, ~] = create_map([
-                        0, 0, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 1, 0]);
-    pattern = {[a, b, 0, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    if dbool == 1
-        [map, ~] = create_map([
                             0, 0, 1, 0;
-                            0, 1, 1, 0;
-                            0, 1, 1, 1;
-                            0, 0, 1, 0]);
-        pattern = {[a, b, y, y]};
+                            0, 0, 1, 1;
+                            0, 0, 1, 1;
+                            ], {
+        [0, 2, a, a]
+        }, k);
+        [map, ~] = create_map(map);
         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
 
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 1;
-                        0, 1, 1, 0;
-                        0, 0, 1, 0]);
-    pattern = {[a, 0, y, b]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+        [map, pattern] = rotate([
+                            0, 0, 0, 0;
+                            0, 0, 0, 0;
+                            1, 1, 1, 1;
+                            0, 0, 1, 1;
+                            ], {
+        [2, 0, a, a]
+        }, k);
+        [map, ~] = create_map(map);
+        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
 
-    if dbool == 1
-        [map, ~] = create_map([
+        [map, pattern] = rotate([
+                            0, 0, 1, 0;
                             0, 0, 1, 0;
                             0, 1, 1, 1;
-                            0, 1, 1, 0;
-                            0, 0, 1, 0]);
-        pattern = {[a, x, y, b]};
+                            0, 0, 1, 1;
+                            ], {
+        [1, 2, a, a]
+        }, k);
+        [map, ~] = create_map(map);
         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-    %down
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        1, 1, 1, 1;
-                        0, 0, 0, 0]);
-    pattern = {[b, a, y, 0], [x, a, b, 0]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    obj = rescale_PEPO_pattern(obj, pattern);
 
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 1;
-                        0, 1, 0, 0]);
-    pattern = {[0, a, b, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    if dbool == 1
-
-        [map, ~] = create_map([
+        [map, pattern] = rotate([
                             0, 0, 0, 0;
-                            0, 1, 1, 0;
+                            0, 0, 1, 0;
                             1, 1, 1, 1;
-                            0, 1, 0, 0]);
-        pattern = {[x, a, b, y]};
+                            0, 0, 1, 1;
+                            ], {
+        [2, 1, a, a]
+        }, k);
+        [map, ~] = create_map(map);
         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
 
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        0, 1, 1, 0;
-                        1, 1, 1, 0;
-                        0, 0, 1, 0]);
-    pattern = {[b, a, 0, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+        dbool = 0;
+        if dbool == 1
+            [map, pattern] = rotate([
+                                0, 0, 1, 0;
+                                0, 0, 1, 0;
+                                1, 1, 1, 1;
+                                0, 0, 1, 1;
+                                ], {
+            [2, 1, a, a]
+            }, k);
+            [map, ~] = create_map(map);
+            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
 
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 0, 0, 0;
-                            0, 1, 1, 0;
-                            1, 1, 1, 1;
-                            0, 0, 1, 0]);
-        pattern = {[b, a, y, y]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-
-    %left
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 1, 0;
-                        1, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[x, b, a, 0], [0, x, a, b]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    obj = rescale_PEPO_pattern(obj, pattern);
-
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 0, 0]);
-    pattern = {[0, b, a, y]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 1, 0, 0;
-                            0, 1, 1, 0;
-                            1, 1, 1, 0;
-                            0, 1, 0, 0]);
-        pattern = {[x, b, a, y]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    end
-
-    [map, ~] = create_map([
-                        0, 0, 0, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 1, 0, 0]);
-    pattern = {[x, 0, a, b]};
-    obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    if dbool == 1
-        [map, ~] = create_map([
-                            0, 1, 0, 0;
-                            1, 1, 1, 0;
-                            0, 1, 1, 0;
-                            0, 1, 0, 0]);
-        pattern = {[x, x, a, b]};
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+        end
     end
 
     if obj.testing == 1
         calculate_error(obj, [
                         0, 0, 1, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0], struct)
+                        0, 0, 1, 0;
+                        0, 0, 1, 1;
+                        0, 0, 1, 1;
+                        ], struct, 1)
     end
 
-    %     %%three neighbouring sites
-    %     fprintf("\n double beta\n")
+    %     %% double corrections
+    %     if obj.testing == 1
+    %         fprintf("\n single beta\n")
+    %     end
+    %     %up
     %
-    %     dbool = 0;
+    %     for k = 0:3
     %
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         1, 1, 1, 0;
-    %                         0, 1, 1, 0;
-    %                         0, 0, 1, 0]);
-    %     pattern = {[b, x, 0, b]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+    %         [map, pattern] = rotate([
+    %                             0, 0, 1, 0;
+    %                             1, 1, 1, 0;
+    %                             0, 1, 1, 0;
+    %                             ], {
+    %         [x, 0, b, a], [b, x, 0, a]
+    %         }, k);
+    %         [map, ~] = create_map(map);
+    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     %
-    %     [map, ~] = create_map([
-    %                         0, 0, 0, 0;
-    %                         1, 1, 1, 1;
-    %                         0, 1, 1, 0;
-    %                         0, 0, 1, 0]);
-    %     pattern = {[b, 0, x, b]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+    %         [map, pattern] = rotate([
+    %                             0, 0, 0, 0;
+    %                             1, 1, 1, 1;
+    %                             0, 1, 1, 0;
+    %                             ], {
+    %         [b, 0, y, a]
+    %         }, k);
+    %         [map, ~] = create_map(map);
+    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     %
-    %     if dbool == 1
-    %         [map, ~] = create_map([
+    %         [map, pattern] = rotate([
     %                             0, 0, 1, 0;
     %                             1, 1, 1, 1;
     %                             0, 1, 1, 0;
-    %                             0, 0, 1, 0]);
-    %         pattern = {[b, x, x, b]};
+    %                             ], {
+    %         [b, 1, 1, a]
+    %         }, k);
+    %         [map, ~] = create_map(map);
     %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %     end
-    %     %
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         0, 1, 1, 0;
-    %                         1, 1, 1, 0;
-    %                         0, 0, 1, 0]);
-    %     pattern = {[b, b, 0, x]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     %
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         0, 1, 1, 0;
-    %                         1, 1, 1, 1;
-    %                         0, 0, 0, 0]);
-    %     pattern = {[b, b, x, 0]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    %     if dbool == 1
-    %         [map, ~] = create_map([
-    %                             0, 0, 1, 0;
-    %                             0, 1, 1, 0;
-    %                             1, 1, 1, 1;
-    %                             0, 0, 1, 0]);
-    %         pattern = {[b, b, x, x]};
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %     end
-    %     %
-    %     [map, ~] = create_map([
-    %                         0, 1, 0, 0;
-    %                         0, 1, 1, 0;
-    %                         1, 1, 1, 1;
-    %                         0, 0, 0, 0]);
-    %     pattern = {[x, b, b, 0]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    %     [map, ~] = create_map([
-    %                         0, 1, 0, 0;
-    %                         0, 1, 1, 0;
-    %                         0, 1, 1, 1;
-    %                         0, 1, 0, 0]);
-    %     pattern = {[0, b, b, x]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    %     if dbool == 1
-    %         [map, ~] = create_map([
-    %                             0, 1, 0, 0;
-    %                             0, 1, 1, 0;
-    %                             1, 1, 1, 1;
-    %                             0, 1, 0, 0]);
-    %         pattern = {[x, b, b, x]};
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %     end
-    %     %
-    %     [map, ~] = create_map([
-    %                         0, 1, 0, 0;
-    %                         0, 1, 1, 1;
-    %                         0, 1, 1, 0;
-    %                         0, 1, 0, 0]);
-    %     pattern = {[0, x, b, b]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    %     [map, ~] = create_map([
-    %                         0, 0, 0, 0;
-    %                         1, 1, 1, 1;
-    %                         0, 1, 1, 0;
-    %                         0, 1, 0, 0]);
-    %     pattern = {[x, 0, b, b]};
-    %     obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-    %
-    %     if dbool == 1
-    %         [map, ~] = create_map([
+    %         [map, pattern] = rotate([
     %                             0, 1, 0, 0;
     %                             1, 1, 1, 1;
     %                             0, 1, 1, 0;
-    %                             0, 1, 0, 0]);
-    %         pattern = {[x, x, b, b]};
+    %                             ], {
+    %         [1, 1, b, a]
+    %         }, k);
+    %         [map, ~] = create_map(map);
     %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
+    %
     %     end
+
+    if obj.testing == 1
+        obj = cell2matrix(obj);
+        calculate_error(obj, [
+                        0, 0, 1, 0;
+                        1, 1, 1, 0;
+                        0, 1, 1, 0;
+                        0, 0, 0, 0], struct, 1)
+    end
+
+end
+
+function [m, p] = rotate(m, p, k)
+    m = rot90(m, k);
+    for l = 1:numel(p)
+        p{l} = circshift(p{l}, -k);
+    end
 end

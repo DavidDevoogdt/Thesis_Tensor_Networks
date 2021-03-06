@@ -8,7 +8,7 @@ fold2 = strjoin(pathparts, '/');
 
 dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
 
-chi_arr = [2, 3, 4,5,6];
+chi_arr = [15];
 g = 2.5;
 
 mbound = [0.6, 0.3];
@@ -29,7 +29,7 @@ function calc_ising_2d(T, J, g, chi_arr, aim_dx, aim_dy, mbound, fold2, dt, onsa
     opts.visualise = 0;
     opts.double = 0;
 
-    parfor t = 1:numel(chi_arr)
+    for t = 1:numel(chi_arr)
         chi = chi_arr(t);
 
         name = sprintf("%s/Ising2D_g=%.4e_chi=%d_%s.mat", fold2, g, chi, dt);

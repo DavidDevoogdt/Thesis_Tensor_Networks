@@ -5,24 +5,31 @@ pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
 fold2 = strjoin(pathparts, '/');
 
 names = {
-    'Ising2D_g=2.5000e+00_chi=2_05_March_2021_11:28.mat';
-    'Ising2D_g=2.5000e+00_chi=3_05_March_2021_11:28.mat';
-    'Ising2D_g=2.5000e+00_chi=4_05_March_2021_11:28.mat'};
+    ...%'Ising2D_g=2.5000e+00_chi=10_05_March_2021_13:25.mat';
+    'Ising2D_g=2.5000e+00_chi=25_05_March_2021_13:25.mat';
+    'Ising2D_g=2.5000e+00_chi=15_05_March_2021_13:25.mat';
+    'Ising2D_g=2.5000e+00_chi=30_05_March_2021_13:25.mat';
+    'Ising2D_g=2.5000e+00_chi=20_05_March_2021_13:25.mat'
+};
 
 for i = 1:numel(names)
     load(sprintf("%s/%s", fold2, names{i}));
 
-    plot_Ising2D(m_arr, T_arr, J, g, chi)
+    plot_Ising2D(m_arr, T_arr, J, 2.5, chi,i)
 end
 
-function plot_Ising2D(m_arr, T_arr, J, g, chi)
+function plot_Ising2D(m_arr, T_arr, J, g, chi,i)
 
     %print(f);
 
+    mask = T_arr ~=0;
+    m_arr = m_arr(mask);
+    T_arr = T_arr(mask);
+    
     figure(1);
     %loglog(  beta_arr,err_arr );
     hold on
-    plot(T_arr, m_arr, '*');
+    plot(T_arr, m_arr,'*-','DisplayName',sprintf("chi = %d",chi)  );
 
     %     T_min = min(T_arr);
     %     T_max = max(T_arr);
@@ -40,18 +47,24 @@ function plot_Ising2D(m_arr, T_arr, J, g, chi)
 
     %plot(T_arr, fitfun(T_arr));
 
-    ylim([0, 1]);
+    if i==1
+        ylim([0.25, 0.6]);
+        xlim([1.23, 1.285])
 
-    title(sprintf("2D transverse Ising, g=%.4f, chi=%d ", g, chi));
-    xlabel("$\frac{k T}{J}$", "Interpreter", "Latex");
-    ylabel("$\left < m \right >$", "Interpreter", "Latex");
+        xline(1.27376)
 
+        title(sprintf("2D transverse Ising, g=%.4f, chi=%d ", g, chi));
+        xlabel("$\frac{k T}{J}$", "Interpreter", "Latex");
+        ylabel("$\left < m \right >$", "Interpreter", "Latex");
+
+        legend('Location','southwest')
+    end
     %lgd = legend('simul', 'onsager', 'fit');
     %lgd.Location = 'southwest';
 
     hold off
 
-    drawnow;
+    %drawnow;
 
 end
 
