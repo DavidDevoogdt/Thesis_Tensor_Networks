@@ -63,8 +63,7 @@
 %----------------------------------------------------------------------------------------
 
 % The title
-\title[]{PEPO cluster expansion of Tensor Exponential  }
-\subtitle{Subtitle}
+\title[]{PEPO cluster expansion of tensor exponential  }
 
 \author[] {David Devoogdt}
 \institute[UGent] % Your institution may be shorthand to save space
@@ -80,6 +79,8 @@
 \input{macros.tex}
 \input{tikzsetup}
 
+\setbeamertemplate{footline}[frame number]
+
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
@@ -93,10 +94,10 @@
     \titlepage
 \end{frame}
 
-\begin{frame}
-    % Print the title page as the first slide
-    \tableofcontents[hidesubsections]
-\end{frame}
+% \begin{frame}
+%     % Print the title page as the first slide
+%     \tableofcontents[hidesubsections]
+% \end{frame}
 
 \AtBeginSection[]
 {
@@ -182,19 +183,17 @@
 
 
 
+
+
 %------------------------------------------------
 \subsection{Cluster expansion}
 %------------------------------------------------
-\begin{frame}{General idea}
-    \begin{itemize}
-        \item represent as MPO/PEPO
-        \item cluster by size, not in $\beta$
-    \end{itemize}
-\end{frame}
-
-
-
-
+% \begin{frame}{General idea}
+%     \begin{itemize}
+%         \item represent as MPO/PEPO
+%         \item cluster by size, not in $\beta$
+%     \end{itemize}
+% \end{frame}
 
 
 
@@ -235,6 +234,7 @@
     \begin{itemize}
         \item size extensive
         \item symmetry
+        \item fast
     \end{itemize}
 \end{frame}
 
@@ -262,24 +262,24 @@
 
 \end{frame}
 
-%------------------------------------------------
-\subsection{Variant B}
-%------------------------------------------------
-\begin{frame}{Variant B}
+% %------------------------------------------------
+% \subsection{Variant B}
+% %------------------------------------------------
+% \begin{frame}{Variant B}
 
 
-    \begin{equation}
-        \begin{split}
-            &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-            &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
-            &\mpob{3}{ {,"1","2",}  }{}{}{}{{,,,}}\\
-            &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
-            &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}\\
-        \end{split}
-    \end{equation}
+%     \begin{equation}
+%         \begin{split}
+%             &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+%             &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+%             &\mpob{3}{ {,"1","2",}  }{}{}{}{{,,,}}\\
+%             &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
+%             &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}\\
+%         \end{split}
+%     \end{equation}
 
 
-\end{frame}
+% \end{frame}
 
 %------------------------------------------------
 \subsection{Variant C}
@@ -299,26 +299,26 @@
 \end{frame}
 %-----------
 
-%------------------------------------------------
-\subsection{Comparison}
-%------------------------------------------------
-\begin{frame}
-    \begin{itemize}
-        \item bond dimension
-        \item "unwanted" chains
-    \end{itemize}
-\end{frame}
+% %------------------------------------------------
+% \subsection{Comparison}
+% %------------------------------------------------
+% \begin{frame}
+%     \begin{itemize}
+%         \item bond dimension
+%         \item "unwanted" chains
+%     \end{itemize}
+% \end{frame}
 
 %------------------------------------------------
 \subsection{Results}
 %------------------------------------------------
 \begin{frame}{Error measure}
 
-    \begin{itemize}
-        \item cyclic
-        \item relative
-        \item 12 sites
-    \end{itemize}
+
+    \begin{equation}
+        \epsilon(\text{map}) = \frac{|| \exp -\beta H( \text{map} ) - \text{MPO}(\text{map}) || }{|| \exp -\beta H(\text{map}) || }
+    \end{equation}
+
 \end{frame}
 
 
@@ -334,6 +334,18 @@
         \includegraphics[scale=0.6]{Figures/1D_heis.pdf}
     \end{figure}
 \end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \includegraphics[scale=0.6]{Figures/rand_01.pdf}
+    \end{figure}
+\end{frame}
+
+% \begin{frame}
+%     \begin{figure}
+%         \includegraphics[scale=0.6]{Figures/rand_02.pdf}
+%     \end{figure}
+% \end{frame}
 
 %------------------------------------------------
 %------------------------------------------------
@@ -382,7 +394,7 @@
 \begin{frame}{Construction 2D: Linear blocks}
     \begin{equation}
         \begin{split}
-            \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \Rightarrow &\pepob{3}{2}{{"2","1","2","1",}}{{"1","1","1",,}}{{0,1,1,0,0,0}}\\
+            \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}} \Rightarrow &\pepob{3}{2}{{"2","1","2","1",}}{{"1","1","1",,}}{{0,1,1,0,0,0}}\\
             &\pepob{3}{2}{{"2","1",,}}{{"1","1",,,}}{{0,0,0,0,1,1}}
         \end{split}
     \end{equation}
@@ -403,7 +415,7 @@
     \end{equation}
 
     \begin{equation}
-        \pepob{3}{2}{{"$\beta$","$\beta'$","$\beta$","$\beta'$"}}{{"$\beta'$","$\alpha$","$\beta'$",,}}{{0,0,0,0,0,0}} \pepob{2}{3}{{"$\beta$","$\alpha$","$\beta$",,}}{{"$\beta'$","$\beta$","$\beta'$","$\beta'$"}}{{0,0,0,0,0,0}}
+        \pepob{3}{2}{{"$\beta$","$\beta'$","$\beta$","$\beta'$"}}{{"$\beta$","$\alpha$","$\beta'$",,}}{{0,0,0,0,0,0}} \pepob{2}{3}{{"$\beta$","$\alpha$","$\beta'$",,}}{{"$\beta'$","$\beta$","$\beta'$","$\beta$"}}{{0,0,0,0,0,0}}
     \end{equation}
 
     \begin{itemize}
@@ -418,7 +430,7 @@
         \pepob{3}{3}{{,,,,,,,,}}{{,,,,,,,,}}{{0,0,1, 0,0,0, 1,0,0,0}} \pepob{3}{3}{{,,,,,,,,}}{{,,,,,,,,}}{{1,0,0, 0,0,0, 0,0,1}}
     \end{equation}
 
-    Easy to solve on finite lattice, dificut in thermodynamic limit...
+    Easy to solve on finite lattice, difficult in thermodynamic limit...
 \end{frame}
 
 
@@ -433,61 +445,61 @@
 
 
 
-%------------------------------------------------
-\subsection{Numerical considerations}
-%------------------------------------------------
-\begin{frame}{Numerical considerations}
-    Normalisation: PEPS $O \rightarrow O/ \alpha$
-    \begin{equation}
-        \frac{ \exp A } { \alpha^N }  =  \exp \left(   A- N \ln{\alpha} \cdot I \right)
-    \end{equation}
+% %------------------------------------------------
+% \subsection{Numerical considerations}
+% %------------------------------------------------
+% \begin{frame}{Numerical considerations}
+%     Normalisation: PEPS $O \rightarrow O/ \alpha$
+%     \begin{equation}
+%         \frac{ \exp A } { \alpha^N }  =  \exp \left(   A- N \ln{\alpha} \cdot I \right)
+%     \end{equation}
 
-    Avoid large values in tensor
-\end{frame}
+%     Avoid large values in tensor
+% \end{frame}
 
-\begin{frame}{Fast cell contraction}
-    \begin{itemize}
-        \item Bottleneck: find all possible contractions of virtual levels
-        \item Solution: Construct sparse PEPO, contract geometry
-    \end{itemize}
+% \begin{frame}{Fast cell contraction}
+%     \begin{itemize}
+%         \item Bottleneck: find all possible contractions of virtual levels
+%         \item Solution: Construct sparse PEPO, contract geometry
+%     \end{itemize}
 
-    \begin{figure}
-        \includegraphics[scale=0.8]{Figures/pepo_contraction.pdf}
-    \end{figure}
-\end{frame}
+%     \begin{figure}
+%         \includegraphics[scale=0.8]{Figures/pepo_contraction.pdf}
+%     \end{figure}
+% \end{frame}
 
-%------------------------------------------------
-\subsection{Problem statement}
-%------------------------------------------------
-\begin{frame}{Solver}
-    \begin{itemize}
-        \item "Linear" problems
-        \item non-linear problems
-    \end{itemize}
-\end{frame}
 
 %------------------------------------------------
 \subsection{Linear solver}
 %------------------------------------------------
 
-\begin{frame}{Linear Solver}
-    \begin{figure}
-        \includegraphics[scale=0.6]{Figures/linprob.pdf}
-    \end{figure}
-\end{frame}
+% \begin{frame}{Linear Solver}
+%     \begin{figure}
+%         \includegraphics[scale=0.6]{Figures/linprob.pdf}
+%     \end{figure}
+% \end{frame}
 
 \begin{frame}{Linear solver}
     \begin{itemize}
-        \item types of inversion
-        \item numerical stability
+        \item pseudoinverse
+        \item optimisation for tree graphs
         \item implemented for any shape
-        \item if connected -> split with SVD
     \end{itemize}
+
+    \begin{equation}
+        \pepob{3}{3}{{"1","1","1","1","1","1",}}{{"1","1","1","1","1","1",}}{{1,0,1,0,0,0,1,0,1}}   \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}
+    \end{equation}
 
     \begin{figure}
         \includegraphics[scale=0.5]{Figures/mexample.png}
     \end{figure}
 
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \includegraphics[scale=0.6]{Figures/ising_no_inverse_finite.pdf}
+    \end{figure}
 \end{frame}
 
 
@@ -512,7 +524,6 @@
     \end{itemize}
 \end{frame}
 
-
 %------------------------------------------------
 %------------------------------------------------
 \section{2D Transversal Ising Model}
@@ -520,21 +531,21 @@
 %------------------------------------------------
 
 
-%------------------------------------------------
-\subsection{Overview}
-%------------------------------------------------
-\begin{frame}{Overview}
-    \begin{equation}
-        \hat{H} = -J \left (  \sum_{<i j>} \sigma^x_i \sigma^x_j + \Gamma \sum_i \sigma^z_i \right )
-    \end{equation}
-\end{frame}
+% %------------------------------------------------
+% \subsection{Overview}
+% %------------------------------------------------
+% \begin{frame}{Overview}
+%     \begin{equation}
+%         \hat{H} = -J \left (  \sum_{<i j>} \sigma^z_i \sigma^z_j + \Gamma \sum_i \sigma^x_i \right )
+%     \end{equation}
+% \end{frame}
 
-\begin{frame}{Overview}
-    \begin{figure}
-        \includegraphics[scale=0.5]{Figures/2disingphase.png}
-        \caption{figure taken from \cite{PhysRevB.93.155157}}
-    \end{figure}
-\end{frame}
+% \begin{frame}{Overview}
+%     \begin{figure}
+%         \includegraphics[scale=0.5]{Figures/2disingphase.png}
+%         \caption{figure taken from \cite{PhysRevB.93.155157}}
+%     \end{figure}
+% \end{frame}
 
 
 %------------------------------------------------
@@ -546,23 +557,24 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{First results}
-    \begin{figure}
-        \includegraphics[scale=0.4]{Figures/g15.pdf}
-    \end{figure}
-\end{frame}
+% \begin{frame}{First results}
+%     \begin{figure}
+%         \includegraphics[scale=0.5]{Figures/g15.pdf}
+%     \end{figure}
+% \end{frame}
 
 \begin{frame}{First results}
     \begin{figure}
-        \includegraphics[scale=0.4]{Figures/g25.pdf}
+        \includegraphics[scale=0.5]{Figures/g25.pdf}
     \end{figure}
 \end{frame}
 
-\begin{frame}{First results}
-    \begin{figure}
-        \includegraphics[scale=0.4]{Figures/g28.pdf}
-    \end{figure}
-\end{frame}
+% \begin{frame}{First results}
+%     \begin{figure}
+%         \includegraphics[scale=0.5]{Figures/g28.pdf}
+%     \end{figure}
+% \end{frame}
+
 
 
 %------------------------------------------------
@@ -574,24 +586,24 @@
     \begin{itemize}
         \item Working code for 1D and 2D
         \item General solvers
-        \item Promising results in 1D and 2D
+        \item Promising first results in 2D
     \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Short term}
+\begin{frame}{Outlook: short term}
     \begin{itemize}
-        \item Accurate estimate Transversal ising quantum critical point
+        \item Accurate estimate transversal Ising quantum critical point
         \item Improve blocks for loops
-        \item
+        \item continuous improvements framework
     \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Short term}
+\begin{frame}{Outlook: long term}
     \begin{itemize}
-        \item Incorporate symmetries Hamiltonian
-        \item Look at other models
+        \item Incorporate symmetries of Hamiltonians
+        \item Look at other (types of) Hamiltonians
         \item Generalize for other lattice geometries
         \item Generalize to 3D
     \end{itemize}

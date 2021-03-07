@@ -16,12 +16,15 @@ The manipulations of MPO's is done by manipulating the tensor into a matrix, per
     \end{split}
 \end{equation}
 
-Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The exact nature of this decomposition is dicussed further. The last step transforms the indices back to separate legs.
+Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
 
 For an exact representation, the bond dimension of virtual level v is:
 \begin{equation}
     \dim{v} = \min( \dim{u}, \dim{v}) + 2 \dim{i}
 \end{equation}
+
+
+Many different matrix decompositions exist. Some usefull examples here are svd decomposition and eigenvalue decomposition. The split in left and right matrix is not unique and differs per algoritm.
 
 
 \subsection{inverse}
@@ -36,12 +39,13 @@ Suppose we want to find a MPO O for given tensors A and B such that the followin
     \combineTikz{ \figone }{\figtwo}{1.8} =  \figthree
 \end{equation}
 
-Again, the indices can be taken toghether in the following way: $\alpha = (u i_1 i_2 j_1 j_2)$ and $\beta = (i_3 j_3 v)$:
+Again, the indices can be taken toghether in the following way: $\alpha = (u i_1 j_1  i_2 j_2)$ and $\beta = (i_3 j_3 v)$:
 \begin{equation}
     A_{\alpha \gamma} O_{\gamma \beta} = B_{\alpha \beta}
 \end{equation}
+This a a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution. In matlab the procedures mldivide and lsqminnorm can be used, which give more robust solutions.
 
-This will be denoted by
+The solution will be denoted by
 
 \def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
 \def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
@@ -59,17 +63,13 @@ This will be denoted by
     \end{split}
     \label{eq_mpoinvdef}
 \end{equation}
-
-For the first equation the unmarked legs on similar positions need to be connected to each other. The second line the mirrored positions are connected.
-
-This can now be computed with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution.
-\todo{explain https://nl.mathworks.com/help/matlab/ref/mldivide.html}
-
-
+For the first equation the unmarked legs on the same positions need to be contracted with each other. The second line the mirrored positions are contracted.
 
 \subsubsection{inverse MPO}
 
 \todo{ fix this}
+
+If the tensor A is an MPO, the inverse can also be constructed as an mpo. This is espacially usefull if the MPO is created with decomposition for which the inverse can be computed easily, suchs as an svd decomposition.
 
 Take has to be taken with the indices to apply the inverse.
 

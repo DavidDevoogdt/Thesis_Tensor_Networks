@@ -1,0 +1,28 @@
+{
+    // "latex-workshop.latex.recipes":[
+    //   {
+    //     "name": "pdflatexDavid",
+    //     "tools":["pdflatex", "bibtex", "pdflatex", "pdflatex"],
+    //   }
+    //   ],
+    // "latex-workshop.latex.tools":[
+    //     {
+    //     "name": "pdflatexDavid",
+    //     "command": "pdflatex",
+    //     "args": [
+    //         "--shell-escape", // if you want to have the shell-escape flag
+    //         "-synctex=1",
+    //         "-interaction=nonstopmode",
+    //         "-file-line-error",
+    //         "%DOC%"
+    //     ]
+    //     }
+    // ],
+    "latex-workshop.latex.autoClean.run": "never",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.synctex.afterBuild.enabled": true,
+    "latex-workshop.chktex.enabled": false,
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120,
+}

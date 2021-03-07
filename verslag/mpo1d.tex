@@ -275,7 +275,7 @@ All of the above types are implemented for arbitrary order in Matlab.
 
 \subsubsection{Source code structure}
 
-The source code for this project can be found on \href{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}{github}. The implementation of these types can be found under \path{src/generateMPO.m}. In this class the different types of MPO can be constructed. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian.
+The source code for this project can be found on \href{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}{github}. The implementation of these types can be found under \path{src/generateMPO.m}. In this class the different types of MPO can be constructed. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian. Other examples are making $L_n^{-1}$ by sequential invers MPO contractions,...
 
 \path{src/test.m}  contains the code to create the plots to compare different types and orders. The other files in the folder are self-explanatory.
 
@@ -291,5 +291,5 @@ An overal normalisation factor $\kappa$ per site is used to keep the numbers in 
 
 The matrix exponential for different number of sites is called on many different places. The results for chain and cycle are stored in the class to save computing time the next time.
 
-\subssubection{Optimalisations}
+\subsubsection{Optimalisations}
 The construction is not yet fully optimised for speed. The arrays can be cast to Matlab gpuArray's to offload the calculations.
