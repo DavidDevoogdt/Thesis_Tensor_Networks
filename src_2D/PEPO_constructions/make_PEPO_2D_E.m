@@ -807,31 +807,31 @@ function obj = make_PEPO_2D_A(obj)
     %
     %     obj = solve_lin_non_lin_and_assign(obj, map1, pattern1, ln_prefact, onceopts);
     %     obj = rescale_PEPO_pattern(obj, pattern1);
-% 
-%     [map1, ~] = create_map([0, 2, 1;
-%                         6, 4, 3;
-%                         5, 7, 0], obj.numopts);
-% 
-%     pattern1 = {[beta_level, beta_level, beta_level + 1, beta_level + 1], ...
-%                 [0, 0, beta_level + 1, beta_level], ... %linksboven
-%                 [0, 0, beta_level, beta_level + 1], ... %linksboven
-%                 };
-% 
-%     obj = solve_lin_non_lin_and_assign(obj, map1, pattern1, ln_prefact, onceopts);
-%     obj = rescale_PEPO_pattern(obj, pattern1);
+    %
+    %     [map1, ~] = create_map([0, 2, 1;
+    %                         6, 4, 3;
+    %                         5, 7, 0], obj.numopts);
+    %
+    %     pattern1 = {[beta_level, beta_level, beta_level + 1, beta_level + 1], ...
+    %                 [0, 0, beta_level + 1, beta_level], ... %linksboven
+    %                 [0, 0, beta_level, beta_level + 1], ... %linksboven
+    %                 };
+    %
+    %     obj = solve_lin_non_lin_and_assign(obj, map1, pattern1, ln_prefact, onceopts);
+    %     obj = rescale_PEPO_pattern(obj, pattern1);
 
-%     [map1, ~] = create_map([1, 2, 0;
-%                         3, 4, 6;
-%                         0, 7, 5; ], obj.numopts);
-% 
-%     pattern1 = {[beta_level, alpha_level, alpha_level, beta_level + 1], ...
-%                 [beta_level, 0, 0, alpha_level], ... %rechtsboven
-%                 [alpha_level, 0, 0, beta_level + 1], ... %rechtsboven
-%                 };
-% 
-%     obj = solve_lin_non_lin_and_assign(obj, map1, pattern1, ln_prefact, onceopts);
-%     obj = rescale_PEPO_pattern(obj, pattern1);
-%     %
+    %     [map1, ~] = create_map([1, 2, 0;
+    %                         3, 4, 6;
+    %                         0, 7, 5; ], obj.numopts);
+    %
+    %     pattern1 = {[beta_level, alpha_level, alpha_level, beta_level + 1], ...
+    %                 [beta_level, 0, 0, alpha_level], ... %rechtsboven
+    %                 [alpha_level, 0, 0, beta_level + 1], ... %rechtsboven
+    %                 };
+    %
+    %     obj = solve_lin_non_lin_and_assign(obj, map1, pattern1, ln_prefact, onceopts);
+    %     obj = rescale_PEPO_pattern(obj, pattern1);
+    %     %
 
     if obj.testing == 1
         calculate_error(obj, [1, 2, 0;

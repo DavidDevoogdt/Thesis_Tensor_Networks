@@ -4,7 +4,7 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
     addParameter(p, 'Gradient', true)
     addParameter(p, 'maxit', 200)
     addParameter(p, 'Display', 'None')
-    addParameter(p,  'PlotFcn','None')
+    addParameter(p, 'PlotFcn', 'None')
     %addParameter(p, 'Algoritm', 'levenberg-marquardt')
     addParameter(p, 'Algoritm', 'trust-region')
     parse(p, opts)
@@ -15,16 +15,16 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
 
     options = optimoptions('fsolve', 'Display', p.Results.Display, ...
         'Algorithm', p.Results.Algoritm, ...
-        'MaxIterations',p.Results.maxit,...
+        'MaxIterations', p.Results.maxit, ...
         'SpecifyObjectiveGradient', p.Results.Gradient, ...
         'FunctionTolerance', 1e-40, ...
-        'StepTolerance', 1e-10,...
-        'PlotFcn', 'optimplotfirstorderopt',...
-        'OptimalityTolerance',1e-30); %for trust region
+        'StepTolerance', 1e-10, ...
+        'PlotFcn', 'optimplotfirstorderopt', ...
+        'OptimalityTolerance', 1e-30); %for trust region
 
     %
 
-        num_patterns = size(patterns, 2);
+    num_patterns = size(patterns, 2);
 
     x_sizes = cell(1, num_patterns);
     begin_vec = [];
@@ -46,12 +46,11 @@ function x_cell = solve_non_lin(obj, patterns, maps, targets, con_cells, opts, l
     end
 
     if p.Results.Algoritm == "trust-region"
-        [~,g]= get_value_and_grad(obj, maps, con_cells, patterns, targets, begin_vec, x_sizes, lnprefact);  
-        j_pat = (g~=0)*1;
-        options = optimoptions(options,'JacobPattern',j_pat, 'SubproblemAlgorithm','cg') ;
+        [~, g] = get_value_and_grad(obj, maps, con_cells, patterns, targets, begin_vec, x_sizes, lnprefact);
+        j_pat = (g ~= 0) * 1;
+        options = optimoptions(options, 'JacobPattern', j_pat, 'SubproblemAlgorithm', 'cg');
     end
-    
-    
+
     x = fsolve(@(x) get_value_and_grad(obj, maps, con_cells, patterns, targets, x, x_sizes, lnprefact), begin_vec, options);
 
     x_cell = split_x (x, x_sizes);

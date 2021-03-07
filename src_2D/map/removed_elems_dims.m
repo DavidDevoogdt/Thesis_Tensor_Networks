@@ -1,4 +1,4 @@
-function [dims, dim_arr, bond_pairs,ext_dims] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums)
+function [dims, dim_arr, bond_pairs, ext_dims] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums)
 
     %determine appropriate size of differnten PEPO cells and
     %connections between them
@@ -6,7 +6,6 @@ function [dims, dim_arr, bond_pairs,ext_dims] = removed_elems_dims(obj, num_pats
 
     dim_arr = zeros(1, num_pats);
 
-    
     for n1 = 1:num_pats
         p = pattern{n1};
         ll = map.leg_list{nums(n1)}(3:6);
@@ -138,22 +137,19 @@ function [dims, dim_arr, bond_pairs,ext_dims] = removed_elems_dims(obj, num_pats
             end
         end
     end
-    
+
     ext_dims = [];
-    
-    
-    for i=1:num_pats
-        
-        
-        
+
+    for i = 1:num_pats
+
         d2 = dims{i}(3:end);
-        
-        mask =  d2~=-1;
-        mask2 = d2~=1;
-        mask3 =mask & mask2;
-        
-        ext_dims = [ext_dims,  d2(mask3) ];
-        
+
+        mask = d2 ~= -1;
+        mask2 = d2 ~= 1;
+        mask3 = mask & mask2;
+
+        ext_dims = [ext_dims, d2(mask3)];
+
     end
-    
+
 end

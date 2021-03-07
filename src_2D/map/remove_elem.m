@@ -193,8 +193,8 @@ function map2 = remove_elem(num, map)
 
     map2.leg_list = con_list_cpy;
 
-    map2.num_map( map2.num_map==num  ) = 0;
-    
+    map2.num_map(map2.num_map == num) = 0;
+
     if ~isfield(map, "ii")
         map2.ii = ii;
     else

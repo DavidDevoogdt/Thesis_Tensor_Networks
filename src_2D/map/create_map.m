@@ -26,7 +26,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     if ~isfield(opts, 'h_cyclic')
         opts.h_cyclic = 0;
     end
-    
+
     if ~isfield(opts, 'boundary_matrix')
         opts.boundary_matrix = 0;
     end
@@ -245,7 +245,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
     map.map = "true";
 
     if internal == 0
-        if opts.boundary_matrix==1
+        if opts.boundary_matrix == 1
             map2 = PEPO.create_map(map.num_map(1:end - opts.v_cyclic, 1:end - opts.h_cyclic), opts, 1);
 
             boundary_map = map;

@@ -4,16 +4,15 @@ function obj = make_PEPO_1D_double(obj)
     obj.boundary_vect = zeros(1, size(obj.PEPO_cell, 1));
     obj.bounds = [1];
     obj.boundary_vect(obj.bounds) = 1;
-    
-    
-    m_i = floor(obj.order/2);
-    prime_level = m_i ;
+
+    m_i = floor(obj.order / 2);
+    prime_level = m_i;
 
     obj.virtual_level_sizes_horiz = obj.dim.^(2 * [0:m_i, 1:m_i]);
     obj.virtual_level_sizes_vert = [1];
-    
-    assert(obj.max_index)= numel(obj.virtual_level_sizes_horiz);
-    
+
+    assert(obj.max_index) = numel(obj.virtual_level_sizes_horiz);
+
     %obj.max_index = numel(obj.virtual_level_sizes_horiz);
     obj.current_max_index = obj.max_index;
 
@@ -43,7 +42,7 @@ function obj = make_PEPO_1D_double(obj)
             end
         end
 
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, d^(2*m),0);
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, d^(2 * m), 0);
 
         %e1 = calculate_error(obj, 1:n, obj.numopts);
         %e2 = svds(target, 1);

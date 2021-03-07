@@ -42,28 +42,27 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
             %err = U*S_l*S_r*V'-x_res;
 
             if split_dim == -1
-                
-                if d1==d2
-                     split_dim = d1;
+
+                if d1 == d2
+                    split_dim = d1;
                 else
-                   error("provide split dimension") 
+                    error("provide split dimension")
                 end
             end
-                
-            PU = eye( size(U,1), split_dim) ;
-            PR = eye( split_dim, size(V,1)) ;
-            DS =diag(S);
-            sqrt_S = diag( DS(1:split_dim).^0.5  );
-            
-            L = U * PU*sqrt_S;
-            R = sqrt_S*PR*V';
-            
-            err = L*R- x_res ;
-        
-            
-            parity = find(mask1)>4; %order of multiplication
 
-            if parity == 1 %in right order
+            PU = eye(size(U, 1), split_dim);
+            PR = eye(split_dim, size(V, 1));
+            DS = diag(S);
+            sqrt_S = diag(DS(1:split_dim).^0.5);
+
+            L = U * PU * sqrt_S;
+            R = sqrt_S * PR * V';
+
+            err = L * R - x_res;
+
+            parity = find(mask1) > 4; %order of multiplication
+
+            if parity == 1%in right order
                 l = permute(reshape(L, dim1_alt(1), dim1_alt(2), []), [1, 3, 2]);
                 r = permute(reshape(R, [], dim2_alt(1), dim2_alt(2)), [2, 1, 3]);
 

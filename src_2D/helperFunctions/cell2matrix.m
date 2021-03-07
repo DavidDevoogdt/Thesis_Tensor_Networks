@@ -1,7 +1,7 @@
-function obj = cell2matrix(obj,sparse)
+function obj = cell2matrix(obj, sparse)
 
     if nargin < 2
-        sparse =0;
+        sparse = 0;
     end
 
     d = obj.dim;
@@ -48,7 +48,7 @@ function obj = cell2matrix(obj,sparse)
         sparsem = ndSparse(sparse(d^2, totaldimensionH^2 * totaldimensionV^2));
         T = reshape(sparsem, [d, d, totaldimensionH, totaldimensionV, totaldimensionH, totaldimensionV]);
     end
-    
+
     %move all existing tensors to matrix
     for i1 = 1:h_size - 1
         for i2 = 1:v_size - 1

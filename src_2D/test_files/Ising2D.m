@@ -8,7 +8,7 @@ fold2 = strjoin(pathparts, '/');
 
 dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
 
-chi_arr = [5,10,15, 20, 25, 30, 35, 40];
+chi_arr = [5, 10, 15, 20, 25, 30, 35, 40];
 g = 2.5;
 
 mbound = [0.6, 0.1];

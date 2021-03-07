@@ -19,9 +19,9 @@ function test
     S_z = [1, 0; 0, -1];
     I_tensor = eye(2);
 
-    handle =  @make_PEPO_2D_A;opts.double = 0;
+    handle = @make_PEPO_2D_A; opts.double = 0;
     %handle =  @make_PEPO_2D_B;opts.double = 1;
-    
+
     J = 1;
     g = 0.01;
     %
@@ -48,7 +48,7 @@ function test
 
     %T = 10.^( -2:0.5:5 )   ;
 
-    beta_arr = 10.^( log10(1.1)  :0.2:1);
+    beta_arr = 10.^(log10(1.1):0.2:1);
     %beta_arr=1./T;
 
     beta_len = size(beta_arr, 2);
@@ -61,7 +61,7 @@ function test
             -beta * H_2_tensor, ...
             pepo_order, handle, opts);
 
-        [err, ~] = calculate_error(pepo, [1,1,1;1,1,1;], struct("numbered", false, "h_cyclic",1,"v_cyclic", 1));
+        [err, ~] = calculate_error(pepo, [1, 1, 1; 1, 1, 1; ], struct("numbered", false, "h_cyclic", 1, "v_cyclic", 1));
 
         fprintf(" beta %.4e err %.4e \n", beta, err);
         err_arr(i) = abs(err);

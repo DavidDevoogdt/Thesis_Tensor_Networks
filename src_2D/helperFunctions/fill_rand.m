@@ -1,11 +1,11 @@
 function obj = fill_rand(obj, patterns, start_size)
     if nargin < 3
-        start_size = 1/exp(obj.nf);
+        start_size = 1 / exp(obj.nf);
     end
 
     H = obj.virtual_level_sizes_horiz;
     V = obj.virtual_level_sizes_vert;
-    d=obj.dim;
+    d = obj.dim;
 
     %guess initial value
     for i = 1:size(patterns, 2)

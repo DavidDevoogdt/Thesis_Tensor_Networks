@@ -502,10 +502,10 @@ function obj = make_PEPO_2D_A(obj)
 
     if obj.testing == 1
         calculate_error(obj, [
-                            0, 1, 0, 0;
-                            0, 1, 1, 0;
-                            0, 1, 1, 0;
-                            0, 0, 0, 0], struct)
+                        0, 1, 0, 0;
+                        0, 1, 1, 0;
+                        0, 1, 1, 0;
+                        0, 0, 0, 0], struct)
 
         calculate_error(obj, [0, 1, 0;
                         1, 1, 1;

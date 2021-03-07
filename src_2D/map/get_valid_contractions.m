@@ -6,8 +6,6 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     addParameter(p, 'pattern', {}, @(x) iscell(x))%additional allowed patterns
     parse(p, opts)
 
-
-
     patterns = p.Results.pattern;
     num_patterns = numel(patterns);
 
@@ -18,8 +16,7 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     for pat_num = 1:num_patterns
         pat = patterns{pat_num};
         ie(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 1;
-        
-        
+
         iepat(pat(1) + 1, pat(2) + 1, pat(3) + 1, pat(4) + 1) = 0; %remove in case already here
     end
 
@@ -30,7 +27,7 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     pat_cells_cell = cell(1, numel(obj.bounds));
 
     total_counter = 0;
-    
+
     for b = 1:numel(obj.bounds)
 
         bound = obj.bounds(b);
@@ -136,7 +133,7 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
 
                 real_index = lookup{ii}(indices{ii});
 
-                st = [size(tensor_list{ii},3),size(tensor_list{ii},4),size(tensor_list{ii},5),size(tensor_list{ii},6)];
+                st = [size(tensor_list{ii}, 3), size(tensor_list{ii}, 4), size(tensor_list{ii}, 5), size(tensor_list{ii}, 6)];
 
                 s = cell(4, 1);
 
@@ -155,28 +152,27 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
             contraction_cell_counter = contraction_cell_counter + 1;
         end
 
-        con_cell_cell{b}= contraction_cell ;
-        
-        total_counter = total_counter+contraction_cell_counter-1;
+        con_cell_cell{b} = contraction_cell;
+
+        total_counter = total_counter + contraction_cell_counter - 1;
     end
 
-    contraction_cell = cell(total_counter,1);
-    pat_cells = zeros(total_counter,1)==1;
-    
+    contraction_cell = cell(total_counter, 1);
+    pat_cells = zeros(total_counter, 1) == 1;
+
     counter = 1;
-    
+
     for i = 1:numel(obj.bounds)
-        num = numel( con_cell_cell{i} );
-        contraction_cell(counter:counter+num-1) =  con_cell_cell{i};
-        
-        m = find(pat_cells_cell{i})+counter-1;
-        
-        pat_cells( m )  = 1;
-        counter = counter+num;
-    
+        num = numel(con_cell_cell{i});
+        contraction_cell(counter:counter + num - 1) = con_cell_cell{i};
+
+        m = find(pat_cells_cell{i}) + counter - 1;
+
+        pat_cells(m) = 1;
+        counter = counter + num;
+
     end
-    
-    
+
     %% old (slow) version
 
     %     %%%%%%%%% previous results
@@ -287,7 +283,5 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     %         end
     %     end
     %     toc
-    
-    
-    
+
 end
