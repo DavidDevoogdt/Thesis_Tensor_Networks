@@ -98,10 +98,16 @@ classdef generateMPO
 
             obj.MPO_type = "cell"; %for creation,type iscasted later
 
-            unnorm = reshape(expm(obj.H_1_tensor), [1, d, d, 1]);
-
+            %reshape(expm(obj.H_1_tensor), [1, d, d, 1]);
+            
+            %unnorm = reshape(expm(obj.H_1_tensor), [1, d, d, 1]);
+            
+            
             obj.MPO_cell = cell(obj.order, obj.order);
 
+            
+            unnorm = reshape(eye(d), [1, d, d, 1]);
+            
             obj.MPO_cell{0+1, 0+1} = unnorm / obj.nf;
 
             obj.current_max_index = 0;
@@ -284,7 +290,10 @@ classdef generateMPO
             end
 
 
-            obj.MPO_cell{1, 1} = reshape(expm(obj.H_1_tensor)/obj.nf, [1, d, d, 1]);
+            unnorm = reshape(eye(d), [1, d, d, 1]);
+            obj.MPO_cell{0+1, 0+1} = unnorm / obj.nf;
+            
+            %obj.MPO_cell{1, 1} = reshape(expm(obj.H_1_tensor)/obj.nf, [1, d, d, 1]);
 
 
             %N=number of free bonds

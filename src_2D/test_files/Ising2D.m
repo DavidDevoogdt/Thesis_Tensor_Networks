@@ -8,12 +8,12 @@ fold2 = strjoin(pathparts, '/');
 
 dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
 
-chi_arr = [15];
+chi_arr = [5,10,15, 20, 25, 30, 35, 40];
 g = 2.5;
 
-mbound = [0.6, 0.3];
+mbound = [0.6, 0.1];
 
-calc_ising_2d(1.1, 1, g, chi_arr, 0.05, 0.02, mbound, fold2, dt, 0);
+calc_ising_2d(1.21, 1, g, chi_arr, 0.01, 0.01, mbound, fold2, dt, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 %plot_onsager(m_arr, T_arr, 1,g,chi)
@@ -29,7 +29,7 @@ function calc_ising_2d(T, J, g, chi_arr, aim_dx, aim_dy, mbound, fold2, dt, onsa
     opts.visualise = 0;
     opts.double = 0;
 
-    for t = 1:numel(chi_arr)
+    parfor t = 1:numel(chi_arr)
         chi = chi_arr(t);
 
         name = sprintf("%s/Ising2D_g=%.4e_chi=%d_%s.mat", fold2, g, chi, dt);
@@ -122,12 +122,13 @@ function calc_ising_2d(T, J, g, chi_arr, aim_dx, aim_dy, mbound, fold2, dt, onsa
             corr_arr(i) = corr_len;
             marek_arr(i) = marek;
 
-            saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', T_arr, m_arr, corr_arr, marek_arr, chi, J);
+            saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', T_arr, m_arr, corr_arr, marek_arr, chi, J, g);
 
             if m < mbound(2)
                 deadcounter = deadcounter -1;
 
                 if deadcounter == 0
+                    fprintf('%d finished', chi)
                     break;
                 end
 
@@ -142,7 +143,7 @@ function calc_ising_2d(T, J, g, chi_arr, aim_dx, aim_dy, mbound, fold2, dt, onsa
         corr_arr = corr_arr(1:i);
         marek_arr = marek_arr(1:i);
 
-        saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', T_arr, m_arr, corr_arr, marek_arr, chi, J);
+        saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', T_arr, m_arr, corr_arr, marek_arr, chi, J, g);
 
         fprintf("")
     end

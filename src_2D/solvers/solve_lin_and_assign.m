@@ -43,12 +43,12 @@ function [obj, target_site, res_target, ln_prefact_out, rank_x] = solve_lin_and_
 
     res_target = ipermute(reshape(res_target, dimension_vector(d, 2 * map.N)), site_ordering_permute(map.N));
 
-    %if obj.testing == 1
+    if obj.testing == 1
         temp_list_1 = fetch_PEPO_cells(obj, map, res_con{1}{1}, ln_prefact_out);
         A1 = ncon(temp_list_1, map.leg_list);
         diff = A1 - res_target;
         svds(reshape(diff, [d^map.N, d^map.N]))
-    %end
+    end
 
     %target = reshape(target, [d^map.N, d^map.N]);
     

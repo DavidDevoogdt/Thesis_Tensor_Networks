@@ -428,7 +428,7 @@ function obj = make_PEPO_2D_A(obj)
 
     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
 
-    alpha_dim = 16;
+    alpha_dim = 14;
     %beta_dim = 16;
 
     lnlopts = struct('Display', 0, 'maxit', 1);

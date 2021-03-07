@@ -5,11 +5,12 @@ pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
 fold2 = strjoin(pathparts, '/');
 
 names = {
-    ...%'Ising2D_g=2.5000e+00_chi=10_05_March_2021_13:25.mat';
-    'Ising2D_g=2.5000e+00_chi=25_05_March_2021_13:25.mat';
-    'Ising2D_g=2.5000e+00_chi=15_05_March_2021_13:25.mat';
-    'Ising2D_g=2.5000e+00_chi=30_05_March_2021_13:25.mat';
-    'Ising2D_g=2.5000e+00_chi=20_05_March_2021_13:25.mat'
+    'Ising2D_g=2.5000e+00_chi=15_06_March_2021_12:10.mat';
+   'Ising2D_g=2.5000e+00_chi=20_06_March_2021_12:10.mat';
+   'Ising2D_g=2.5000e+00_chi=25_06_March_2021_12:10.mat';
+   'Ising2D_g=2.5000e+00_chi=30_06_March_2021_12:10.mat';
+   'Ising2D_g=2.5000e+00_chi=35_06_March_2021_12:10.mat';
+   'Ising2D_g=2.5000e+00_chi=40_06_March_2021_12:10.mat';
 };
 
 for i = 1:numel(names)
