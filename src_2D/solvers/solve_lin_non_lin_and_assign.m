@@ -62,7 +62,7 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
     for j = 1:maxit
 
         for i = 1:numel(patterns)
-            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, -1, 1,con_cells, pat_cells,target_site);
+            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, -1, 0,con_cells, pat_cells,target_site);
         end
 
         err_vect = contract_con_cells(obj, map, ln_prefact_out, target_site, con_cells);

@@ -370,18 +370,23 @@ function obj = make_PEPO_2D_A(obj)
     end
 
     %%
-    % 4 2 leg requires to much ram
-    % [map, ~] = create_map([
-    %                     0, 0, 1, 0, 0;
-    %                     0, 0, 1, 0, 0;
-    %                     1, 1, 1, 1, 1;
-    %                     0, 0, 1, 0, 0;
-    %                     0, 0, 1, 0, 0], obj.numopts);
-    % pattern = {[2, 2, 2, 2]};
-    % [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %4 2 leg requires to much ram
+    [map, ~] = create_map([
+                        0, 0, 1, 0, 0;
+                        0, 0, 1, 0, 0;
+                        1, 1, 1, 1, 1;
+                        0, 0, 1, 0, 0;
+                        0, 0, 1, 0, 0]);
+    pattern = {[2, 2, 2, 2]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
 
     if obj.testing == 1
-        calculate_error(obj, [0, 0, 8, 0, 0; 1, 2, 3, 4, 5; 0, 0, 6, 0, 0; 0, 0, 7, 0, 0], obj.numopts)
+        calculate_error(obj, [
+                        0, 0, 1, 0, 0;
+                        0, 0, 1, 0, 0;
+                        1, 1, 1, 1, 1;
+                        0, 0, 1, 0, 0;
+                        0, 0, 1, 0, 0], obj.numopts)
     end
     %%
 
@@ -423,10 +428,10 @@ function obj = make_PEPO_2D_A(obj)
 
     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
 
-    alpha_dim = 10;
+    alpha_dim = 16;
     %beta_dim = 16;
 
-    lnlopts = struct('Display', 1, 'maxit', 1);
+    lnlopts = struct('Display', 0, 'maxit', 1);
     %obj.cycle_index = a;
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
@@ -496,9 +501,11 @@ function obj = make_PEPO_2D_A(obj)
     end
 
     if obj.testing == 1
-        calculate_error(obj, [0, 0, 0;
-                        1, 1, 1;
-                        0, 1, 1], struct)
+        calculate_error(obj, [
+                            0, 1, 0, 0;
+                            0, 1, 1, 0;
+                            0, 1, 1, 0;
+                            0, 0, 0, 0], struct)
 
         calculate_error(obj, [0, 1, 0;
                         1, 1, 1;
@@ -553,20 +560,16 @@ function obj = make_PEPO_2D_A(obj)
         [map, ~] = create_map(map);
         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
 
-        dbool = 0;
-        if dbool == 1
-            [map, pattern] = rotate([
-                                0, 0, 1, 0;
-                                0, 0, 1, 0;
-                                1, 1, 1, 1;
-                                0, 0, 1, 1;
-                                ], {
-            [2, 1, a, a]
-            }, k);
-            [map, ~] = create_map(map);
-            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
-
-        end
+        [map, pattern] = rotate([
+                            0, 0, 1, 0;
+                            0, 0, 1, 0;
+                            1, 1, 1, 1;
+                            0, 0, 1, 1;
+                            ], {
+        [2, 2, a, a]
+        }, k);
+        [map, ~] = create_map(map);
+        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     end
 
     if obj.testing == 1
@@ -617,7 +620,7 @@ function obj = make_PEPO_2D_A(obj)
     %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnlopts);
     %
     %         [map, pattern] = rotate([
-    %                             0, 1, 0, 0;
+    %                             0, 1, 3, 0;
     %                             1, 1, 1, 1;
     %                             0, 1, 1, 0;
     %                             ], {
@@ -636,7 +639,6 @@ function obj = make_PEPO_2D_A(obj)
                         0, 1, 1, 0;
                         0, 0, 0, 0], struct, 1)
     end
-
 end
 
 function [m, p] = rotate(m, p, k)

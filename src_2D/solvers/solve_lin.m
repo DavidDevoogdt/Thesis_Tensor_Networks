@@ -47,8 +47,10 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
         rem_map = remove_elem(num, rem_map);
     end
 
-    [dims, dim_arr, bond_pairs] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
+    [dims, dim_arr, bond_pairs,ext_dims] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
 
+    
+    
     method = nargin < 6;
 
     inv_eps =  obj.inv_eps;
@@ -59,18 +61,23 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
         tensors = fetch_PEPO_cells(obj, map, cc{1}, lnprefact);
 
-        legs = get_legs(map, nums);
+        %legs2 = get_legs(map, nums);
+        
+        legs = get_legs_2(rem_map,nums);
+        %
+        
 
         if ~isempty(legs)
-
-            leg_num = [];
+            
+            ext_ord2 = [];
 
             perm_vect = zeros(map.N - num_pats, 1);
             perm_dims = zeros(size(legs, 1), 1);
             perm_c = 1;
             for ii = 1:numel(legs)
-
-                leg_num = [leg_num, legs{ii}{1}{1}];
+    
+                ext_ord2 = [ext_ord2,legs{ii}{1} ];
+                
                 leg = sort(legs{ii}{2});
                 nl = size(leg, 2);
                 perm_vect(perm_c:perm_c + nl - 1) = leg;
@@ -78,6 +85,11 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
                 perm_dims(ii) = obj.dim^(2 * nl);
             end
 
+
+            [~,order] = sort(-ext_ord2);
+            eord = cell(numel(legs),1);
+            
+            
             perm_dims = [perm_dims, obj.dim^(2 * num_pats)];
             perm_vect = [perm_vect; nums];
 
@@ -97,6 +109,8 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
                 mask = mask ~= 0;
 
                 new_map = map.num_map .* mask;
+                
+                %make newe map with only branch
                 [~, new_map(mask)] = sort(new_map(mask));
 
                 new_map = create_map(new_map, obj.numopts);
@@ -105,8 +119,17 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
                 size_A = size(A);
                 ext = size_A(2 * numel(leg) + 1:end);
+    
+                %ext_perm = find(ext ~= 1);
+                d2 =  [2 * numel(leg) + 1:size(size_A, 2)];
+                %patch = d2(ext_perm);
+                %d2(ext_perm) = patch(iorder(external_order_orig)  ) ;
+                
+                
+                pvect = [site_ordering_permute(numel(leg))',d2];
+                
 
-                A = reshape(permute(A, [site_ordering_permute(numel(leg))', 2 * numel(leg) + 1:size(size_A, 2)]), ...
+                A = reshape(permute(A, pvect), ...
                     [obj.dim^(2 * numel(leg)), prod(ext)]);
 
                 A_list{ii} = A;
@@ -114,13 +137,37 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
             target_rot = permute(residual_target, perm_vect);
             target_rot = reshape(target_rot, perm_dims);
+            
+            x = lin_solver_core(A_list, target_rot, inv_eps   );
 
-            x = lin_solver_core(A_list, target_rot, inv_eps);
+            
+            %fix order
+            
+            ext_ord2 = [];
+            for ii = 1:numel(legs)
+                
+              ext_ord2 = [ext_ord2, legs{ii}{1}  ];
+            end
+
+
+            [~,order] = sort(-ext_ord2);
+            
+            x = reshape(x, [ ext_dims( iorder(order) ), obj.dim^(2*num_pats)]  ); %split in dims per leg
+            
+            x = permute(x, [order,numel(order)+1]   ); %put legs in order according to sites
+            
+            
+            x = reshape(x, [dim_arr,dimension_vector(obj.dim^2, num_pats)]  );%put back per site
+            
+            x = permute(x, site_ordering_permute(num_pats, 1)); %put physical dims next to site
+
 
         else
             x = residual_target;
+            x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
+            x = permute(x, site_ordering_permute(num_pats, 1));
         end
-    else % do it all at once
+    else % do it all at once, slow for large cells
         %remove target from map to the back and adapt order of target
 
         target_rot = permute_rhs(residual_target, nums); %put part in back
@@ -135,12 +182,14 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
         dA = decomposition(A_res, 'qr', 'RankTolerance', inv_eps, 'CheckCondition', false);
         x = dA \ target_rot;
+        
+        x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
+        x = permute(x, site_ordering_permute(num_pats, 1));
 
         %x = lsqminnorm(A_res,target_rot,inv_eps);
     end
 
-    x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
-    x = permute(x, site_ordering_permute(num_pats, 1));
+   
 
     rank_x = NaN;
 
