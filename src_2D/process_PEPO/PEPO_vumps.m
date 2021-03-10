@@ -1,4 +1,4 @@
-function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
+function [A, B, G1, lambda1, ctr, err] = PEPO_vumps(obj, chimax)
 
     %todo check these params
     opts.charges = 'regular';
@@ -8,6 +8,7 @@ function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
     opts.chimax = 350;
     %opts.disp='iter';
     opts.disp = 'none';
+    %opts.disp = 'conv';
     opts.tolmax = 1e-4; %1e-4
     opts.tolfactor = 1e4;
     opts.minit = 1;
@@ -20,7 +21,7 @@ function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
 
     opts.plot = 'on';
     opts.maxit = 1000;
-    opts.tolfixed = 1e-10;
+    opts.tolfixed = 1e-12;
 
     %put into vumps format
 
@@ -41,7 +42,9 @@ function [A, B, G1, lambda1] = PEPO_vumps(obj, chimax)
     O.type = 'mpo';
     O.mpo = o;
 
-    [A, G1, lambda1, ~, ~] = Vumps(O, chimax, [], opts);
+    [A, G1, lambda1, ctr, err] = Vumps(O, chimax, [], opts);
+
+    %err = err0 > opts.tolfixed;
 
     %correct estimate for inversion sym?
 

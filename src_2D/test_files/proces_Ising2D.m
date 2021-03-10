@@ -4,22 +4,50 @@ pathparts = strsplit(fold, '/');
 pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
 fold2 = strjoin(pathparts, '/');
 
-names = {
-    'Ising2D_g=2.5000e+00_chi=15_06_March_2021_12:10.mat';
-    'Ising2D_g=2.5000e+00_chi=20_06_March_2021_12:10.mat';
-    'Ising2D_g=2.5000e+00_chi=25_06_March_2021_12:10.mat';
-    'Ising2D_g=2.5000e+00_chi=30_06_March_2021_12:10.mat';
-    'Ising2D_g=2.5000e+00_chi=35_06_March_2021_12:10.mat';
-    'Ising2D_g=2.5000e+00_chi=40_06_March_2021_12:10.mat';
-    };
+% names = {{
+% %'Ising2D_g=2.5000e+00_chi=5_07_March_2021_18:08.mat';
+% %'Ising2D_g=2.5000e+00_chi=10_07_March_2021_18:08.mat';
+% %'Ising2D_g=2.5000e+00_chi=15_07_March_2021_18:08.mat';
+% %'Ising2D_g=2.5000e+00_chi=20_07_March_2021_18:08.mat';
+% %'Ising2D_g=2.5000e+00_chi=25_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=30_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=35_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=40_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=45_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=50_07_March_2021_18:08.mat';
+%     'Ising2D_g=2.5000e+00_chi=55_07_March_2021_18:08.mat';
+% % 'Ising2D_g=2.5000e+00_chi=35_07_March_2021_17:28.mat';
+% % 'Ising2D_g=2.5000e+00_chi=40_07_March_2021_17:28.mat';
+%     }, {
+%     'Ising2D_g=2.5000e+00_chi=15_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=20_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=25_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=30_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=35_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=40_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=45_07_March_2021_23:19.mat';
+%     'Ising2D_g=2.5000e+00_chi=50_07_March_2021_23:19.mat';
+%     }};
 
-for i = 1:numel(names)
-    load(sprintf("%s/%s", fold2, names{i}));
+names = {{
+    'Ising2D_g=2.5000e+00_chi=30_09_March_2021_20:36.mat';
+    'Ising2D_g=2.5000e+00_chi=35_09_March_2021_20:36.mat';
+    }};
 
-    plot_Ising2D(m_arr, T_arr, J, 2.5, chi, i)
+for j = 1:numel(names)
+    for i = 1:numel(names{j})
+        load(sprintf("%s/%s", fold2, names{j}{i}));
+
+        mask = T_arr > 0;
+        [T_arr, idx] = sort(T_arr(mask));
+        m_arr = m_arr(mask);
+        m_arr = m_arr(idx);
+
+        plot_Ising2D(m_arr, T_arr, J, 2.5, chi, i, j)
+    end
 end
 
-function plot_Ising2D(m_arr, T_arr, J, g, chi, i)
+function plot_Ising2D(m_arr, T_arr, J, g, chi, i, j)
 
     %print(f);
 
@@ -27,7 +55,7 @@ function plot_Ising2D(m_arr, T_arr, J, g, chi, i)
     m_arr = m_arr(mask);
     T_arr = T_arr(mask);
 
-    figure(1);
+    figure(j);
     %loglog(  beta_arr,err_arr );
     hold on
     plot(T_arr, m_arr, '*-', 'DisplayName', sprintf("chi = %d", chi));
@@ -49,8 +77,8 @@ function plot_Ising2D(m_arr, T_arr, J, g, chi, i)
     %plot(T_arr, fitfun(T_arr));
 
     if i == 1
-        ylim([0.25, 0.6]);
-        xlim([1.23, 1.285])
+        ylim([0.25, 0.55]);
+        xlim([1.25, 1.285])
 
         xline(1.27376)
 

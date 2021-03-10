@@ -8,12 +8,12 @@ fold2 = strjoin(pathparts, '/');
 
 dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
 
-chi_arr = [5, 10, 15, 20, 25, 30, 35, 40];
+chi_arr = [15, 20, 25, 30, 35, 40, 45, 50, 55];
 g = 2.5;
 
 mbound = [0.6, 0.1];
 
-calc_ising_2d(1.21, 1, g, chi_arr, 0.01, 0.01, mbound, fold2, dt, 0);
+calc_ising_2d(1.24, 1, g, chi_arr, 0.01, 0.01, mbound, fold2, dt, 0);
 
 %[f,gof] = fit_data(1,1e-7,m_arr, T_arr);
 %plot_onsager(m_arr, T_arr, 1,g,chi)
@@ -87,6 +87,10 @@ function calc_ising_2d(T, J, g, chi_arr, aim_dx, aim_dy, mbound, fold2, dt, onsa
             f = @(t) sqrt(1 + (scale_factor_dy * (dmdT(t))).^2);
             arc_len = @(dt) integral(f, T0, T0 + dt) - ds;
             dT = fzero(arc_len, [0, ds * 1.01]);
+
+            if dT < 0.001
+                dT = 0.01;
+            end
 
             T0 = T0 + dT;
 
