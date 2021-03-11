@@ -12,16 +12,16 @@ mbound = [0.3, 1];
 
 g = 2.5;
 
-nsammple = 10;
-
 switch getenv('USER')
     case "david"
         chi_arr = [15];
-        calc_ising_2d(1.1, 2.8, 1, g, chi_arr, 0.1, 0.1, fold2, dt, 1, nsammple, mbound);
+        nsammple = 4;
+        %calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 0, nsammple, mbound);
+        calc_ising_2d(1.1, 2.9, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 1, nsammple, mbound);
     otherwise
         nsammple = 20;
-        chi_arr = [45, 50];
-        calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.05, 0.01, fold2, dt, 0, nsammple, mbound);
+        chi_arr = [35, 40];
+        calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.02, 0.01, fold2, dt, 0, nsammple, mbound);
 end
 
 %
@@ -48,19 +48,24 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
     for t = 1:numel(chi_arr)
         chi = chi_arr(t);
 
-        name = sprintf("%s/Ising2D_g=%.4e_chi=%d_%s.mat", fold2, g, chi, datet);
-        disp(name);
+        cc = sprintf("%s/Ising2D_g=%.4e_chi=%d_%s", fold2, g, chi, datet);
+        fprintf("%s.mat", cc);
 
-        maxit = 100;
+        maxit = 10;
 
-        T_arr = zeros(1, maxit * nsammple);
-        m_arr = zeros(1, maxit * nsammple);
-        corr_arr = zeros(1, maxit * nsammple);
-        marek_arr = zeros(1, maxit * nsammple);
+        T_arr = zeros(maxit, nsammple);
+        m_arr = zeros(maxit, nsammple);
+        corr_arr = zeros(maxit, nsammple);
+        marek_arr = zeros(maxit, nsammple);
+        ctr_arr = zeros(maxit, nsammple);
+        vumps_err_arr = zeros(maxit, nsammple);
 
         %T0=1;
 
         for i = 1:maxit
+            
+            
+            
             if i == 1
                 T0 = (Tmax - Tmin) / (nsammple - 1) * (0:nsammple - 1) + Tmin;
             else
@@ -108,33 +113,11 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
 
             end
 
-            [m0, corr_len0, marek0, T_max] = Ising2D_core(T0, J, g, onsager, chi, i, T_max);
+            T_arr(i, :) = T0;
 
-            m_arr((i - 1) * nsammple + 1:i * nsammple) = m0;
-            T_arr((i - 1) * nsammple + 1:i * nsammple) = T0;
-            corr_arr((i - 1) * nsammple + 1:i * nsammple) = corr_len0;
-            marek_arr((i - 1) * nsammple + 1:i * nsammple) = marek0;
+            [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr] = Ising2D_core(cc,  J, g, onsager, chi, i, m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr);
 
-            saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', T_arr, m_arr, corr_arr, marek_arr, chi, J, g);
-
-            %print current status
-            %mask = T_arr > 0;
-            %[T_arr_2, idx] = sort(T_arr(mask));
-            %m_arr_2 = m_arr(mask);
-            %m_arr_2 = m_arr_2(idx);
-            %disp(T_arr_2);
-            %disp(m_arr_2);
-            %
         end
-
-        %strip trailing places in saved array
-
-        T_arr = T_arr(1:i * nsammple);
-        m_arr = m_arr(1:i * nsammple);
-        corr_arr = corr_arr(1:i * nsammple);
-        marek_arr = marek_arr(1:i * nsammple);
-
-        saveboy(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', T_arr, m_arr, corr_arr, marek_arr, chi, J, g);
 
         fprintf("")
     end

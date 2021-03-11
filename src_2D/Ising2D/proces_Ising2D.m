@@ -1,8 +1,4 @@
-fold = mfilename('fullpath');
-pathparts = strsplit(fold, '/');
 
-pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
-fold2 = strjoin(pathparts, '/');
 
 % names = {{
 % %'Ising2D_g=2.5000e+00_chi=5_07_March_2021_18:08.mat';
@@ -30,20 +26,20 @@ fold2 = strjoin(pathparts, '/');
 %     }};
 
 names = {{
-    'Ising2D_g=2.5000e+00_chi=30_09_March_2021_20:36.mat';
-    'Ising2D_g=2.5000e+00_chi=35_09_March_2021_20:36.mat';
+    'Ising2D_g=2.5000e+00_chi=15_11_March_2021_11:54';
     }};
+
+filterPoints = 1;
 
 for j = 1:numel(names)
     for i = 1:numel(names{j})
-        load(sprintf("%s/%s", fold2, names{j}{i}));
+        
+        [T_arr, m_arr, marek_arr, corr_arr,vumps_err_arr,ctr_arr,J,chi,g]  = fetch_matfiles(names{j}{i});
+       
 
-        mask = T_arr > 0;
-        [T_arr, idx] = sort(T_arr(mask));
-        m_arr = m_arr(mask);
-        m_arr = m_arr(idx);
+        [T_arr, m_arr, marek_arr, corr_arr] = filter_ising_results(T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, filterPoints);
 
-        plot_Ising2D(m_arr, T_arr, J, 2.5, chi, i, j)
+        plot_Ising2D(m_arr, T_arr, J, g, chi, i, j)
     end
 end
 

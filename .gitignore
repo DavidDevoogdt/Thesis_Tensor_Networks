@@ -37,7 +37,8 @@ src_2D/.vscode/settings.json
 src_2D/.vscode
 
 figures_2D/*
-IsingMatfiles/*
 load_calana.sh
 matlab_calana.sh
 transfer_calana
+IsingMatFiles/*.mat
+IsingMatFiles/*/*.mat
