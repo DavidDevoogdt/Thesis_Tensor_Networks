@@ -42,3 +42,4 @@ matlab_calana.sh
 transfer_calana
 IsingMatFiles/*.mat
 IsingMatFiles/*/*.mat
+calana.sh

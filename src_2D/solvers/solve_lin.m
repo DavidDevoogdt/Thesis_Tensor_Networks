@@ -106,14 +106,14 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
                 new_map = map.num_map .* mask;
 
                 %make newe map with only branch
-                
-                sz = size(new_map);
-                new_map = reshape(new_map,[],1);
-                [~,ord] =  sort(new_map(new_map>0));
 
-                new_map(new_map>0) = iorder(ord);
-                
-                new_map = reshape(new_map,sz);
+                sz = size(new_map);
+                new_map = reshape(new_map, [], 1);
+                [~, ord] = sort(new_map(new_map > 0));
+
+                new_map(new_map > 0) = iorder(ord);
+
+                new_map = reshape(new_map, sz);
 
                 new_map = create_map(new_map, obj.numopts);
 

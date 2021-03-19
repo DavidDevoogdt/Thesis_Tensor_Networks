@@ -1,11 +1,15 @@
-function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, patfilt)
+function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, assignfn, step)
 
-    obj = fill_rand(obj, patterns);
+    obj = fill_rand(obj, patterns, 1 / exp(obj.nf));
+
+    if nargin >= 6
+        [obj, full_pat] = assignfn(obj);
+    end
 
     p = inputParser;
     addParameter(p, 'maxit', 20)
     addParameter(p, 'solved', 1e-16)
-    addParameter(p, 'minchange', 0.99)
+    addParameter(p, 'minchange', 1 - 1e-4)
     addParameter(p, 'display', 0)
     parse(p, opts);
 
@@ -32,40 +36,66 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
         fprintf("starting solver")
     end
 
-    if nargin >= 6
-        pcells = find(pat_cells);
+    % if nargin >= 6
+    %     pcells = find(pat_cells);
 
-        matching = zeros(size(pcells));
-        for i = 1:numel(pcells)
-            ccell = all_con_cells{pcells(i)}{1};
+    %     matching = zeros(size(pcells));
+    %     for i = 1:numel(pcells)
+    %         ccell = all_con_cells{pcells(i)}{1};
 
-            match = zeros(size(ccell));
-            for j = 1:numel(ccell)
-                for k = 1:numel(patfilt)
-                    if sum(patfilt{k} == ccell{j}) == 4
-                        match(j) = 1;
-                        break;
-                    end
-                end
-            end
-            if match == ones(size(match))
-                matching(i) = 1;
-            end
-        end
+    %         match = zeros(size(ccell));
+    %         for j = 1:numel(ccell)
+    %             for k = 1:numel(patfilt)
+    %                 if sum(patfilt{k} == ccell{j}) == 4
+    %                     match(j) = 1;
+    %                     break;
+    %                 end
+    %             end
+    %         end
+    %         if match == ones(size(match))
+    %             matching(i) = 1;
+    %         end
+    %     end
 
-        pat_cells(pcells(~matching)) = 0;
+    %     pat_cells(pcells(~matching)) = 0;
 
-    end
+    % end
 
     for j = 1:maxit
 
         for i = 1:numel(patterns)
+            if nargin >= 6
+                leg = patterns{1};
+                prev_A = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
+            end
+
             obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, -1, 0, con_cells, pat_cells, target_site);
+
         end
 
-        err_vect = contract_con_cells(obj, map, ln_prefact_out, target_site, con_cells);
-        mul_factor = exp(ln_prefact_out - obj.nf);
-        err = sum(svds(reshape(err_vect, [obj.dim^(map.N), obj.dim^(map.N)]), 10).^2).^0.5 * mul_factor;
+        if nargin < 6
+            err_vect = contract_con_cells(obj, map, ln_prefact_out, target_site, con_cells);
+            mul_factor = exp(ln_prefact_out - obj.nf);
+            err = sum(svds(reshape(err_vect, [obj.dim^(map.N), obj.dim^(map.N)]), 10).^2).^0.5 * mul_factor;
+
+        else
+
+            leg = patterns{1};
+            new = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
+            old = prev_A;
+
+            dist = norm(reshape(new - old, [], 1));
+
+            ss = step / (dist);
+
+            obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1} = old + step * (new - old);
+
+            %obj = rescale_PEPO_pattern(obj, full_pat,1.0001,0);
+
+            obj = assignfn(obj);
+
+            err = calculate_error(obj, map.num_map, map.opts);
+        end
 
         if p.Results.display == 1
             fprintf("%3d: %.4e\n", j, err);
@@ -79,10 +109,25 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
         end
 
         if err / prev_err > p.Results.minchange
-            break;
+            if nargin >= 6
+                step = step * 0.9;
+
+                if step < 0.05
+                    fprintf("not solved, res err %.4e\n", err)
+                    break;
+                end
+
+            else
+                fprintf("not solved, res err %.4e\n", err)
+                break;
+            end
         end
 
         prev_err = err;
     end
 
+end
+
+function F = simil(x, A, B)
+    F = ncon({inv(x), A, x}, {[-3, 1], [-1, -2, 1, 2], [2, -4]}) - B;
 end

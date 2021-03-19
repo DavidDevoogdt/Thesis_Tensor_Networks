@@ -1,4 +1,4 @@
-function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, targets, x0, x_sizes, ln_prefactor)
+function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, extended_patterns, pattern_root, pattern_permutations, targets, x0, x_sizes, ln_prefactor)
 
     if nargin < 8
         ln_prefactor = 0;
@@ -44,7 +44,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
         for con_cell_index = 1:size(con_cells, 2)
 
             legs = con_cells{con_cell_index}{1};
-            temp_list_1 = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, x_cell);
+            temp_list_1 = fetch_PEPO_cells(obj, map, legs, ln_prefactor, root_patterns, x_cell, extended_patterns, pattern_root, pattern_permutations);
 
             A1 = ncon(temp_list_1, map.leg_list);
             %F_sub = F_sub + reshape(  permute(A1,site_ordering_permute(map.N2)), size(target));
@@ -66,18 +66,18 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
 
                     x = x_cell{pat_num};
 
-                    if size(patterns{pat_num}, 2) == 2%boundary matrix
+                    if size(root_patterns{pat_num}, 2) == 2%boundary matrix
 
                         grad_total_size = [numel(target), numel(x)];
                         Grad_total = zeros(grad_total_size);
 
                         for ii = 1:size(legs, 2)
 
-                            if same_pattern(legs{ii}, patterns{pat_num})
+                            if same_pattern(legs{ii}, root_patterns{pat_num})
 
                                 map2 = remove_elem(ii, map);
 
-                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, patterns);
+                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
                                 Grad_total = Grad_total + Ai;
                             end
                         end
@@ -93,7 +93,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
                         num = 0;
 
                         for ii = 1:size(legs, 2)
-                            if same_pattern(legs{ii}, patterns{pat_num})
+                            if same_pattern(legs{ii}, root_patterns{pat_num})
 
                                 index_before = num;
                                 index_after = map.N2 - num - 1;
@@ -102,7 +102,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, patterns, target
 
                                 map2 = remove_elem(ii, map);
 
-                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, patterns);
+                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
 
                                 size_x = size_x_red(2:5);
                                 non_connected = map.leg_list{ii} < 0;

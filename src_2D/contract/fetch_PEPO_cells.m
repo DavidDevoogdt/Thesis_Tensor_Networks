@@ -1,4 +1,4 @@
-function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
+function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs, extended_patterns, pattern_root, pattern_permutations)
 
     if nargin < 4
         ln_prefactor = obj.nf;
@@ -11,6 +11,9 @@ function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
     end
 
     num_patterns = size(patterns, 2);
+    if nargin > 6
+        num_ex_patterns = numel(extended_patterns);
+    end
 
     tensors = cell(1, map.N);
 
@@ -25,6 +28,19 @@ function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs)
                 tensorsn = xs{ii};
                 matched_pattern = 1;
                 break;
+            end
+        end
+
+        if nargin > 6
+            for ii = 1:num_ex_patterns
+                if same_pattern(leg, extended_patterns{ii}) == 1
+                    real_pat = [1, 2, pattern_permutations{ii} + 2];
+
+                    orig_ii = pattern_root(ii);
+                    tensorsn = permute(xs{orig_ii}, real_pat);
+                    matched_pattern = 1;
+                    break;
+                end
             end
         end
 

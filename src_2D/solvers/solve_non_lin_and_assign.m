@@ -1,8 +1,13 @@
-function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, pattern, ln_prefact, opts)
+function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, ln_prefact, opts, extended_patterns_permutations)
 
     d = obj.dim;
 
-    obj = fill_rand(obj, pattern);
+    [extended_patterns, pattern_root, pattern_permutations] = extend_pattern(root_patterns, extended_patterns_permutations);
+
+    obj = fill_rand(obj, root_patterns, obj.nf);
+    obj = fill_rand(obj, extended_patterns, obj.nf);
+
+    all_patterns = [root_patterns, extended_patterns];
 
     nmaps = numel(maps);
     targets = cell(1, nmaps);
@@ -17,7 +22,7 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, pattern, ln_pre
             [target, ~] = H_exp(obj, maps{i}, ln_prefact_out, false);
         end
         targets{i} = reshape(permute(target, site_ordering_permute(maps{i}.N)), dimension_vector(d^2, maps{i}.N));
-        con_cells{i} = get_valid_contractions(obj, maps{i}, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
+        con_cells{i} = get_valid_contractions(obj, maps{i}, struct('max_index', obj.current_max_index, 'pattern', {all_patterns}));
     end
 
     mul_factor = exp(ln_prefact_out - obj.nf);
@@ -26,10 +31,10 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, pattern, ln_pre
     %        maps = {maps};
     %     end
 
-    x_cell = solve_non_lin(obj, pattern, maps, targets, con_cells, opts, ln_prefact_out);
+    x_cell = solve_non_lin(obj, root_patterns, extended_patterns, pattern_root, pattern_permutations, maps, targets, con_cells, opts, ln_prefact_out);
 
-    for i = 1:size(pattern, 2)
-        obj.PEPO_cell{pattern{i}(1) + 1, pattern{i}(2) + 1, pattern{i}(3) + 1, pattern{i}(4) + 1} = x_cell{i} * mul_factor;
+    for i = 1:size(all_patterns, 2)
+        obj.PEPO_cell{all_patterns{i}(1) + 1, all_patterns{i}(2) + 1, all_patterns{i}(3) + 1, all_patterns{i}(4) + 1} = x_cell{i} * (mul_factor);
         fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
     end
 
