@@ -1,6 +1,6 @@
 function obj = fill_rand(obj, patterns, start_size)
     if nargin < 3
-        start_size = 1 / exp(obj.nf);
+        start_size = 1e-2 / exp(obj.nf);
     end
 
     H = obj.virtual_level_sizes_horiz;

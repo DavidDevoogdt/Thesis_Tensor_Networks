@@ -4,8 +4,8 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
 
     [extended_patterns, pattern_root, pattern_permutations] = extend_pattern(root_patterns, extended_patterns_permutations);
 
-    obj = fill_rand(obj, root_patterns, obj.nf);
-    obj = fill_rand(obj, extended_patterns, obj.nf);
+    obj = fill_rand(obj, root_patterns);
+    obj = fill_rand(obj, extended_patterns);
 
     all_patterns = [root_patterns, extended_patterns];
 
