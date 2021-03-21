@@ -53,7 +53,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, e
 
             F_sub_buffer{con_cell_index} = reshape(permute(A1, perm_vect), size(target));
 
-            if nargout_val > 1%calculate gradient
+            if nargout_val > 1 %calculate gradient
 
                 G_sub_cell = cell(num_x, 1);
 
@@ -66,7 +66,13 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, e
 
                     x = x_cell{pat_num};
 
-                    if size(root_patterns{pat_num}, 2) == 2%boundary matrix
+                    pat_num_mask = pattern_root == pat_num;
+                    all_patterns = [{root_patterns{pat_num}}, extended_patterns{pat_num_mask}];
+                    all_perm = [{1:4}, pattern_permutations{pat_num_mask}];
+
+                    if size(root_patterns{pat_num}, 2) == 2 %boundary matrix
+
+                        error("not verified for sub_num impelementation")
 
                         grad_total_size = [numel(target), numel(x)];
                         Grad_total = zeros(grad_total_size);
@@ -78,163 +84,188 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, e
                                 map2 = remove_elem(ii, map);
 
                                 [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
+
                                 Grad_total = Grad_total + Ai;
                             end
                         end
                     else
-                        size_x_red = size(x, [1, 2, 3, 4, 5, 6]);
-                        d2 = obj.dim^2;
-                        size_x_red(1) = d2;
-                        size_x_red(2) = [];
 
-                        grad_total_size = [size(target), size_x_red];
+                        size_x_red_o = size(x, [1, 2, 3, 4, 5, 6]);
+
+                        d2 = obj.dim^2;
+                        size_x_red_o(1) = d2;
+                        size_x_red_o(2) = [];
+
+                        grad_total_size = [size(target), size_x_red_o];
                         Grad_total = zeros(grad_total_size);
 
-                        num = 0;
+                        for sub_num = 1:numel(all_patterns)
 
-                        for ii = 1:size(legs, 2)
-                            if same_pattern(legs{ii}, root_patterns{pat_num})
+                            sub_num_perm = [1, all_perm{sub_num} + 1];
 
-                                index_before = num;
-                                index_after = map.N2 - num - 1;
+                            size_x_red = size_x_red_o(sub_num_perm); %permute to current version
 
-                                external_sizes = numel(target) / d2^(map.N2);
+                            num = 0;
 
-                                map2 = remove_elem(ii, map);
+                            for ii = 1:size(legs, 2)
+                                if same_pattern(legs{ii}, all_patterns{sub_num})
 
-                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
+                                    index_before = num;
+                                    index_after = map.N2 - num - 1;
 
-                                size_x = size_x_red(2:5);
-                                non_connected = map.leg_list{ii} < 0;
-                                non_connected = non_connected(3:end);
-                                size_x_internal = size_x;
-                                size_x_internal(non_connected) = 1;
+                                    external_sizes = numel(target) / d2^(map.N2);
 
-                                size_x_external = size_x;
-                                size_x_external(~non_connected) = 1;
+                                    map2 = remove_elem(ii, map);
 
-                                ai_size = size(Ai);
-                                external_size = ai_size(2:4);
-                                size_curr = external_sizes / prod(external_size);
+                                    %[Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
+                                    [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns, extended_patterns, pattern_root, pattern_permutations);
 
-                                Grad_total = reshape(Grad_total, [d2^index_before, d2, d2^index_after, external_size(1), size_curr, external_size(3), size_x_red]);
+                                    size_x = size_x_red(2:5);
+                                    non_connected = map.leg_list{ii} < 0;
+                                    non_connected = non_connected(3:end);
+                                    size_x_internal = size_x;
+                                    size_x_internal(non_connected) = 1;
 
-                                Ai_res = reshape(Ai, [d2^index_before, 1, d2^index_after, external_size, 1, size_x_internal]);
+                                    size_x_external = size_x;
+                                    size_x_external(~non_connected) = 1;
 
-                                if isequal([0, 0, 0, 0], non_connected)
+                                    ai_size = size(Ai);
+                                    external_size = ai_size(2:4);
+                                    size_curr = external_sizes / prod(external_size);
 
-                                    for iii = 1:size_x_red(1)
-                                        Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) = Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) ...
-                                            + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, :);
-                                    end
-                                elseif isequal([0, 1, 1, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, i2, i3, i4] = ind2sub(size_x_external, iiii);
+                                    %permute everything to final form
+                                    rvect_ext = [d2^index_before, d2, d2^index_after, external_size(1), size_curr, external_size(3), size_x_red];
+                                    zz = numel(rvect_ext) - 4;
+                                    rvect_ext = rvect_ext([1:zz, all_perm{sub_num} + zz]);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, 1, 1, 1);
+                                    Grad_total = reshape(Grad_total, rvect_ext);
+
+                                    rvect = [d2^index_before, 1, d2^index_after, external_size, 1, size_x_internal];
+                                    Ai_res = reshape(Ai, rvect);
+                                    zz = numel(rvect) - 4;
+
+                                    Ai_res = permute(Ai_res, [1:zz, all_perm{sub_num} + zz]);
+
+                                    non_connected = non_connected(all_perm{sub_num});
+                                    size_x_external = size_x_external(all_perm{sub_num});
+
+                                    if isequal([0, 0, 0, 0], non_connected)
+
+                                        for iii = 1:size_x_red(1)
+                                            Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) = Grad_total(:, iii, :, :, 1, :, iii, :, :, :, :) ...
+                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, :);
                                         end
-                                    end
-                                elseif isequal([1, 1, 0, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [i1, i2, ~, i4] = ind2sub(size_x_external, iiii);
-                                            Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, 1);
-                                        end
-                                    end
-                                elseif isequal([0, 1, 0, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, i2, ~, i4] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 1, 1, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, i2, i3, i4] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, 1);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, 1, 1, 1);
+                                            end
                                         end
-                                    end
-                                elseif isequal([0, 0, 1, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, ~, i3, i4] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([1, 1, 0, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [i1, i2, ~, i4] = ind2sub(size_x_external, iiii);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, 1);
+                                            end
+                                        end
+                                    elseif isequal([0, 1, 0, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, i2, ~, i4] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :, 1, 1);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, 1);
+                                            end
                                         end
-                                    end
-                                elseif isequal([0, 1, 1, 0], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, i2, i3, ~] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 0, 1, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, ~, i3, i4] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, :) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, 1, 1, :);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, :, 1, 1);
+                                            end
                                         end
-                                    end
-                                elseif isequal([1, 0, 0, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [i1, ~, ~, i4] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 1, 1, 0], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, i2, i3, ~] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, 1, :, :, 1);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, i3, :) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, 1, 1, :);
+                                            end
                                         end
-                                    end
-                                elseif isequal([1, 1, 0, 0], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [i1, i2, ~, ~] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([1, 0, 0, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [i1, ~, ~, i4] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, :);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, 1, :, :, 1);
+                                            end
                                         end
-                                    end
-                                elseif isequal([0, 0, 0, 1], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, ~, ~, i4] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([1, 1, 0, 0], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [i1, i2, ~, ~] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, 1);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1, i2, :, :) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, 1, 1, :, :);
+                                            end
                                         end
-                                    end
-                                elseif isequal([0, 0, 1, 0], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, ~, i3, ~] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 0, 0, 1], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, ~, ~, i4] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, :) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, :, 1, :);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, :, i4) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, :, :, 1);
+                                            end
                                         end
-                                    end
-                                elseif isequal([0, 1, 0, 0], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [~, i2, ~, ~] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 0, 1, 0], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, ~, i3, ~] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, :) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, :);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, :, i3, :) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, :, 1, :);
+                                            end
                                         end
-                                    end
-                                elseif isequal([1, 0, 0, 0], non_connected)
-                                    for iii = 1:size_x_red(1)
-                                        for iiii = 1:size_curr
-                                            [i1, ~, ~, ~] = ind2sub(size_x_external, iiii);
+                                    elseif isequal([0, 1, 0, 0], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [~, i2, ~, ~] = ind2sub(size_x_external, iiii);
 
-                                            Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, :) ...
-                                                + Ai_res(:, 1, :, :, 1, :, 1, 1, :, :, :);
+                                                Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, :, i2, :, :) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, :, 1, :, :);
+                                            end
                                         end
+                                    elseif isequal([1, 0, 0, 0], non_connected)
+                                        for iii = 1:size_x_red(1)
+                                            for iiii = 1:size_curr
+                                                [i1, ~, ~, ~] = ind2sub(size_x_external, iiii);
+
+                                                Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, :) = Grad_total(:, iii, :, :, iiii, :, iii, i1, :, :, :) ...
+                                                    + Ai_res(:, 1, :, :, 1, :, 1, 1, :, :, :);
+                                            end
+                                        end
+                                    else
+                                        error("not implemented")
+
                                     end
-                                else
-                                    error("not implemented")
 
                                 end
 
                                 Grad_total = reshape(Grad_total, grad_total_size);
-                            end
 
-                            if size(legs{ii}, 2) == 4%not boundary matrix
-                                num = num + 1;
+                                if size(legs{ii}, 2) == 4 %not boundary matrix
+                                    num = num + 1;
+                                end
+
                             end
                         end
                     end

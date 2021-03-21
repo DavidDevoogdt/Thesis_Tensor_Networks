@@ -1,6 +1,6 @@
 function obj = fill_rand(obj, patterns, start_size)
     if nargin < 3
-        start_size = 1e-2 / exp(obj.nf);
+        start_size = 1e-1 / exp(obj.nf);
     end
 
     H = obj.virtual_level_sizes_horiz;
@@ -12,10 +12,10 @@ function obj = fill_rand(obj, patterns, start_size)
 
         pat = patterns{i} + 1;
 
-        if isempty(obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)})
+        %if isempty(obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)})
 
-            pattern_s = [d, d, H(pat(1)), V(pat(2)), H(pat(3)), V(pat(4))];
-            obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)} = rand(pattern_s) * start_size;
-        end
+        pattern_s = [d, d, H(pat(1)), V(pat(2)), H(pat(3)), V(pat(4))];
+        obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)} = rand(pattern_s) * start_size;
+        %end
     end
 end

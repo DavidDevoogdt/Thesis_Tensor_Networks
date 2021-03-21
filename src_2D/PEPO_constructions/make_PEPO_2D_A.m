@@ -4,6 +4,9 @@ function obj = make_PEPO_2D_A(obj)
 
     rot_180 = {{[3, 4, 1, 2]}};
 
+    %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed','Algoritm', "trust-region");
+    nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% Block with 1/2 legs %%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,12 +29,12 @@ function obj = make_PEPO_2D_A(obj)
     n = 2;
     [map, ~] = create_map(1:n, obj.numopts);
     pattern = {[1, 0, 0, 0]};
-    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, struct('Gradient', false, 'Display', 'none'), rot_180);
+    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, rot_180);
 
     obj = assign_perm(obj, pattern{1});
 
     if obj.testing == 1
-        test_rot_90(obj, [1, 0, 0, 0], [0, 1, 0, 0])
+        %test_rot_90(obj, [1, 0, 0, 0], [0, 1, 0, 0])
         calculate_error(obj, 1:n, obj.numopts)
         calculate_error(obj, (1:n)', obj.numopts)
     end
@@ -67,7 +70,7 @@ function obj = make_PEPO_2D_A(obj)
     [map, ~] = create_map(1:4, obj.numopts);
 
     pattern = {[1, 0, 2, 0]};
-    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, struct('Gradient', false, 'Display', 'none'), rot_180);
+    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, rot_180);
 
     obj = assign_perm(obj, [1, 0, 2, 0]);
 
@@ -134,7 +137,7 @@ function obj = make_PEPO_2D_A(obj)
     obj = assign_perm(obj, pattern{1});
 
     if obj.testing == 1
-        test_rot_90(obj, [1, 1, 1, 1], [1, 1, 1, 1]);
+        test_rot_90(obj);
         calculate_error(obj, [0, 1, 0; 2, 3, 5; 0, 4, 0], obj.numopts)
     end
 
@@ -253,7 +256,8 @@ function obj = make_PEPO_2D_A(obj)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% LOOPS %%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    %x = 2;
+    x = 2;
     a = 3;
     b = a + 1;
 
@@ -262,8 +266,11 @@ function obj = make_PEPO_2D_A(obj)
     alpha_dim = 10;
     %beta_dim = 20;
 
-    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim, alpha_dim];
-    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim, alpha_dim];
+    %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^2, alpha_dim];
+    %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^2, alpha_dim];
+
+    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
+    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim];
 
     obj.current_max_index = numel(obj.virtual_level_sizes_horiz);
     obj.max_index = obj.current_max_index;
@@ -279,35 +286,46 @@ function obj = make_PEPO_2D_A(obj)
                             [4, 1, 2, 3]}};
 
     lnopts = struct('Display', 0, 'maxit', 1);
-    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {alpha_map}, alpha_pattern, ln_prefact, struct('Gradient', false, 'Display', 'none'), alpha_pattern_perm);
+    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {alpha_map}, alpha_pattern, ln_prefact, nl_opts, alpha_pattern_perm);
     %obj = assign_perm(obj, alpha_pattern{1},a);
-    
-    
+
     if obj.testing == 1
         calculate_error(obj, [1, 2; 3, 4], obj.numopts)
     end
 
+    %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed', 'Algoritm', "trust-region");
+
+    [alpha_map, ~] = create_map([1, 2; 3, 4; 5, 6], obj.numopts);
+    alpha_pattern = {[a, a, 0, a]};
+    alpha_pattern_perm = {{...
+                            [3, 2, 1, 4]}};
+    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {alpha_map}, alpha_pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+
+    if obj.testing == 1
+        calculate_error(obj, [1, 2; 3, 4; 5, 6], obj.numopts)
+    end
+
     % %% double loops
 
-    %single extension
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[0, 1, a, a]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    obj = assign_perm(obj, pattern{1},[0,0,1,1]);
-
-    %double extension
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[1, 1, a, a]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    obj = assign_perm(obj, pattern{1}, [0,0,1,1] );
+    %         %single extension
+    %         [map, ~] = create_map([
+    %                             0, 1, 0, 0;
+    %                             0, 1, 1, 0;
+    %                             0, 1, 1, 0;
+    %                             0, 0, 0, 0]);
+    %         pattern = {[0, 1, a, a]};
+    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %         obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
+    %
+    %         %double extension
+    %         [map, ~] = create_map([
+    %                             0, 1, 0, 0;
+    %                             1, 1, 1, 0;
+    %                             0, 1, 1, 0;
+    %                             0, 0, 0, 0]);
+    %         pattern = {[ 1,  1, a, a]};
+    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %         obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
 
     if obj.testing == 1
         calculate_error(obj, [
@@ -321,45 +339,43 @@ function obj = make_PEPO_2D_A(obj)
                         0, 1, 1], struct)
     end
 
-    %long extension
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 0, 0;
-                        0, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[0, 2, a, a]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    obj = assign_perm(obj, pattern{1},[0,0,1,1]);
-
-    [map, ~] = create_map([
-                        0, 1, 0, 0;
-                        0, 1, 0, 0;
-                        1, 1, 1, 0;
-                        0, 1, 1, 0;
-                        0, 0, 0, 0]);
-    pattern = {[1, 2, a, a]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    obj = assign_perm(obj, pattern{1},[0,0,1,1]);
-
-    [map, ~] = create_map([
-                        0, 0, 1, 0;
-                        0, 0, 1, 0;
-                        1, 1, 1, 1;
-                        0, 0, 1, 1;
-                        ]);
-    pattern = {[2, 2, a, a]};
-    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    obj = assign_perm(obj, pattern{1},[0,0,1,1]);
-
-    if obj.testing == 1
-        calculate_error(obj, [
-                        0, 0, 1, 0;
-                        0, 0, 1, 0;
-                        0, 0, 1, 1;
-                        0, 0, 1, 1;
-                        ], struct)
-    end
+    %     %long extension
+    %     [map, ~] = create_map([
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 1;
+    %                         0, 0, 1, 1]);
+    %     pattern = {[0, 2, a, a]};
+    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
+    %
+    %     [map, ~] = create_map([
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 0;
+    %                         0, 1, 1, 1;
+    %                         0, 0, 1, 1]);
+    %     pattern = {[1, 2, a, a]};
+    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
+    % %
+    %     [map, ~] = create_map([
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 0;
+    %                         1, 1, 1, 1;
+    %                         0, 0, 1, 1;
+    %                         ]);
+    %     pattern = {[2, 2, a, a]};
+    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
+    %
+    %     if obj.testing == 1
+    %         calculate_error(obj, [
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 0;
+    %                         0, 0, 1, 1;
+    %                         0, 0, 1, 1;
+    %                         ], struct)
+    %     end
 
     %double 2 options
 
@@ -418,14 +434,14 @@ function obj = make_PEPO_2D_A(obj)
     %     end
 
     %
-    %     if obj.testing == 1
-    %         obj = cell2matrix(obj);
-    %         calculate_error(obj, [
-    %                         0, 0, 1, 0;
-    %                         1, 1, 1, 0;
-    %                         0, 1, 1, 0;
-    %                         0, 0, 0, 0], struct, 1)
-    %     end
+    if obj.testing == 1
+        obj = cell2matrix(obj);
+        calculate_error(obj, [
+                        0, 0, 1, 0;
+                        1, 1, 1, 0;
+                        0, 1, 1, 0;
+                        0, 0, 0, 0], struct, 1)
+    end
 
     fprintf(".");
 end

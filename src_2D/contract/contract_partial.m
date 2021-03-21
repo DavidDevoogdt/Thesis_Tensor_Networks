@@ -1,4 +1,4 @@
-function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor, x, pattern)
+function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor, x, pattern, extended_patterns, pattern_root, pattern_permutations)
 
     %patterns: match x with pattern given pattern for subs
     if nargin < 5
@@ -21,7 +21,8 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
         if nargin < 6
             temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor);
         else
-            temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x);
+            %temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x);
+            temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x, extended_patterns, pattern_root, pattern_permutations);
         end
 
         x0 = temp_list(~mask);

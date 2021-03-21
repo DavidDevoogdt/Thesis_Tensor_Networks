@@ -27,6 +27,14 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
 
     mul_factor = exp(ln_prefact_out - obj.nf);
 
+    %refill with new prefact
+    %fprintf("old nf %.4e new %.4e",ln_prefact,ln_prefact_out);
+
+    init_val = 1e-3 / mul_factor;
+
+    obj = fill_rand(obj, root_patterns, init_val);
+    obj = fill_rand(obj, extended_patterns, init_val);
+
     %     if nmaps ==1
     %        maps = {maps};
     %     end
