@@ -43,3 +43,5 @@ transfer_calana
 IsingMatFiles/*.mat
 IsingMatFiles/*/*.mat
 calana.sh
+
+test_2D_files/*

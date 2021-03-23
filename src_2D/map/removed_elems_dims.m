@@ -33,7 +33,7 @@ function [dims, dim_arr, bond_pairs, ext_dims] = removed_elems_dims(obj, num_pat
 
     bond_pairs = {};
 
-    for n1 = 1:num_pats%look for bonds between extracted x
+    for n1 = 1:num_pats %look for bonds between extracted x
         num = nums(n1);
 
         for j = 1:4

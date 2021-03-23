@@ -1,5 +1,5 @@
 function [mag, inv_corr_length, delta, ctr, err] = PEPO_get_expectation (obj, X, chimax, maxit, name, A, G0, ctr, err, T)
-    if nargin <= 5%calculate stuff
+    if nargin <= 5 %calculate stuff
         [A, G0, ~, ctr, err] = PEPO_vumps(obj, chimax, maxit, name);
         T = obj.PEPO_matrix;
     end

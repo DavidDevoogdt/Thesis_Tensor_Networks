@@ -1,9 +1,7 @@
 function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
     p = inputParser;
     addParameter(p, 'max_index', obj.max_index)
-    %addParameter(p, 'matrix', 0)
-    %addParameter(p, 'fixed', zeros(map.internal_legs, 1) - 1)
-    addParameter(p, 'pattern', {}, @(x) iscell(x))%additional allowed patterns
+    addParameter(p, 'pattern', {}, @(x) iscell(x)) %additional allowed patterns
     parse(p, opts)
 
     patterns = p.Results.pattern;
@@ -61,28 +59,6 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
                 T = T(:, :, :, bound);
                 Tpat = Tpat(:, :, :, bound);
             end
-
-            % %only keep sublevel 0 for the given tensors
-            % if connections(1 + 2) < 0
-            %     T = ncon(   { bound_vect,  T}, { [-1,1],[1,-2,-3,-4]  } )  ;
-            %     Tpat = ncon(   {bound_vect,  Tpat},{ [-1,1],[1,-2,-3,-4]  } )  ;
-
-            % end
-
-            % if connections(2 + 2) < 0
-            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,1,-3,-4]  } )  ;
-            %     Tpat = ncon(   { bound_vect,  Tpat},{ [-1,1],[-2,1,-3,-4]  } )  ;
-            % end
-
-            % if connections(3 + 2) < 0
-            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,-3,1,-4]  } )  ;
-            %     Tpat = ncon(   { bound_vect,  Tpat},{ [-1,1],[-2,1,-3,-4]  } )  ;
-            % end
-
-            % if connections(4 + 2) < 0
-            %     T = ncon(   { bound_vect,  T},{ [-1,1],[-2,-3,-4,1]  } )  ;
-            %     Tpat = ncon(  { bound_vect,  Tpat},{ [-1,1],[-2,-3,-4,1]  } )  ;
-            % end
 
             A = find(T);
             nA = numel(A);

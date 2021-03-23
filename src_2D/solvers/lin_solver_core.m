@@ -11,7 +11,7 @@ function X = lin_solver_core(A_list, target, inv_eps)
 
     type = 0;
 
-    if type == 1%qr
+    if type == 1 %qr
 
         R_dim = prod(size(target, 1:num_A));
         phys_dim = size(target, num_A + 1);

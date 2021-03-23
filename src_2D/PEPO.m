@@ -11,7 +11,7 @@ classdef PEPO
         H_1_tensor
         H_2_tensor
         PEPO_cell
-        nf%normalisation factor
+        nf %normalisation factor
         max_index
         testing
         visualise
@@ -91,9 +91,7 @@ classdef PEPO
 
             %non generic PEPO code
 
-            %tic
             obj = make_PEPO_handle(obj);
-            %toc
 
             obj = cell2matrix(obj); %save matrix form
 

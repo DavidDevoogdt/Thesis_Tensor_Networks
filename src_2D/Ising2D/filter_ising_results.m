@@ -5,7 +5,7 @@ function [T_arr, m_arr, marek_arr, corr_arr] = filter_ising_results(T_arr, m_arr
     end
 
     if filter == 1
-        mask = (T_arr > 0) & (vumps_err_arr < 1e-9) & (vumps_err_arr ~= 0);
+        mask = (T_arr > 0) & (vumps_err_arr < 1e-10) & (vumps_err_arr ~= 0);
     else
         mask = (T_arr > 0);
     end

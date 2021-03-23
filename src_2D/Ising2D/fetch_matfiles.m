@@ -11,7 +11,7 @@ function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g] 
     load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr');
 
     if exist(folder, 'dir')
-        myFiles = dir(fullfile(folder, '*.mat')); %gets all wav files in struct
+        myFiles = dir(fullfile(folder, 'temp_*.mat')); %gets all wav files in struct
         for k = 1:length(myFiles)
             baseFileName = myFiles(k).name;
             fullFileName = fullfile(folder, baseFileName);

@@ -33,6 +33,7 @@ function [map, boundary_map] = create_map(pos_map, opts, internal)
 
     %number the location of operators from up to down and left to
     %right, and create toghether with it a leg_list for ncon
+    map.opts = opts;
 
     [m, n] = size(pos_map);
     map.m = m;

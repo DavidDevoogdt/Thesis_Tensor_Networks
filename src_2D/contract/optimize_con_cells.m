@@ -36,7 +36,7 @@ function [con_cells_cell2, targets] = optimize_con_cells(obj, maps, con_cells_ce
                 end
             end
 
-            if has_matched_pattern%keep in new list
+            if has_matched_pattern %keep in new list
                 con_cells2{con_cells2_counter} = con_cells{con_cell_index};
                 con_cells2_counter = con_cells2_counter + 1;
             else %remove and change target

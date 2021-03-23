@@ -13,18 +13,18 @@ function Ising2D_par(chi, name)
     mbound = [0.1, 1]; %no longer used
 
     g = 2.5;
-    vumps_maxit = 1500;
+    vumps_maxit = 1300;
 
     switch getenv('USER')
         case "david"
             chi_arr = [chi];
-            nsammple = 15;
+            nsammple = 8;
             calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 0, nsammple, mbound, vumps_maxit);
             %calc_ising_2d(2.1, 2.3, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 1, nsammple, mbound, vumps_maxit);
         otherwise
             nsammple = 15;
             chi_arr = [chi];
-            calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.01, 0.02, fold2, dt, 0, nsammple, mbound, vumps_maxit);
+            calc_ising_2d(1.27, 1.275, 1, g, chi_arr, 0.01, 0.02, fold2, dt, 0, nsammple, mbound, vumps_maxit);
     end
 end
 
@@ -46,6 +46,8 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
 
     cluster.NumWorkers = nsammple;
     cluster.NumThreads = 1;
+
+    fprintf("\n");
 
     for t = 1:numel(chi_arr)
         chi = chi_arr(t);
@@ -111,7 +113,7 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
 
             T_arr(i, :) = T0;
 
-            [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr,pepo_arr] = Ising2D_core(cc, J, g, onsager, chi, i, m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, vumps_maxit,pepo_arr);
+            [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] = Ising2D_core(cc, J, g, onsager, chi, i, m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, vumps_maxit, pepo_arr);
 
         end
 

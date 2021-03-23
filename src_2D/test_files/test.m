@@ -142,7 +142,7 @@ function test
         %     opt4.single_threshold =simulatiemodellen(round);
         %
 
-        simul.Order_arr = [3, 4, 5, 6];
+        simul.Order_arr = [5, 6];
         simul.types = [2, 3];
         simul.M = 9;
         simul.beta_arr = 10.^(-2:0.05:1.5);

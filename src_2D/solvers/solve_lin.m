@@ -53,7 +53,7 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     inv_eps = obj.inv_eps;
 
-    if loop == 0%invert leg per leg
+    if loop == 0 %invert leg per leg
 
         %x_sol =  residual_target;
 

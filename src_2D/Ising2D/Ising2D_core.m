@@ -1,14 +1,16 @@
 function [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] = Ising2D_core(name_prefix, J, g, onsager, chi, i, m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, vumps_maxit, pepo_arr)
 
     if i == 1
-         saveboy(sprintf("%s.mat", name_prefix), 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr', 'pepo_arr', T_arr, m_arr, corr_arr, marek_arr, chi, J, g, vumps_err_arr, ctr_arr, pepo_arr);
+        saveboy(sprintf("%s.mat", name_prefix), 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr', 'pepo_arr', T_arr, m_arr, corr_arr, marek_arr, chi, J, g, vumps_err_arr, ctr_arr, pepo_arr);
     end
 
     beta = 1 ./ T_arr(i, :);
 
     %dir for temp results
     dir_name = sprintf("%s/", name_prefix);
-    mkdir(dir_name);
+    if ~exist(dir_name, 'dir')
+        mkdir(dir_name);
+    end
 
     %hamiltonian setup
     S_x = [0, 1; 1, 0];
@@ -19,8 +21,6 @@ function [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] =
     handle = @make_PEPO_2D_A;
 
     d = 2;
-    %J=1;
-    %g=0.01;
 
     H_1_tensor = -J * g * S_x;
     H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
@@ -29,12 +29,6 @@ function [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] =
     opts.testing = 0;
     opts.visualise = 0;
     opts.double = 0;
-
-    % m0 = zeros(size(T0));
-    % corr_len0 = zeros(size(T0));
-    % marek0 = zeros(size(T0));
-    % err0 = zeros(size(T0));
-    % ctr0 = zeros(size(T0));
 
     index = i;
 
@@ -49,7 +43,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] =
         vumps_err_arr_2 = vumps_err_arr(:, iii);
         pepo_arr_2 = pepo_arr(:, iii);
 
-        if onsager == 1%for testing purposes
+        if onsager == 1 %for testing purposes
 
             m_arr_2(index) = m_onsager(T_arr(index, iii), J);
             corr_arr_2(index) = 1;
@@ -62,7 +56,7 @@ function [m_arr, T_arr, corr_arr, marek_arr, ctr_arr, vumps_err_arr, pepo_arr] =
             pepo = PEPO(d, -beta(iii) * H_1_tensor, -beta(iii) * H_2_tensor, 5, handle, opts);
             [mm, inv_corr_length, marek_arr_2(index), ctr_arr_2(index), vumps_err_arr_2(index)] = PEPO_get_expectation(pepo, S_z, chi, vumps_maxit, sprintf("%s/vumps_save_v%d_%d_%d.mat", name_prefix, chi, i, iii));
 
-            pepo_arr_2(index) = obj.PEPO_matrix;
+            pepo_arr_2{index} = pepo.PEPO_matrix;
             m_arr_2(index) = abs(mm);
             corr_arr_2(index) = 1 / inv_corr_length;
 

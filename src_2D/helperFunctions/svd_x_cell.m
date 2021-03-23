@@ -62,7 +62,7 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
 
             parity = find(mask1) > 4; %order of multiplication
 
-            if parity == 1%in right order
+            if parity == 1 %in right order
                 l = permute(reshape(L, dim1_alt(1), dim1_alt(2), []), [1, 3, 2]);
                 r = permute(reshape(R, [], dim2_alt(1), dim2_alt(2)), [2, 1, 3]);
 
