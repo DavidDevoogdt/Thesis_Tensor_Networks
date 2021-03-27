@@ -1,4 +1,4 @@
-function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g] = fetch_matfiles(name_prefix)
+function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g,pepo_arr] = fetch_matfiles(name_prefix)
 
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');
@@ -7,8 +7,12 @@ function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g] 
 
     name = sprintf("%s.mat", name_prefix);
     folder = sprintf("%s/%s/", fold2, name_prefix);
-
-    load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr');
+    
+    if nargout <10
+        load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr');
+    else
+        load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr','pepo_arr');
+    end
 
     if exist(folder, 'dir')
         myFiles = dir(fullfile(folder, 'temp_*.mat')); %gets all wav files in struct
@@ -26,22 +30,14 @@ function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g] 
             marek_arr(:, iii) = marek_arr_2;
             ctr_arr(:, iii) = ctr_arr_2;
             vumps_err_arr(:, iii) = vumps_err_arr_2;
-
-            %             T_arr( mask, iii) = T_arr_2( mask);
-            %             m_arr(mask, iii) = m_arr_2( mask);
-            %             corr_arr(mask, iii) = corr_arr_2( mask);
-            %             marek_arr(mask, iii) = marek_arr_2( mask);
-            %             ctr_arr(mask, iii) = ctr_arr_2( mask);
-            %             vumps_err_arr(mask, iii) = vumps_err_arr_2( mask);
-
         end
     end
-
-    T_arr = reshape(T_arr, [], 1);
-    m_arr = reshape(m_arr, [], 1);
-    marek_arr = reshape(marek_arr, [], 1);
-    corr_arr = reshape(corr_arr, [], 1);
-    vumps_err_arr = reshape(vumps_err_arr, [], 1);
-    ctr_arr = reshape(ctr_arr, [], 1);
+% 
+%     T_arr = reshape(T_arr, [], 1);
+%     m_arr = reshape(m_arr, [], 1);
+%     marek_arr = reshape(marek_arr, [], 1);
+%     corr_arr = reshape(corr_arr, [], 1);
+%     vumps_err_arr = reshape(vumps_err_arr, [], 1);
+%     ctr_arr = reshape(ctr_arr, [], 1);
 
 end

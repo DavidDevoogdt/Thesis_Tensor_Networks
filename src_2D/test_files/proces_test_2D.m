@@ -8,7 +8,8 @@
 
 function test
 
-    filename = "2D_03-21-21_10-33-49";
+    %filename = "2D_03-24-21_11-30-07";
+    filename = '2D_03-24-21_11-59-27';
 
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');
@@ -20,7 +21,7 @@ function test
 
     fprintf("%s \n", filename)
 
-    load(filename)
+    load(filename, 'time', 'simul', 'beta_arr', 'err_arr', 'num_map', 'map_opts', 'density_site');
 
     %%
 
@@ -34,7 +35,7 @@ function test
 
     %hold on
 
-    title(sprintf("2D transverse Ising, g=%.4f ", g));
+    title(simul.title);
     xlabel("$\frac{J}{k T}$", "Interpreter", "Latex");
     ylabel("err");
     ylim([0, 10])

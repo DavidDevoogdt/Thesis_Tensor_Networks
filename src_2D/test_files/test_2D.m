@@ -1,125 +1,57 @@
-% function test
-%     %test_H_exp
-%     test_PEPO
-%     %test3
-% end
-
-%function test_PEPO
-
-function test
-    fprintf('d');
-
+function test_2D(model)
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');
 
     pathparts = [pathparts(1:end - 3), 'test_2D_files'];
     fold2 = strjoin(pathparts, '/');
+    
+    time = now;
 
-    filename = sprintf("%s/2D_%s.mat", fold2, datestr(now, 'mm-dd-yy_HH-MM-SS'));
+    filename = sprintf("%s/2D_%s.mat", fold2, datestr(time, 'mm-dd-yy_HH-MM-SS'));
 
     fprintf("%s \n", filename)
 
-    d = 2;
+    model_opts.g = 2.5;
+    %model = 't_ising';
+    model = 'Heisenberg_2D';
 
-    %hamiltonian setup
-    S_x = [0, 1; 1, 0];
-    S_y = [0, -1i; 1i, 0];
-    S_z = [1, 0; 0, -1];
-    I_tensor = eye(2);
-
-    handle = @make_PEPO_2D_A;
-    %handle =  @make_PEPO_2D_B;opts.double = 1;
-
-    J = 1;
-    g = 1.5;
-    %
-    H_1_tensor = -J * g * S_x;
-    H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
-    %
-    %
-    %     H_2_tensor = -ncon({S_x, S_x}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_y, S_y}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_z, S_z}, {[-1, -3], [-2, -4]});
-    %     H_1_tensor = zeros(d);
-
-    %
-    %     H_2_tensor = -ncon({S_x, S_x}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_y, S_y}, {[-1, -3], [-2, -4]}) ...
-    %             -ncon({S_z, S_z}, {[-1, -3], [-2, -4]});
-    %    H_1_tensor = zeros(d);
+    simul = models(model, model_opts);
 
     opts.testing = 1;
     opts.visualise = 0;
     opts.double = 0;
+    opts.inv_eps = 1e-10;
+    opts.err_tol = 1e-12;
 
     pepo_order = 5;
+    handle = @make_PEPO_2D_A;
 
-    %T = 10.^( -2:0.5:5 )   ;
-
-    beta_arr = 10.^(0:0.2:3);
-    %beta_arr=1./T;
+    beta_arr = 10.^(log10(1.5):0.5:2);
 
     beta_len = size(beta_arr, 2);
     err_arr = zeros(beta_len, 1);
 
+    num_map = [
+                        0, 5, 6, 0 ;
+                        1, 4, 7, 10;
+                        2, 3, 8, 9; ];
+    map_opts = struct("numbered", true, "h_cyclic", 1, "v_cyclic", 0);
+    density_site = 6;
+    
+    
     for i = 1:beta_len
         beta = beta_arr(i);
 
-        pepo = PEPO(d, -beta * H_1_tensor, ...
-            -beta * H_2_tensor, ...
+        pepo = PEPO(simul.d, -beta * simul.H_1_tensor, ...
+            -beta * simul.H_2_tensor, ...
             pepo_order, handle, opts);
 
-        err = calculate_error(pepo, [
-                                1, 1, 1;
-                                1, 1, 1;
-                                1, 1, 1; ], ...
-            struct("numbered", false, "h_cyclic", 1, "v_cyclic", 0), ...
-            1, 1);
+        err = calculate_error(pepo, num_map, map_opts, 1, density_site);
 
-        %         [err, ~] = calculate_error(pepo, [
-        %                                     1, 1, 1;
-        %                                     1, 1, 1;
-        %                                     1, 1, 1; ], ...
-        %             struct("numbered", false, "h_cyclic", 0, "v_cyclic", 0), ...
-            %             1)
-
-        % [err, ~] = calculate_error(pepo, [
-        %                                     1, 1, 1;
-        %                                     1, 1, 1; ], ...
-        %             struct("numbered", false, "h_cyclic", 1, "v_cyclic", 0), ...
-            %             1)
 
         fprintf(" beta %.4e cycl err %.4e \n", beta, err);
         err_arr(i) = abs(err);
 
-        %fprintf(" beta %.4e rel err %.4e abs err %.4e \n",beta,abs(err), abs(err)* prefact );
-        %err_arr(i) = abs(err);
-
-        save(filename)
+        save(filename,'time','simul','beta_arr','err_arr','num_map','map_opts','density_site')
     end
-
-    %%
-    %hold off
-    %     figure();
-    %     x_width = 15;
-    %     y_width = 10;
-    %     set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
-    %
-    %     loglog(beta_arr, err_arr);
-    %     %plot(T,err_arr );
-    %
-    %     %hold on
-    %
-    %     title(sprintf("1D transverse Ising, g=%.4f ", g));
-    %     xlabel("$\frac{J}{k T}$", "Interpreter", "Latex");
-    %     ylabel("err");
-    %     ylim([0, 10])
-    %
-    %     figure(gcf)
-    %
-    %
-    %     saveas(gcf, filename)
-
-    %end
-
 end
