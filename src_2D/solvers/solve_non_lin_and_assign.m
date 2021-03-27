@@ -1,6 +1,10 @@
 function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, ln_prefact, opts, extended_patterns_permutations)
 
     d = obj.dim;
+    
+    if nargin<6
+        extended_patterns_permutations = cell( size(root_patterns) );
+    end
 
     [extended_patterns, pattern_root, pattern_permutations] = extend_pattern(root_patterns, extended_patterns_permutations);
 
@@ -32,8 +36,8 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
 
     init_val = 1e-3 / mul_factor;
 
-    obj = fill_rand(obj, root_patterns, init_val);
-    obj = fill_rand(obj, extended_patterns, init_val);
+    obj = fill_rand(obj, root_patterns, init_val,true);
+    obj = fill_rand(obj, extended_patterns, init_val,true);
 
     %     if nmaps ==1
     %        maps = {maps};
@@ -44,6 +48,9 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
     for i = 1:size(all_patterns, 2)
         obj.PEPO_cell{all_patterns{i}(1) + 1, all_patterns{i}(2) + 1, all_patterns{i}(3) + 1, all_patterns{i}(4) + 1} = x_cell{i} * (mul_factor);
         %fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
+        if obj.testing == 2
+            fprintf("%.4e ", norm( reshape(x_cell{i} * mul_factor, [], 1) ,2));
+        end
     end
 
 end

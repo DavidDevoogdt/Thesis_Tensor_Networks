@@ -1,37 +1,61 @@
-function [err, prefact] = calculate_error(obj, nummap, opts, matrix)
-    if nargin < 4
-        matrix = 0;
-    end
+function [err] = calculate_error(obj, nummap, opts, matrix, non_trace_num)
 
-    [map, b_map] = create_map(nummap, opts);
+    if isfield(nummap, 'map')
+        map = nummap;
+        b_map = map;
+    else
+        [map, b_map] = create_map(nummap, opts);
+    end
 
     d = obj.dim;
 
-    H_matrix = H_exp(obj, map, obj.nf);
+    cn_opts.max_index = obj.max_index;
 
-    if matrix == 1
-        Contraction = contract_network(obj, map, struct('max_index', obj.max_index, "matrix", 1));
+    if nargin < 4
+        cn_opts.matrix = 0;
     else
-        Contraction = contract_network(obj, b_map, struct('max_index', obj.max_index));
+        cn_opts.matrix = matrix;
     end
 
-    b = reshape(H_matrix, [d^(map.N2), d^(map.N2)]);
-    a = reshape(Contraction, [d^(map.N2), d^(map.N2)]);
+    if nargin == 5
+        cn_opts.trace = true;
+        cn_opts.non_trace_num = non_trace_num;
+    else
+        cn_opts.trace = false;
+    end
 
-    p = 2;
+    Contraction = contract_network(obj, map, cn_opts);
 
-    [~, S1, ~] = svds(a - b, 30);
+    H_matrix = H_exp(obj, map, obj.nf);
 
-    sum_1 = (sum(diag(S1).^p))^(1 / p);
+    if cn_opts.trace == true
+        b = permute(H_matrix, site_ordering_permute(map.N2));
+        convect = [reshape([1:non_trace_num - 1; 1:non_trace_num - 1], [], 1)', -1, -2, reshape([non_trace_num:map.N2 - 1; non_trace_num:map.N2 - 1], [], 1)'];
+        b = ncon({b}, {convect});
 
-    [~, S2, ~] = svds(b, 30);
+        a = reshape(permute(Contraction, site_ordering_permute(map.N2)), [d, d]);
 
-    sum_2 = (sum(diag(S2).^p))^(1 / p);
+        err = norm((b - a), 2) / norm(b, 2);
+        %prefact =
+    else
+        b = reshape(H_matrix, [d^(map.N2), d^(map.N2)]);
+        a = reshape(Contraction, [d^(map.N2), d^(map.N2)]);
 
-    prefact = exp(obj.nf * map.N) * (sum_2);
+        p = 2;
 
-    % for real values, multiply both with obj.nf^(map.N)*trace_a =
-    % prefact^N
+        [~, S1, ~] = svds(a - b, 30);
 
-    err = sum_1 / sum_2;
+        sum_1 = (sum(diag(S1).^p))^(1 / p);
+
+        [~, S2, ~] = svds(b, 30);
+
+        sum_2 = (sum(diag(S2).^p))^(1 / p);
+
+        %prefact = exp(obj.nf * map.N) * (sum_2);
+
+        % for real values, multiply both with obj.nf^(map.N)*trace_a =
+        % prefact^N
+
+        err = sum_1 / sum_2;
+    end
 end

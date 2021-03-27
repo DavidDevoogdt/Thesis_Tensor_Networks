@@ -1,7 +1,7 @@
-function [mag, inv_corr_length, delta, ctr, err] = PEPO_get_expectation (obj, X, chimax, maxit, name, A, G0, ctr, err, T)
+function [mag, inv_corr_length, delta, ctr, err] = PEPO_get_expectation (obj, X, chimax, maxit, name, A, G0, T)
     if nargin <= 5 %calculate stuff
         [A, G0, ~, ctr, err] = PEPO_vumps(obj, chimax, maxit, name);
-        T = obj.PEPO_matrix;
+        T = obj.PEPO_matrix; 
     end
 
     %construct central tensor
@@ -53,6 +53,6 @@ function [mag, inv_corr_length, delta, ctr, err] = PEPO_get_expectation (obj, X,
     eps_i = -log(f2);
     inv_corr_length = eps_i(1);
 
-    delta = eps_i(2) - eps_i(1);
+    delta = eps_i(4) - eps_i(2);
 
 end

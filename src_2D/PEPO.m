@@ -28,11 +28,13 @@ classdef PEPO
         bounds
         order
         inv_eps
+        complex
+        err_tol
     end
 
     methods
 
-        function obj = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
+        function [obj,err_code] = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
             numopts.numbered = 1;
             obj.numopts = numopts;
 
@@ -44,6 +46,8 @@ classdef PEPO
             obj.dim = d;
             obj.H_1_tensor = H_1_tensor;
             obj.H_2_tensor = H_2_tensor;
+            
+            obj.complex = false;
 
             %parse opts
             p = inputParser;
@@ -51,7 +55,11 @@ classdef PEPO
             addParameter(p, 'visualise', 0)
             addParameter(p, 'double', 1)
             addParameter(p, 'inv_eps', 1e-12)
+            addParameter(p, 'err_tol' ,1e-13)
+            
             parse(p, opts)
+            
+            obj.err_tol = p.Results.err_tol;
 
             obj.inv_eps = p.Results.inv_eps;
 
@@ -91,9 +99,13 @@ classdef PEPO
 
             %non generic PEPO code
 
-            obj = make_PEPO_handle(obj);
+            [obj,err_code] = make_PEPO_handle(obj);
 
             obj = cell2matrix(obj); %save matrix form
+
+            if err_code == 1
+               warning("PEPO costruction failed, try lower beta");
+            end
 
         end
     end

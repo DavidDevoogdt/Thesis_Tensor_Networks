@@ -33,19 +33,19 @@ function [obj, target_site, res_target, ln_prefact_out, rank_x] = solve_lin_and_
             obj.PEPO_cell{pattern{i}(1) + 1, pattern{i}(2) + 1, pattern{i}(3) + 1, pattern{i}(4) + 1} = x_cell{i} * mul_factor;
 
             if obj.testing == 2
-                fprintf("%.4e ", max(abs(reshape(x_cell{i} * mul_factor, [], 1))));
+                fprintf("%.4e ", norm( reshape(x_cell{i} * mul_factor, [], 1) ,2));
             end
         end
     end
 
     res_target = ipermute(reshape(res_target, dimension_vector(d, 2 * map.N)), site_ordering_permute(map.N));
 
-    if obj.testing == 2
-        temp_list_1 = fetch_PEPO_cells(obj, map, res_con{1}{1}, ln_prefact_out);
-        A1 = ncon(temp_list_1, map.leg_list);
-        diff = A1 - res_target;
-        svds(reshape(diff, [d^map.N, d^map.N]))
-    end
+%     if obj.testing == 2
+%         temp_list_1 = fetch_PEPO_cells(obj, map, res_con{1}{1}, ln_prefact_out);
+%         A1 = ncon(temp_list_1, map.leg_list);
+%         diff = A1 - res_target;
+%         svds(reshape(diff, [d^map.N, d^map.N]))
+%     end
 
     %target = reshape(target, [d^map.N, d^map.N]);
 
