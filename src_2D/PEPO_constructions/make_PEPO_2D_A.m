@@ -422,19 +422,19 @@ function [obj, error_code ] = make_PEPO_2D_A(obj)
     
     
     
-    %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed', 'Algoritm', "trust-region");
-     nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
-
-
-        [map, ~] = create_map([1, 2; 3, 4; 5, 6], obj.numopts);
-        pattern = {[a, a, 0, a]};
-        pattern_perm = {{...
-                                [3, 2, 1, 4]}};
-        [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, pattern_perm);
-
-        if obj.testing == 1
-            calculate_error(obj, [1, 2; 3, 4; 5, 6], obj.numopts)
-         end
+%     %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed', 'Algoritm', "trust-region");
+%      nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
+% 
+% 
+%         [map, ~] = create_map([1, 2; 3, 4; 5, 6], obj.numopts);
+%         pattern = {[a, a, 0, a]};
+%         pattern_perm = {{...
+%                                 [3, 2, 1, 4]}};
+%         [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, pattern_perm);
+% 
+%         if obj.testing == 1
+%             calculate_error(obj, [1, 2; 3, 4; 5, 6], obj.numopts)
+%          end
 
     % %% double loops
 
