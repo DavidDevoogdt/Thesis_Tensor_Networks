@@ -4,6 +4,8 @@ function data = fetch_matfiles(file_name, opts)
         opts.save_vars = 0;
     end
 
+    do_call_back = isfield(opts, 'call_back_fn');
+
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');
     pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
@@ -16,6 +18,16 @@ function data = fetch_matfiles(file_name, opts)
         error("invalid files")
     end
 
+    myFiles = dir(fullfile(folder, 'template.mat'));
+    if numel(myFiles) ~= 1
+        warning('continuing woithout template')
+        template = [];
+    else
+        baseFileName = myFiles(1).name;
+        fullFileName = fullfile(folder, baseFileName);
+        load(fullFileName, 'template');
+    end
+
     myFiles = dir(fullfile(folder, 'results_*.mat'));
     num_files = numel(myFiles);
 
@@ -26,50 +38,57 @@ function data = fetch_matfiles(file_name, opts)
 
     mergestructs = @(x, y) cell2struct([struct2cell(x); struct2cell(y)], [fieldnames(x); fieldnames(y)]);
 
-    for k = 1:num_files
+    parfor k = 1:num_files
         baseFileName = myFiles(k).name;
         fullFileName = fullfile(folder, baseFileName);
-        load(fullFileName, 'results', 'template');
-        data_points{k} = results;
+        R = load(fullFileName, 'results');
+        data_points{k} = R.results;
 
         if opts.save_vars == 1
             baseFileName = strrep(baseFileName, 'results', 'save_vars');
             fullFileName = fullfile(folder, baseFileName);
-            load(fullFileName, 'save_vars');
+            S = load(fullFileName, 'save_vars');
 
-            save_data_points{k} = save_vars;
+            save_data_points{k} = S.save_vars;
+        end
+
+        if do_call_back
+            opts.call_back_fn(template, R.results, S.save_vars, baseFileName);
         end
 
     end
 
-    fields = fieldnames(data_points{1});
+    if nargout == 1
 
-    reordered_data = struct();
+        fields = fieldnames(data_points{1});
 
-    for i = 1:numel(fields)
-        fn = fields{i};
+        reordered_data = struct();
 
-        val = cellfun(@(x) x.(fn).', data_points, 'UniformOutput', false);
-        reordered_data.(fn) = cell2mat(val);
-    end
+        for i = 1:numel(fields)
+            fn = fields{i};
 
-    if opts.save_vars == 1
-        fields2 = fieldnames(save_data_points{1});
-        for i = 1:numel(fields2)
-            fn = fields2{i};
-            val = cellfun(@(x) x.(fn), save_data_points, 'UniformOutput', false);
-            reordered_data.(fn) = val;
+            val = cellfun(@(x) x.(fn).', data_points, 'UniformOutput', false);
+            reordered_data.(fn) = cell2mat(val);
         end
-    end
 
-    %add template stuff
+        if opts.save_vars == 1
+            fields2 = fieldnames(save_data_points{1});
+            for i = 1:numel(fields2)
+                fn = fields2{i};
+                val = cellfun(@(x) x.(fn), save_data_points, 'UniformOutput', false);
+                reordered_data.(fn) = val;
+            end
+        end
 
-    data = mergestructs(reordered_data, template);
+        %add template stuff
 
-    if opts.save_vars == 1
-        data.fields = [fields; fields2];
-    else
-        data.fields = fields;
+        data = mergestructs(reordered_data, template);
+
+        if opts.save_vars == 1
+            data.fields = [fields; fields2];
+        else
+            data.fields = fields;
+        end
     end
 
 end

@@ -2,15 +2,19 @@
 
 function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts,results,opts)
 
+    if nargin<5
+       opts=[]; 
+    end
+
     if ~isfield(opts, 'doVumps')
-        opts.doVumps = 1;
+        opts.doVumps = 0;
     end
 
     assert(isfield(save_vars, 'PEPO_matrix'));
     T = save_vars.PEPO_matrix;
 
     if ~isfield(save_vars, 'A') || ~isfield(save_vars, 'G0') || opts.doVumps
-        [A, G0, ~, ctr, err] = PEPO_vumps(T, vumps_opts);
+        [A, G0, ~, ctr, err] = PEPO_vumps(T, vumps_opts,save_vars);
     else
         A = save_vars.A;
         G0 = save_vars.G0;

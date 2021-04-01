@@ -1,4 +1,8 @@
-function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts)
+function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts,save_vars)
+    
+if nargin <3
+   save_vars = []; 
+end
 
     %     p = inputParser;
     %
@@ -45,5 +49,11 @@ function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts)
     O.type = 'mpo';
     O.mpo = o;
 
-    [A, G1, lambda1, ctr, err] = Vumps(O, vumps_opts.chi_max, [], opts);
+    if isfield(save_vars, 'G0')
+        [A, G1, lambda1, ctr, err] = Vumps(O, save_vars.A, save_vars.G0, opts);
+    else
+        [A, G1, lambda1, ctr, err] = Vumps(O, vumps_opts.chi_max, [], opts);
+    end
+    
+    
 end
