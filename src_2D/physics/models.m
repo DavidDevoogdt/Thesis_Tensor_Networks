@@ -65,26 +65,26 @@ function [simul] = models(model, opts)
             simul.title = sprintf("H=random");
 
         case "t_ising"
-%             d = 2;
-%             simul.d = d;
-%             J = p.Results.J;
-%             g = p.Results.g;
-% 
-%             %H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
-%             %H_1_tensor =-J*g*S_x_2 ;
-% 
-%             H_2_tensor = -J * (ncon({S_z_2, S_z_2}, {[-1, -3], [-2, -4]}) ...
-%                 +0.5 * g * ncon({S_x_2, eye(d)}, {[-1, -3], [-2, -4]}) ...
-%                 +0.5 * g * ncon({eye(d), S_x_2}, {[-1, -3], [-2, -4]}));
-%             H_1_tensor = -0.0 * eye(2);
-% 
-%             simul.title = sprintf("H=ZZ + %.3fX", g);
-%         case "t_ising_2"
+            %             d = 2;
+            %             simul.d = d;
+            %             J = p.Results.J;
+            %             g = p.Results.g;
+            %
+            %             %H_2_tensor =-J*ncon( {S_z_2,S_z_2}, {[-1,-3],[-2,-4]});
+            %             %H_1_tensor =-J*g*S_x_2 ;
+            %
+            %             H_2_tensor = -J * (ncon({S_z_2, S_z_2}, {[-1, -3], [-2, -4]}) ...
+            %                 +0.5 * g * ncon({S_x_2, eye(d)}, {[-1, -3], [-2, -4]}) ...
+            %                 +0.5 * g * ncon({eye(d), S_x_2}, {[-1, -3], [-2, -4]}));
+            %             H_1_tensor = -0.0 * eye(2);
+            %
+            %             simul.title = sprintf("H=ZZ + %.3fX", g);
+            %         case "t_ising_2"
             d = 2;
             simul.d = d;
-            J= p.Results.J;
+            J = p.Results.J;
             g = p.Results.g;
-            
+
             simul.J = J;
             simul.g = g;
 
@@ -143,6 +143,5 @@ function [simul] = models(model, opts)
             error("unknown model")
 
     end
-    
 
 end

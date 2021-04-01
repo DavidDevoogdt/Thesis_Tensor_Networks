@@ -4,7 +4,7 @@ function test_2D(model)
 
     pathparts = [pathparts(1:end - 3), 'test_2D_files'];
     fold2 = strjoin(pathparts, '/');
-    
+
     time = now;
 
     filename = sprintf("%s/2D_%s.mat", fold2, datestr(time, 'mm-dd-yy_HH-MM-SS'));
@@ -32,13 +32,12 @@ function test_2D(model)
     err_arr = zeros(beta_len, 1);
 
     num_map = [
-                        0, 5, 6, 0 ;
-                        1, 4, 7, 10;
-                        2, 3, 8, 9; ];
+            0, 5, 6, 0;
+            1, 4, 7, 10;
+            2, 3, 8, 9; ];
     map_opts = struct("numbered", true, "h_cyclic", 1, "v_cyclic", 0);
     density_site = 6;
-    
-    
+
     for i = 1:beta_len
         beta = beta_arr(i);
 
@@ -48,10 +47,9 @@ function test_2D(model)
 
         err = calculate_error(pepo, num_map, map_opts, 1, density_site);
 
-
         fprintf(" beta %.4e cycl err %.4e \n", beta, err);
         err_arr(i) = abs(err);
 
-        save(filename,'time','simul','beta_arr','err_arr','num_map','map_opts','density_site')
+        save(filename, 'time', 'simul', 'beta_arr', 'err_arr', 'num_map', 'map_opts', 'density_site')
     end
 end
