@@ -1,14 +1,12 @@
 function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts)
 
-%     p = inputParser;
-% 
-%     addRequired(p, 'chi_max')
-%     addParameter(p, 'name',[])
-%     addRequired(p, 'maxit' )
-% 
-%     parse(p, vumps_opts)
-
-
+    %     p = inputParser;
+    %
+    %     addRequired(p, 'chi_max')
+    %     addParameter(p, 'name',[])
+    %     addRequired(p, 'maxit' )
+    %
+    %     parse(p, vumps_opts)
 
     %todo check these params
     opts.charges = 'regular';
@@ -32,8 +30,8 @@ function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts)
     %opts.method = 'qr';
 
     opts.plot = 'on';
-    opts.maxit = vumps_opts.maxit;
-    opts.tolfixed = 1e-10;
+    opts.maxit = vumps_opts.vumps_maxit;
+    opts.tolfixed = vumps_opts.tolfixed;
 
     %put into vumps format
     T = pepo_matrix;

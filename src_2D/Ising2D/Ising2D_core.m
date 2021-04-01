@@ -1,58 +1,29 @@
-function Ising2D_core(name_prefix, T0,template,ind)
+function Ising2D_core(save_vars, template, T, results)
 
-    beta = 1 ./ T0;
-
-    %dir for temp results
-    dir_name = sprintf("%s/", name_prefix);
-    if ~exist(dir_name, 'dir')
-        mkdir(dir_name);
+    if nargin < 4
+        results = [];
     end
 
-    %hamiltonian setup
-    S_x = [0, 1; 1, 0];
-    S_y = [0, -1i; 1i, 0];
-    S_z = [1, 0; 0, -1];
-    I_tensor = eye(2);
+    if ~isfield(save_vars, 'PEPO_matrix')
 
-    handle = @make_PEPO_2D_A;
+        beta = 1 / T;
 
-    d = 2;
-
-    J=template.J;
-    g=template.g;
-    
-    template.X=S_z;
-    
-    H_1_tensor = -J * g * S_x;
-    H_2_tensor = -J * (reshape(ncon({S_z, S_z}, {[-1, -3], [-2, -4]}), [d, d, d, d]));
-
-    opts = [];
-    opts.testing = 0;
-    opts.visualise = 0;
-    opts.double = 0;
-
-    parfor iii = 1:numel(T0)
-
-            pepo = PEPO(d, -beta(iii) * H_1_tensor, -beta(iii) * H_2_tensor, 5, handle, opts);
-         
-            arr = pepo.PEPO_matrix;
-            
-            in_vars = [];
-            in_vars.PEPO_matrix = arr;
-            
-            vumps_opts=[];
-            vumps_opts.chi_max = template.chi;
-            vumps_opts.maxit = template.vumps_maxit;
-            
-            [results,save_vars] = PEPO_get_expectation (S_z, in_vars, vumps_opts );
-            results.T= T0(iii);
-            
-            saveboy(sprintf("%s/results_%d_%d.mat", name_prefix,ind, iii), 'results','template',results,template);
-            saveboy(sprintf("%s/save_vars_%d_%d.mat", name_prefix,ind, iii), 'save_vars',save_vars);
-            
-           fprintf("%s %3d:%2d:%2d T:%.4e mag:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.chi, ind, iii, results.T, results.m, 1/ results.inv_corr_length, results.marek, results.ctr, results.err);
+        pepo = PEPO(template.model_params.d, -beta * template.model_params.H_1_tensor, -beta * template.model_params.H_2_tensor, 5, template.handle, template.pepo_opts);
+        %save_vars = [];
+        save_vars.PEPO_matrix = pepo.PEPO_matrix;
 
     end
+
+    [results, save_vars] = PEPO_get_expectation (template.X, save_vars, template.vumps_opts, results);
+    results.T = T;
+
+    save_vars.results_name = sprintf("%s/results_%s.mat", template.name_prefix, save_vars.fname);
+    save_vars.save_vars_name = strrep(save_vars.results_name, '/results_', '/save_vars_');
+
+    saveboy(save_vars.results_name, 'results', results);
+    saveboy(save_vars.save_vars_name, 'save_vars', save_vars);
+
+    fprintf("%s %3d:%s T:%.4e mag:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':'), results.T, results.m, 1 / results.inv_corr_length, results.marek, results.ctr, results.err);
 
 end
 

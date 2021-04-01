@@ -19,7 +19,7 @@ function Ising2D_par(chi, name)
         case "david"
             chi_arr = [chi];
             nsammple = 4;
-            calc_ising_2d(1.26, 1.28, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 0, nsammple, mbound, vumps_maxit);
+            calc_ising_2d(1.26, 1.29, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 0, nsammple, mbound, vumps_maxit);
             %calc_ising_2d(2.1, 2.3, 1, g, chi_arr, 0.01, 0.01, fold2, dt, 1, nsammple, mbound, vumps_maxit);
         otherwise
             nsammple = 15;
@@ -53,20 +53,46 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
         chi = chi_arr(t);
 
         nn = sprintf("Ising2D_g=%.4e_chi=%d_%s", g, chi, datet);
-        cc = sprintf("%s/%s", fold2, nn);
-        fprintf("%s.mat", cc);
+
+        template.name_prefix = sprintf("%s/%s", fold2, nn);
+
+        dir_name = sprintf("%s/", template.name_prefix);
+        if ~exist(dir_name, 'dir')
+            mkdir(dir_name);
+        end
 
         maxit = 30;
 
+        %make template for simulations
+
+        vumps_opts.chi_max = chi;
+        vumps_opts.vumps_maxit = vumps_maxit;
+        vumps_opts.tolfixed = 1e-10;
+
+        template.vumps_opts = vumps_opts;
+        template.handle = @make_PEPO_2D_A;
+
+        template.dir_name = dir_name;
+        template.time = dt;
+
+        S_z = [1, 0; 0, -1];
+        template.X = S_z; %observable
+
+        template.model_params = models('t_ising', struct('g', 2.5));
+        template.pepo_opts = struct();
+
+        saveboy(sprintf("%s/template_%s.mat", template.name_prefix, template.name_suffix), 'template', template);
+
         for i = 1:maxit
 
+            %determine next temperatures
             if i == 1
                 T0 = (Tmax - Tmin) / (nsammple - 1) * (0:nsammple - 1) + Tmin;
             else
 
-                data = fetch_matfiles(nn,struct);
+                data = fetch_matfiles(nn, struct);
                 data = filter_ising_results(data, struct);
-                
+
                 T_arr_2 = data.T;
                 m_arr_2 = data.m;
 
@@ -99,19 +125,14 @@ function calc_ising_2d(Tmin, Tmax, J, g, chi_arr, aim_dx, aim_dy, fold2, dt, ons
                 end
 
             end
-          
-            template.J=J;
-            template.g=g;
-            template.chi=chi;
-            template.vumps_maxit = vumps_maxit;
-            
-            
-            Ising2D_core(cc, T0,template,i);
-            
 
+            parfor j = 1:numel(T0)
+                save_vars = [];
+                save_vars.fname = sprintf('%2d:%2d', i, j);
+
+                Ising2D_core(save_vars, template, T0(j));
+            end
         end
-
-        fprintf("")
     end
 
 end

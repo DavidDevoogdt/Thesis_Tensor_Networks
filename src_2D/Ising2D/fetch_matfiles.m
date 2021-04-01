@@ -1,4 +1,3 @@
-%function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g] = fetch_matfiles(file_name,opts)
 function data = fetch_matfiles(file_name, opts)
 
     if ~isfield(opts, 'save_vars')

@@ -17,26 +17,23 @@
 %     }};
 
 names = {{
-    'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11_rep';
-    'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11_rep';
-    'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11_rep';
-    'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46_rep';
-    'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49_rep';
-    'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52_rep';
-    'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51_rep';
-    }};
+%     'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11_rep';
+%     'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11_rep';
+%     'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11_rep';
+%     'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46_rep';
+%     'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49_rep';
+%     'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52_rep';
+%     'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51_rep';
+%     }};
 %     },{
-%     %'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11';
-%     %'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11';
-%     %'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11';
-%     'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46';
-%     'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49';
-%     'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52';
-%     'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51';
-%     }};
-% names = {{
-%     'Ising2D_g=2.5000e+00_chi=12_29_March_2021_16:58';
-%     }};
+%'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11';
+%'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11';
+%'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11';
+    'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46';
+    'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49';
+    'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52';
+    'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51';
+    }};
 
 ln_lopts = struct('Display', 0, 'maxit', 1);
 
@@ -58,7 +55,7 @@ for j = 1:numel(names)
         g = data.g;
         chi = data.chi;
 
-        T_c = 1.27362;
+        T_c = 1.2736;
         %T_c = 1.2737;  %https://journals.aps.org/prb/pdf/10.1103/PhysRevB.93.155157
 
         plot_m_vs_t(m_arr, T_arr, J, g, chi, i, j, T_c)

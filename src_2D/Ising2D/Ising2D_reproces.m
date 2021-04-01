@@ -7,12 +7,12 @@ function Ising2D_reproces
 
     filenames = {
             'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11';
-            'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11';
-            'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11';
-            'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46';
-            'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49';
-            'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52';
-            'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51';
+    % 'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11';
+    % 'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11';
+    % 'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46';
+    % 'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49';
+    % 'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52';
+    % 'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51';
             };
 
     for i = 1:numel(filenames)
@@ -20,19 +20,9 @@ function Ising2D_reproces
         root_folder = sprintf("%s/%s", fold2, filenames{i});
         fprintf("root fold: %s \n", root_folder);
 
-        [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g, pepo_arr] = fetch_matfiles_old(filenames{i});
-
-        if ~exist(root_folder, 'dir')
-            error('vumps_save not found');
-        end
-
-        s = find(m_arr ~= 0);
+        data = fetch_matfiles(filenames{i}, struct);
 
         for j = 1:numel(s)
-
-            [m, n] = ind2sub(size(T_arr), s(j));
-
-            this_file = sprintf("%s/vumps_save_v%d_%d_%d.mat", root_folder, chi, m, n);
 
             fprintf("%s \n", this_file);
 
@@ -87,48 +77,4 @@ function Ising2D_reproces
         %         saveboy(name_rep, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr', T_arr, m_arr, corr_arr, marek_arr, chi, J, g, vumps_err_arr, ctr_arr);
         %         fprintf('done with %s\n', root_folder);
     end
-end
-
-function [T_arr, m_arr, marek_arr, corr_arr, vumps_err_arr, ctr_arr, J, chi, g, pepo_arr] = fetch_matfiles_old(name_prefix)
-
-    fold = mfilename('fullpath');
-    pathparts = strsplit(fold, '/');
-    pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
-    fold2 = strjoin(pathparts, '/');
-
-    name = sprintf("%s.mat", name_prefix);
-    folder = sprintf("%s/%s/", fold2, name_prefix);
-
-    if nargout < 10
-        load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr');
-    else
-        load(name, 'T_arr', 'm_arr', 'corr_arr', 'marek_arr', 'chi', 'J', 'g', 'vumps_err_arr', 'ctr_arr', 'pepo_arr');
-    end
-
-    if exist(folder, 'dir')
-        myFiles = dir(fullfile(folder, 'temp_*.mat')); %gets all wav files in struct
-        for k = 1:length(myFiles)
-            baseFileName = myFiles(k).name;
-            fullFileName = fullfile(folder, baseFileName);
-
-            load(fullFileName, 'T_arr_2', 'm_arr_2', 'corr_arr_2', 'marek_arr_2', 'vumps_err_arr_2', 'ctr_arr_2', 'index', 'iii');
-
-            mask = T_arr(:, iii) == 0;
-
-            T_arr(:, iii) = T_arr_2;
-            m_arr(:, iii) = m_arr_2;
-            corr_arr(:, iii) = corr_arr_2;
-            marek_arr(:, iii) = marek_arr_2;
-            ctr_arr(:, iii) = ctr_arr_2;
-            vumps_err_arr(:, iii) = vumps_err_arr_2;
-        end
-    end
-    %
-    %     T_arr = reshape(T_arr, [], 1);
-    %     m_arr = reshape(m_arr, [], 1);
-    %     marek_arr = reshape(marek_arr, [], 1);
-    %     corr_arr = reshape(corr_arr, [], 1);
-    %     vumps_err_arr = reshape(vumps_err_arr, [], 1);
-    %     ctr_arr = reshape(ctr_arr, [], 1);
-
 end

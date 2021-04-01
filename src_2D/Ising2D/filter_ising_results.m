@@ -4,7 +4,7 @@ function data = filter_ising_results(data, opts)
         opts.tol = 1e-10;
     end
 
-    mask = (data.T > 0) & (data.err < opts.tol) & (data.err ~= 0);
+    mask = (data.T > 0) & (data.err < opts.tol) & (data.err ~= 0) & (data.inv_corr_length > 1e-5);
 
     [~, idx] = sort(data.T(mask));
 
