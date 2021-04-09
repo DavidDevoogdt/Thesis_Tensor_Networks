@@ -33,7 +33,7 @@ end
 
     %opts.method = 'qr';
 
-    opts.plot = 'on';
+    opts.plot = 'off';
     opts.maxit = vumps_opts.vumps_maxit;
     opts.tolfixed = vumps_opts.tolfixed;
 

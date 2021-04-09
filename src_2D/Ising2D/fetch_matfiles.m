@@ -1,4 +1,4 @@
-function data = fetch_matfiles(file_name, opts)
+function [data,template] = fetch_matfiles(file_name, opts)
 
     if ~isfield(opts, 'save_vars')
         opts.save_vars = 0;
@@ -20,12 +20,12 @@ function data = fetch_matfiles(file_name, opts)
 
     myFiles = dir(fullfile(folder, 'template.mat'));
     if numel(myFiles) ~= 1
-        warning('continuing woithout template')
-        template = [];
+        error('template not found')       
     else
         baseFileName = myFiles(1).name;
         fullFileName = fullfile(folder, baseFileName);
         load(fullFileName, 'template');
+        template.found = 1;
     end
 
     myFiles = dir(fullfile(folder, 'results_*.mat'));
@@ -38,27 +38,29 @@ function data = fetch_matfiles(file_name, opts)
 
     mergestructs = @(x, y) cell2struct([struct2cell(x); struct2cell(y)], [fieldnames(x); fieldnames(y)]);
 
-    parfor k = 1:num_files
+    for k = 1:num_files
         baseFileName = myFiles(k).name;
         fullFileName = fullfile(folder, baseFileName);
         R = load(fullFileName, 'results');
         data_points{k} = R.results;
 
+        S=[];
         if opts.save_vars == 1
             baseFileName = strrep(baseFileName, 'results', 'save_vars');
             fullFileName = fullfile(folder, baseFileName);
+           
             S = load(fullFileName, 'save_vars');
 
             save_data_points{k} = S.save_vars;
         end
 
         if do_call_back
-            opts.call_back_fn(template, R.results, S.save_vars, baseFileName);
+            opts.call_back_fn( R.results, S.save_vars, baseFileName);
         end
 
     end
 
-    if nargout == 1
+    if nargout ~= 0
 
         fields = fieldnames(data_points{1});
 

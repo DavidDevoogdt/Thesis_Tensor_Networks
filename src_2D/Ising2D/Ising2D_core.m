@@ -1,4 +1,8 @@
-function Ising2D_core(save_vars, template, T, results)
+function Ising2D_core(save_vars, template, T, results,get_exp_opts)
+
+    if nargin < 5
+        get_exp_opts = struct();
+    end
 
     if nargin < 4
         results = [];
@@ -14,7 +18,7 @@ function Ising2D_core(save_vars, template, T, results)
 
     end
 
-    [results, save_vars] = PEPO_get_expectation (template.X, save_vars, template.vumps_opts, results);
+    [results, save_vars] = PEPO_get_expectation (template.X, save_vars, template.vumps_opts, results,get_exp_opts);
     results.T = T;
 
     save_vars.results_name = sprintf("%s/results_%s.mat", template.name_prefix, save_vars.fname);

@@ -1,315 +1,269 @@
 %notes: http://alps.comp-phys.org/mediawiki/index.php/Main_Page
-% https://arxiv.org/pdf/1406.2973.pdf
 
 %sizes: 20*1.2.^(1:9)
 
-% names = {{
-% %'Ising2D_g=2.5000e+00_chi=24_15_March_2021_15:41';
-%     'Ising2D_g=2.5000e+00_chi=15_20_March_2021_17:45';
-%     'Ising2D_g=2.5000e+00_chi=29_15_March_2021_15:41';
-%     'Ising2D_g=2.5000e+00_chi=20_20_March_2021_12:48';
-%     'Ising2D_g=2.5000e+00_chi=35_15_March_2021_15:41';
-%     'Ising2D_g=2.5000e+00_chi=41_15_March_2021_15:41';
-%     'Ising2D_g=2.5000e+00_chi=50_15_March_2021_16:20';
-%     'Ising2D_g=2.5000e+00_chi=60_15_March_2021_16:54';
-%     'Ising2D_g=2.5000e+00_chi=73_15_March_2021_19:35';
-%     'Ising2D_g=2.5000e+00_chi=86_15_March_2021_19:46';
-%     }};
-
 names = {{
-%     'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11_rep';
-%     'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11_rep';
-%     'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11_rep';
-%     'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46_rep';
-%     'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49_rep';
-%     'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52_rep';
-%     'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51_rep';
-%     }};
+%     'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11_a';
+%     'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11_a';
+%     'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11_a';
+%     'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46_a';
+%     'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49_a';
+%     'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52_a';
+%     'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51_a';
 %     },{
-%'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11';
-%'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11';
-%'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11';
-    'Ising2D_g=2.5000e+00_chi=40_22_March_2021_10:46';
-    'Ising2D_g=2.5000e+00_chi=60_22_March_2021_11:49';
-    'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52';
-    'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51';
-    }};
+%     'Ising2D_g=2.5000e+00_chi=8_02_April_2021_09:38';
+%     'Ising2D_g=2.5000e+00_chi=11_02_April_2021_09:38';
+%     'Ising2D_g=2.5000e+00_chi=16_02_April_2021_09:38';
+%     'Ising2D_g=2.5000e+00_chi=23_02_April_2021_09:38';
+%     'Ising2D_g=2.5000e+00_chi=32_02_April_2021_09:38';
+%     'Ising2D_g=2.5000e+00_chi=45_02_April_2021_09:38';
+%     },{
+%     'Ising2D_g=1.5000e+00_chi=8_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=11_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=16_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=23_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=32_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=45_02_April_2021_11:17';
+%     'Ising2D_g=1.5000e+00_chi=64_02_April_2021_11:17';
+%     },{
+%     'Ising2D_g=0.0000e+00_chi=8_02_April_2021_11:46';
+%     'Ising2D_g=0.0000e+00_chi=11_02_April_2021_11:46';
+%     'Ising2D_g=0.0000e+00_chi=16_02_April_2021_11:46';
+%     'Ising2D_g=0.0000e+00_chi=23_02_April_2021_11:46';
+%     'Ising2D_g=0.0000e+00_chi=32_02_April_2021_11:46';
+%     'Ising2D_g=0.0000e+00_chi=45_02_April_2021_11:46';
+%     },{
+    'Ising2D_g=0.0000e+00_chi=8_08_April_2021_09:52';
+    'Ising2D_g=0.0000e+00_chi=11_08_April_2021_10:11';
+    'Ising2D_g=0.0000e+00_chi=16_08_April_2021_10:43';
+    'Ising2D_g=0.0000e+00_chi=23_08_April_2021_11:50';
+    'Ising2D_g=0.0000e+00_chi=32_08_April_2021_14:41';
+    'Ising2D_g=0.0000e+00_chi=45_08_April_2021_18:59';
+    'Ising2D_g=0.0000e+00_chi=64_09_April_2021_05:59';
+    },{
+    'Ising2D_g=1.5000e+00_chi=8_08_April_2021_10:15';
+    'Ising2D_g=1.5000e+00_chi=11_08_April_2021_10:28';
+    'Ising2D_g=1.5000e+00_chi=16_08_April_2021_10:48';
+    'Ising2D_g=1.5000e+00_chi=23_08_April_2021_11:29';
+    'Ising2D_g=1.5000e+00_chi=32_08_April_2021_12:19';
+    'Ising2D_g=1.5000e+00_chi=45_08_April_2021_16:50';
+    'Ising2D_g=1.5000e+00_chi=64_09_April_2021_04:35';
+    },{
+    'Ising2D_g=2.5000e+00_chi=8_08_April_2021_09:52';
+    'Ising2D_g=2.5000e+00_chi=11_08_April_2021_10:02';
+    'Ising2D_g=2.5000e+00_chi=16_08_April_2021_10:17';
+    'Ising2D_g=2.5000e+00_chi=23_08_April_2021_10:52';
+    'Ising2D_g=2.5000e+00_chi=32_08_April_2021_12:39';
+    'Ising2D_g=2.5000e+00_chi=45_08_April_2021_17:46';
+    'Ising2D_g=2.5000e+00_chi=64_09_April_2021_05:52';
+    },{
+    'Ising2D_g=2.9000e+00_chi=8_08_April_2021_09:52';
+    'Ising2D_g=2.9000e+00_chi=11_08_April_2021_10:03';
+    'Ising2D_g=2.9000e+00_chi=16_08_April_2021_10:06';
+}};
+
+
+%1.27375%1.2737(2)
+
+T_c_arr = [  2/log( 1+ sqrt(2) ),1.980,1.27348, 0.9  ];
 
 ln_lopts = struct('Display', 0, 'maxit', 1);
 
 filterPoints = 1;
 
+
+skip = [1,1,0,1];
+
 close all
 
+plot_opts.marker_size = 2;
+
+
 for j = 1:numel(names)
-    for i = 1:numel(names{j})
+    
+    T_c = T_c_arr(j);
+    
+    if skip(j)~=1
 
-        data = fetch_matfiles(names{j}{i}, struct);
-        data = filter_ising_results(data, struct);
+        for i = 1:numel(names{j})
 
-        marek_arr = data.marek;
-        corr_arr = 1 ./ data.inv_corr_length;
-        m_arr = data.m;
-        T_arr = data.T;
-        J = data.J;
-        g = data.g;
-        chi = data.chi;
+            data = fetch_matfiles(names{j}{i}, struct);
+            data = filter_ising_results(data, struct);
 
-        T_c = 1.2736;
-        %T_c = 1.2737;  %https://journals.aps.org/prb/pdf/10.1103/PhysRevB.93.155157
+            %d1=real(data.eps_i(:, 2)-data.eps_i(:, 1));
+            %d2=real(  data.eps_i(:, 7) + data.eps_i(:, 6) + data.eps_i(:, 5) + data.eps_i(:, 4) + data.eps_i(:, 3)+ data.eps_i(:, 2) - 6 * data.eps_i(:, 1))/6;
+            %d3=real(data.eps_i(:, 4) -  data.eps_i(:, 3));
+            
+            
+            %plot(d1,d2,'*');
 
-        plot_m_vs_t(m_arr, T_arr, J, g, chi, i, j, T_c)
-        plot_m_vs_t_marek(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
+            
+%             marek_arr = 1/3 * real(  data.eps_i(:, 4) - data.eps_i(:, 1) +...
+%                 data.eps_i(:, 5) - data.eps_i(:, 2)+...
+%                 data.eps_i(:, 6)- data.eps_i(:, 3) );
+            
+           marek_arr = real((data.eps_i(:, 6) - data.eps_i(:, 1)) / 3 + ...
+                        (data.eps_i(:, 5) - data.eps_i(:, 2)) / 2 + ...
+                        (data.eps_i(:, 4) - data.eps_i(:, 3)));
+%                       
+%            marek_arr =real(  data.eps_i(:, 2) -  data.eps_i(:, 1));
 
-        plot_xi(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-        plot_xi_marek(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-        %crit_plot(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-        %collapse(corr_arr, m_arr, T_arr, J, g, chi, i, j)
+            
+            
+            chi = data.chi(1);
 
-        %delta_scatter(marek_arr, m_arr, T_arr, J, g, chi, i, j, T_c);
+            %T_c = 1.2737;  %https://journals.aps.org/prb/pdf/10.1103/PhysRevB.93.155157
+
+            plot_m_vs_t(data, chi,marek_arr, i, j, T_c)
+            plot_m_vs_t_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
+
+
+            plot_xi_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
+
+            plot_S_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
+
+        end
 
     end
 end
 
-% function delta_scatter(marek_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-
-%     figure(j + 700);
-
-%     % if i == 1
-%     %     %     xline(1.27376, 'DisplayName', "$ T_c $")
-
-%     %     %     title(sprintf("2D transverse Ising, g=%.4f", g));
-%     %     %     xlabel("$\frac{k T}{J}$", "Interpreter", "Latex", 'FontSize', 12);
-%     %     %     ylabel("$\left < m \right >$", "Interpreter", "Latex");
-
-%     %     %     legend('Location', 'southwest', "Interpreter", "Latex", 'FontSize', 12)
-%     %     colorbar
-%     %     set(gca, 'ColorScale', 'log')
-%     % end
-
-%     hold on
-%     plot3(T_arr, m_arr, marek_arr);
-
-%     hold off
-
-% end
-
-function plot_m_vs_t(m_arr, T_arr, J, g, chi, i, j, T_c)
+function plot_m_vs_t(data, chi,marek_arr, i, j, T_c)
 
     figure(j);
+    
+    
+    
 
     if i == 1
-        xline(1.27376, 'DisplayName', "$ T_c $")
+        xline( T_c , 'DisplayName', "$ T_c $")
 
-        title(sprintf("2D transverse Ising, g=%.4f", g));
+        title(sprintf("2D transverse Ising, g=%.4f", data.model_params.g));
         xlabel("$\frac{k T}{J}$", "Interpreter", "Latex", 'FontSize', 12);
         ylabel("$\left < m \right >$", "Interpreter", "Latex");
 
         legend('Location', 'southwest', "Interpreter", "Latex", 'FontSize', 12)
     end
-
+    
     hold on
-    plot(T_arr, m_arr, '*-', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
+    plot(data.T, data.m, '*-', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
 
+    
     hold off
 
 end
 
-function plot_xi(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
 
-    y_arr = corr_arr;
-    x_arr = T_arr;
+function plot_xi_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
 
-    figure(j + 100);
+    nu=1;
+    omega=1;
+    c=-0.5;
+    d=0.1;
+    phi=1;
+    
 
-    if i == 1
 
-        title(sprintf("2D transverse Ising, g=%.4f", g));
-        xlabel("$T$", "Interpreter", "Latex", 'FontSize', 12);
-        ylabel("$ \xi  $", "Interpreter", "Latex");
+    %y_arr =  (1./data.inv_corr_length .* marek_arr.^(1/nu))./( 1+c*marek_arr.^(omega)  )   ; 
+    %x_arr = (data.T - T_c) .* (marek_arr.^(-1/1)) + d*marek_arr.^phi/nu;
 
-        legend('Location', 'northwest', "Interpreter", "Latex", 'FontSize', 12)
-    end
-
-    hold on
-    plot(x_arr, real(y_arr), '*-', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
-    hold off
-
-end
-
-function plot_xi_marek(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-
-    y_arr = corr_arr .* marek_arr;
-    x_arr = (T_arr - T_c) .* (marek_arr.^(-1/1));
-
+    y_arr =  (1./data.inv_corr_length .* marek_arr.^(1/nu))   ; 
+    x_arr = (data.T - T_c) .* (marek_arr.^(-1/1));
+    
     figure(j + 600);
 
     if i == 1
 
-        title(sprintf("2D transverse Ising, g=%.4f", g));
+        title(sprintf("$$H =ZZ+ %.2f X$$, $$T_c = %.5f$$ ", data.model_params.g,T_c),'interpreter','latex');
         xlabel("$(T-T_c)\delta^{-1/\nu}$", "Interpreter", "Latex", 'FontSize', 12);
         ylabel("$ \xi \delta  $", "Interpreter", "Latex");
 
-        %legend('Location', 'northwest', "Interpreter", "Latex", 'FontSize', 12)
+         legend('Location', 'northwest', "Interpreter", "Latex", 'FontSize', 12)
 
-        colorbar
-        %set(gca, 'colorscale', 'log')
-        %colormap('gray')
-        % cb = colorbar();
-        % cb.Ruler.Scale = 'log';
-        % cb.Ruler.MinorTick = 'on';
     end
 
     hold on
-    %plot(x_arr, real(y_arr), '*', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
-    scatter(x_arr, real(y_arr), 10, marek_arr, 'filled')
+    plot(x_arr, real(y_arr), '*', 'MarkerSize',plot_opts.marker_size,'DisplayName', sprintf("$ \\chi  = %d $", chi));
+    %scatter(x_arr, real(y_arr), 10, marek_arr, 'filled','DisplayName', sprintf("$ \\chi  = %d $", chi))
 
     hold off
 
 end
 
-function crit_plot(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
+function plot_S_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
+    c = 1/2;
 
-    %print(f);
+    nu=1;
+    omega=1.5;
+    e=0;
+    d=0;
+    phi=1;
+    
 
-    yarr = m_arr .* marek_arr.^(-1/8);
-    xarr = T_arr;
 
-    %yarr = m_arr .* marek_arr.^(-1/8);
-    %xarr = (T_arr-T_c).*marek_arr.^(-1);
+    y_arr = log(  exp(6*data.S/c) .* marek_arr.^(1/nu)./( 1+e*marek_arr.^omega )  )   ; 
+    x_arr = (data.T - T_c) .* (marek_arr.^(-1/1)) + d*marek_arr.^phi/nu;
+    
+    
+    %y_arr = 6*data.S/c +log(marek_arr) ;
+    %x_arr =(data.T- T_c).* (marek_arr.^(-1/1));
 
-    figure(j + 200);
-    %loglog(  beta_arr,err_arr );
+    figure(j + 900);
 
     if i == 1
-        ylim([0, 1]);
-        xlim([T_c - 0.01, T_c + 0.01])
 
-        xline(1.27376, 'DisplayName', "$ T_c $")
-
-        title(sprintf("2D transverse Ising, g=%.4f", g));
-        xlabel("$\frac{k T}{J}$", "Interpreter", "Latex", 'FontSize', 12);
-        ylabel("$ m \xi ^{\frac{\beta}{\nu}}  $", "Interpreter", "Latex");
+        title(sprintf("$$H =ZZ+ %.2f X$$, $$T_c = %.5f$$ ", data.model_params.g,T_c),'interpreter','latex');
+        xlabel("$(T-T_c)  \delta^{-1/\nu}$", "Interpreter", "Latex", 'FontSize', 12);
+        ylabel("$ 6 S / c + \ln \delta  $", "Interpreter", "Latex");
 
         legend('Location', 'northwest', "Interpreter", "Latex", 'FontSize', 12)
+
+        
+        %colorbar
     end
 
     hold on
-    plot(xarr, yarr, '*', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
-
-    idxmax = find(yarr < 0.45);
-    Tmax = T_arr(idxmax(1));
-
-    Tmin = T_arr(1);
-
-    fict_T = Tmin:1e-4:Tmax;
-    vq = interp1(T_arr(1:idxmax), yarr(1:idxmax), fict_T, 'spline');
-    plot(fict_T, vq, '-', 'DisplayName', sprintf("$ interp \\chi  = %d $", chi));
-
-    %lgd = legend('simul', 'onsager', 'fit');
-    %lgd.Location = 'southwest';
+    plot(x_arr, real(y_arr), '*', 'MarkerSize',plot_opts.marker_size,'DisplayName', sprintf("$ \\chi  = %d $", chi));
+    %scatter(x_arr, real(y_arr), 10, marek_arr, 'filled','DisplayName', sprintf("$ \\chi  = %d $", chi))
 
     hold off
 
-    %drawnow;
-
 end
 
-function collapse(corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
+function plot_m_vs_t_marek(data, chi,marek_arr, i, j, T_c,plot_opts)
 
-    %print(f);
+    nu=1;
+    c=-0.3;
+    omega = 1.4;
+    phi=1;
+    d=-0.1;
+    
+    yarr = data.m .* (marek_arr.^(-1/8)) ./( 1 + c* marek_arr.^(omega) );
+    xarr = (data.T - T_c) / T_c .* (marek_arr.^(-1/nu))+d*marek_arr.^(phi/nu);
 
-    yarr = m_arr .* corr_arr.^(1/8);
-    xarr = (T_arr - T_c) ./ T_c .* corr_arr;
-
-    figure(j + 300);
-    %loglog(  beta_arr,err_arr );
-    hold on
-    plot(xarr, yarr, '*', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
-
-    if i == 1
-        ylim([0, 1]);
-        xlim([-0.5, 0.6])
-
-        xline(1.27376, 'DisplayName', "$ T_c $")
-
-        title(sprintf("2D transverse Ising, g=%.4f", g));
-        xlabel("$t \xi^{\frac{1}{\nu}}$", "Interpreter", "Latex", 'FontSize', 12);
-        ylabel("$ m \xi ^{\frac{\beta}{\nu}}  $", "Interpreter", "Latex");
-
-        legend('Location', 'southwest', "Interpreter", "Latex", 'FontSize', 12)
-    end
-    %lgd = legend('simul', 'onsager', 'fit');
-    %lgd.Location = 'southwest';
-
-    hold off
-
-    %drawnow;
-
-end
-
-function plot_m_vs_t_marek(marek_arr, corr_arr, m_arr, T_arr, J, g, chi, i, j, T_c)
-
-    yarr = m_arr .* (marek_arr.^(-1/8));
-    xarr = (T_arr - T_c) / T_c .* (marek_arr.^(-1));
-
+  
     figure(j + 400);
 
     if i == 1
-        title(sprintf("2D transverse Ising, g=%.4f ", g));
+        title(sprintf("$$H =ZZ+ %.2f X$$, $$T_c = %.5f$$ ", data.model_params.g,T_c),'interpreter','latex');
         xlabel("$ (T-T_C) \delta^{-1 / \nu} $", "Interpreter", "Latex", 'FontSize', 12);
         ylabel("$  \left< m \right>  \delta ^{ -\beta / \nu}  $", "Interpreter", "Latex");
 
-        %legend('Location', 'southwest', "Interpreter", "Latex", 'FontSize', 12)
+        legend('Location', 'southwest', "Interpreter", "Latex", 'FontSize', 12)
 
         %set(gca, 'ColorScale', 'log')
 
-        % c1 = min(min(marek_arr));
-        % c2 = max(max(marek_arr));
-        % % set limits for the caxis
-        % caxis([log10(c1) log10(c2)]);
-        % % preallocate Ticks and TickLabels
-        % num_of_ticks = 5;
-        % Ticks = zeros(1, num_of_ticks);
-        % TickLabels = zeros(1, num_of_ticks);
-        % % distribute Ticks and TickLabels
-        % for n = 1:1:num_of_ticks
-
-        %     Ticks(n) = log10(round(c2) / num_of_ticks * n);
-        %     TickLabels(n) = round(c2) / num_of_ticks * n;
-        % end
-        % % set Ticks and TickLabels
-        % colorbar('Ticks', Ticks, 'TickLabels', TickLabels)
-        colorbar
-        set(gca, 'colorscale', 'log')
+        %colorbar
+        %set(gca, 'colorscale', 'log')
         %colormap('gray')
     end
 
     hold on
 
-    %plot3(xarr, yarr, marek_arr, '*', 'DisplayName', sprintf("$ \\chi  = %d $", chi));
+    plot(xarr, yarr,  '*', 'MarkerSize',plot_opts.marker_size, 'DisplayName', sprintf("$ \\chi  = %d $", chi));
 
-    scatter(xarr, yarr, 10, marek_arr, 'filled')
+    %scatter(xarr, yarr, 10, marek_arr, 'filled','DisplayName', sprintf("$ \\chi  = %d $", chi))
+   
 
     hold off
-
-end
-
-%%
-
-function [f, gof_info] = fit_data(m_max, m_min, m_arr, T_arr)
-
-    m_mask = (m_arr > m_min) & (m_arr < m_max);
-
-    T_data = reshape(T_arr(m_mask), [], 1);
-    m_data = reshape(m_arr(m_mask), [], 1);
-
-    [f, gof_info] = fit(m_data, T_data, ...
-        'Tc*(1- (x/a)^(1/beta) )', ...
-        'StartPoint', [2.26, 1, 1/8]);
-
-    %      [f, gof_info] = fit(m_data,T_data,...
-    %         'Tc*(1- (x)^(1/beta) )',...
-        %         'StartPoint', [2.26,  1/8]);
 
 end
