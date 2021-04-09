@@ -1,0 +1,45 @@
+
+Cluster expansion
+
+Time/thermal evolutuion
+https://tensornetwork.org/mps/algorithms/timeevo/tebd.html: TEBD
+
+Gibbs states:
+https://arxiv.org/pdf/1406.2973.pdf: Approximating Gibbs states of local Hamiltonians efficiently with PEPS
+
+
+Thermal ising
+https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107: https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107
+https://arxiv.org/abs/1602.02096: Thermal Ising transitions in the vicinity of two-dimensional quantum critical points
+https://arxiv.org/pdf/1209.0454.pdf: Projected Entangled Pair States at Finite Temperature: Imaginary Time Evolution with Ancillas
+
+
+
+Quantum phases
+quantum phase transitions - subir sachdev?
+
+vumps:
+https://biblio.ugent.be/publication/8519063/file/8519064: Diagonalizing Transfer Matrices and Matrix Product Operators: A Medley of Exact and Computational Methods
+https://arxiv.org/pdf/2003.01142.pdf: multisite vumps
+https://scipost.org/SciPostPhysLectNotes.7/pdf: vumps for MPO
+
+Tensor ring decomposition
+https://arxiv.org/pdf/1606.05535.pdf
+
+Time evolution
+https://arxiv.org/pdf/1901.05824.pdf: Time-evolution methods for matrix-product states
+https://fais.uj.edu.pl/documents/41628/111671067/PhD_Czarnik.pdf/d555e5eb-22ee-4cd2-89a8-960e4661073d :thesis about gibbs states,..
+
+
+slides about PEPS
+http://www.romanorus.com/Orus456.pdf
+
+Quantum monte carlo
+
+
+data collapse:
+https://arxiv.org/abs/cond-mat/0505194: subleading
+https://arxiv.org/pdf/cond-mat/0509747.pdf: subleading ising
+https://arxiv.org/pdf/1907.08603.pdf: A scaling hypothesis for matrix product states
+
+

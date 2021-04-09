@@ -45,3 +45,4 @@ IsingMatFiles/*/*.mat
 calana.sh
 
 test_2D_files/*
+src_2D/fit/ising_data.mat
