@@ -1,3 +1,8 @@
+genral intro to Tensor
+https://arxiv.org/pdf/1306.2164.pdf :A Practical Introduction to Tensor Networks:
+Matrix Product States and Projected Entangled Pair States
+https://arxiv.org/pdf/1603.03039.pdf: TN:Hand-waving and Interpretive Dance
+
 
 Cluster expansion
 
@@ -5,13 +10,14 @@ Time/thermal evolutuion
 https://tensornetwork.org/mps/algorithms/timeevo/tebd.html: TEBD
 
 Gibbs states:
-https://arxiv.org/pdf/1406.2973.pdf: Approximating Gibbs states of local Hamiltonians efficiently with PEPS
+https://arxiv.org/pdf/1406.2973.pdf : Approximating Gibbs states of local Hamiltonians efficiently with PEPS
 
 
 Thermal ising
-https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107: https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107
-https://arxiv.org/abs/1602.02096: Thermal Ising transitions in the vicinity of two-dimensional quantum critical points
-https://arxiv.org/pdf/1209.0454.pdf: Projected Entangled Pair States at Finite Temperature: Imaginary Time Evolution with Ancillas
+https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107 : 
+https://journals.aps.org/prb/abstract/10.1103/PhysRevB.99.245107
+https://arxiv.org/abs/1602.02096 : Thermal Ising transitions in the vicinity of two-dimensional quantum critical points
+https://arxiv.org/pdf/1209.0454.pdf : Projected Entangled Pair States at Finite Temperature: Imaginary Time Evolution with Ancillas
 
 
 
@@ -19,9 +25,9 @@ Quantum phases
 quantum phase transitions - subir sachdev?
 
 vumps:
-https://biblio.ugent.be/publication/8519063/file/8519064: Diagonalizing Transfer Matrices and Matrix Product Operators: A Medley of Exact and Computational Methods
-https://arxiv.org/pdf/2003.01142.pdf: multisite vumps
-https://scipost.org/SciPostPhysLectNotes.7/pdf: vumps for MPO
+https://biblio.ugent.be/publication/8519063/file/8519064 : Diagonalizing Transfer Matrices and Matrix Product Operators: A Medley of Exact and Computational Methods
+https://arxiv.org/pdf/2003.01142.pdf : multisite vumps
+https://scipost.org/SciPostPhysLectNotes.7/pdf : vumps for MPO
 
 Tensor ring decomposition
 https://arxiv.org/pdf/1606.05535.pdf
@@ -38,8 +44,8 @@ Quantum monte carlo
 
 
 data collapse:
-https://arxiv.org/abs/cond-mat/0505194: subleading
-https://arxiv.org/pdf/cond-mat/0509747.pdf: subleading ising
-https://arxiv.org/pdf/1907.08603.pdf: A scaling hypothesis for matrix product states
+https://arxiv.org/abs/cond-mat/0505194 : subleading
+https://arxiv.org/pdf/cond-mat/0509747.pdf : subleading ising
+https://arxiv.org/pdf/1907.08603.pdf : A scaling hypothesis for matrix product states
 
 

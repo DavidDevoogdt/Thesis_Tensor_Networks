@@ -1,25 +1,222 @@
-@unknown{clusterExp,
-  author = {Vanhecke, Bram and Damme, Maarten and Vanderstraeten, Laurens and Verstraete, Frank},
-  year   = {2019},
-  month  = {12},
-  pages  = {},
-  title  = {Symmetric cluster expansions with tensor networks}
+@misc{Bridgeman2017,
+  abstract      = {The curse of dimensionality associated with the Hilbert space of spin systems provides a significant obstruction to the study of condensed matter systems. Tensor networks have proven an important tool in attempting to overcome this difficulty in both the numerical and analytic regimes. These notes form the basis for a seven lecture course, introducing the basics of a range of common tensor networks and algorithms. In particular, we cover: introductory tensor network notation, applications to quantum information, basic properties of matrix product states, a classification of quantum phases using tensor networks, algorithms for finding matrix product states, basic properties of projected entangled pair states, and multiscale entanglement renormalisation ansatz states. The lectures are intended to be generally accessible, although the relevance of many of the examples may be lost on students without a background in many-body physics/quantum information. For each lecture, several problems are given, with worked solutions in an ancillary file.},
+  archiveprefix = {arXiv},
+  arxivid       = {1603.03039},
+  author        = {Bridgeman, Jacob C. and Chubb, Christopher T.},
+  booktitle     = {Journal of Physics A: Mathematical and Theoretical},
+  doi           = {10.1088/1751-8121/aa6dc3},
+  eprint        = {1603.03039},
+  issn          = {17518121},
+  keywords      = {DMRG,MERA,PEPS,matrix product states,quantum phases,strongly correlated,tensor networks},
+  month         = {may},
+  number        = {22},
+  publisher     = {Institute of Physics Publishing},
+  title         = {{Hand-waving and interpretive dance: An introductory course on tensor networks}},
+  volume        = {50},
+  year          = {2017}
 }
-
-
-
- %   \href{https://www.researchgate.net/publication/51966038_Exploring_corner_transfer_matrices_and_corner_tensors_for_the_classicalsimulation_of_quantum_lattice_systems}{explanation thermal expectation  values}
-    
-  %  http://qpt.physics.harvard.edu/c43.pdf
-    
-   % https://arxiv.org/pdf/1012.0653.pdf
-    
-%    https://pdfs.semanticscholar.org/f8db/3d9e21371372e5edab5a34ce13b9f91cc7a6.pdf
-    
- %   https://arxiv.org/pdf/cond-mat/9509147.pdf
-    
-  %  expliciete contructie mpo en pepo
-  %  https://arxiv.org/pdf/1911.04592.pdf
-
-%finite t simul peps
-%  https://arxiv.org/pdf/1809.08258.pdf
+@misc{Orus2014,
+  abstract      = {This is a partly non-technical introduction to selected topics on tensor network methods, based on several lectures and introductory seminars given on the subject. It should be a good place for newcomers to get familiarized with some of the key ideas in the field, specially regarding the numerics. After a very general introduction we motivate the concept of tensor network and provide several examples. We then move on to explain some basics about Matrix Product States (MPS) and Projected Entangled Pair States (PEPS). Selected details on some of the associated numerical methods for 1. d and 2. d quantum lattice systems are also discussed. {\textcopyright} 2014 Elsevier Inc.},
+  archiveprefix = {arXiv},
+  arxivid       = {1306.2164},
+  author        = {Or{\'{u}}s, Rom{\'{a}}n},
+  booktitle     = {Annals of Physics},
+  doi           = {10.1016/j.aop.2014.06.013},
+  eprint        = {1306.2164},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Or{\'{u}}s - 2014 - A practical introduction to tensor networks Matrix product states and projected entangled pair states.pdf:pdf},
+  issn          = {1096035X},
+  keywords      = {Entanglement,MPS,PEPS,Tensor networks},
+  month         = {oct},
+  pages         = {117--158},
+  publisher     = {Academic Press Inc.},
+  title         = {{A practical introduction to tensor networks: Matrix product states and projected entangled pair states}},
+  volume        = {349},
+  year          = {2014}
+}
+@article{Molnar2015,
+  abstract      = {We analyze the error of approximating Gibbs states of local quantum spin Hamiltonians on lattices with projected entangled pair states (PEPS) as a function of the bond dimension (D), temperature ($\beta$-1), and system size (N). First, we introduce a compression method in which the bond dimension scales as D=eO(log22(N/$\epsilon$)) if $\beta$<O(log2N). Second, building on the work of Hastings [M. B. Hastings, Phys. Rev. B 73, 085115 (2006)PRBMDO1098-012110.1103/PhysRevB.73.085115], we derive a polynomial scaling relation, D=(N/$\epsilon$)O($\beta$). This implies that the manifold of PEPS forms an efficient representation of Gibbs states of local quantum Hamiltonians. From those bounds it also follows that ground states can be approximated with D=NO(log2N) whenever the density of states only grows polynomially in the system size. All results hold for any spatial dimension of the lattice.},
+  archiveprefix = {arXiv},
+  arxivid       = {1406.2973v1},
+  author        = {Molnar, Andras and Schuch, Norbert and Verstraete, Frank and Cirac, J Ignacio},
+  doi           = {10.1103/PhysRevB.91.045138},
+  eprint        = {1406.2973v1},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Molnar et al. - 2014 - Approximating Gibbs states of local Hamiltonians efficiently with PEPS.pdf:pdf},
+  issn          = {1550235X},
+  journal       = {Physical Review B - Condensed Matter and Materials Physics},
+  keywords      = {()},
+  number        = {4},
+  title         = {{Approximating Gibbs states of local Hamiltonians efficiently with projected entangled pair states}},
+  volume        = {91},
+  year          = {2015}
+}
+@article{Hesselmann2016,
+  abstract = {The scaling of the transition temperature into an ordered phase close to a quantum critical point as well as the order parameter fluctuations inside the quantum critical region provide valuable information about universal properties of the underlying quantum critical point. Here, we employ quantum Monte Carlo simulations to examine these relations in detail for two-dimensional quantum systems that exhibit a finite-temperature Ising-transition line in the vicinity of a quantum critical point that belongs to the universality class of either (i) the three-dimensional Ising model for the case of the quantum Ising model in a transverse magnetic field on the square lattice or (ii) the chiral Ising transition for the case of a half-filled system of spinless fermions on the honeycomb lattice with nearest-neighbor repulsion. While the first case allows large-scale simulations to assess the scaling predictions to a high precision in terms of the known values for the critical exponents at the quantum critical point, for the later case, we extract values of the critical exponents $\nu$ and $\eta$, related to the order parameter fluctuations, which we discuss in relation to other recent estimates from ground-state quantum Monte Carlo calculations as well as analytical approaches.},
+  author   = {Hesselmann, S and Wessel, S},
+  doi      = {10.1103/PhysRevB.93.155157},
+  file     = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Hesselmann, Wessel - 2016 - Thermal Ising transitions in the vicinity of two-dimensional quantum critical points.pdf:pdf},
+  journal  = {PHYSICAL REVIEW B},
+  pages    = {155157},
+  title    = {{Thermal Ising transitions in the vicinity of two-dimensional quantum critical points}},
+  volume   = {93},
+  year     = {2016}
+}
+@article{Czarnik2019,
+  abstract = {We study second-order finite-temperature phase transitions of the two-dimensional quantum Ising and interacting honeycomb fermion models using infinite projected entangled pair states (iPEPS). We obtain an iPEPS thermal state representation by variational tensor network renormalization. We find that at the critical temperature T c the iPEPS correlation length is finite for the computationally accessible values of the iPEPS bond dimension D. Motivated by this observation, we investigate the application of finite correlation length scaling (FCLS), which has been previously used for iPEPS simulations of quantum critical points at T = 0, to obtain precise values of T c and the universal critical exponents. We find that in the vicinity of T c the behavior of observables follows well the one predicted by FCLS. Using FCLS we obtain T c and the critical exponents in agreement with quantum Monte Carlo results except for couplings close to the quantum critical points where larger bond dimensions are required.},
+  author   = {Czarnik, Piotr and Corboz, Philippe},
+  doi      = {10.1103/PhysRevB.99.245107},
+  file     = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Czarnik, Corboz - 2019 - Finite correlation length scaling with infinite projected entangled pair states at finite temperature.pdf:pdf},
+  journal  = {Physical Review B},
+  keywords = {doi:10.1103/PhysRevB.99.245107 url:https://doi.org/10.1103/PhysRevB.99.245107},
+  pages    = {245107},
+  title    = {{Finite correlation length scaling with infinite projected entangled pair states at finite temperature}},
+  volume   = {99},
+  year     = {2019}
+}
+@article{Vanderstraeten2019,
+  abstract = {In these lecture notes we give a technical overview of tangent-space methods for matrix product states in the thermodynamic limit. We introduce the manifold of uniform matrix product states, show how to compute different types of observables, and discuss the concept of a tangent space. We explain how to variationally optimize ground-state approximations, implement real-time evolution and describe elementary excitations for a given model Hamiltonian. Also, we explain how matrix product states approximate fixed points of one-dimensional transfer matrices. We show how all these methods can be translated to the language of continuous matrix product states for one-dimensional field theories. We conclude with some extensions of the tangent-space formalism and with an outlook to new applications.},
+  author   = {Vanderstraeten, Laurens and Haegeman, Jutho and Verstraete, Frank},
+  doi      = {10.21468/SciPostPhysLectNotes.7},
+  file     = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Vanderstraeten, Haegeman, Verstraete - 2019 - Tangent-space methods for uniform matrix product states.pdf:pdf},
+  journal  = {SciPost Phys. Lect. Notes},
+  title    = {{Tangent-space methods for uniform matrix product states}},
+  volume   = {7},
+  year     = {2019}
+}
+@article{Nietner2020,
+  abstract      = {Tensor network states provide an efficient class of states that faithfully capture strongly correlated quantum models and systems in classical statistical mechanics. While tensor networks can now be seen as becoming standard tools in the description of such complex many-body systems, close to optimal variational principles based on such states are less obvious to come by. In this work, we generalize a recently proposed variational uniform matrix product state algorithm for capturing one-dimensional quantum lattices in the thermodynamic limit, to the study of regular two-dimensional tensor networks with a non-trivial unit cell. A key property of the algorithm is a computational effort that scales linearly rather than exponentially in the size of the unit cell. We demonstrate the performance of our approach on the computation of the classical partition functions of the antiferromagnetic Ising model and interacting dimers on the square lattice, as well as of a quantum doped resonating valence bond state.},
+  archiveprefix = {arXiv},
+  arxivid       = {2003.01142},
+  author        = {Nietner, A and Vanhecke, B and Verstraete, F and Eisert, J and Vanderstraeten, L},
+  doi           = {10.22331/Q-2020-09-21-328},
+  eprint        = {2003.01142},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Nietner et al. - 2020 - Efficient variational contraction of two-dimensional tensor networks with a non-trivial unit cell.pdf:pdf},
+  issn          = {2521327X},
+  journal       = {Quantum},
+  title         = {{Efficient variational contraction of two-dimensional tensor networks with a non-trivial unit cell}},
+  volume        = {4},
+  year          = {2020}
+}
+@article{Haegeman2017,
+  abstract = {Transfer matrices and matrix product operators play a ubiquitous role in the field of many-body physics. This review gives an idiosyncratic overview of applications, exact results, and computational aspects of diagonalizing transfer matrices and matrix product operators. The results in this paper are a mixture of classic results, presented from the point of view of tensor networks, and new results. Topics discussed are exact solutions of transfer matrices in equilibrium and nonequilibrium statistical physics, tensor network states, matrix product operator algebras, and numerical matrix product state methods for finding extremal eigenvectors of matrix product operators.},
+  author   = {Haegeman, Jutho and Verstraete, Frank},
+  doi      = {10.1146/annurev-conmatphys},
+  file     = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Haegeman, Verstraete - 2017 - Diagonalizing Transfer Matrices and Matrix Product Operators A Medley of Exact and Computational Methods.pdf:pdf},
+  journal  = {The Annual Review of Condensed Matter Physics is},
+  keywords = {Bethe ansatz,entanglement,equilibrium and nonequilibrium statistical physics,fusion tensor categories,many-body physics,quantum spin chains,tensor networks},
+  pages    = {355--406},
+  title    = {{Diagonalizing Transfer Matrices and Matrix Product Operators: A Medley of Exact and Computational Methods}},
+  url      = {https://doi.org/10.1146/annurev-conmatphys-},
+  volume   = {8},
+  year     = {2017}
+}
+@article{Czarnik2012,
+  abstract      = {A projected entangled pair state (PEPS) with ancillas is evolved in imaginary time. This tensor network represents a thermal state of a two-dimensional (2D) lattice quantum system. A finite-temperature phase diagram of the 2D quantum Ising model in a transverse field is obtained as a benchmark application. {\textcopyright} 2012 American Physical Society.},
+  archiveprefix = {arXiv},
+  arxivid       = {1209.0454},
+  author        = {Czarnik, Piotr and Cincio, Lukasz and Dziarmaga, Jacek},
+  doi           = {10.1103/PhysRevB.86.245101},
+  eprint        = {1209.0454},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Czarnik, Cincio, Dziarmaga - Unknown - Projected Entangled Pair States at Finite Temperature Imaginary Time Evolution with Ancillas.pdf:pdf},
+  issn          = {10980121},
+  journal       = {Physical Review B - Condensed Matter and Materials Physics},
+  keywords      = {0270-c,0365Ud,0530Fk,numbers: 0367-a},
+  number        = {24},
+  title         = {{Projected entangled pair states at finite temperature: Imaginary time evolution with ancillas}},
+  volume        = {86},
+  year          = {2012}
+}
+@article{Vanhecke2021,
+  abstract      = {Cluster expansions for the exponential of local operators are constructed using tensor networks. In contrast to other approaches, the cluster expansion does not break any spatial or internal symmetries and exhibits a very favorable prefactor to the error scaling versus bond dimension. This is illustrated by time evolving a matrix product state using very large time steps, and by constructing a robust algorithm for finding ground states of two-dimensional Hamiltonians using projected entangled pair states as fixed points of two-dimensional transfer matrices.},
+  archiveprefix = {arXiv},
+  arxivid       = {1912.10512},
+  author        = {Vanhecke, Bram and Vanderstraeten, Laurens and Verstraete, Frank},
+  doi           = {10.1103/PhysRevA.103.L020402},
+  eprint        = {1912.10512},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Vanhecke, Vanderstraeten, Verstraete - Unknown - Symmetric cluster expansions with tensor networks.pdf:pdf},
+  issn          = {24699934},
+  journal       = {Physical Review A},
+  number        = {2},
+  title         = {{Symmetric cluster expansions with tensor networks}},
+  volume        = {103},
+  year          = {2021}
+}
+@article{Zhao2016,
+  abstract      = {Tensor networks have in recent years emerged as the powerful tools for solving the large-scale optimization problems. One of the most popular tensor network is tensor train (TT) decomposition that acts as the building blocks for the complicated tensor networks. However, the TT decomposition highly depends on permutations of tensor dimensions, due to its strictly sequential multilinear products over latent cores, which leads to difficulties in finding the optimal TT representation. In this paper, we introduce a fundamental tensor decomposition model to represent a large dimensional tensor by a circular multilinear products over a sequence of low dimensional cores, which can be graphically interpreted as a cyclic interconnection of 3rd-order tensors, and thus termed as tensor ring (TR) decomposition. The key advantage of TR model is the circular dimensional permutation invariance which is gained by employing the trace operation and treating the latent cores equivalently. TR model can be viewed as a linear combination of TT decompositions, thus obtaining the powerful and generalized representation abilities. For optimization of latent cores, we present four different algorithms based on the sequential SVDs, ALS scheme, and block-wise ALS techniques. Furthermore, the mathematical properties of TR model are investigated, which shows that the basic multilinear algebra can be performed efficiently by using TR representaions and the classical tensor decompositions can be conveniently transformed into the TR representation. Finally, the experiments on both synthetic signals and real-world datasets were conducted to evaluate the performance of different algorithms.},
+  archiveprefix = {arXiv},
+  arxivid       = {1606.05535},
+  author        = {Zhao, Qibin and Zhou, Guoxu and Xie, Shengli and Zhang, Liqing and Cichocki, Andrzej},
+  eprint        = {1606.05535},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Zhao et al. - 2016 - Tensor Ring Decomposition.pdf:pdf},
+  keywords      = {CP decomposition,Index Terms-Tensor ring decomposition,Tucker decomposition,tensor networks,tensor rank !,tensor train decomposition},
+  title         = {{Tensor Ring Decomposition}},
+  url           = {http://arxiv.org/abs/1606.05535},
+  year          = {2016}
+}
+@article{Vanhecke2019,
+  abstract      = {We study critical spin systems and field theories using matrix product states, and formulate a scaling hypothesis in terms of operators, eigenvalues of the transfer matrix, and lattice spacing in the case of field theories. The critical point, exponents, and central charge are determined by optimizing them to obtain a data collapse. We benchmark this method by studying critical Ising and Potts models, where we also obtain a scaling Ansatz for the correlation length and entanglement entropy. The formulation of those scaling functions turns out to be crucial for studying critical quantum field theories on the lattice. For the case of $\lambda$$\phi$4 with mass parameter $\mu$2 and lattice spacing a, we demonstrate a double data collapse for the correlation length $\delta$$\zeta$($\mu$,$\lambda$,D)=$\zeta$(($\alpha$-$\alpha$c)($\delta$/a)-1/$\nu$) with D the bond dimension, $\delta$ the gap between eigenvalues of the transfer matrix, and $\alpha$c=$\mu$R2/$\lambda$ the parameter which fixes the critical quantum field theory.},
+  archiveprefix = {arXiv},
+  arxivid       = {1907.08603},
+  author        = {Vanhecke, Bram and Haegeman, Jutho and {Van Acoleyen}, Karel and Vanderstraeten, Laurens and Verstraete, Frank},
+  doi           = {10.1103/PhysRevLett.123.250604},
+  eprint        = {1907.08603},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Vanhecke et al. - 2019 - Scaling Hypothesis for Matrix Product States.pdf:pdf},
+  issn          = {10797114},
+  journal       = {Physical Review Letters},
+  number        = {25},
+  pmid          = {31922783},
+  title         = {{Scaling Hypothesis for Matrix Product States}},
+  volume        = {123},
+  year          = {2019}
+}
+@article{Wang2006,
+  abstract      = {We use quantum Monte Carlo (stochastic series expansion) and finite-size scaling to study the quantum critical points of two S=1 2 Heisenberg antiferromagnets in two dimensions: a bilayer and a Kondo-lattice-like system (incomplete bilayer), each with intraplane and interplane couplings J and J. We discuss the ground-state finite-size scaling properties of three different quantities-the Binder moment ratio, the spin stiffness, and the long-wavelength magnetic susceptibility-which we use to extract the critical value of the coupling ratio g= J J. The individual estimates of gc are consistent provided that subleading finite-size corrections are properly taken into account. For both models, we find that the spin stiffness has the smallest subleading finite-size corrections; in the case of the incomplete bilayer we find that the first subleading correction vanishes or is extremely small. In agreement with predictions, we find that at the critical point the Binder ratio has a universal value and the product of the spin stiffness and the long-wavelength susceptibility scales as 1 L2 with a universal prefactor. Our results for the critical coupling ratios are gc =2.5220 (1) (full bilayer) and gc =1.3888 (1) (incomplete bilayer), which represent improvements of more than an order of magnitude over the previous best estimates. For the correlation length exponent we obtain $\nu$=0.7106 (9), consistent with the expected three-dimensional Heisenberg universality class. {\textcopyright} 2006 The American Physical Society.},
+  archiveprefix = {arXiv},
+  arxivid       = {cond-mat/0509747},
+  author        = {Wang, Ling and Beach, K. S.D. and Sandvik, Anders W},
+  doi           = {10.1103/PhysRevB.73.014431},
+  eprint        = {0509747},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Wang, Beach, Sandvik - 2006 - High-precision finite-size scaling analysis of the quantum-critical point of S=1 2 Heisenberg antiferromag.pdf:pdf},
+  issn          = {10980121},
+  journal       = {Physical Review B - Condensed Matter and Materials Physics},
+  keywords      = {7510-b,7540Cx,7540Mg,numbers: 7510Jm},
+  number        = {1},
+  primaryclass  = {cond-mat},
+  title         = {{High-precision finite-size scaling analysis of the quantum-critical point of S=1 2 Heisenberg antiferromagnetic bilayers}},
+  volume        = {73},
+  year          = {2006}
+}
+@article{Beach2005,
+  abstract      = {We propose a treatment of the subleading corrections to finite-size scaling that preserves the notion of data collapse. This approach is used to extend and improve the usual Binder cumulant analysis. As a demonstration, we present results for the two- and three-dimensional classical Ising models and the two-dimensional, double-layer quantum antiferromagnet.},
+  archiveprefix = {arXiv},
+  arxivid       = {cond-mat/0505194},
+  author        = {Beach, K. S. D. and Wang, Ling and Sandvik, Anders W.},
+  eprint        = {0505194},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Beach, Wang, Sandvik - 2005 - Data collapse in the critical region using finite-size scaling with subleading corrections.pdf:pdf},
+  month         = {may},
+  primaryclass  = {cond-mat},
+  title         = {{Data collapse in the critical region using finite-size scaling with subleading corrections}},
+  url           = {http://arxiv.org/abs/cond-mat/0505194},
+  year          = {2005}
+}
+@article{Supervisor2016,
+  author = {Supervisor, Philosophy and Dziarmaga, Jacek},
+  file   = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Supervisor, Dziarmaga - 2016 - Time Evolution of Quantum Tensor Networks.pdf:pdf},
+  number = {May},
+  title  = {{Time Evolution of Quantum Tensor Networks}},
+  year   = {2016}
+}
+@article{Paeckel2019,
+  abstract      = {Matrix-product states have become the de facto standard for the representation of one-dimensional quantum many body states. During the last few years, numerous new methods have been introduced to evaluate the time evolution of a matrix-product state. Here, we will review and summarize the recent work on this topic as applied to finite quantum systems. We will explain and compare the different methods available to construct a time-evolved matrix-product state, namely the time-evolving block decimation, the MPO WI,II method, the global Krylov method, the local Krylov method and the one- and two-site time-dependent variational principle. We will also apply these methods to four different representative examples of current problem settings in condensed matter physics.},
+  archiveprefix = {arXiv},
+  arxivid       = {1901.05824},
+  author        = {Paeckel, Sebastian and K{\"{o}}hler, Thomas and Swoboda, Andreas and Manmana, Salvatore R and Schollw{\"{o}}ck, Ulrich and Hubig, Claudius},
+  doi           = {10.1016/j.aop.2019.167998},
+  eprint        = {1901.05824},
+  file          = {:home/david/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Paeckel et al. - Unknown - Time-evolution methods for matrix-product states.pdf:pdf},
+  issn          = {1096035X},
+  journal       = {Annals of Physics},
+  keywords      = {Density matrix renormalization group (DMRG),Matrix-product states (MPS),Strongly-correlated systems,Time-dependent variational principle (TDVP),Time-evolution methods,Time-evolving block decimation (TEBD)},
+  title         = {{Time-evolution methods for matrix-product states}},
+  volume        = {411},
+  year          = {2019}
+}
