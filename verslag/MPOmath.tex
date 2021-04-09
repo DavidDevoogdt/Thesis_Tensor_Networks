@@ -1,11 +1,12 @@
-
+This section severs as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the oprations translate to the 2D case.
 
 The manipulations of MPO's is done by manipulating the tensor into a matrix, performing some matrix calculations and casting it back into it's original form. This section gives some examples how these manipulations are done in practice:
 
-\subsection{decomposition} \label{decompMPO}
+\subsection{Basics}
+
+\subsubsection{decomposition} \label{decompMPO}
 
 \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
-
 
 \begin{equation}
     \begin{split}
@@ -23,11 +24,9 @@ For an exact representation, the bond dimension of virtual level v is:
     \dim{v} = \min( \dim{u}, \dim{v}) + 2 \dim{i}
 \end{equation}
 
-
 Many different matrix decompositions exist. Some usefull examples here are svd decomposition and eigenvalue decomposition. The split in left and right matrix is not unique and differs per algoritm.
 
-
-\subsection{inverse}
+\subsubsection{inverse}
 Suppose we want to find a MPO O for given tensors A and B such that the following holds:
 
 \def \figone {\expH{2}{$A$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_2$"}}{{"u",}}}
@@ -65,10 +64,6 @@ The solution will be denoted by
 \end{equation}
 For the first equation the unmarked legs on the same positions need to be contracted with each other. The second line the mirrored positions are contracted.
 
-\subsubsection{inverse MPO}
-
-\todo{ fix this}
-
 If the tensor A is an MPO, the inverse can also be constructed as an mpo. This is espacially usefull if the MPO is created with decomposition for which the inverse can be computed easily, suchs as an svd decomposition.
 
 Take has to be taken with the indices to apply the inverse.
@@ -91,11 +86,9 @@ With the notation from \cref{eq_mpoinvdef} we have:
 \end{equation}
 The inverse can be applied sequentially.
 
+\todo{PEPS inverse, fast version, bookkeeping}
 
 \subsection{virtual levels and matrisation}
-
-The
-
 
 \todo{explain}
 
@@ -114,22 +107,30 @@ The boundary conditions (leftmost and rightmost virtual level are zero) correspo
 \begin{equation}
     \begin{split}
         l &= \begin{bmatrix} 1 & 0
-              & \cdots\end{bmatrix} \\
+                  & \cdots\end{bmatrix} \\
         r &= l^{T}
     \end{split}
 \end{equation}
 
 The total dimension is the sum of dimensions of the virtual level. In this case the \todo{berken exact en maak tabletje voor de verschillende types}
 
-\subsection{cononical form}
+\subsection{MPS algoritms}
+
+%https://arxiv.org/pdf/1306.2164.pdf
+
+\subsubsection{cononical form}
+
+schmidt decomp,
+
+\subsubsection{Expectation values}
+
+\subsection{PEPS algorimts}
 
 \todo{...}
 
 \subsection{compression}
 
-
-
-\subsection{Expectation values}
+\subsection{PEPS contraction}
 
 Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A and that the mpo represenation for X Y is localised over n sites, then the expactation value is given by:
 
@@ -160,7 +161,6 @@ Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A a
             \draw  (N4) -- (N5) ;
             \draw  (N5) -- (N6) ;
 
-
             \draw  (X2) -- (X3) ;
             \draw  (X3) -- (X4) ;
 
@@ -170,7 +170,6 @@ Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A a
             \draw (X2.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N2.south);
             \draw (X4.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N4.south);
 
-
             \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
             \draw (N5.north)   ..  controls +(0.4,1.4) and +(0.4,-1.4)  .. (N5.south);
         \end{tikzpicture}
@@ -179,11 +178,9 @@ Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A a
 
             \clip  (-1.5,-3) rectangle (5.5,-1);
 
-
             \node[] (O0) at (-1,-2) {...};
             \node[circle, draw] (O1) at (0,-2) {A};
             \node[circle, draw] (O2) at (1,-2) {A};
-
 
             \node[] (O3) at (2 ,-2) {...};
             \node[circle, draw] (O4) at (3 ,-2) {A};
@@ -199,10 +196,8 @@ Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A a
             \draw  (O4) -- (O5) ;
             \draw  (O5) -- (O6) ;
 
-
             \draw (O2.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (O2.south);
             \draw (O4.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (O4.south);
-
 
             \draw (O1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (O1.south);
             \draw (O5.north)   ..  controls +(0.4,1.4) and +(0.4,-1.4)  .. (O5.south);
@@ -210,7 +205,6 @@ Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A a
     }
     \label{sm:expecatation_X}
 \end{equation}
-
 
 In the thermodynamic limit there are an infinity number of A to the left and the right. This can be simulated by taking the left and right fixed points of the traced MPO A corresponding to the largest eigenvector $\lambda$.
 
@@ -259,7 +253,6 @@ Equation \cref{sm:expecatation_X} can now be easily caclulated:
         \begin{tikzpicture} [   ]
             \clip (-0.5,-1) rectangle (4.5,2);
 
-
             \node[] (N1) at (0,0) {$G_l$};
             \node[circle, draw] (N2) at (1,0) {A};
             \node[circle, draw] (X2) at (1,1) {X};
@@ -272,13 +265,10 @@ Equation \cref{sm:expecatation_X} can now be easily caclulated:
 
             \node[] (N5) at (4 ,0) {$G_r$};
 
-
             \draw  (N1) -- (N2) ;
             \draw  (N2) -- (N3) ;
             \draw  (N3) -- (N4) ;
             \draw  (N4) -- (N5) ;
-
-
 
             \draw  (X2) -- (X3) ;
             \draw  (X3) -- (X4) ;
@@ -301,3 +291,6 @@ Equation \cref{sm:expecatation_X} can now be easily caclulated:
     }
     \label{sm:expecatation_X_2}
 \end{equation}
+
+\subsection{Vumps}
+\subsection{}

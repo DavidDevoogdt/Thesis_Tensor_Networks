@@ -4,9 +4,6 @@
 %  <NON EMPTY>%
 %\fi
 
-
-
-
 %use first argument is numbers of O's, second the labels, can be empty
 %\mpo{3}{ {0,1,2,3,4} }
 
@@ -16,7 +13,6 @@
         \node (AB) at ( {#3} ,0)  {  #2  };
     \end{tikzpicture}
 }
-
 
 \newcommand{\mpo}[6]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")}]
         %\def \NNodes {#1}
@@ -48,7 +44,6 @@
                     \pgfmathsetmacro{\labeldown}{  {#4}[\N]  }
                 \fi
 
-
                 \def\aab{#5}\ifx\aab\empty
                     \def \dotssite {0}
                 \else
@@ -63,10 +58,7 @@
                         \pgfmathsetmacro{\nname}{  {#6}[\N]  }
                     \fi
 
-
-
                     \node[circle,draw, radius=\radius] (O\N) at (\p,0) {\nname};
-
 
                     \ifthenelse{ \equal{\labelUp}{-}  }{
                     }{
@@ -74,24 +66,15 @@
                         \draw (O\N) -- (Ou\N);
                     }
 
-
                     \ifthenelse{ \equal{\labeldown}{-}  }{
                     }{
                         \node[] (Od\N) at (\p,-\legpos) {\labeldown};
                         \draw (O\N) -- (Od\N);
                     }
 
-
-
-
-
-
-
-
                 }{
                     \node[circle] (O\N) at (\p,0) { $\cdots$ };
                 }
-
 
             }
 
@@ -118,13 +101,11 @@
 
         %\draw (O0) --  node[above] {1} (O1);
 
-
     \end{tikzpicture}}
 
 \newcommand{\expH}[5]{ \begin{tikzpicture}[baseline={0-0.5*height("$=$")}]
 
         \def \NNodes {#1};
-
 
         \def\aaa{#2}\ifx\aaa\empty
             \def \text { $e^{-\beta \hat{H}_{\NNodes} }$ }
@@ -134,7 +115,6 @@
 
         \pgfmathwidth{ "\text" }
         \def \textwidth { \pgfmathresult }
-
 
         %\pgfmathsetmacro{\text}{width(\text)}
 
@@ -148,14 +128,10 @@
 
         \pgfmathsetmacro{\Nmax}{\NNodes -1}
 
-
-
         \pgfmathsetmacro{\boxsize}{ max ( \textwidth/1cm , \step*\Nmax )   + \radius}
 
         %\pgfmathsetmacro{\boxsize}{ 5  )}
         %\pgfmathsetlength{\boxsize}{ max( \textwidth,  \boxsize1  )}
-
-
 
         %            \ifthenelse{#1=1}{
         %                \def \left {-0.6}
@@ -166,7 +142,6 @@
         %            }
 
         \draw (\left,- \boxHeight ) rectangle (\right, \boxHeight ) [add reference =H] ;
-
 
         \node  at (H center) { \text };
 
@@ -186,9 +161,7 @@
                     \pgfmathsetmacro{\labeldown}{  {#4}[\N]  }
                 \fi
 
-
                 \node[] (O\N) at (\p,0) {};
-
 
                 \ifthenelse{ \equal{\labelUp}{...}  }{
                     \node[] (Ou\N) at (\p, \dotpos ) {\labelUp};
@@ -196,7 +169,6 @@
                     \node[] (Ou\N) at (\p, \legpos ) {\labelUp};
                     \draw (Ou\N) --  (Ou\N  |- H north);
                 }
-
 
                 \ifthenelse{ \equal{\labeldown}{...}  }{
                     \node[] (Od\N) at (\p,-\dotpos ) {\labeldown};
@@ -221,7 +193,6 @@
             \node (Ne) at (\rightleg,0) {\labeli};
             \draw (Ne) --  ( Ne  -| H east);
         \fi
-
 
     \end{tikzpicture} }
 

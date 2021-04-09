@@ -28,7 +28,6 @@
 \usepackage[hidelinks,breaklinks]{hyperref}
 
 \usepackage{verbatim}
-%\usepackage{hyperref}
 \usepackage{siunitx} % Elegant eenheden zetten
 \usepackage[version=3]{mhchem} % ingeven van chemische fomules
 \usepackage{cleveref} % Paragraaf tekens
@@ -67,7 +66,6 @@
 
 \input{macros.tex}
 
-
 \onecolumn
 \begin{titlepage}
     \begin{center}
@@ -89,11 +87,7 @@
 
         David Devoogdt \\       [2.5cm]
 
-
         Academic supervisor: prof.
-
-
-
 
         \vfill
 
@@ -114,24 +108,26 @@
 \section{Introduction}
 \input{introduction.tex}
 
-\section{Models}
-\input{qphasediag}
-
-\section{Criticality}
-\input{criticality.tex}
-
 \section{tensor networks}
 \input{tensorNetworks.tex}
 
-\section{Statistical mechanics}
+\section{Operator exponentials}
 \input{statmech.tex}
 
-\section{MPO Calculations}
+\section{Tensor network manipulations}
 \input{MPOmath}
 
 \section{contruction MPO}
 \input{mpo1d}
 
+\section{contruction PEPO framework}
+\input{pepo2d}
+
+\section{Models}
+\input{qphasediag}
+
+\section{Criticality}
+\input{criticality.tex}
 
 \section{Benchmarking}
 \input{benchmark.tex}

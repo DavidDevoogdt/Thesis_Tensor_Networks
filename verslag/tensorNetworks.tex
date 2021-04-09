@@ -1,5 +1,7 @@
+\subsection{introduction}
 
-\subsection{MPS}
+\subsection{1D}
+\subsubsection{MPS}
 
 A general quantum state with n sites can be described in a given basis $\ket{i}$ as
 \begin{equation}
@@ -8,17 +10,12 @@ A general quantum state with n sites can be described in a given basis $\ket{i}$
 
 This requires an exponential number $d^n$ of coefficients C where d is the dimensions of basis $\ket{i}$.
 
-
-
-
-
 In order to make the problem tractable, the following form is proposed as wavefunction:
 
 \begin{equation}
     C^{i_1 i_2 \cdots i_n} = {C^{1}}_{\alpha_1}^{ i_1} {C^{2}}_{\alpha_1 \alpha_2}^{i_2} \cdots  {C^{n}}_{\alpha_{n-1} }^{i_n}
 \end{equation}
 Where summation over shared indices is implied. It is always possible to find such an representation by means of matrix decomposition. The summation over $\alpha_i$ are called virtual bond and their dimension is denoted by $\chi$.
-
 
 \begin{figure}
     \centering
@@ -28,12 +25,10 @@ Where summation over shared indices is implied. It is always possible to find su
         \draw (-3,-0) rectangle (1,1)  [add reference=C]   ;
         \node  at (C center) {C};
 
-
         \node (N1)  at  (-2.5,-1) {};
         \node (N2)  at  (-1.5,-1) {};
         \node  at  (-.5,-0.5) {...};
         \node  (N3) at  (.5,-1) {};
-
 
         \draw    (N1) -- (N1 |-  C south);
         \draw    (N2) -- (N2 |-  C south);
@@ -45,8 +40,6 @@ Where summation over shared indices is implied. It is always possible to find su
     \label{fig:my_label}
 \end{figure}
 
-
-
 Explicit translational invariance is given by tensor $C^i_{\alpha \beta }$ that don't depend on the location. The chain is closed by setting $\alpha_n = \alpha_0$. We can now write this as a Trace over matrix products:
 
 \begin{equation}
@@ -55,8 +48,7 @@ Explicit translational invariance is given by tensor $C^i_{\alpha \beta }$ that 
 
 \missingfigure{make this in graphical notation}
 
-
-\subsection{graphical notation}
+\subsubsection{graphical notation}
 Tensor networks can be written in a graphical notation. The legs f a tensor denote the number of external indices. The upper  Connected legs are summed. Some examples are shown in \cref{tab:grafical_not}
 
 \begin{table}[]
@@ -96,11 +88,7 @@ Tensor networks can be written in a graphical notation. The legs f a tensor deno
     \label{tab:grafical_not}
 \end{table}
 
-
-
-
-
-\subsection{MPO}
+\subsubsection{MPO}
 
 In a similar fashion, a Matrix Product Operator (MPO) is of the following form:
 
@@ -114,8 +102,9 @@ In a similar fashion, a Matrix Product Operator (MPO) is of the following form:
 \mpo{5}{{,,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"$j_1$","$j_2$",,"$j_n$","-"}}{{0,0,1,0,0}}{{"A", "A",,"A","M" }}
 \todo{connect trace and hide legs at M}
 
-
-
 The matrix M contains the boundary conditions of the operator. Many Hamiltonians can be represented by an MPO. For ins
 
-\subsection{PEPO}
+\subsection{2D}
+\subsubsection{PEPS}
+
+\subsubsection{PEPO}

@@ -1,10 +1,7 @@
 
-
-
 \subsection{Time evolution methods}
 
 \todo{https://tensornetwork.org/mps/algorithms/timeevo/}
-
 
 \subsection{Cluster expansion}
 This thesis builds on the cluster expansions introduced in \cite{clusterExp}. The idea is to create tensor network with a number of virtual levels. The representation is exact up to M connected sites, where M is the order. Different variations are possible.
@@ -33,8 +30,6 @@ Some notation will be introduced that will be used later on. The rensor $L_n$ is
     \end{split}
 \end{equation}
 
-
-
 \def \MnBlock {\expH{4}{ $M_n$  }{ {,,"...",} }{ {,,"...",} }{}{} }
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }
 \def \Mn {\mpo{4}{ {0,,,,0}  }{}{}{{0,0,1,0,0}}{}}
@@ -59,7 +54,6 @@ This type was originally proposed in \cite{clusterExp}. The following types of b
 
 The $O^{n n}$ block is defined by \cref{eq_nn_level}
 
-
 \def \rhs{\expH{1}{ $L_{n}^{-1}  M_{2n+1}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
 
 \begin{equation}
@@ -71,7 +65,6 @@ The residual error M is calculated for a chain of size $2n+1$. The left and righ
 \paragraph{ $O^{m n }$ and $O^{n m} $}
 The contraction of $O^{n m }$ and $O^{m n} $ is defined by:
 
-
 \def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
 \begin{equation}
     \mpo{2}{ {"n","m","n"}  }{}{}{}{} = \rhs
@@ -79,7 +72,6 @@ The contraction of $O^{n m }$ and $O^{m n} $ is defined by:
 \end{equation}
 
 The individual elements $O^{m n }$ and $O^{n m} $ are obtained by doing an svd decoposition as explained in \cref{decompMPO}. The square root of the singuar values is multiplied to the left and right of the decomposition. The operator $L_{n+1}$ and $R_{n+1}$ can be construdted directly. \todo{implementeren en testen.}
-
 
 During the svd the bond dimension can be lowered by only keeping the rows and colums belonging to $\sigma_i > \sigma_0$. This also helps the invertibility. Increasing $\sigma_0$ reduces the precision of the MPO.
 
@@ -103,7 +95,6 @@ From the construction is can be seen that  the dimension of the new virtual leve
 
 The only parameter in the construction is $\sigma_0$ As can be seen in \cref{construction:sigman0}, mainly the construction for small values of $\beta$ get affected by the choice of $\sigma_0$.This can be seen in \cref{fig:sigman0}. A good tradeoff seems to be $ \sigma_0 = {10}^{-12}$. There is almost no precision loss vor small $\beta$, while for intermediate it performs optimal for intermediate $\beta$.
 
-
 \begin{figure}
     \centering
     \begin{subfigure}{\textwidth}
@@ -122,7 +113,6 @@ The only parameter in the construction is $\sigma_0$ As can be seen in \cref{con
     \caption{A figure with two subfigures}
     \label{fig:sigman0}
 \end{figure}
-
 
 \begin{figure} \ContinuedFloat
     \centering
@@ -143,7 +133,6 @@ The only parameter in the construction is $\sigma_0$ As can be seen in \cref{con
     \label{fig:sigman0}
 \end{figure}
 
-
 \begin{figure} \ContinuedFloat
     \centering
     \begin{subfigure}{\textwidth}
@@ -157,7 +146,6 @@ The only parameter in the construction is $\sigma_0$ As can be seen in \cref{con
 \end{figure}
 
 In practice, the truncation criterium is not completely optimal in some specific cases.
-
 
 \subsubsection{Type B}
 
@@ -200,9 +188,7 @@ Such matrices with optimal bond dimension can be found with generalised SVD. Gen
 \end{equation}
 The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  The dimension is higher than type A.
 
-
 \todo{meer uitleg gsvd https://nl.mathworks.com/help/matlab/ref/gsvd.html}
-
 
 \paragraph{discussion}
 
@@ -227,12 +213,9 @@ As can be expected from the construction, the bond dimension grows very fast. Th
 
 This type uses a differemt setup which tries to capture the best of both Type A and B. Type  could handle long range correlation better because of the introuction of $O^{n n}$, but the inverse was not necesarily well defined. Type B had well conditioned inverses, but performed in most of the cases worse. The block appearing in type D are as follows:
 
-
 \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{}
 
 Similar to type A,
-
-
 
 \def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
 \begin{equation}
@@ -244,7 +227,6 @@ Similar to type A,
 \end{equation}
 
 Matrix $D_n$ is the singular value diagonal matrix devided by a normalisation factor $\phi$. Both U and V are multiplied by $  \sqrt{\phi} $.
-
 
 \paragraph{discussion}
 It's not completely clear what the values of $\phi$ should be.  If $\phi$ is to large, large chains are not surpressed. If phi is to small, the $O^{n n}$ blocks will become large and hence the chain will diverge again. A reasonable value is the sum of the singular values. \todo{other things could be tried here, WIP}
@@ -267,7 +249,6 @@ The cost of this type lies in the fact that it has no compact way of casting it 
                            &             &             &              &                &           &             & $ D_2^{1/2} O_{21} D_1^{-1/2}$                                  \\\end{tabular}
 
 \todo{fix this }
-
 
 \subsection{Implementation details}
 
