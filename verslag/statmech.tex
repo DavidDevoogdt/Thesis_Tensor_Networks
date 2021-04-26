@@ -1,36 +1,45 @@
 
+While it is often possible to find exact MPO representation to represent a wide class of hamiltonians \todo{find citation and examples}, it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate i is given by $p_i\exp{ - \beta \hat{H_i} }$. This is often called "imaginary" time, due to the substitution $\beta = i t$. \todo{explain link CFT}. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world obsevations of these systems at finite temperature.
+
 \subsection{Statistical mechanics}
 
-The physics of a system in thermodynamical equilibrium can be derived from it's partition function Z.
+The physics of a system in thermodynamical equilibrium can be derived from it's partition function Z. The classical formula generalises to a density matrix $\rho$ as follows:
 \begin{equation}
-    \begin{split}
-        Z &= \sum e^{ - \beta E_n} \\
-        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
-        &= \Tr( e^{ - \beta \hat{H} } )
-    \end{split}
+  \begin{split}
+    Z &= \sum e^{ - \beta E_n} \\
+    &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
+    &= \Tr( e^{ - \beta \hat{H} } )
+  \end{split}
 \end{equation}
-The first line is the partition function for clasical discrete systems. The index n runs of all possible microstates. It is know that the propability to find the system in a given microstates is given by:
+The first line is the partition function for clasical discrete systems. The index n runs of all possible microstates. It is known that the propability to find the system in a given microstates is given by:
 \begin{equation}
-    p_i = \frac{\sum e^{ - \beta E_i}}{Z}
+  p_i = \frac{\sum e^{ - \beta E_i}}{Z}
 \end{equation}
 An useful quantity is the density matrix $\rho$.
 \begin{equation}
-    \begin{split}
-        \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
-        &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
-    \end{split}
+  \begin{split}
+    \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
+    &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
+  \end{split}
 \end{equation}
-With this notation
+Whith this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
 \begin{equation}
-    \begin{split}
-        Z &= \Tr( \rho) \\
-        \Braket{X} &= \Tr(\rho \hat{X})
-    \end{split}
+  \begin{split}
+    Z &= \Tr( \rho) \\
+    \Braket{X} &= \Tr(\rho \hat{X})
+  \end{split}
 \end{equation}
 
 \subsection{Time evolutions}
+In quantum field theory, \todo{LSZ theorema herbekijken}, calculation of n-point correlation functions is extremely important to understand a given field theory.
+
+\subsubsection{ground state}
+One practical way of finding the ground state is cooling an intitial stata down very small T.
 
 \subsection{Tensor network methods}
+In the following section I will give a very short review of the current tensor network methods to simulate real or imaginary time evolution. This overview is mainly based on the review paper \cite{Paeckel2019}.
+
+\cite{Paeckel2019}
 
 % https://arxiv.org/pdf/1901.05824.pdf
 
@@ -43,3 +52,4 @@ TEBD, MPO $W^{I,II}$
 \subsubsection{MPS-local methods }
 local Krylov
 TDVP
+

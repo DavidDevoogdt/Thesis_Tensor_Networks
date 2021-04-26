@@ -14,7 +14,7 @@
 
  \usepackage{tikz}
  \usetikzlibrary{external}
- 
+
 
  \usepackage{braket}
 
@@ -85,8 +85,6 @@
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
-
-
 \begin{document}
 
 \begin{frame}
@@ -126,7 +124,6 @@
 %------------------------------------------------
 %------------------------------------------------
 
-
 %------------------------------------------------
 \subsection{Problem Statement}
 %------------------------------------------------
@@ -142,8 +139,6 @@
         \end{split}
     \end{equation}
 \end{frame}
-
-
 
 %------------------------------------------------
 \subsection{Graphical notation}
@@ -181,10 +176,6 @@
     \end{equation}
 \end{frame}
 
-
-
-
-
 %------------------------------------------------
 \subsection{Cluster expansion}
 %------------------------------------------------
@@ -194,8 +185,6 @@
 %         \item cluster by size, not in $\beta$
 %     \end{itemize}
 % \end{frame}
-
-
 
 \begin{frame}{General idea}
     \begin{equation}
@@ -224,11 +213,8 @@
 
 \end{frame}
 
-
 %=  \exp \left(  -\beta \mpob{1}{{,,}}{}{}{}{{"H","H",}} \right)
 %=  \exp \left(  -\beta \mpob{2}{{,,}}{}{}{}{{"H","H",}} \right)
-
-
 
 \begin{frame}{Advantages}
     \begin{itemize}
@@ -237,7 +223,6 @@
         \item fast
     \end{itemize}
 \end{frame}
-
 
 %------------------------------------------------
 %------------------------------------------------
@@ -267,7 +252,6 @@
 % %------------------------------------------------
 % \begin{frame}{Variant B}
 
-
 %     \begin{equation}
 %         \begin{split}
 %             &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
@@ -277,7 +261,6 @@
 %             &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}\\
 %         \end{split}
 %     \end{equation}
-
 
 % \end{frame}
 
@@ -314,20 +297,17 @@
 %------------------------------------------------
 \begin{frame}{Error measure}
 
-
     \begin{equation}
         \epsilon(\text{map}) = \frac{|| \exp -\beta H( \text{map} ) - \text{MPO}(\text{map}) || }{|| \exp -\beta H(\text{map}) || }
     \end{equation}
 
 \end{frame}
 
-
 \begin{frame}
     \begin{figure}
         \includegraphics[scale=0.6]{Figures/1D_ising.pdf}
     \end{figure}
 \end{frame}
-
 
 \begin{frame}
     \begin{figure}
@@ -357,7 +337,6 @@
 \subsection{ Linear blocks}
 %------------------------------------------------
 
-
 \begin{frame}{Construction 2D: Linear blocks}
     \begin{equation}
         \mpob{1}{ {,}  }{}{}{}{{,,}}
@@ -367,10 +346,7 @@
         \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}}  \pepob{2}{2}{{,,}}{{"1",,}}{{0,1,0,1}}
     \end{equation}
 
-
-
 \end{frame}
-
 
 \begin{frame}{Construction 2D: Linear blocks}
     \begin{equation}
@@ -406,7 +382,6 @@
 %------------------------------------------------
 \begin{frame}{Loops}
 
-
     \def \figone {{\pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}}}}
     \def \figtwo {{\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}}}
 
@@ -433,7 +408,6 @@
     Easy to solve on finite lattice, difficult in thermodynamic limit...
 \end{frame}
 
-
 % \exp -\beta H( & \pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}})\\
 %- \pepob{2}{2}{{,,,,}}{{,,,,}}{{0,0,0,0}}
 
@@ -442,8 +416,6 @@
 \section{Solvers}
 %------------------------------------------------
 %------------------------------------------------
-
-
 
 % %------------------------------------------------
 % \subsection{Numerical considerations}
@@ -467,7 +439,6 @@
 %         \includegraphics[scale=0.8]{Figures/pepo_contraction.pdf}
 %     \end{figure}
 % \end{frame}
-
 
 %------------------------------------------------
 \subsection{Linear solver}
@@ -502,7 +473,6 @@
     \end{figure}
 \end{frame}
 
-
 %------------------------------------------------
 \subsection{Non-linear solvers}
 %------------------------------------------------
@@ -513,7 +483,6 @@
         \item fast
     \end{itemize}
 \end{frame}
-
 
 \begin{frame}{true non-linear solver}
     \begin{itemize}
@@ -530,23 +499,21 @@
 %------------------------------------------------
 %------------------------------------------------
 
-
 % %------------------------------------------------
 % \subsection{Overview}
 % %------------------------------------------------
-% \begin{frame}{Overview}
-%     \begin{equation}
-%         \hat{H} = -J \left (  \sum_{<i j>} \sigma^z_i \sigma^z_j + \Gamma \sum_i \sigma^x_i \right )
-%     \end{equation}
-% \end{frame}
+\begin{frame}{Overview}
+    \begin{equation}
+        \hat{H} = -J \left (  \sum_{<i j>} \sigma^z_i \sigma^z_j + \Gamma \sum_i \sigma^x_i \right )
+    \end{equation}
+\end{frame}
 
-% \begin{frame}{Overview}
-%     \begin{figure}
-%         \includegraphics[scale=0.5]{Figures/2disingphase.png}
-%         \caption{figure taken from \cite{PhysRevB.93.155157}}
-%     \end{figure}
-% \end{frame}
-
+\begin{frame}{Overview}
+    \begin{figure}
+        \includegraphics[scale=0.5]{Figures/2disingphase.png}
+        \caption{figure taken from \cite{PhysRevB.93.155157}}
+    \end{figure}
+\end{frame}
 
 %------------------------------------------------
 \subsection{First results}
@@ -575,8 +542,6 @@
 %     \end{figure}
 % \end{frame}
 
-
-
 %------------------------------------------------
 %------------------------------------------------
 \section{Conclusion and outlook}
@@ -590,7 +555,6 @@
     \end{itemize}
 \end{frame}
 
-
 \begin{frame}{Outlook: short term}
     \begin{itemize}
         \item Accurate estimate transversal Ising quantum critical point
@@ -598,7 +562,6 @@
         \item continuous improvements framework
     \end{itemize}
 \end{frame}
-
 
 \begin{frame}{Outlook: long term}
     \begin{itemize}
@@ -614,6 +577,5 @@
     \bibliographystyle{elsarticle-num}
     \bibliography{bib}
 \end{frame}
-
 
 \end{document}
