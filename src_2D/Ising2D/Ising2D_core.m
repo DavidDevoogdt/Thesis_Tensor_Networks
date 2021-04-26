@@ -1,4 +1,4 @@
-function Ising2D_core(save_vars, template, T, results,get_exp_opts)
+function Ising2D_core(save_vars, template, x, results,get_exp_opts)
 
     if nargin < 5
         get_exp_opts = struct();
@@ -8,18 +8,37 @@ function Ising2D_core(save_vars, template, T, results,get_exp_opts)
         results = [];
     end
 
+    switch template.fixed_var
+        case 'g'
+            save_vars.model_params = models( template.model_name  , struct('g', template.fixed_val ));
+            beta = 1/x;
+        case 'T'
+            beta = 1/template.fixed_val;
+            save_vars.model_params = models('t_ising', struct('g', x));
+    end
+    
+    
+    
+
+
     if ~isfield(save_vars, 'PEPO_matrix')
 
-        beta = 1 / T;
-
-        pepo = PEPO(template.model_params.d, -beta * template.model_params.H_1_tensor, -beta * template.model_params.H_2_tensor, 5, template.handle, template.pepo_opts);
+        pepo = PEPO(save_vars.model_params.d, -beta * save_vars.model_params.H_1_tensor, -beta * save_vars.model_params.H_2_tensor, 5, template.handle, template.pepo_opts);
         %save_vars = [];
         save_vars.PEPO_matrix = pepo.PEPO_matrix;
+        
+        save_vars.virtual_level_sizes_horiz = pepo.virtual_level_sizes_horiz;
+        save_vars.virtual_level_sizes_vert = pepo.virtual_level_sizes_vert;
 
     end
-
+    
     [results, save_vars] = PEPO_get_expectation (template.X, save_vars, template.vumps_opts, results,get_exp_opts);
-    results.T = T;
+    
+    
+
+    results.( template.fixed_var ) =  template.fixed_val;
+    results.( template.free_var  ) = x;
+     
 
     save_vars.results_name = sprintf("%s/results_%s.mat", template.name_prefix, save_vars.fname);
     save_vars.save_vars_name = strrep(save_vars.results_name, '/results_', '/save_vars_');
@@ -27,14 +46,5 @@ function Ising2D_core(save_vars, template, T, results,get_exp_opts)
     saveboy(save_vars.results_name, 'results', results);
     saveboy(save_vars.save_vars_name, 'save_vars', save_vars);
 
-    fprintf("%s %3d:%s T:%.4e mag:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':'), results.T, results.m, 1 / results.inv_corr_length, results.marek, results.ctr, results.err);
-
-end
-
-function m = m_onsager(T, J)
-    T_c = 2 * J / (log(1 + sqrt(2)));
-    m = T;
-    mask = T < T_c;
-    m(mask) = (1 - sinh((2 * J) ./ T(mask)).^(-4)).^(1/8);
-    m(~mask) = 0;
+    fprintf("%s %3d:%s %s:%.4e <X>:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':') ,  template.free_var , x   , results.m, 1 / results.inv_corr_length, results.marek, results.ctr, results.err);
 end

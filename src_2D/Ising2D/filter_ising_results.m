@@ -4,9 +4,15 @@ function data = filter_ising_results(data, opts)
         opts.tol = 1e-10;
     end
 
-    mask = (data.T > 0) & (data.err < opts.tol) & (data.err ~= 0) & (data.inv_corr_length > 1e-5);
+    if ~isfield(opts, 'Tbound')
+        opts.Tbound = [0,Inf];
+    end
 
-    [~, idx] = sort(data.T(mask));
+    mask = (data.T > opts.Tbound(1)) & ( data.T < opts.Tbound(2) ) & (data.err < opts.tol) & (data.err ~= 0)  ;
+    
+
+
+    [~, idx] = sort(data. (data.free_var)(mask));
 
     for i = 1:numel(data.fields)
         nf = data.fields{i};
