@@ -21,10 +21,22 @@ function [obj, target_site, res_target, ln_prefact_out, rank_x] = solve_lin_and_
         [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
     end
 
-    target_site = contract_con_cells(obj, map, ln_prefact_out, target_site, all_con_cells(~pat_cells));
     con_cells = all_con_cells(pat_cells);
+    
+    if map.N > 0 %do matrix contraction and substract non contracted cells
 
-    %con_cells = all_con_cells;
+        obj = cell2matrix(obj);
+        
+        target = target - contract_network(obj, map, struct('matrix', 1, 'lnprefact', ln_prefact_out));
+        target_site = reshape(permute(target, site_ordering_permute(map.N)), dimension_vector(obj.dim^2, map.N));
+
+        target_site = -contract_con_cells(obj, map, ln_prefact_out, -target_site, con_cells);
+        
+     
+    else
+        target_site = contract_con_cells(obj, map, ln_prefact_out, target_site, all_con_cells(~pat_cells));
+    end
+    
 
     [x_cell, res_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, loop_dim, loop);
 

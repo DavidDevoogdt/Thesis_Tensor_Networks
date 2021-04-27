@@ -39,13 +39,16 @@ function target2 = contract_con_cells(obj, map, ln_prefactor, target2, con_cells
 
             temp_list_1 = fetch_PEPO_cells(obj, map, legs, ln_prefactor);
 
-            A1 = ncon(temp_list_1, map.leg_list);
+            if sum(cellfun(@isempty, temp_list_1)) ==0 %uninitialised cell, skip
+            
+                A1 = ncon(temp_list_1, map.leg_list);
 
-            if perm == 1
-                perm_vect = [site_ordering_permute(map.N2); (2 * map.N2 + 1:size(size(A1), 2))'];
-                target = target - reshape(permute(A1, perm_vect), size(target));
-            else
-                target = target - A1;
+                if perm == 1
+                    perm_vect = [site_ordering_permute(map.N2); (2 * map.N2 + 1:size(size(A1), 2))'];
+                    target = target - reshape(permute(A1, perm_vect), size(target));
+                else
+                    target = target - A1;
+                end
             end
 
         end
