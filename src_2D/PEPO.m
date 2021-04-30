@@ -30,6 +30,7 @@ classdef PEPO
         inv_eps
         complex
         err_tol
+        error_code
     end
 
     methods
@@ -102,6 +103,8 @@ classdef PEPO
             [obj, err_code] = make_PEPO_handle(obj);
 
             obj = cell2matrix(obj); %save matrix form
+
+            obj.error_code = err_code;
 
             if err_code == 1
                 warning("PEPO costruction failed, try lower beta");

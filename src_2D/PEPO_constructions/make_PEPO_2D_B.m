@@ -362,60 +362,60 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         end
     end
     %%
-% 
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     %%%%%%%%%%%%%% LOOPS %%%%%%%%%%%%%%
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     %x = 2;
-%     x = 2;
-%     a = 3;
-%     b = a + 1;
-% 
-%     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
-% 
-%     alpha_dim = 8;
-%     %beta_dim = 20;
-% 
-%     %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^2, alpha_dim];
-%     %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^2, alpha_dim];
-% 
-%     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
-%     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim];
-% 
-%     obj.current_max_index = numel(obj.virtual_level_sizes_horiz);
-%     obj.max_index = obj.current_max_index;
-% 
-%     %simple loop
-% 
-%     [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
-% 
-%     pattern = {[a, a, 0, 0]};
-%     alpha_pattern_perm = {{...
-%                             [2, 3, 4, 1], ...
-%                             [3, 4, 1, 2], ...
-%                             [4, 1, 2, 3]}};
-% 
-%     %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
-% 
-%     lnopts = struct('Display', 0, 'maxit', 1);
-%     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
-%     %obj = assign_perm(obj, alpha_pattern{1},a);
-% 
-%     if obj.testing == 1
-%         err = calculate_error(obj, map);
-%         if err > obj.err_tol
-%             disp(err);
-%         end
-%     end
-% 
-%     obj = cell2matrix(obj);
-%     err = calculate_error(obj, [
-%                             1, 1, 1;
-%                            1, 1, 1; ], struct, 1);
-% 
-%     if err > 1
-%         error_code = 1;
-%     end
+    %
+    %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %     %%%%%%%%%%%%%% LOOPS %%%%%%%%%%%%%%
+    %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %     %x = 2;
+    %     x = 2;
+    %     a = 3;
+    %     b = a + 1;
+    %
+    %     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
+    %
+    %     alpha_dim = 8;
+    %     %beta_dim = 20;
+    %
+    %     %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^2, alpha_dim];
+    %     %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^2, alpha_dim];
+    %
+    %     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
+    %     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim];
+    %
+    %     obj.current_max_index = numel(obj.virtual_level_sizes_horiz);
+    %     obj.max_index = obj.current_max_index;
+    %
+    %     %simple loop
+    %
+    %     [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+    %
+    %     pattern = {[a, a, 0, 0]};
+    %     alpha_pattern_perm = {{...
+    %                             [2, 3, 4, 1], ...
+    %                             [3, 4, 1, 2], ...
+    %                             [4, 1, 2, 3]}};
+    %
+    %     %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
+    %
+    %     lnopts = struct('Display', 0, 'maxit', 1);
+    %     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+    %     %obj = assign_perm(obj, alpha_pattern{1},a);
+    %
+    %     if obj.testing == 1
+    %         err = calculate_error(obj, map);
+    %         if err > obj.err_tol
+    %             disp(err);
+    %         end
+    %     end
+    %
+    %     obj = cell2matrix(obj);
+    %     err = calculate_error(obj, [
+    %                             1, 1, 1;
+    %                            1, 1, 1; ], struct, 1);
+    %
+    %     if err > 1
+    %         error_code = 1;
+    %     end
 
     %     %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed', 'Algoritm', "trust-region");
     %      nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');

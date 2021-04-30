@@ -39,8 +39,8 @@ function target2 = contract_con_cells(obj, map, ln_prefactor, target2, con_cells
 
             temp_list_1 = fetch_PEPO_cells(obj, map, legs, ln_prefactor);
 
-            if sum(cellfun(@isempty, temp_list_1)) ==0 %uninitialised cell, skip
-            
+            if sum(cellfun(@isempty, temp_list_1)) == 0 %uninitialised cell, skip
+
                 A1 = ncon(temp_list_1, map.leg_list);
 
                 if perm == 1

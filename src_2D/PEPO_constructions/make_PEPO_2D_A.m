@@ -5,7 +5,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     error_code = 0;
 
     rot_180 = {{[3, 4, 1, 2]}};
-    nl_opts = struct('Gradient', true, 'Display', 'iter','maxit', 50);
+    if obj.testing == 1
+        nl_opts = struct('Gradient', true, 'Display', 'iter', 'maxit', 100);
+    else
+        nl_opts = struct('Gradient', true, 'Display', 'none', 'maxit', 100);
+    end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% Block with 1/2 legs %%%%%%%%%%%%%%%%%
@@ -22,263 +26,307 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
     obj.PEPO_cell{1, 1, 1, 1} = reshape((expm(obj.H_1_tensor)) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
 
-    
-    function [obj,ln_prefact,error_code] = add_lin(obj, pattern ,ln_prefact,nl)
+    function [obj, ln_prefact, err] = add_lin(obj, pattern, ln_prefact, nl)
         if nargin < 4
-           nl=0; 
+            nl = 0;
         end
 
-        [map1, ~] = create_map(  make_cross( pattern )  );
+        [map1, ~] = create_map(make_cross(pattern));
 
-        if nl==0
+        if nl == 0
             [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, {pattern}, ln_prefact);
         else
             [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map1}, {pattern}, ln_prefact, nl_opts, rot_180);
         end
 
         obj = assign_perm(obj, pattern);
-        error_code = 0; % check_lin_error(obj);
 
+        obj = cell2matrix(obj);
+        err = calculate_error(obj, map1, [], 1);
 
         if obj.testing == 1
-            obj = cell2matrix(obj);          
-            err1 = calculate_error(obj, map1, []  ,1);
-            if err1 > obj.err_tol
-                disp(err1);
+            if err > obj.err_tol
+                disp(err);
             end
-        end  
+        end
     end
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% Blocks 1D chain %%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   for l = 1:3
-       
-       sz = min(d^(2*l),20);
-       
-        obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, sz ];
-        obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, sz ];
-        obj.current_max_index = l;
-        
-        
-        [obj,ln_prefact,~] = add_lin(obj, [l-1,0,l,0] ,ln_prefact,1); 
-        if l==1 && error_code ==1 %try again with complex numbers
-            obj.complex = true;
-            [obj,ln_prefact,error_code] = add_lin(obj, [l-1,0,l,0] ,ln_prefact,1);
-        end
-        
-        [obj,ln_prefact,~] = add_lin(obj, [l,l,0,0] ,ln_prefact); 
-        
+
+    obj.complex = true;
+
+    L = 2;
+
+    for l = 1:L
+        sz = min(d^(2 * l), Inf);
+
+        obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, sz];
+        obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, sz];
     end
-    
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%% Block with 3/4 legs %%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    for l = 1:L
 
-    obj.current_max_index = obj.max_index;
+        %%% n-1--|--n--|--n1- block
 
+        if l ~= 1
+            err01 = calculate_error(obj, 1:(2 * l + 2), obj.cycleopts, 1);
+        else
+            err01 = 1;
+        end
 
-    %level 1
-    [obj,ln_prefact,~] = add_lin(obj, [1,1,1,0] ,ln_prefact); 
-    [obj,ln_prefact,~] = add_lin(obj, [1,1,1,1] ,ln_prefact); 
-    
-    %level 2
-    [obj,ln_prefact,~] = add_lin(obj, [2,1,1,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [2,1,1,1] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [2,2,1,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [2,2,1,1] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [2,2,2,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [2,2,2,1] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [2,2,2,2] ,ln_prefact);
-    %level 3
-    [obj,ln_prefact,~] = add_lin(obj, [3,1,1,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,1,1,1] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [3,2,1,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,2,1,1] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [3,2,2,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,2,2,1] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,2,2,2] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,1,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,1,1] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,2,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,2,1] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,2,2] ,ln_prefact);
-    
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,3,0] ,ln_prefact);
-    [obj,ln_prefact,~] = add_lin(obj, [3,3,3,1] ,ln_prefact);
-    
-    %works but slow
-    %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,2] ,ln_prefact);
-    %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,3] ,ln_prefact);
-    
+        [obj, ln_prefact, ~] = add_lin(obj, [l - 1, 0, l, 0], ln_prefact, 1);
+        err02 = calculate_error(obj, 1:(2 * l + 2), obj.cycleopts, 1);
 
+        if err02 > err01
+            warning('not converging')
+            error_code = 1;
+
+            obj.PEPO_cell{l + 1, l + 1, 1, 1} = [];
+            obj = assign_perm(obj, [l, l, 0, 0]);
+        end
+
+        %%% n--|--n block
+
+        [obj, ln_prefact, ~] = add_lin(obj, [l, l, 0, 0], ln_prefact);
+        err03 = calculate_error(obj, 1:(2 * l + 2), obj.cycleopts, 1);
+
+        if err03 -1e-14 > err02
+            warning('not converging')
+            error_code = 1;
+            obj.PEPO_cell{l + 1, l + 1, 1, 1} = [];
+            obj = assign_perm(obj, [l, l, 0, 0]);
+
+        end
+
+        % blocks with 3 or more legs
+
+        switch l
+            case 1
+                [obj, ln_prefact, ~] = add_lin(obj, [1, 1, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [1, 1, 1, 1], ln_prefact);
+
+            case 2
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 1, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 1, 1, 1], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 1, 1], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 1], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 2], ln_prefact);
+            case 3
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 1, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 1, 1, 1], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 1, 1], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 2, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 2, 1], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 2, 2], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 1, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 1, 1], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 2, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 2, 1], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 2, 2], ln_prefact);
+
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 0], ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 1], ln_prefact);
+
+                %works but slow
+                %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,2] ,ln_prefact);
+                %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,3] ,ln_prefact);
+            otherwise
+                error('not impl')
+        end
+
+        %make loop correction at current stage
+        %         switch l
+        %             case 1
+        %                 [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+        %
+        %                 pattern = {[0, 0, a, 1],...
+        %                              [a,0,0,1]};
+        %
+        %                 rpat={[2, 3, 4, 1], ...
+        %                 [3, 4, 1, 2], ...
+        %                 [4, 1, 2, 3]};
+        %
+        %                 [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, {rpat,rpat});
+        %
+        %                 %
+        %                 [map, ~] = create_map([1, 1, 1;
+        %                                        0, 1, 1], struct);
+        %                 pattern = {[1, 0, a, 1]};
+        %
+        %                 %[obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+        %
+        %                 %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
+        %                 obj = assign_perm(obj, [1, 0, a, 1], [0,0,1,1] );
+        %                 %
+        % %                 [map, ~] = create_map([1, 1, 1;
+        % %                                        1, 1, 0], struct);
+        % %                 pattern = {[a, 0, 1, 1]};
+        % %                 [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
+        % %                 %
+        %                 [map, ~] = create_map([0, 1, 0;
+        %                                        1, 1, 1;
+        %                                        0, 1, 1], struct);
+        %                 pattern = {[1, 1, a, 1]};
+        %                 [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
+        %                 obj = assign_perm(obj, [1, 1, a, 1] , [0,0,1,1] );
+        %
+        %             case 2
+        %
+        %             case 3
+        %
+        %         end
+
+        %         [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+        %
+        %         rpat = {...
+        %                 [2, 3, 4, 1], ...
+        %                 [3, 4, 1, 2], ...
+        %                 [4, 1, 2, 3]};
+        %         if l ==1
+        %             pattern = {[0, 0, l, a],...
+        %                         [b,l,0,0],...
+        %                         [0,a,b,0]};
+        %
+        %             alpha_pattern_perm = {rpat,rpat,rpat};
+        %         else
+        %             pattern = {[0, 0, l, a],...
+        %                         [b,l,0,0]};
+        %             alpha_pattern_perm = {rpat,rpat};
+        %         end
+        %
+        %         [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts,alpha_pattern_perm);
+    end
 
     %%
-% 
+    %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%% LOOPS %%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %x = 2;
-    x = 2;
-    a = 3;
+
+    a = numel(obj.virtual_level_sizes_horiz);
     b = a + 1;
+    c = b + 1;
 
-    %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
+    obj.current_max_index = c;
+    obj.max_index = c;
 
-    alpha_dim = 10;
-    %beta_dim = 20;
+    dd = [d^3, d^3, d];
 
-    %obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^2, alpha_dim];
-    %obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^2, alpha_dim];
-% 
-%     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim];
-%     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim];
-% 
-%     obj.current_max_index = numel(obj.virtual_level_sizes_horiz);
-%     obj.max_index = obj.current_max_index;
-% 
-%     %simple loop
-% 
-%     [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
-% 
-%     pattern = {[a, a, 0, 0]};
-%     alpha_pattern_perm = {{...
-%                             [2, 3, 4, 1], ...
-%                             [3, 4, 1, 2], ...
-%                             [4, 1, 2, 3]}};
+    obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
+    obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, dd];
 
-    %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
+    %d0 = numel(obj.virtual_level_sizes_horiz);
+    %d1 = d0+1;
+    %a = d0+2;
 
-%     lnopts = struct('Display', 1, 'maxit', 1);
-%     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
-%     %obj = assign_perm(obj, alpha_pattern{1},a);
-% 
-%     if obj.testing == 1
-%         err = calculate_error(obj, map);
-%         if err > obj.err_tol
-%             disp(err);
-%         end
-%     end
-% 
-     obj = cell2matrix(obj);
-     err = calculate_error(obj, [
-                             1, 1, 1;
-                             1, 1, 1; ], struct, 1);
- 
-%     if err > 1
-%         error_code = 1;
-%     end
-
-    %     %nl_opts = struct('Gradient', true, 'Display', 'iter-detailed', 'Algoritm', "trust-region");
-    %      nl_opts = struct('Gradient', true, 'Display', 'iter-detailed');
+    %     a = numel(obj.virtual_level_sizes_horiz);
+    %     b=a+1;
     %
-%     %
-%             [map, ~] = create_map([1, 2; 3, 4; 5, 6], obj.numopts);
-%             pattern = {[a, a, 0, a]};
-%             pattern_perm = {{...
-%                                     [3, 2, 1, 4]}};
-%             [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, pattern_perm);
-%     
-%             if obj.testing == 1
-%                 calculate_error(obj, [1, 2; 3, 4; 5, 6], obj.numopts)
-%              end
+    %     obj.current_max_index = b;
+    %     %obj.PEPO_cell{zero_level+1,zero_level+1,zero_level+1,zero_level+1}= obj.PEPO_cell{1,1,1,1};
+    %
+    %     alpha_dim = 6;
+    %
+    %     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, alpha_dim, alpha_dim];
+    %     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, alpha_dim , alpha_dim];
+    %
+    nl_opts = struct('Gradient', true, 'Display', 'iter');
 
-    % %% double loops
+    %      [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+    %      pattern = {[a, a, 0, 0]};
+    %
+    rpat = {[2, 3, 4, 1], ...
+            [3, 4, 1, 2], ...
+            [4, 1, 2, 3]};
 
-    %nl_opts = struct('Gradient', true, 'Display', 'iter','Algoritm',"trust-region");
-    
+    alpha_pattern_perm = {rpat, rpat, rpat, rpat};
+    %
+    %      [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+
+    [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+    pattern = {[0, 0, b, a], ...
+                [b, 0, 0, c], ...
+                [c, c, 0, 0], ...
+                [0, a, c, 0]};
+
+    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+
+    calculate_error(obj, map, [])
+
     %single extension
-%     [map, ~] = create_map([
-%                         0, 1, 0, 0;
-%                         0, 1, 1, 0;
-%                         0, 1, 1, 0;
-%                         0, 0, 0, 0]);
-%     pattern = {[0, 1, a, a]};
-%     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-%     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
-%     obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
-% 
-%     fprintf('new')
-    %double extension
-%     [map, ~] = create_map([
-%                         0, 1, 0, 0;
-%                         1, 1, 1, 0;
-%                         0, 1, 1, 0;
-%                         0, 0, 0, 0]);
-%     pattern = {[ 1,  1, a, a]};
-%     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-%     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
-%     obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
-    %
-    %         if obj.testing == 1
-    %             obj = cell2matrix(obj);
-    %             calculate_error(obj, [
-    %                     0, 1, 0, 0;
-    %                     0, 1, 1, 0;
-    %                     0, 1, 1, 0;
-    %                     0, 0, 0, 0], struct,1)
-    %
-    %             calculate_error(obj, [
-    %                     0, 1, 1, 0;
-    %                     0, 1, 1, 0;
-    %                     0, 1, 1, 0;
-    %                     0, 0, 0, 0], struct,1)
-    %             calculate_error(obj, [
-    %                     0, 1, 0, 0;
-    %                     0, 1, 1, 1;
-    %                     0, 1, 1, 0;
-    %                     0, 0, 0, 0], struct,1)
-    %             calculate_error(obj, [
-    %                     0, 0, 1, 0;
-    %                     1, 1, 1, 0;
-    %                     0, 1, 1, 1;
-    %                     0, 1, 0, 0], struct,1)
-    %         end
+    [map, ~] = create_map([
+                        0, 1, 0, 0;
+                        0, 1, 1, 0;
+                        0, 1, 1, 0;
+                        0, 0, 0, 0]);
+    pattern = {[0, 1, b, a]};
 
-    %     %long extension
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 1;
-    %                         0, 0, 1, 1]);
-    %     pattern = {[0, 2, a, a]};
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
+
+    %double extension, can be solve linearly
+    [map, ~] = create_map([
+                        0, 1, 0, 0;
+                        1, 1, 1, 0;
+                        0, 1, 1, 0;
+                        0, 0, 0, 0]);
+
+    pattern = {[1, 1, b, a]};
+
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
+
+    %long extension
+    [map, ~] = create_map([
+                        0, 0, 1, 0;
+                        0, 0, 1, 0;
+                        0, 0, 1, 1;
+                        0, 0, 1, 1]);
+    pattern = {[0, 2, b, a]};
+
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+
+    obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
+
+    [map, ~] = create_map([
+                        0, 0, 1, 0;
+                        0, 0, 1, 0;
+                        0, 1, 1, 1;
+                        0, 0, 1, 1]);
+    pattern = {[1, 2, b, a]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
     %
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 0;
-    %                         0, 1, 1, 1;
-    %                         0, 0, 1, 1]);
-    %     pattern = {[1, 2, a, a]};
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
-    % %
-    %     [map, ~] = create_map([
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 0;
-    %                         1, 1, 1, 1;
-    %                         0, 0, 1, 1;
-    %                         ]);
-    %     pattern = {[2, 2, a, a]};
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %     obj = assign_perm(obj, pattern{1},[0,0,1,1]);
+    [map, ~] = create_map([
+                        0, 0, 1, 0;
+                        0, 0, 1, 0;
+                        1, 1, 1, 1;
+                        0, 0, 1, 1;
+                        ]);
+    pattern = {[2, 2, b, a]};
+    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+    obj = assign_perm(obj, pattern{1}, [0, 0, 1, 1]);
     %
-    %     if obj.testing == 1
-    %         calculate_error(obj, [
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 0;
-    %                         0, 0, 1, 1;
-    %                         0, 0, 1, 1;
-    %                         ], struct)
-    %     end
+    if obj.testing == 1
+        obj = cell2matrix(obj);
+        calculate_error(obj, [
+                        0, 0, 1, 0;
+                        0, 0, 1, 0;
+                        0, 0, 1, 1;
+                        0, 0, 1, 1;
+                        ], struct, 1)
+    end
 
     %double 2 options
 
@@ -366,5 +414,3 @@ function test_rot_90(obj)
     svds(reshape(obj.PEPO_matrix - permute(obj.PEPO_matrix, [1, 2, 5, 6, 3, 4]), [], 1))
 
 end
-
-
