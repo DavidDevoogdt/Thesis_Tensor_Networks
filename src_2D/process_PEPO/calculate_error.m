@@ -17,6 +17,10 @@ function [err] = calculate_error(obj, nummap, opts, matrix, non_trace_num)
         cn_opts.matrix = matrix;
     end
 
+    if cn_opts.matrix == 1
+        obj = cell2matrix(obj);
+    end
+
     if nargin == 5
         cn_opts.trace = true;
         cn_opts.non_trace_num = non_trace_num;
