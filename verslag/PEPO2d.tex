@@ -1,9 +1,11 @@
-The MPO construction outlined in previous section can be generalized to
+The MPO construction outlined in previous section can be generalized to 2D case. While the same general idea applies, a lot more care has to be taken to keep everything tractable from a programming point of view. This chapter section is organised as follows: first the physical construction will be detailed. The the blocks will be dived in 2 categories: one which can be solved with linear algebra and one which needs a non-linear solver. Then the workings of both solvers are detailed. Finally, some implementation tricks are discussed.
 
 \subsection{Construction block}
 The construction
 
 \subsection{Linear block}
+
+In the following, linear blocks means that the graph is a rooted tree.
 
 \subsection{Blocks with loops}
 
@@ -44,22 +46,31 @@ With some care, the jacobian can be calculated for a general tensor network in a
 
 \todo{source}
 
-\paragraph{symmetry}
+\paragraph{Symmetry}
 
-The non-linear solver can handle rotated and permuted blocks. \todo{ complete}
+The non-linear solver can handle rotated and permuted blocks. For instance, a simple loop (square) can be solved by rotating one tensor $T^I_{ \alpha \alpha 0 0}$ 4 times, once for every corner. Another example is the following decomposition:  $  X^I_\alpha X^J_\alpha = T^{I J} $.
 
 \subsection{Bookkeeping}
 
 One imporatant aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbourghs for each site, numbers the inernal and external legs and a list to perform the contractions.
 
-The framework provides some tools to transform these maps into other maps, for instace by removing 1 site.
+The framework provides some tools to transform these maps into other maps, for instance by removing 1 site.
 
 \subsection{Fast contraction}
 
-One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T_{i (\alpha \beta \gamma \delta )} = \delta^i_{(\alpha \beta \gamma \delta )} $ where i encodes the non zero combinations of legs $(\alpha \beta \gamma \delta)$. After setting the boundary conditions, the PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contraction. Due to its sparsity, this performs quit fast.
+One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T_{i (\alpha \beta \gamma \delta )} = \delta^i_{(\alpha \beta \gamma \delta )} $ where i encodes the non-zero combinations of legs $(\alpha \beta \gamma \delta)$. After setting the boundary conditions, the PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contraction. Due to its sparsity, this performs quit fast.
 
 \todo{tikz figure}
 
 \subsection{Normalisation}
 
-Storing the
+For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the hamiltonian evaluated for a certain geometry. This is a hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
+\begin{align}
+    exp(  H_{d^N} - N \alpha I  ) & =  Q exp(  D- N \log(\alpha ) I    ) Q^{\dagger} \\
+                                  & =  Q \begin{bmatrix} exp(D_{1 1} - N \log(\alpha )) &        &                                     \\
+                                               & \ddots &                                     \\
+                                               &        & exp(D_{ d^N d^N} - N \log(\alpha )) \\
+    \end{bmatrix}  Q^{\dagger}      \\
+                                  & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }
+\end{align}.
+With $I$ the unit matrix. Next to a global normalisation factor, every block calculation calculates a specific normalisation factor such that the largest eigenvalue of $exp(H)$ is of the order 1.

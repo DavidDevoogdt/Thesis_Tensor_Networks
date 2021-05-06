@@ -25,18 +25,23 @@ The following table defines some of the critical exponents for the Ising system.
     \begin{tabular}{c c c c}
         Symbol & name                \\
         \hline
-        M      & magnetisation       \\
+        m      & magnetisation       \\
         $\xi$  & correlation length  \\
+        g      & external field      \\
         t      & reduced temperature \\
         d      & dimension           \\
     \end{tabular}
 \end{table}
 
+The 2 point correlation function is defined as $ f( x,y) =  \left < m(x) m(y) \right > -  \left<m(x) \right> \left<m(y) \right> $. At larger distances this decays exponentially fast (see \cref{crt:cft} ) $ f(  x,y ) = e^{ -\frac{ |x-y|}{ \xi} } $, where $\xi$ is the correlation length.
+
+for the ordered phase, the following relations hold: $m ~ |t|^{\beta} $ , $\xi(t) \approx |t|^{-\nu} $. At the critical temperature near a quantum phase transition  $ m \approx |g-g_c|^{\frac{1}{\delta}} $.
+
 \subsection{Finite size scaling}
 
-The finite size scaling method was
+Finite size scaling was originally introduced in order to extract critical exponents from monte carlo simulations.
 
-\subsection{CFT}
+\subsection{CFT}\label{crit:cft}
 
 \todo{central charge}
 
