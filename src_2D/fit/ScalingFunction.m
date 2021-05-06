@@ -1,4 +1,4 @@
-function [f, g, fl, fr, gl, gr] = ScalingFunction(pm, cont, x0, alfa, sfunparam,N, fl, fr, gl, gr)
+function [f, g, fl, fr, gl, gr] = ScalingFunction(pm, cont, x0, alfa, sfunparam, N, fl, fr, gl, gr)
     % pm sets the sign of the power of the scaling function
     % cont (0 or 1) determines if continuity is enforced
     % x0 is the location of the discontinuity
@@ -12,13 +12,12 @@ function [f, g, fl, fr, gl, gr] = ScalingFunction(pm, cont, x0, alfa, sfunparam,
     % x=linspace(-2,2,100);
     % plot(x,f(x));
 
-    Al=sfunparam(1);
-    Ar=sfunparam(2);
-    sl=sfunparam(3);
-    sr=sfunparam(4);
-    v=sfunparam(5:(4 + 8 * N));
+    Al = sfunparam(1);
+    Ar = sfunparam(2);
+    sl = sfunparam(3);
+    sr = sfunparam(4);
+    v = sfunparam(5:(4 + 8 * N));
 
-    
     if isempty(fl)
         syms x y z t s
         k1 = sym('a', [N, 1]);

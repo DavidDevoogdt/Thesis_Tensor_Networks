@@ -1,7 +1,7 @@
-function [names,T_c_arr] = ising_names(n)
+function [names, T_c_arr] = ising_names(n)
     switch n
         case 1
-            
+
             names = {{
                 'Ising2D_g=0.0000e+00_chi=8_02_April_2021_11:46';
                 'Ising2D_g=0.0000e+00_chi=11_02_April_2021_11:46';
@@ -9,7 +9,7 @@ function [names,T_c_arr] = ising_names(n)
                 'Ising2D_g=0.0000e+00_chi=23_02_April_2021_11:46';
                 'Ising2D_g=0.0000e+00_chi=32_02_April_2021_11:46';
                 'Ising2D_g=0.0000e+00_chi=45_02_April_2021_11:46';
-                },{
+                }, {
                 'Ising2D_g=1.5000e+00_chi=8_02_April_2021_11:17';
                 'Ising2D_g=1.5000e+00_chi=11_02_April_2021_11:17';
                 'Ising2D_g=1.5000e+00_chi=16_02_April_2021_11:17';
@@ -17,14 +17,14 @@ function [names,T_c_arr] = ising_names(n)
                 'Ising2D_g=1.5000e+00_chi=32_02_April_2021_11:17';
                 'Ising2D_g=1.5000e+00_chi=45_02_April_2021_11:17';
                 'Ising2D_g=1.5000e+00_chi=64_02_April_2021_11:17';
-                },{
+                }, {
                 'Ising2D_g=2.5000e+00_chi=8_02_April_2021_09:38';
                 'Ising2D_g=2.5000e+00_chi=11_02_April_2021_09:38';
                 'Ising2D_g=2.5000e+00_chi=16_02_April_2021_09:38';
                 'Ising2D_g=2.5000e+00_chi=23_02_April_2021_09:38';
                 'Ising2D_g=2.5000e+00_chi=32_02_April_2021_09:38';
                 'Ising2D_g=2.5000e+00_chi=45_02_April_2021_09:38';
-                },{
+                }, {
                 'Ising2D_g=2.5000e+00_chi=20_22_March_2021_10:11_a';
                 'Ising2D_g=2.5000e+00_chi=25_22_March_2021_10:11_a';
                 'Ising2D_g=2.5000e+00_chi=30_22_March_2021_10:11_a';
@@ -33,8 +33,8 @@ function [names,T_c_arr] = ising_names(n)
                 'Ising2D_g=2.5000e+00_chi=65_22_March_2021_13:52_a';
                 'Ising2D_g=2.5000e+00_chi=70_22_March_2021_13:51_a';
                 }};
-            
-            T_c_arr= [2.2691859, 1.97951, 1.27372, 0.9];
+
+            T_c_arr = [2.2691859, 1.97951, 1.27372, 0.9];
 
         case 2
 
@@ -72,8 +72,8 @@ function [names,T_c_arr] = ising_names(n)
                 'Ising2D_g=2.9000e+00_chi=8_08_April_2021_09:52';
                 'Ising2D_g=2.9000e+00_chi=11_08_April_2021_10:03';
                 'Ising2D_g=2.9000e+00_chi=16_08_April_2021_10:06';
-            }};
-         T_c_arr = [2.2691859, 1.97951, 1.27372, 0.9];
+                }};
+            T_c_arr = [2.2691859, 1.97951, 1.27372, 0.9];
     end
 
 end

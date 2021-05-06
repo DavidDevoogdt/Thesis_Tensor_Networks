@@ -1,4 +1,4 @@
-function [data,template] = fetch_matfiles(file_name, opts)
+function [data, template] = fetch_matfiles(file_name, opts)
 
     if ~isfield(opts, 'save_vars')
         opts.save_vars = 0;
@@ -20,7 +20,7 @@ function [data,template] = fetch_matfiles(file_name, opts)
 
     myFiles = dir(fullfile(folder, 'template.mat'));
     if numel(myFiles) ~= 1
-        error('template not found')       
+        error('template not found')
     else
         baseFileName = myFiles(1).name;
         fullFileName = fullfile(folder, baseFileName);
@@ -44,18 +44,18 @@ function [data,template] = fetch_matfiles(file_name, opts)
         R = load(fullFileName, 'results');
         data_points{k} = R.results;
 
-        S=[];
+        S = [];
         if opts.save_vars == 1
             baseFileName = strrep(baseFileName, 'results', 'save_vars');
             fullFileName = fullfile(folder, baseFileName);
-           
+
             S = load(fullFileName, 'save_vars');
 
             save_data_points{k} = S.save_vars;
         end
 
         if do_call_back
-            opts.call_back_fn( R.results, S.save_vars, baseFileName);
+            opts.call_back_fn(R.results, S.save_vars, baseFileName);
         end
 
     end

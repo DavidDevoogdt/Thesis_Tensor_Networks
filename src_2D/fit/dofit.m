@@ -44,7 +44,6 @@ T_c_noise = rand * 0.01;
 
 T_range = 0.08;
 
-
 select = 3;
 Tc = T_c_arr(select);
 names = names{select};
@@ -58,13 +57,10 @@ all_data.T = [];
 all_data.xi = [];
 all_data.eps_i = [];
 
-
-
 for i = 1:numel(names)
     data = fetch_matfiles(names{i}, struct);
-    data = filter_ising_results(data, struct( 'Tbound', [Tc-T_range, Tc+T_range ] ));
+    data = filter_ising_results(data, struct('Tbound', [Tc - T_range, Tc + T_range]));
 
-  
     all_data.eps_i = [all_data.eps_i; data.eps_i];
     all_data.m = [all_data.m; data.m];
     all_data.S = [all_data.S; data.S];
@@ -215,24 +211,22 @@ while true
     ctr = ctr + 1;
 end
 
+function delta = eps_to_delta(eps_i, c_i)
 
-function delta = eps_to_delta(eps_i,c_i)
-
-    if nargin <2
-       %c_i = [-1/3,-1/2,-1,1,1/2,1/3]/(2*sum(1+1/2+1/3)); 
-       c_i = [-1,1]/2; 
+    if nargin < 2
+        %c_i = [-1/3,-1/2,-1,1,1/2,1/3]/(2*sum(1+1/2+1/3));
+        c_i = [-1, 1] / 2;
     end
-    
-    delta = zeros( size(eps_i,1),1 );
-    
-    for j=1:numel(c_i)
-       delta = delta + c_i(j)* eps_i(: ,j) ;
+
+    delta = zeros(size(eps_i, 1), 1);
+
+    for j = 1:numel(c_i)
+        delta = delta + c_i(j) * eps_i(:, j);
     end
 
     delta = real(delta);
-    
-    if sum(delta)<0
-       delta = -delta; 
+
+    if sum(delta) < 0
+        delta = -delta;
     end
 end
-

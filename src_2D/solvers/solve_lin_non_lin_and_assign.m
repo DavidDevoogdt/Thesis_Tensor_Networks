@@ -3,7 +3,7 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
     obj = fill_rand(obj, patterns, 1 / exp(obj.nf));
 
     if nargin >= 6
-        [obj, full_pat] = assignfn(obj);
+        obj = assignfn(obj);
     end
 
     p = inputParser;
@@ -94,7 +94,7 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
 
             obj = assignfn(obj);
 
-            err = calculate_error(obj, map.num_map, map.opts);
+            err = calculate_error(obj, map, [],1 );
         end
 
         if p.Results.display == 1

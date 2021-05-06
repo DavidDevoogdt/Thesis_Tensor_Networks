@@ -67,95 +67,84 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
 
         data = struct();
 
-        %% read out params 
+        %% read out params
         x0 = x(5 + 12);
-        
+
         data.m.sfunparam = x(12 + 6:12 + 9 + 8 * Fitparams.m.N);
         data.xi.sfunparam = x(12 + 6 + 8 * Fitparams.m.N:12 + 9 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N);
         data.S.sfunparam = x(6 + 12 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N:9 + 12 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N + 8 * Fitparams.S.N);
-        
+
         data.m.params = x(5:8);
         data.xi.params = x(9:12);
         data.S.params = x(13:16);
-        
-        
-        
+
         if Fitparams.dodelta == 1
-        
-            ci = x(end-5:end);
-            ci = [ci,-sum(ci)];
 
-            ci = ci/ sum(abs(ci));
+            ci = x(end - 5:end);
+            ci = [ci, -sum(ci)];
 
-            delta = Fitparams.Delta_fun( all_data.eps_i, ci );
+            ci = ci / sum(abs(ci));
+
+            delta = Fitparams.Delta_fun(all_data.eps_i, ci);
         else
-            delta = Fitparams.Delta_fun( all_data.eps_i );
+            delta = Fitparams.Delta_fun(all_data.eps_i);
         end
-        
 
-        
-
-        
         %% make scaling functions and derivatives of scaling functions
         [data.m.fit_f, data.m.fit_df, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr] = ScalingFunction(1, 1, x0, beta / nu, data.m.sfunparam, Fitparams.m.N, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr);
         [data.xi.fit_f, data.xi.fit_df, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.xi.sfunparam, Fitparams.xi.N, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr);
         [data.S.fit_f, data.S.fit_df, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.S.sfunparam, Fitparams.S.N, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr);
-        
+
         %do log
 
-       
         %% make dimensionless quantities
         t = all_data.T - Tc;
-        
-        omega =  x(6);
+
+        omega = x(6);
         phi = x(8);
-        
+
         res = [];
         mask = [];
-        
+
         for ii = 1:3
             Zz = Fitparams.names{ii};
-            
+
             if Fitparams.logfit(ii)
                 data.(Zz).fit_df = @(x)data.(Zz).fit_df(x) ./ data.(Zz).fit_f(x);
                 data.(Zz).fit_f = @(x)log(data.(Zz).fit_f(x));
             end
 
             if ~Fitparams.subleading
-                s_c_1 =0;
-                s_d_1 =0;
-            else        
+                s_c_1 = 0;
+                s_d_1 = 0;
+            else
                 s_c_1 = data.(Zz).params(1);
                 s_d_1 = data.(Zz).params(3);
             end
-            
+
             data.(Zz).s_corr = 1 + s_c_1 * delta.^(omega / nu);
             data.(Zz).temp = t .* delta.^(-1 / nu) - s_d_1 * delta.^(phi / nu);
-                       
 
             switch Zz
                 case 'm'
-                    data.m.f = log(all_data.m .* delta.^(-beta / nu) ./ data.m.s_corr );
+                    data.m.f = log(all_data.m .* delta.^(-beta / nu) ./ data.m.s_corr);
                 case 'xi'
-                    data.xi.f = log( all_data.xi .* delta.^(1 / nu) ./ data.xi.s_corr );
+                    data.xi.f = log(all_data.xi .* delta.^(1 / nu) ./ data.xi.s_corr);
                 case 'S'
-                    data.S.f = 6 / c * all_data.S + log( delta) - log(data.S.s_corr) ;
+                    data.S.f = 6 / c * all_data.S + log(delta) - log(data.S.s_corr);
             end
 
-            if ~Fitparams.logfit(ii) 
-                data.(Zz).f = exp( data.(Zz).f );
+            if ~Fitparams.logfit(ii)
+                data.(Zz).f = exp(data.(Zz).f);
             end
-            
-            data.(Zz).rtrange = max( data.(Zz).temp )-min( data.(Zz).temp );
+
+            data.(Zz).rtrange = max(data.(Zz).temp) - min(data.(Zz).temp);
             data.(Zz).range = max(data.(Zz).f) - min(data.(Zz).f);
-           
 
             t2 = sort(data.(Zz).temp);
-            n=numel(data.(Zz).temp);
-            data.(Zz).trange =  t2( round(3/4*n))-t2( round(1/4*n));
+            n = numel(data.(Zz).temp);
+            data.(Zz).trange = t2(round(3/4 * n)) - t2(round(1/4 * n));
 
-           
-            
             data.(Zz).fr = data.(Zz).f / data.(Zz).range;
             data.(Zz).tempr = data.(Zz).temp / data.(Zz).trange;
 
@@ -166,84 +155,77 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
             if Fitparams.orthdist
                 [out_data.(Zz).tempr, data.(Zz).res] = DistanceToLine(data.(Zz).fit_f, data.(Zz).fit_df, x0, out_data.(Zz).tempr, data.(Zz).tempr, data.(Zz).fr);
             else
-                data.(Zz).res = data.(Zz).fr - data.(Zz).fit_f( data.(Zz).tempr );
+                data.(Zz).res = data.(Zz).fr - data.(Zz).fit_f(data.(Zz).tempr);
             end
-      
 
             bounds = Fitparams.bounds.(Zz);
 
             data.(Zz).mask = (data.(Zz).f > bounds(1)) & (data.(Zz).f < bounds(2));
 
-            
-            
             if isempty(mask)
-               mask =  data.(Zz).mask;
+                mask = data.(Zz).mask;
             else
-               mask = mask  & data.(Zz).mask;
+                mask = mask & data.(Zz).mask;
             end
-            
-           
-            
+
         end
         for ii = 1:3
             Zz = Fitparams.names{ii};
-             if Fitparams.doFit(ii)
+            if Fitparams.doFit(ii)
 
                 %apply mask
                 %ata.(Zz).res(~mask) = 0;
 
                 res = [res, data.(Zz).res];
-             end
-        
+            end
+
         end
 
-           %% plot
-        if mod(teller - 1, numel(x)) == 0   
+        %% plot
+        if mod(teller - 1, numel(x)) == 0
             clf
 
             for ii = 1:3
                 Zz = Fitparams.names{ii};
-                
+
                 tempr_sorted = sort(data.(Zz).tempr);
                 f_sorted = sort(data.(Zz).f);
-                
+
                 fact = 1.4;
-                
-                xlr = [tempr_sorted(10),tempr_sorted(end-10)]*fact;
-                xl= xlr*data.(Zz).trange;
-                yl= [f_sorted(10),f_sorted(end-10)]*fact;
-                
-                
+
+                xlr = [tempr_sorted(10), tempr_sorted(end - 10)] * fact;
+                xl = xlr * data.(Zz).trange;
+                yl = [f_sorted(10), f_sorted(end - 10)] * fact;
+
                 data.(Zz).temp_lin = linspace(xlr(1), xlr(2), 200)';
-                
+
                 subplot(1, 3, ii)
                 hold off
-                
-                if ~Fitparams.logplot(ii) 
-     
-                    plot(data.(Zz).temp(  mask ), data.(Zz).f( mask), '.b', 'MarkerSize', 4);
+
+                if ~Fitparams.logplot(ii)
+
+                    plot(data.(Zz).temp(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
                     hold on
-                    plot(data.(Zz).temp(  ~mask ), data.(Zz).f( ~mask), '.r', 'MarkerSize', 4);
+                    plot(data.(Zz).temp(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
                     plot(data.(Zz).temp_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.temp_lin)), '-g');
-                    
-                    
+
                 else
-                    semilogy(data.(Zz).temp(  mask ), data.(Zz).f( mask), '.b', 'MarkerSize', 4);
+                    semilogy(data.(Zz).temp(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
                     hold on
-                    semilogy(data.(Zz).temp(  ~mask ), data.(Zz).f( ~mask), '.r', 'MarkerSize', 4);
+                    semilogy(data.(Zz).temp(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
                     semilogy(data.(Zz).temp_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.temp_lin)), '-g');
 
                 end
                 hold off
-                
-                set(gca,'ylim',yl);
-                set(gca,'xlim',xl);
-                
-                xlabel( Fitparams.(Zz).xlabel );
-                ylabel( Fitparams.(Zz).ylabel );
+
+                set(gca, 'ylim', yl);
+                set(gca, 'xlim', xl);
+
+                xlabel(Fitparams.(Zz).xlabel);
+                ylabel(Fitparams.(Zz).ylabel);
                 set(gca, 'fontsize', 16)
             end
-            
+
             drawnow
         end
 

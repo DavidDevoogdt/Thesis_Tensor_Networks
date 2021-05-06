@@ -5,12 +5,10 @@ function data = filter_ising_results(data, opts)
     end
 
     if ~isfield(opts, 'Tbound')
-        opts.Tbound = [0,Inf];
+        opts.Tbound = [0, Inf];
     end
 
-    mask = (data.T > opts.Tbound(1)) & ( data.T < opts.Tbound(2) ) & (data.err < opts.tol) & (data.err ~= 0)  ;
-    
-
+    mask = (data.T > opts.Tbound(1)) & (data.T < opts.Tbound(2)) & (data.err < opts.tol) & (data.err ~= 0);
 
     [~, idx] = sort(data. (data.free_var)(mask));
 

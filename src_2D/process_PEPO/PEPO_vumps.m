@@ -1,8 +1,8 @@
-function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts,save_vars)
-    
-if nargin <3
-   save_vars = []; 
-end
+function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts, save_vars)
+
+    if nargin < 3
+        save_vars = [];
+    end
 
     %     p = inputParser;
     %
@@ -33,7 +33,7 @@ end
 
     %opts.method = 'qr';
 
-    opts.plot = 'off';
+    opts.plot = 'on';
     opts.maxit = vumps_opts.vumps_maxit;
     opts.tolfixed = vumps_opts.tolfixed;
 
@@ -54,6 +54,5 @@ end
     else
         [A, G1, lambda1, ctr, err] = Vumps(O, vumps_opts.chi_max, [], opts);
     end
-    
-    
+
 end

@@ -20,7 +20,7 @@ function x_cell = solve_non_lin(obj, root_patterns, extended_patterns, pattern_r
         'FunctionTolerance', 1e-14, ...
         'StepTolerance', 1e-12, ...
         'PlotFcn', p.Results.PlotFcn, ...
-        'InitDamping',1e-10,...
+        'InitDamping', 1e-5, ...
         'OptimalityTolerance', 1e-20); %for trust region
 
     %
@@ -59,7 +59,7 @@ function x_cell = solve_non_lin(obj, root_patterns, extended_patterns, pattern_r
 
     for i = 1:numel(extended_patterns)
         real_pat = [1, 2, pattern_permutations{i} + 2];
-        x_cell = [x_cell, permute(x_cell{pattern_root(i)}, real_pat)];
+        x_cell = [x_cell; permute(x_cell{pattern_root(i)}, real_pat)];
     end
 
     %             if obj.testing == 1
