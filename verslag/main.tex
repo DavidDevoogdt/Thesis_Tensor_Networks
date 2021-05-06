@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{book}
 %\documentclass{article}
 
 \usepackage{tikz}
@@ -48,6 +48,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage{gensymb} % /textdegree
 
+\usepackage[toc,page]{appendix}
+
+\usepackage{pdfpages}
+
 
 %\setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
@@ -66,47 +70,89 @@
 
 \input{macros.tex}
 
-\onecolumn
-\begin{titlepage}
-  \begin{center}
+% \begin{titlepage}
+%   \begin{center}
 
-    \pagenumbering{gobble}
-    \includegraphics[width=4cm]{Figuren/UGent.png} \\[0.5cm]    %Logo UGENT	
+%     \pagenumbering{gobble}
+%     \includegraphics[width=4cm]{Figuren/UGent.png} \\[0.5cm]    %Logo UGENT	
 
-    \Large{\textsc{Master Engineering Physics}} \\[0.5cm]  %Vakgroep	
+%     \Large{\textsc{Master Engineering Physics}} \\[0.5cm]  %Vakgroep	
 
-    \normalsize{Year 2020-2021} \\[3cm]  %Academiejaar
+%     \normalsize{Year 2020-2021} \\[3cm]  %Academiejaar
 
-    \huge{\textsc{Master desertation}} \\[0.25cm]   %Titel
+%     \huge{\textsc{Master desertation}} \\[0.25cm]   %Titel
 
-    \Large{\textsc{Thesis Tensor networks}}\\[0.25cm]
+%     \Large{\textsc{Thesis Tensor networks}}\\[0.25cm]
 
-    \large \textnormal{October 2020} \\[2.5cm]   %Extra informatie
+%     \large \textnormal{October 2020} \\[2.5cm]   %Extra informatie
 
-    %\small      %Namen
+%     %\small      %Namen
 
-    David Devoogdt \\       [2.5cm]
+%     David Devoogdt \\       [2.5cm]
 
-    Academic supervisor: prof.
+%     Academic supervisor: prof.
 
-    \vfill
+%     \vfill
 
-  \end{center}
-\end{titlepage}
+%   \end{center}
+% \end{titlepage}
 
-\tableofcontents
+\frontmatter
+
+%https://www.ugent.be/ea/nl/faculteit/studentenadministratie/masterproef/vorm1920.pdf
+
+% \includepdf[page={1}]{ titelblad.pdf }
+
+% \newpage
+% \thispagestyle{empty}
+% \mbox{}
+% \newpage
+
+\includepdf[page={1}]{ titelblad.pdf }
 
 \newpage
 \listoftodos
 \newpage
 
 %\twocolumn
-\pagenumbering{arabic}
 
 \input{tikzsetup}
 
+\addcontentsline{toc}{chapter}{Foreword}
+\section*{Foreword}
+\lipsum{20}
+
+\section*{Permision of use on loan }
+The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
+
+\addcontentsline{toc}{chapter}{Abstract}
+
+\section*{Abstract}
+
+Het abstract is maximum één bladzijde en bevat minstens:
+a) De informatie die werd vermeld op het titelblad (eigen vorm);
+b) Een summiere beschrijving van het werk (vijftien à twintig regels);
+c) Eventueel: drie tot vijf goed gekozen trefwoorden die het onderwerp best
+omschrijven.
+
+\addcontentsline{toc}{chapter}{Extended abstract}
+
+\section*{Extended Abstract}
+
+De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met een maximum van zes bladzijden.
+
+\tableofcontents
+
+\listoffigures
+
+\mainmatter
+
+\chapter{Introduction}
+
 \section{Introduction}
 \input{introduction.tex}
+
+\chapter{Tensor networks}
 
 \section{tensor networks}
 \input{tensorNetworks.tex}
@@ -117,20 +163,32 @@
 \section{Tensor network manipulations}
 \input{MPOmath}
 
+\chapter{Construction}
+
 \section{Contruction MPO}
 \input{mpo1d}
 
 \section{Contruction PEPO}
 \input{PEPO2d}
 
+\chapter{Strongly correlated matter}
+
+\section{Phases and Criticality} \label{sec:PhasesAndCrit}
+\input{criticality.tex}
+
 \section{Models}
 \input{qphasediag}
 
-\section{Phases and Criticality}
-\input{criticality.tex}
+\chapter{Results}
 
 \section{Benchmarking}
 \input{benchmark.tex}
+
+\chapter{Conclusion and lookout}
+
+\begin{appendices}
+    \chapter{Source code and documentation}
+\end{appendices}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{bib}

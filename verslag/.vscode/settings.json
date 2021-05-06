@@ -68,5 +68,7 @@
                 "latexmk"
             ]
         }
-    ]
+    ],
+    "ltex.language": "en-GB",
+    "ltex.checkFrequency": "edit"
 }

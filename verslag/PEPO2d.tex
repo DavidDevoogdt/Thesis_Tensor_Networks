@@ -7,8 +7,6 @@ The construction
 
 \subsection{Blocks with loops}
 
-\subsubsection{hypothesis}
-
 \subsection{Framework Implementation}
 
 A large part of the code written consist of a general framework in Matlab to perform many operations in an automated manner.
@@ -35,14 +33,33 @@ Here $i^M_N$ has the following meaning: M numbers the differrent legs or branche
 \end{equation}
 While this method is very quick and scales well, in practice it results in unstable result. This is a result of the potentially ill conditioned inverses inherent to the construction. A pseudo-inverse of the full matrix can be easily obtained and resolves this issue \todo{link to right section}. Solving in a sequetial way, the errors of the pseudo-inverses accumulate. Luckily the problem can be resolved by first performming an SVD decomposion of $A^m = U^m S^m  V^{m\dagger}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the hermitian transpose to B. The Tensor $S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be inverted at once. The last step consist of inverting all unitary $V$.
 
-The linear solver also works
-
 \subsubsection{Nonlinear solver}
+
+In some cases, the above solver does not return the best possible solution to a given problem. The reason is that it is not able to incorporate symmetries or solve problems where the new blocks appear more than once. A new solver is needed which does not rely on methods from linear algebra, but on more general non-linear leat squares solvers.
+
+In essence, the non-linear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$ , and if possible also the jocabian, i.e. $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. An improved point x is chosen by the algoritm, untill some convergence criterium is reached. The implementation uses matlab fsolve routine, which uses Levenberg-Marquardt algoritm under the hood.
+
+\paragraph{automatic differentiation}
+With some care, the jacobian can be calculated for a general tensor network in an automated way. Suppose we want to differentiate the contracted tensor $T^{i_1  \cdots i_n  }$ with respect to one of the PEPO blocks $x_n = O^{i_n }_{\alpha \beta \gamma \delta}$. Denote $I=(i_1 \cdots i_n )$ and $J=(i_m  \alpha \beta \gamma \delta)$, and this block only occurs once. Then $  J_{I J}  = \frac{\partial T^{i_1  \cdots i_n  } }{  \partial O^{i_m }_{\alpha \beta \gamma \delta} } = T^{i_1 \cdots i_n } _{ i_m  \alpha \beta \gamma \delta}  \delta^{i_n}_{i_m}   $  amounts to  contracting the network with the tensor $x_m$ removed, and treating the non contracted indices as external ones. If a tensor appears in multiple places, the sum of these contributions has to be taken into account.
+
+\todo{source}
 
 \paragraph{symmetry}
 
+The non-linear solver can handle rotated and permuted blocks. \todo{ complete}
+
 \subsection{Bookkeeping}
+
+One imporatant aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbourghs for each site, numbers the inernal and external legs and a list to perform the contractions.
+
+The framework provides some tools to transform these maps into other maps, for instace by removing 1 site.
 
 \subsection{Fast contraction}
 
+One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T_{i (\alpha \beta \gamma \delta )} = \delta^i_{(\alpha \beta \gamma \delta )} $ where i encodes the non zero combinations of legs $(\alpha \beta \gamma \delta)$. After setting the boundary conditions, the PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contraction. Due to its sparsity, this performs quit fast.
+
+\todo{tikz figure}
+
 \subsection{Normalisation}
+
+Storing the
