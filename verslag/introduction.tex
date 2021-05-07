@@ -1,4 +1,5 @@
-\todo{write this}
+
+\section{Introduction}
 
 In 2015, there were about 5.6 million known physics papers in literature. At the current rate, this number doubles every 18.7 years \cite{Sinatra2015}. Despite this enormous body of literature, there are a lot of things which are not completely understood. Some examples include a self-consistent theory of quantum gravity, the need for dark energy and matter in cosmology, the arrow of time, the matter-antimatter asymmetry. There even is no interpretation of quantum mechanics where everyone agrees upon.
 
@@ -6,25 +7,22 @@ But certainly not all open problems have to do with 'new' physics. In many areas
 
 In reality, the real challenge is to model the macroscopic properties of quantum many-body system with around $10^{23}$ particles. Needless to say, this not an easy task at all. Finding good and computable approximations is of primary importance in the fields of quantum chemistry, condensed matter physics, and materials science.
 
-In computational chemistry, the many-body problem is tackled with with methods which fall in one of the following categories: (post-) Hartree-Fock methods, density functional theory (DFT) and force-field methods. While they have many applications \todo{vind bron en voorbeelden}, these methods are not fully able to capture all the properties of the so called strongly correlated matter.
+In computational chemistry, the many-body problem is tackled with methods which fall in one of the following categories: (post-) Hartree-Fock methods, density functional theory (DFT) and force-field methods. While they have many applications \todo{vind bron en voorbeelden}, these methods are not fully able to capture all the properties of the so called strongly correlated matter.
 
-Examples of phase of strongly correlated matter which are not yet understood are include high-T superconductors, topological ordered phases, quantum spin liquids \cite{Orus2014}. There exist different methods to investigate these exciting materials. A very limited number of models is quantum integrable, meaning they can be solved in a non pertubative way. Also, some properties of models near criticality can be determined exactly with conformal field theory (CFT). But for some systems, we can only simulate the behaviour with numerical techniques.
+Examples of phase of strongly correlated matter which are not yet understood include high-T superconductors, topological ordered phases, quantum spin liquids \cite{Orus2014}. There exist different methods to investigate these exciting materials. A very limited number of models is quantum integrable, meaning they can be solved in a non pertubative way. Also, some properties of models near criticality can be determined exactly with conformal field theory (CFT). But for some systems, we can only simulate the behaviour with numerical techniques. To make progress, new fast and accurate numerical methods are needed, because exact diagonalisation becomes unfeasible for large systems.
 
 %http://benasque.org/2020scs/talks_contr/106_tensornetworks_lecture1.pdf
 
-To make progress in
-strongly correlated
-systems it is essential to
-develop new accurate
-numerical methods!
-• DMFT / DCA
-• Diagrammatic Monte Carlo
-• Tensor network algorithms
-• Fixed-node Monte Carlo
-• Series expansion
-• Density Matrix Embedding Theory
-• Variational Monte Carlo
-• Functional renormalization group
-• Coupled-cluster methods
+Some examples of such numerical techniques, which will not be discussed, are: Dynamical Mean Field (DMFT) / Dynamical Cluster Approximation  (DCA), Series expansion, Density Matrix Embedding Theory (DMET), Fixed-node Monte Carlo, Diagrammatic Monte Carlo, Variational Monte Carlo, Functional renormalization group (FRG) and Coupled-cluster methods. \cite{Corboz}
 
-%
+In this thesis, a technique is proposed that builds on the broad field of tensor networks.
+
+\section{Tensor networks}
+
+This is often referred to as the curse of dimensionality. The size of the Hilbert space of quantum states grows exponentially fast. This prevents an effecient description of all possible quantum states. \todo{area law+picture}
+
+\todo{sign problem monte carlo, ...}
+
+\todo{write about tensor networks}
+
+%https://arxiv.org/pdf/2011.12127.pdf

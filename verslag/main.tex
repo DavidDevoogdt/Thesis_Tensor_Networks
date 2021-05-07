@@ -55,6 +55,10 @@
 \usepackage{pdfpages}
 
 
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz/]
+\tikzexternaldisable
+
 %\setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
 
@@ -103,14 +107,14 @@
 
 %https://www.ugent.be/ea/nl/faculteit/studentenadministratie/masterproef/vorm1920.pdf
 
-% \includepdf[page={1}]{ titelblad.pdf }
+%\includepdf[page={1}]{ titelblad.pdf }
 
 % \newpage
 % \thispagestyle{empty}
 % \mbox{}
 % \newpage
 
-\includepdf[page={1}]{ titelblad.pdf }
+%\includepdf[page={1}]{ titelblad.pdf }
 
 \newpage
 \listoftodos
@@ -124,7 +128,7 @@
 \section*{Foreword}
 \lipsum{20}
 
-\section*{Permision of use on loan }
+\section*{ Permission of use on loan }
 The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
 
 \addcontentsline{toc}{chapter}{Abstract}
@@ -153,27 +157,18 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 
 \epigraph{There is nothing new to be discovered in physics now. All that remains is more and more precise measurement.}{Lord Kelvin, 1900}
 
-\section{Introduction}
 \input{introduction.tex}
 
 \chapter{Tensor networks}
 
-\section{tensor networks}
+\section{Tensor networks}
 \input{tensorNetworks.tex}
 
-\section{Operator exponentials}
-\input{statmech.tex}
-
-\section{Tensor network manipulations}
+\section{Tensor network manipulations}\label{sec:mpomath}
 \input{MPOmath}
 
-\chapter{Construction}
-
-\section{Contruction MPO}
-\input{mpo1d}
-
-\section{Contruction PEPO}
-\input{PEPO2d}
+\section{Tensor network algorithms}
+\input{TNalgs.tex}
 
 \chapter{Strongly correlated matter}
 
@@ -183,18 +178,35 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 \section{Models}
 \input{qphasediag}
 
-\chapter{Results}
+\section{Operator exponentials}
+\input{statmech.tex}
 
-\epigraph{With four parameters I can fit an elephant, and with five I can make him wiggle his trunk}{John von Neumann}
+\chapter{Construction Cluster expansion}
 
-\section{Benchmarking}
-\input{benchmark.tex}
+\section{Introduction}
+\input{construction_intro.tex}
 
-\chapter{Conclusion and lookout}
+\section{Construction MPO}
+\input{mpo1d}
 
-\begin{appendices}
-    \chapter{Source code and documentation}
-\end{appendices}
+% \section{Construction PEPO}
+% \input{PEPO2d}
+
+% \section{Framework implementation}
+% \input{framework_impl.tex}
+
+% \chapter{Results} \label{chap:results}
+
+% \epigraph{With four parameters I can fit an elephant, and with five I can make him wiggle his trunk}{John von Neumann}
+
+% \section{Benchmarking}
+% \input{benchmark.tex}
+
+% \chapter{Conclusion and lookout}
+
+% \begin{appendices}
+%     \chapter{Source code and documentation}
+% \end{appendices}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{bib}

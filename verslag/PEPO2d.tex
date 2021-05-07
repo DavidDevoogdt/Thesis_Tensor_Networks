@@ -1,7 +1,3 @@
-The MPO construction outlined in previous section can be generalized to 2D case. While the same general idea applies, a lot more care has to be taken to keep everything tractable from a programming point of view. This chapter section is organised as follows: first the physical construction will be detailed. The the blocks will be dived in 2 categories: one which can be solved with linear algebra and one which needs a non-linear solver. Then the workings of both solvers are detailed. Finally, some implementation tricks are discussed.
-
-\subsection{Construction block}
-The construction
 
 \subsection{Linear block}
 
@@ -9,68 +5,3 @@ In the following, linear blocks means that the graph is a rooted tree.
 
 \subsection{Blocks with loops}
 
-\subsection{Framework Implementation}
-
-A large part of the code written consist of a general framework in Matlab to perform many operations in an automated manner.
-
-\subsubsection{Linear solver}
-
-The linear solver is a general purpose block solver which reduces the problem to a set of linear matrix equations. Linear block consist of a tree structure, where the new block is the root of the tree, and all the branches need to be inverted.  Let $ I^m = (i^1_1 i^1_2 \cdots i^1_{n_1})$, then the problem can in general, after some tedious tensor leg bookkeeping, be rewritten in the following form:
-
-\begin{equation}
-    \begin{split}
-        &A_{ I_1  I_2 \cdots I_n \alpha^1 \alpha^2 \cdots \alpha^m   } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } \\
-        = &B_{  I_1  I_2 \cdots I_n   j }
-    \end{split}
-\end{equation}
-Here $i^M_N$ has the following meaning: M numbers the differrent legs or branches of the tree, N number of sites of the leg and i numbers the bra and ket states and has dimension $d^2$. Hence the bond dimension of $I_n= d^{2 n_m }$. The most obvious way to solve this system is by using a linear solver. The problem is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this becomes infeasable for very quickly. A second method consist of solving the following sequence of linear problems one leg at a time:
-
-\begin{equation}
-    \begin{split}
-        A^1_{ I^1 \alpha^1 } X_{ \alpha^1  I^2 \cdots I^m j} &=  B_{  I_1  I_2 \cdots I_n   j }\\
-        A^2_{ I^2 \alpha^2 } X_{ \alpha^1   \alpha^2  I^3 \cdots I^m j} &=  B_{  \alpha^1  I_2 \cdots I_n   j }\\
-        &\vdots\\
-        A^m_{ I^m \alpha^m } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } &=  B_{ \alpha^1 \alpha^2 \cdots \alpha^{m-1} I_m   j }\\
-    \end{split}
-\end{equation}
-While this method is very quick and scales well, in practice it results in unstable result. This is a result of the potentially ill conditioned inverses inherent to the construction. A pseudo-inverse of the full matrix can be easily obtained and resolves this issue \todo{link to right section}. Solving in a sequetial way, the errors of the pseudo-inverses accumulate. Luckily the problem can be resolved by first performming an SVD decomposion of $A^m = U^m S^m  V^{m\dagger}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the hermitian transpose to B. The Tensor $S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be inverted at once. The last step consist of inverting all unitary $V$.
-
-\subsubsection{Nonlinear solver}
-
-In some cases, the above solver does not return the best possible solution to a given problem. The reason is that it is not able to incorporate symmetries or solve problems where the new blocks appear more than once. A new solver is needed which does not rely on methods from linear algebra, but on more general non-linear leat squares solvers.
-
-In essence, the non-linear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$ , and if possible also the jocabian, i.e. $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. An improved point x is chosen by the algoritm, untill some convergence criterium is reached. The implementation uses matlab fsolve routine, which uses Levenberg-Marquardt algoritm under the hood.
-
-\paragraph{automatic differentiation}
-With some care, the jacobian can be calculated for a general tensor network in an automated way. Suppose we want to differentiate the contracted tensor $T^{i_1  \cdots i_n  }$ with respect to one of the PEPO blocks $x_n = O^{i_n }_{\alpha \beta \gamma \delta}$. Denote $I=(i_1 \cdots i_n )$ and $J=(i_m  \alpha \beta \gamma \delta)$, and this block only occurs once. Then $  J_{I J}  = \frac{\partial T^{i_1  \cdots i_n  } }{  \partial O^{i_m }_{\alpha \beta \gamma \delta} } = T^{i_1 \cdots i_n } _{ i_m  \alpha \beta \gamma \delta}  \delta^{i_n}_{i_m}   $  amounts to  contracting the network with the tensor $x_m$ removed, and treating the non contracted indices as external ones. If a tensor appears in multiple places, the sum of these contributions has to be taken into account.
-
-\todo{source}
-
-\paragraph{Symmetry}
-
-The non-linear solver can handle rotated and permuted blocks. For instance, a simple loop (square) can be solved by rotating one tensor $T^I_{ \alpha \alpha 0 0}$ 4 times, once for every corner. Another example is the following decomposition:  $  X^I_\alpha X^J_\alpha = T^{I J} $.
-
-\subsection{Bookkeeping}
-
-One imporatant aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbourghs for each site, numbers the inernal and external legs and a list to perform the contractions.
-
-The framework provides some tools to transform these maps into other maps, for instance by removing 1 site.
-
-\subsection{Fast contraction}
-
-One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T_{i (\alpha \beta \gamma \delta )} = \delta^i_{(\alpha \beta \gamma \delta )} $ where i encodes the non-zero combinations of legs $(\alpha \beta \gamma \delta)$. After setting the boundary conditions, the PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contraction. Due to its sparsity, this performs quit fast.
-
-\todo{tikz figure}
-
-\subsection{Normalisation}
-
-For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the hamiltonian evaluated for a certain geometry. This is a hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
-\begin{align}
-    exp(  H_{d^N} - N \alpha I  ) & =  Q exp(  D- N \log(\alpha ) I    ) Q^{\dagger} \\
-                                  & =  Q \begin{bmatrix} exp(D_{1 1} - N \log(\alpha )) &        &                                     \\
-                                               & \ddots &                                     \\
-                                               &        & exp(D_{ d^N d^N} - N \log(\alpha )) \\
-    \end{bmatrix}  Q^{\dagger}      \\
-                                  & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }
-\end{align}.
-With $I$ the unit matrix. Next to a global normalisation factor, every block calculation calculates a specific normalisation factor such that the largest eigenvalue of $exp(H)$ is of the order 1.

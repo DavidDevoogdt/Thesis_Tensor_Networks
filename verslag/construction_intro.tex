@@ -1,0 +1,70 @@
+\subsection{ Notation}
+
+In the following, the external legs and virtual level 0 will be omitted:
+
+\begin{equation}
+    \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
+\end{equation}
+
+\begin{equation}
+    \mpo{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_2$",}}{}{{"",}} =\mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}
+\end{equation}
+
+\begin{equation}
+    \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
+\end{equation}
+
+This hamiltonian consists of 1 and 2 site operators. Of course more general hamiltonians can also be captured.
+\begin{equation}
+    \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
+\end{equation}
+The same notation will be used to denote the hamiltonin evaluated on the given geometry:
+\begin{equation}
+    \begin{split}
+        H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = &H_1 \otimes 1 \otimes 1 \\
+        +  &1 \otimes H_1  \otimes 1 \\
+        +  &1 \otimes 1 \otimes H_1   \\
+        +  &H_2 \otimes H_2 \otimes 1  \\
+        +  &1 \otimes H_2 \otimes H_2  \\
+    \end{split}
+\end{equation}
+
+\subsection{Idea}
+This chapter shows the main construction of dissertation. A cluster expansion is used to approximate $e^{ \hat{H} }$ for every possible geometry. The goal is to make a MPO/PEPO which captures the tensor exponential in the thermodynamic limit.
+
+\todo{symmetry, speed}
+
+This cluster expansions introduced in  \cite{Vanhecke2021}. The main idea is to make an extensive expansion by adding blocks which solve the model exactly on a local patch. Crucially, the expansion is not in the inverse temperature $\beta$ but in the size of the patches. The local patches are separated by a virtual level 0 bond.
+
+To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that hamiltonian.
+\begin{equation}
+    \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
+\end{equation}
+
+If there were no 2 site interaction, this already captures the full diagonilsation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions previously introduced interaction are subtracted from the diagonalised hamiltonian.
+
+\begin{equation}
+    \begin{split}
+        \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}})  \\
+        - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+    \end{split}
+\end{equation}
+
+At this stage, all seperated networks with maximally 2 connected sites in a row are diagonalised exactly. Notice that here, 2  new blocks are introduced: $\mpo{1}{ {0,1}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}$ and of course also $\mpo{1}{ {1,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}$. As can be seen, the dimension of sublevel 1 needs to be $d^2$, with d the dimension of physical level. Although different possible constructions already differ in the next step, one more step is added to make te construction and notation clear.
+
+\begin{equation}\label{constr:intro:gen}
+    \begin{split}
+        \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+        -&\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+        -&\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+        -&\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}\\
+        =\exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})\\
+        -&\mpob{3}{ {,,,}  }{}{}{}{{,,,}}\\
+    \end{split}
+\end{equation}
+
+It is clear that the right-hand side of \cref{constr:intro:gen} can alsoe be ommited, as it is just evaluating the exponentiated hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously.
+
+\subsection{Preview}
+
+In the following sections some possible configurations in 1D and 2D will be discussed. The results will be discussed later in \cref{chap:results}. T
