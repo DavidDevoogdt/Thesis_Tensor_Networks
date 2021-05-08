@@ -76,6 +76,50 @@ Two main internal representations are used to construct the given MPO. Either, t
 
 \subsection{1D implementation}
 
+The solution will be denoted by
+
+\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
+\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
+\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
+
+\def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
+
+\def \figfour { \expH{1}{$A^{-1}B$}{{"$i_3$",}}{{"$j_3$",}}{{"u","v"}} }
+
+\begin{equation}
+    \begin{split}
+        \figtwob &=  \left[ \figoneb \right ]^{-1}  \figthreeb \\
+        &=  \left[ \figonec  \right ]  \figthreeb\\
+        &= \figfour
+    \end{split}
+    \label{eq_mpoinvdef}
+\end{equation}
+For the first equation the unmarked legs on the same positions need to be contracted with each other. The second line the mirrored positions are contracted.
+
+If the tensor A is an MPO, the inverse can also be constructed as an mpo. This is espacially usefull if the MPO is created with decomposition for which the inverse can be computed easily, suchs as an svd decomposition.
+
+Take has to be taken with the indices to apply the inverse.
+
+\begin{equation}
+    \begin{split}
+        U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
+        &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
+    \end{split}
+\end{equation}
+If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
+\begin{equation}
+    \mpo{1}{ {"$\delta$","$\alpha$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{\delta i j \alpha}
+\end{equation}
+With the notation from \cref{eq_mpoinvdef} we have:
+\def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
+
+\begin{equation}
+    \OnBlock =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
+\end{equation}
+The inverse can be applied sequentially.
+
+\todo{ update}
+
 \subsubsection{buffering results}
 
 The matrix exponential for different number of sites is called on many places. The results for chain and cycle are stored in the class to save computing time the next time.

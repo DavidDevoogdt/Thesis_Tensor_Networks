@@ -1,10 +1,24 @@
-This section severs as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the oprations translate to the 2D case.
+This section serves as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the oprations translate to the 2D case.
 
-The manipulations of MPO's is done by manipulating the tensor into a matrix, performing some matrix calculations and casting it back into it's original form. This section gives some examples how these manipulations are done in practice:
+The MPS's are processed by transforming the tensor into a matrix, performing some matrix calculations and casting it back into its original form. In this way, the standard methods from linear algebra can be used. This section gives some examples how this is done in practice:
 
 \subsection{Basics}
 
+\subsubsection{Grouping legs}
+One of the most basic manipulations is to group some legs of a tensor into one leg:
+\begin{equation}
+    \begin{split}
+        T^{i_1 i_2 j_1 j_2} &=  \expH{2}{$T$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{} \\
+        & \cong \expH{2}{$T$}{{"-","-"}}{{"-","-"}}{{"$(i_1 j_1 )$","$(i_2 j_2)$"}} \\
+        &= T^{ (i_1 j_1 ) (i_2 j_2) } \\
+    \end{split}
+\end{equation}
+The dimension of the new leg is the product of the dimension of the individual legs. Contracting 2 merged legs with 2 merged legs is exactly the same as contracting them separately. The both The 4 leg tensor and matrix contain exactly the same information.
+Manipulating this in memory requires both permute and reshape commands. This requires some time, the internal representation of the matrix changes.
+
 \subsubsection{decomposition} \label{decompMPO}
+
+The grouping above can be applied to decompose a tensor into 2 tensor with matrix techniques. An example, which will be needed later on, is give here.
 
 \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
@@ -12,19 +26,22 @@ The manipulations of MPO's is done by manipulating the tensor into a matrix, per
     \begin{split}
         \figone &= O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w} \\
         &\cong O^{u w}_{ (\alpha_u i_1 j_1) (\gamma_w i_2 j_2) } \\
-        &= O^{u v}_{(\alpha_u i_1 j_1) \beta_v } O^{v w}_{ \beta_v (\gamma_w i_2 j_2) } \\
+        &= O^{u v}_{(\alpha_u i_1 j_1) \alpha_v } O^{v w}_{ \alpha_v (\alpha_w i_2 j_2) } \\
         &\cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}
     \end{split}
 \end{equation}
 
-Step 2 reshapes and groups the indices to one index. The dimension of this index is the sum of the seperate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
+The indices U,V and W represent blocks indices. Step 2 reshapes and groups the indices on to one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
 
 For an exact representation, the bond dimension of virtual level v is:
 \begin{equation}
     \dim{v} = \min( \dim{u}, \dim{v}) + 2 \dim{i}
 \end{equation}
 
-Many different matrix decompositions exist. Some usefull examples here are svd decomposition and eigenvalue decomposition. The split in left and right matrix is not unique and differs per algoritm.
+Many matrix decompositions exist. Some useful examples here are SVD decomposition, eigenvalue decomposition, QR, $\cdots$.
+
+\subsubsection{virtual levels}
+In the previous example, the levels were indicate with a block index or virtual level. The idea is to create seperate the contraction into blocks. This is completely analogous to matrix block multipliction. This wil be a more natural form to represent the algorithm. Of course, one can easily switch between block representation and the full one.
 
 \subsubsection{inverse}
 Suppose we want to find a MPO O for given tensors A and B such that the following holds:
@@ -42,81 +59,18 @@ Again, the indices can be taken toghether in the following way: $\alpha = (u i_1
 \begin{equation}
     A_{\alpha \gamma} O_{\gamma \beta} = B_{\alpha \beta}
 \end{equation}
-This a a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution. In matlab the procedures mldivide and lsqminnorm can be used, which give more robust solutions.
+This a a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution. Linear solver are generally much faster. As this is one of the core problems to solve both in 1D and 2D, this will be discussed in detail in \cref{sec:framework_impl}.
 
-The solution will be denoted by
-
-\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
-\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
-\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
-
-\def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
-
-\def \figfour { \expH{1}{$A^{-1}B$}{{"$i_3$",}}{{"$j_3$",}}{{"u","v"}} }
-
-\begin{equation}
-    \begin{split}
-        \figtwob &=  \left[ \figoneb \right ]^{-1}  \figthreeb \\
-        &=  \left[ \figonec  \right ]  \figthreeb\\
-        &= \figfour
-    \end{split}
-    \label{eq_mpoinvdef}
-\end{equation}
-For the first equation the unmarked legs on the same positions need to be contracted with each other. The second line the mirrored positions are contracted.
-
-If the tensor A is an MPO, the inverse can also be constructed as an mpo. This is espacially usefull if the MPO is created with decomposition for which the inverse can be computed easily, suchs as an svd decomposition.
-
-Take has to be taken with the indices to apply the inverse.
-
-\begin{equation}
-    \begin{split}
-        U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
-        &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
-    \end{split}
-\end{equation}
-If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
-\begin{equation}
-    \mpo{1}{ {"$\delta$","$\alpha$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{\delta i j \alpha}
-\end{equation}
-With the notation from \cref{eq_mpoinvdef} we have:
-\def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
-
-\begin{equation}
-    \OnBlock =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
-\end{equation}
-The inverse can be applied sequentially.
-
-\todo{PEPS inverse, fast version, bookkeeping}
-
-\subsubsection{virtual levels and matrisation}
-\subsubsection{truncation}
-
-\todo{explain}
-
-From the construction with svd we can see that the dimension of virtual bond $\dim{n} = d^{2 n}$ with d the dimension of $\ket{i}$. The virtual levels can be joined into a $\chi \times d \times d \times \chi$ dimensional tensor O. This tensor is given by a tridiagonal block matrix :
-
-\begin{equation}
-    O^{ij}_{\alpha \beta} = \begin{bmatrix}
-        O^{00,ij} & O^{01,ij} &           &        &     \\
-        O^{10,ij} & O^{11,ij} & O^{12,ij} &              \\
-                  & O^{21,ij} & O^{22,ij} & \ddots       \\
-                  &           & \ddots    & \ddots &   &
-    \end{bmatrix}
-\end{equation}
-
-The boundary conditions (leftmost and rightmost virtual level are zero) correspond to vectors:
-\begin{equation}
-    \begin{split}
-        l &= \begin{bmatrix} 1 & 0
-                  & \cdots\end{bmatrix} \\
-        r &= l^{T}
-    \end{split}
-\end{equation}
-
-The total dimension is the sum of dimensions of the virtual level. In this case the \todo{berken exact en maak tabletje voor de verschillende types}
 \subsubsection{contraction order}
 
+\todo{contraction order}
+
 \subsubsection{Gauge freedom}
+
+\todo{gauge}
+\subsubsection{truncation}
+
+\todo{svd truncation}
 
 \subsection{MPS algoritms}
 

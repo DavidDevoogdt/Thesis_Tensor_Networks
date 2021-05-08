@@ -55,9 +55,8 @@
 \usepackage{pdfpages}
 
 
-\usetikzlibrary{external}
-\tikzexternalize[prefix=tikz/]
-\tikzexternaldisable
+% \tikzexternalize[prefix=tikz/]
+% \tikzexternaldisable
 
 %\setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
@@ -131,6 +130,8 @@
 \section*{ Permission of use on loan }
 The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
 
+\todo{add date}
+
 \addcontentsline{toc}{chapter}{Abstract}
 
 \section*{Abstract}
@@ -161,11 +162,16 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 
 \chapter{Tensor networks}
 
+The aim of this chapter is to give a basic introduction to tensor networks from a computational viewpoint. First the graphical notation for tensors, which is ubiquitous in the field, will be introduced and explained. A incomplete classification of the different kinds of tensor networks will be discussed. Some routine tensor network manipulations are explained. Also, a selection of different algorithms, which are from a computational point of view the reason behind the success of tensor networks, are presented very briefly.
+
 \section{Tensor networks}
 \input{tensorNetworks.tex}
 
 \section{Tensor network manipulations}\label{sec:mpomath}
 \input{MPOmath}
+
+\section{ Why tensor networks}
+\input{why_tensor_networks.tex}
 
 \section{Tensor network algorithms}
 \input{TNalgs.tex}
@@ -192,7 +198,7 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 \section{Construction PEPO}
 \input{PEPO2d}
 
-\section{Framework implementation}
+\section{Framework implementation} \label{sec:framework_impl}
 \input{framework_impl.tex}
 
 \chapter{Results} \label{chap:results}
@@ -204,9 +210,9 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 
 \chapter{Conclusion and lookout}
 
-% \begin{appendices}
-%     \chapter{Source code and documentation}
-% \end{appendices}
+\begin{appendices}
+    \chapter{Source code and documentation}
+\end{appendices}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{bib}
