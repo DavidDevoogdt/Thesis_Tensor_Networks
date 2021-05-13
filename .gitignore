@@ -49,3 +49,11 @@ src_2D/fit/ising_data.mat
 IsingMatFiles/Ising2D_g=2.5000e+00_chi=8_/home/ddvoogdt/Thesis_prod/IsingMatFiles/results_*.mat
 IsingMatFiles/Ising2D_g=2.5000e+00_chi=8_/home/ddvoogdt/Thesis_prod/IsingMatFiles/save_vars_*.mat
 IsingMatFiles/Ising2D_g=2.5000e+00_chi=8_/home/ddvoogdt/Thesis_prod/IsingMatFiles/template.mat
+verslag/tikz/*
+
+#latex compiler stuff
+*.lof
+*.auxlock
+*.synctec*
+
+

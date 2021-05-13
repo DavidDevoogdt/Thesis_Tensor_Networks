@@ -1,9 +1,14 @@
-function obj = make_PEPO_1D(obj)
+function [obj, err_code] = make_PEPO_1D(obj)
+
+    err_code = 0;
+
     d = obj.dim;
     ln_prefact = obj.nf;
     obj.boundary_vect = zeros(1, size(obj.PEPO_cell, 1));
     obj.bounds = [1];
     obj.boundary_vect(obj.bounds) = 1;
+
+    %[obj, ln_prefact] = solve_non_lin_and_assign(obj, { create_map( [1, 1] , struct( 'h_cyclic',1  )) }, { [0,0,0,0]  }, ln_prefact, struct('Gradient', false, 'Display', 'iter', 'maxit', 20));
 
     for n = 2:obj.order
 
@@ -21,7 +26,7 @@ function obj = make_PEPO_1D(obj)
             pattern = {[m - 1, 0, m, 0], [m, 0, m - 1, 0]};
         end
 
-        [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
+        [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
         e1 = calculate_error(obj, 1:n + 1, obj.numopts);
         %e2 = svds(target, 1);

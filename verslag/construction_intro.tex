@@ -19,15 +19,14 @@ This hamiltonian consists of 1 and 2 site operators. Of course more general hami
     \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
 \end{equation}
 The same notation will be used to denote the hamiltonin evaluated on the given geometry:
-\begin{equation}
-    \begin{split}
-        H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = &H_1 \otimes 1 \otimes 1 \\
-        +  &1 \otimes H_1  \otimes 1 \\
-        +  &1 \otimes 1 \otimes H_1   \\
-        +  &H_2 \otimes H_2 \otimes 1  \\
-        +  &1 \otimes H_2 \otimes H_2  \\
-    \end{split}
-\end{equation}
+
+\begin{alignat}{3}
+    H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
+    +                                                      & 1   &  & \otimes H_1 &  & \otimes 1 \nonumber   \\
+    +                                                      & 1   &  & \otimes 1   &  & \otimes H_1 \nonumber \\
+    +                                                      & H_2 &  & \otimes H_2 &  & \otimes 1   \nonumber \\
+    +                                                      & 1   &  & \otimes H_2 &  & \otimes H_2 \nonumber \\
+\end{alignat}
 
 \subsection{Idea}
 This chapter shows the main construction of dissertation. A cluster expansion is used to approximate $e^{ \hat{H} }$ for every possible geometry. The goal is to make a MPO/PEPO which captures the tensor exponential in the thermodynamic limit.
@@ -67,4 +66,4 @@ It is clear that the right-hand side of \cref{constr:intro:gen} can alsoe be omm
 
 \subsection{Preview}
 
-In the following sections some possible configurations in 1D and 2D will be discussed. The results will be discussed later in \cref{chap:results}. T
+In the following sections some possible configurations in 1D and 2D will be discussed. At this point, the focus is on the construction and its bond dimension. The results will be discussed later in \cref{chap:results}. T

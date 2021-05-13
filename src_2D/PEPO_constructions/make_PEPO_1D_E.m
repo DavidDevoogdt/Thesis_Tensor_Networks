@@ -27,9 +27,9 @@ function [obj, err_code] = make_PEPO_1D_double(obj)
         if mod(n, 2) == 1
             m = (n - 1) / 2;
             if n == 3
-                pattern = {[m, 0, m + prime_level, 0], [m + prime_level, 0, 0, 0]};
+                pattern = {[m, 0, m, 0]};
             else
-                pattern = {[m, 0, m + prime_level, 0], [m + prime_level, 0, m + prime_level - 1, 0]};
+                pattern = {[m, 0, m, 0], };
             end
         else
 
@@ -44,7 +44,11 @@ function [obj, err_code] = make_PEPO_1D_double(obj)
             end
         end
 
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop_dim', d^(2 * m)));
+        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+        if n == 2
+            obj.PEPO_cell{2 + prime_level, 1, 1, 1} = obj.PEPO_cell{2, 1, 1, 1};
+        end
 
         %e1 = calculate_error(obj, 1:n, obj.numopts);
         %e2 = svds(target, 1);

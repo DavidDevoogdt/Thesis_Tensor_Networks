@@ -1,6 +1,8 @@
 function [obj, err_code] = make_PEPO_1D_double(obj)
     err_code = 0;
 
+    obj.complex = 1;
+
     d = obj.dim;
     ln_prefact = obj.nf;
     obj.boundary_vect = zeros(1, size(obj.PEPO_cell, 1));
@@ -18,7 +20,7 @@ function [obj, err_code] = make_PEPO_1D_double(obj)
     %obj.max_index = numel(obj.virtual_level_sizes_horiz);
     obj.current_max_index = obj.max_index;
 
-    obj.PEPO_cell{1, 1, 2 + prime_level, 1} = obj.PEPO_cell{1, 1, 2, 1};
+    %obj.PEPO_cell{1, 1, 2 + prime_level, 1} = obj.PEPO_cell{1, 1, 2, 1};
 
     for n = 2:obj.order
 
@@ -26,25 +28,23 @@ function [obj, err_code] = make_PEPO_1D_double(obj)
 
         if mod(n, 2) == 1
             m = (n - 1) / 2;
-            if n == 3
-                pattern = {[m, 0, m + prime_level, 0], [m + prime_level, 0, 0, 0]};
-            else
-                pattern = {[m, 0, m + prime_level, 0], [m + prime_level, 0, m + prime_level - 1, 0]};
-            end
+
+            pattern = {[m + prime_level, 0, m + prime_level, 0]};
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
         else
 
             %obj.current_max_index = n / 2;
 
             m = n / 2;
 
-            if n == 2
-                pattern = {[0, 0, m, 0], [m, 0, 0, 0]};
-            else
-                pattern = {[m - 1, 0, m, 0], [m, 0, m - 1 + prime_level, 0]};
-            end
-        end
+            obj.PEPO_cell{m, 1, 1 + m + prime_level, 1} = 0.5 * reshape(eye(d^(2 * m)), [d, d, d^(2 * m - 2), 1, d^(2 * m), 1]) / exp(obj.nf);
+            obj = assign_perm(obj, [m - 1, 0, m + prime_level, 0]);
 
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop_dim', d^(2 * m)));
+            pattern = {[m - 1, 0, m, 0], [m, 0, m - 1, 0]};
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+        end
 
         %e1 = calculate_error(obj, 1:n, obj.numopts);
         %e2 = svds(target, 1);
