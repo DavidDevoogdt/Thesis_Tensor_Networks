@@ -68,8 +68,8 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
                 leg = patterns{1};
                 prev_A = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
             end
-
-            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, -1, 0, con_cells, pat_cells, target_site);
+            
+            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, struct('target_site',target_site ,'all_con_cells',{con_cells} ,'pat_cells',pat_cells));
 
         end
 
@@ -94,7 +94,7 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
 
             obj = assignfn(obj);
 
-            err = calculate_error(obj, map, [],1 );
+            err = calculate_error(obj, map, [], 1);
         end
 
         if p.Results.display == 1

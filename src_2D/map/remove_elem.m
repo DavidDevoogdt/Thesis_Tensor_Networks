@@ -98,13 +98,13 @@ function map2 = remove_elem(num, map)
         ii = ii + 1;
         pair = map.v_bonds{d};
 
-        map2.v_bond_u_lookup{num} = [];
+        map2.v_bond_d_lookup{num} = [];
         map2.num_v_bonds = map2.num_v_bonds - 1;
         %h_bonds_missing = [h_bonds_missing, d];
 
         other = pair(2);
 
-        map2.v_bond_d_lookup{other} = [];
+        map2.v_bond_u_lookup{other} = [];
 
         if map.is_y_border(other)
             con_list_cpy{other}(1) = -(max_occupied +ii);

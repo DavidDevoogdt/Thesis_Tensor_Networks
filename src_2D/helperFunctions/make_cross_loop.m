@@ -1,16 +1,22 @@
-function [map,pat] = make_cross_loop(arr,li)
-    mx = arr(1) + 1;
-    my = arr(2) + 1;
+function map = make_cross_loop(pat, m)
 
-    x = arr(1)  + 2;
-    y = arr(2)  + 2;
+    a = pat;
+    a(m == 1) = 1;
 
-    map = zeros([y, x]);
+    map = make_cross(a);
 
-    map(my:my+1, mx:mx+1) = 1;
+    if m(1) == 1
+        x = 1;
+    else
+        x = size(map, 2);
+    end
 
-    map(my, 1:arr(1)) = 1;
-    map(1:arr(2), mx) = 1;
-    
-    pat = [arr(1),arr(2),li(1),li(2)];
+    if m(2) == 1
+        y = 1;
+    else
+        y = size(map, 1);
+    end
+
+    map(y, x) = 1;
+
 end

@@ -12,17 +12,21 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
     [con_cells_cell2, target2] = optimize_con_cells(obj, {map}, {con_cells}, pattern, {target}, lnprefact);
 
     if numel(con_cells_cell2) ~= 1
-        error("too many sub_problems")
+        error("too many maps")
     end
 
     if numel(con_cells_cell2{1}) ~= 1
-        error("not linear")
+        error("pattern occurs multiple times, try solve non lin")
     end
 
     residual_target = target2{1};
     cc = con_cells_cell2{1}{1};
     res_con = con_cells_cell2{1};
 
+    if isempty(cc)
+       error('no valid combinations with pattern, try other one')
+    end
+    
     %get locaton of patterns
     num_pats = size(pattern, 2);
     nums = zeros(num_pats, 1) -1;
