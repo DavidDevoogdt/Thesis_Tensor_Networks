@@ -20,24 +20,27 @@ function l = get_legs_2(map, nums)
 
                 curr = m_copy(p);
 
-                m_copy(p) = 0;
+                if curr~=0
+                
+                    m_copy(p) = 0;
 
-                list = [list, curr];
+                    list = [list, curr];
 
-                el = map.leg_list{curr};
-                ext_legs{end + 1} = el(el <- map.external_orig);
+                    el = map.leg_list{curr};
+                    ext_legs{end + 1} = el(el <- map.external_orig);
 
-                o = n(curr);
+                    o = n(curr);
 
-                a = find(o);
-                for j = 1:numel(a)
-                    np = o(a(j));
+                    a = find(o);
+                    for j = 1:numel(a)
+                        np = o(a(j));
 
-                    idx = find(m_copy == np);
-                    if ~isempty(idx)
-                        points{end + 1} = idx;
+                        idx = find(m_copy == np);
+                        if ~isempty(idx)
+                            points{end + 1} = idx;
+                        end
+
                     end
-
                 end
 
             end

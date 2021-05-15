@@ -2,7 +2,7 @@ function obj = rescale_PEPO_pattern(obj, pattern, fact, num)
     %assumes every pattern only occurs once
 
     if nargin < 3
-        fact = 1.5;
+        fact = 1+1e-2;
         num = 0;
     end
 
@@ -39,8 +39,8 @@ function obj = rescale_PEPO_pattern(obj, pattern, fact, num)
             pat = pattern{i} + 1;
             sizes(i) = max(reshape(abs(obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)}), [], 1));
         end
-        if obj.testing == 1
-            sizes
-        end
+        %if obj.testing == 1
+        %    disp(sizes)
+        %end
     end
 end

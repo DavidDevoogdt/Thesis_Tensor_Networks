@@ -1,6 +1,6 @@
 function [obj, error_code] = make_PEPO_2D_A(obj)
 
-    load_save = 0
+    load_save = 0;
 
     function [obj, ln_prefact, err] = add_lin(obj, pattern, ln_prefact, ldim)
         if nargin < 4
@@ -31,6 +31,8 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         end
 
         err = check_err(obj, map1);
+        
+        
     end
 
     function [obj, ln_prefact] = add_loop(obj, arr, ln_prefact)
@@ -87,10 +89,10 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         obj.bounds = [1];
         obj.boundary_vect(obj.bounds) = 1;
 
-        obj.complex = false;
+        obj.complex = true;
 
-        L = 2;
-        max_bond_dim = 20;
+        L = obj.L;
+        max_bond_dim = obj.max_bond_dim;
 
         for n = 1:L
             sz = min(d^(2 * n), max_bond_dim);
@@ -231,362 +233,281 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     a = numel(obj.virtual_level_sizes_horiz);
     b = a + 1;
     c = b + 1;
-    %e = c + 1;
+    e = c + 1;
 
-    obj.current_max_index = c;
-    obj.max_index = c;
+    obj.current_max_index = e;
+    obj.max_index = e;
 
-    dd = [6, 12, 12];
-
-    %dd = [8, 8, 6];
-    %dd = [10, 10, 6, 6];
+    dd = [6, 8, 8];
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, dd];
 
-    if obj.testing == 1
-        fprintf('loops')
-    end
+    single_loop = 1;
+    single_extensions = 0;
+    offset_loop = 0;
+    double_extension = 0;
+    double_loop = 0;
+    L_loop = 0;
 
-    %simple loop
-    [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
+    if single_loop == 1
+        if obj.testing == 1
+            fprintf('simple loop\n')
+        end
 
-    alpha_pattern_perm = {rot_90, rot_90, rot_90, rot_90};
+        [map, ~] = create_map([
+                            1, 1;
+                            1, 1; ], struct);
 
-    pattern = {[a, a, 0, 0]};
+        alpha_pattern_perm = {rot_90};
 
-    [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
-    check_err(obj, map);
+        pattern = {[a, a, 0, 0]};
 
-    for k = 0:3
-        [m, pattern] = rotate([
-                            0, 0, 0, 0;
-                            1, 1, 1, 0;
-                            0, 1, 1, 0; ], {[0, b, a, 0], [c, 0, 0, a], [1, 0, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-        %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 1, 0, 0;
-                            0, 1, 1, 0;
-                            0, 1, 1, 0; ], {[0, 1, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 0, 0, 0, 0;
-                            1, 1, 1, 1, 0;
-                            0, 0, 1, 1, 0; ], {[2, 0, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 1, 0, 0;
-                            0, 1, 0, 0;
-                            0, 1, 1, 0;
-                            0, 1, 1, 0; ], {[0, 2, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 1, 0, 0;
-                            1, 1, 1, 0;
-                            0, 1, 1, 0; ], {[1, 1, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 1, 0, 0;
-                            0, 1, 0, 0;
-                            1, 1, 1, 0;
-                            0, 1, 1, 0; ], {[1, 2, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 0, 0, 0, 0;
-                            0, 0, 1, 0, 0;
-                            1, 1, 1, 1, 0;
-                            0, 0, 1, 1, 0; ], {[2, 1, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
-        check_err(obj, map);
-
-        [m, pattern] = rotate([
-                            0, 0, 1, 0, 0;
-                            0, 0, 1, 0, 0;
-                            1, 1, 1, 1, 0;
-                            0, 0, 1, 1, 0; ], {[2, 2, c, b]}, k);
-
-        [map, ~] = create_map(m, struct);
-        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-
+        [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
         check_err(obj, map);
     end
 
-    %     for k = 0:1
-    %         [m, pattern] = rotate([
-    %                             1, 1, 0, 0;
-    %                             1, 1, 1, 0;
-    %                             0, 1, 1, 0; ], {[c, b, c, b]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %         %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
-    %
-    %         check_err(obj, map);
-    %
-    %     end
+    if single_extensions == 1
 
-    %     a = numel(obj.virtual_level_sizes_horiz);
-    %     b = a + 1;
-    %     %b = a + 1;
-    %     c = b + 1;
-    %     %e = c + 1;
-    %
-    %     obj.current_max_index = a;
-    %     obj.max_index = a;
-    %
-    %     dd = [8,8, 6];
-    %
-    %     %dd = [8, 8, 6];
-    %     %dd = [10, 10, 6, 6];
-    %
-    %     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
-    %     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, dd];
-    %
-    %     if obj.testing == 1
-    %         fprintf('started loops')
-    %     end
+        if obj.testing == 1
+            fprintf('single_ext\n')
+        end
 
-    %simple loop
-    %     [map, ~] = create_map([1, 2; 3, 4], obj.numopts);
-    %
-    %     alpha_pattern_perm = {rot_90, rot_90, rot_90, rot_90};
-    %     %     pattern = {...
-    %     %                 [0, 0, b, a] ...
-    %     %                 [b, 0, 0, c], ...
-    %     %                 [e, c, 0, 0], ...
-    %     %                 [0, a, e, 0]};
-    %
-    %     pattern = {[c, c, 0, 0]};
-    %
-    %     [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
-    %
-    %     check_err(obj, map);
-    %
-    %     pattern = {[b, 0, 0, c], ...
-    %                 [0, a, c, 0]};
-    %     obj = fill_rand(obj, pattern,1e-2);
-    %
-    %     obj = assign_perm(obj, [b, 0, 0, c], [1, 0, 0, 1]);
-    %     obj = assign_perm(obj, [0, a, c, 0], [0, 1, 1, 0]);
+        for k = 0:3
 
-    %loops with 1 or more legs
-    %
-    %     for n = 1:L
-    %         switch n
-    %             case 1
-    %                 [obj, ln_prefact] = add_loop(obj, [1, 0], ln_prefact);
-    %                 %[obj, ln_prefact] = add_loop(obj, [1, 1], ln_prefact);
-    %             case 2
-    %                 %[obj, ln_prefact] = add_loop(obj, [2, 0], ln_prefact);
-    %                 %[obj, ln_prefact] = add_loop(obj, [2, 1], ln_prefact);
-    %                 %[obj, ln_prefact] = add_loop(obj, [2, 2], ln_prefact);
-    %             case 3
-    %                 [obj, ln_prefact] = add_loop(obj, [3, 0], ln_prefact);
-    %                 [obj, ln_prefact] = add_loop(obj, [3, 1], ln_prefact);
-    %                 [obj, ln_prefact] = add_loop(obj, [3, 2], ln_prefact);
-    %                 [obj, ln_prefact] = add_loop(obj, [3, 3], ln_prefact);
-    %             otherwise
-    %                 error('not impl')
-    %         end
-    %     end
+            [m, pattern] = rotate([
+                                0, 0, 0, 0;
+                                1, 1, 1, 0;
+                                0, 1, 1, 0; ], {[0, b, a, 0], [c, 0, 0, a], [1, 0, c, b]}, k);
 
-    %
-    if obj.testing == 1
-        fprintf('double loops')
+            [map, ~] = create_map(m, struct);
+            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            obj = rescale_PEPO_pattern(obj, pattern);
+
+            %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 1, 0, 0;
+                                0, 1, 1, 0;
+                                0, 1, 1, 0; ], {[0, 1, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 0, 0, 0, 0;
+                                1, 1, 1, 1, 0;
+                                0, 0, 1, 1, 0; ], {[2, 0, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 1, 0, 0;
+                                0, 1, 0, 0;
+                                0, 1, 1, 0;
+                                0, 1, 1, 0; ], {[0, 2, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 1, 0, 0;
+                                1, 1, 1, 0;
+                                0, 1, 1, 0; ], {[1, 1, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 1, 0, 0;
+                                0, 1, 0, 0;
+                                1, 1, 1, 0;
+                                0, 1, 1, 0; ], {[1, 2, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 0, 0, 0, 0;
+                                0, 0, 1, 0, 0;
+                                1, 1, 1, 1, 0;
+                                0, 0, 1, 1, 0; ], {[2, 1, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([
+                                0, 0, 1, 0, 0;
+                                0, 0, 1, 0, 0;
+                                1, 1, 1, 1, 0;
+                                0, 0, 1, 1, 0; ], {[2, 2, c, b]}, k);
+
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            %loops with 1 or more legs
+            %
+            %     for n = 1:L
+            %         switch n
+            %             case 1
+            %                 [obj, ln_prefact] = add_loop(obj, [1, 0], ln_prefact);
+            %                 %[obj, ln_prefact] = add_loop(obj, [1, 1], ln_prefact);
+            %             case 2
+            %                 %[obj, ln_prefact] = add_loop(obj, [2, 0], ln_prefact);
+            %                 %[obj, ln_prefact] = add_loop(obj, [2, 1], ln_prefact);
+            %                 %[obj, ln_prefact] = add_loop(obj, [2, 2], ln_prefact);
+            %             case 3
+            %                 [obj, ln_prefact] = add_loop(obj, [3, 0], ln_prefact);
+            %                 [obj, ln_prefact] = add_loop(obj, [3, 1], ln_prefact);
+            %                 [obj, ln_prefact] = add_loop(obj, [3, 2], ln_prefact);
+            %                 [obj, ln_prefact] = add_loop(obj, [3, 3], ln_prefact);
+            %             otherwise
+            %                 error('not impl')
+            %         end
+            %     end
+
+        end
+
     end
 
-    %    for k = 1:4
-    %         [m, pattern] = rotate([
-    %                             0, 0, 0, 0;
-    %                             1, 1, 1, 0;
-    %                             0, 1, 1, 0; ], {[1, 0, b, a]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([
-    %                             0, 1, 0, 0;
-    %                             0, 1, 1, 0;
-    %                             0, 1, 1, 0; ], {[0, 1, b, a]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([
-    %                             0, 1, 0, 0;
-    %                             1, 1, 1, 0;
-    %                             0, 1, 1, 0; ], {[1, 1, b, a]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %        check_err(obj, map);
-    %     end
+    if offset_loop == 1
 
-    %     for k = 1:4
-    %         [m, pattern] = rotate([0, 0, 0, 0;
-    %                             1, 1, 1, 1;
-    %                             0, 1, 1, 0; ], {[1, 0, b, a], [b, 0, 1, a]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([0, 0, 1, 0;
-    %                             1, 1, 1, 0;
-    %                             0, 1, 1, 0; ], {[b, 1, 0, a]}, k);
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([0, 0, 1, 0;
-    %                             1, 1, 1, 1;
-    %                             0, 1, 1, 0; ], {[b, 1, 1, a]}, k);
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([0, 1, 0, 0;
-    %                             0, 1, 1, 1;
-    %                             0, 1, 1, 0; ], {[0, 1, b, a]}, k);
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %         [m, pattern] = rotate([0, 1, 0, 0;
-    %                             1, 1, 1, 1;
-    %                             0, 1, 1, 0; ], {[1, 1, b, a]}, k);
-    %         [map, ~] = create_map(m, struct);
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %
-    %         check_err(obj, map);
-    %
-    %     end
+        if obj.testing == 1
+            fprintf('offset loops\n')
+        end
+        for k = 0:1
+            [m, pattern] = rotate([
+                                1, 1, 0, 0;
+                                1, 1, 1, 0;
+                                0, 1, 1, 0; ], {[c, b, c, b]}, k);
 
-    %offset loop
-    %     [map, ~] = create_map([
-    %                         1, 1, 0;
-    %                         1, 1, 1;
-    %                         0, 1, 1; ], struct);
-    %
-    %
-    %     pattern = {[a, a, a, a]};
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact);
-    %      obj = assign_perm(obj, pattern{1}, [0, 0, 0, 0]);
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
 
-    %double loop
-    %
-    %alpha_pattern_perm = {rot_90};
-    %     [map, ~] = create_map([
-    %                         1, 1, 1;
-    %                         1, 1, 1; ], struct);
-    %     pattern = {[a, 0, a, b], [a, b, a, 0]};
-    %
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
-    %
-    %     check_err(obj,map);
-    %
-    %           while err01>1e-13
-    %
-    %                [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact,struct  );
-    %                [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact,struct  );
-    %         %
-    %                err01 = calculate_error(obj, map , [], 1)
-    %           end
-    %
-    %
-    %
-    %       %vert
-    %     [map, ~] = create_map([
-    %                         1, 1;
-    %                         1, 1;
-    %                         1, 1; ], struct);
-    %     pattern = {[0, a, b, a], [b, a, 0, a]};
-    %
-    %     [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
-    %
-    %     check_err(obj,map);
-    %
-    %        while err01>1e-13
-    %
-    %            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact,struct  );
-    %            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact,struct  );
-    %
-    %            err01 = calculate_error(obj, map , [], 1)
-    %        end
+            check_err(obj, map);
 
-    %obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1), @(x) assign_perm(x, [a,0,a,a], [1, 0, 1, 1]), 0.5)
+        end
+    end
 
-    %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+    if double_extension == 1
+        if obj.testing == 1
+            fprintf('double extension\n')
+        end
+        for k = 1:4
+            [m, pattern] = rotate([0, 0, 0, 0;
+                                1, 1, 1, 1;
+                                0, 1, 1, 0; ], {[1, 0, b, a], [b, 0, 1, a]}, k);
 
-    %     if obj.testing == 1
-    %         fprintf('L shape \n')
-    %     end
+            [map, ~] = create_map(m, struct);
 
-    %vert
-    %     for k=1:4
-    %         [m, pattern] = rotate([   1, 1, 1;
-    %                                   1, 1, 1;
-    %                                   1, 1, 0; ], {[b, b, a, a]}, k);
-    %
-    %         [map, ~] = create_map(m, struct);
-    %         tic
-    %         [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
-    %         toc
-    %         check_err(obj,map);
-    %
-    %     end
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact, struct);
 
-    calculate_error(obj, [
-                    0, 0, 0, 0;
-                    0, 1, 1, 0;
-                    0, 1, 1, 0;
-                    0, 0, 0, 0; ], [], 1)
+            check_err(obj, map);
+
+            [m, pattern] = rotate([0, 0, 1, 0;
+                                1, 1, 1, 0;
+                                0, 1, 1, 0; ], {[b, 1, 0, a]}, k);
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([0, 0, 1, 0;
+                                1, 1, 1, 1;
+                                0, 1, 1, 0; ], {[b, 1, 1, a]}, k);
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([0, 1, 0, 0;
+                                0, 1, 1, 1;
+                                0, 1, 1, 0; ], {[0, 1, b, a]}, k);
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+            [m, pattern] = rotate([0, 1, 0, 0;
+                                1, 1, 1, 1;
+                                0, 1, 1, 0; ], {[1, 1, b, a]}, k);
+            [map, ~] = create_map(m, struct);
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+
+            check_err(obj, map);
+
+        end
+    end
+
+    if double_loop == 1
+
+        if obj.testing == 1
+            fprintf('double loop\n')
+        end
+
+        for k=0:1
+             [m, pattern] = rotate([
+                                1, 1, 1 ;
+                                1, 1, 1; ], {
+                                %[0, 0, b, a], [b, 0, c, a],[c,0,0,a],[0,a,b,0],[b,a,c,0],[c,a,0,0]
+                                [a,0,a,b],[a,b,a,0]
+                                }, k);
+            
+            [map, ~] = create_map(m, struct);
+
+            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', obj.testing));
+            obj = rescale_PEPO_pattern(obj, pattern); %
+
+            check_err(obj, map);
+        end
+      
+    end
+
+    if L_loop == 1
+
+        if obj.testing == 1
+            fprintf('L shape \n')
+        end
+
+        for k = 1:4
+            [m, pattern] = rotate([1, 1, 1;
+                                1, 1, 1;
+                                1, 1, 0; ], {[b, b, a, a]}, k);
+
+            [map, ~] = create_map(m, struct);
+            tic
+            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            toc
+            check_err(obj, map);
+        end
+    end
+
+    %     calculate_error(obj, [
+    %                     0, 0, 0, 0;
+    %                     0, 1, 1, 0;
+    %                     0, 1, 1, 0;
+    %                     0, 0, 0, 0; ], [], 1);
 
 end
 
@@ -599,7 +520,14 @@ function err = check_err(obj, map1)
         end
     end
 
+    obj = cell2matrix(obj);
+    msize = max(  abs( reshape(obj.PEPO_matrix,[],1)   )  );
+    if msize>2
+        fprintf('size %.4e',msize);
+    end
+    
 end
+
 
 function [m, p] = rotate(m, p, k)
     m = rot90(m, k);

@@ -31,6 +31,8 @@ classdef PEPO
         complex
         err_tol
         error_code
+        L
+        max_bond_dim
     end
 
     methods
@@ -49,6 +51,8 @@ classdef PEPO
             obj.H_2_tensor = H_2_tensor;
 
             obj.complex = false;
+            
+            
 
             %parse opts
             p = inputParser;
@@ -57,9 +61,14 @@ classdef PEPO
             addParameter(p, 'double', 0)
             addParameter(p, 'inv_eps', 1e-12)
             addParameter(p, 'err_tol', 1e-13)
+            addParameter(p, 'L', 2)
+            addParameter(p, 'max_bond_dim',20);
 
             parse(p, opts)
 
+            obj.L = p.Results.L;
+            obj.max_bond_dim = p.Results.max_bond_dim;
+            
             obj.err_tol = p.Results.err_tol;
 
             obj.inv_eps = p.Results.inv_eps;
