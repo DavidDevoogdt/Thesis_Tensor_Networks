@@ -1,4 +1,4 @@
-function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, assignfn, step)
+function [obj,ln_prefact_out,err] = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, assignfn, step)
 
     obj = fill_rand(obj, patterns, 1 / exp(obj.nf));
 
@@ -8,7 +8,7 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
 
     p = inputParser;
     addParameter(p, 'maxit', 20)
-    addParameter(p, 'solved', 1e-16)
+    addParameter(p, 'solved', 1e-14)
     addParameter(p, 'minchange', 1 - 1e-4)
     addParameter(p, 'display', 0)
     parse(p, opts);
@@ -32,9 +32,9 @@ function obj = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts
 
     target_site = -contract_con_cells(obj, map, ln_prefact_out, -target_site, con_cells);
 
-    if obj.testing == 1
-        fprintf("starting solver")
-    end
+    %if obj.testing == 1
+    %    fprintf("starting solver")
+    %end
 
     % if nargin >= 6
     %     pcells = find(pat_cells);

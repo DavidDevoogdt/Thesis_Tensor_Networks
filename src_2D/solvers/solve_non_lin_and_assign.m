@@ -1,4 +1,4 @@
-function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, ln_prefact, opts, extended_patterns_permutations)
+function [obj, ln_prefact,err] = solve_non_lin_and_assign(obj, maps, root_patterns, ln_prefact, opts, extended_patterns_permutations)
 
     d = obj.dim;
 
@@ -29,21 +29,19 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
         con_cells{i} = get_valid_contractions(obj, maps{i}, struct('max_index', obj.current_max_index, 'pattern', {all_patterns}));
     end
 
+    if nargout == 3
+       targets_orig = targets;
+    end
+    
     mul_factor = exp(ln_prefact_out - obj.nf);
-
-    %refill with new prefact
-    %fprintf("old nf %.4e new %.4e",ln_prefact,ln_prefact_out);
 
     init_val = 1e-3 / mul_factor;
 
     obj = fill_rand(obj, root_patterns, init_val, true);
     obj = fill_rand(obj, extended_patterns, init_val, true);
 
-    %     if nmaps ==1
-    %        maps = {maps};
-    %     end
 
-    x_cell = solve_non_lin(obj, root_patterns, extended_patterns, pattern_root, pattern_permutations, maps, targets, con_cells, opts, ln_prefact_out);
+    [x_cell,con_cells, targets] = solve_non_lin(obj, root_patterns, extended_patterns, pattern_root, pattern_permutations, maps, targets, con_cells, opts, ln_prefact_out);
 
     for i = 1:size(all_patterns, 2)
         obj.PEPO_cell{all_patterns{i}(1) + 1, all_patterns{i}(2) + 1, all_patterns{i}(3) + 1, all_patterns{i}(4) + 1} = x_cell{i} * (mul_factor);
@@ -52,5 +50,19 @@ function [obj, ln_prefact] = solve_non_lin_and_assign(obj, maps, root_patterns, 
             fprintf("%.4e ", norm(reshape(x_cell{i} * mul_factor, [], 1), 2));
         end
     end
-
+    
+    if nargout >=3
+        
+        [ ~, res_target ]= optimize_con_cells(obj, maps , con_cells, {}, targets, ln_prefact_out);
+        N = numel(targets);
+        err = zeros(N,1);
+        
+        for i=1:N
+            mn = maps{i}.N;
+            res_target = permute(reshape( res_target{i} , dimension_vector(d, 2 * mn)), [1:2:2 * mn, 2:2:2 * mn]);
+            target_orig =  permute(reshape( targets_orig{i} , dimension_vector(d, 2 * mn)), [1:2:2 * mn, 2:2:2 * mn]);
+            
+            err = calculate_error_core( res_target , target_orig);
+        end
+    end
 end

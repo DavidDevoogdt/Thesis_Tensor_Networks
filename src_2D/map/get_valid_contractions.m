@@ -85,17 +85,35 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
 
         end
 
-        M = ncon_optim(tensor_list, map.leg_list);
+        if map.N>6
+            M = ncon_optim(tensor_list, map.leg_list);
+        else
+            M = ncon(tensor_list, map.leg_list);
+        end
+        
         val_con = find(M);
 
         if nargout > 1
-            M_pat = ncon_optim(tensor_list_pat, map.leg_list);
+            if map.N>6
+                M_pat = ncon_optim(tensor_list_pat, map.leg_list);
+            else
+                M_pat = ncon(tensor_list_pat, map.leg_list);
+            end
+            
             val_con_pat = find(M_pat);
 
             pat_cells_cell{b} = ~ismember(val_con, val_con_pat);
 
         end
 
+        st2 = ones(map.N,4);
+        for ii=1:map.N
+            sz = size(tensor_list{ii});
+            nsz = numel(sz)-2;
+            
+            st2(ii, 1:nsz ) = sz(3:end);
+        end
+        
         contraction_cell = cell(1, numel(val_con));
         contraction_cell_counter = 1;
 
@@ -108,9 +126,11 @@ function [contraction_cell, pat_cells] = get_valid_contractions(obj, map, opts)
             for ii = 1:map.N
 
                 real_index = lookup{ii}(indices{ii});
-
-                st = [size(tensor_list{ii}, 3), size(tensor_list{ii}, 4), size(tensor_list{ii}, 5), size(tensor_list{ii}, 6)];
-
+                
+                %slow
+                %st = [size(tensor_list{ii}, 3), size(tensor_list{ii}, 4), size(tensor_list{ii}, 5), size(tensor_list{ii}, 6)];
+                
+                st = st2(ii,:);
                 s = cell(4, 1);
 
                 [s{:}] = ind2sub(st, real_index);

@@ -27,8 +27,10 @@ function M = contract_network(obj, map, opts)
 
         mult_fact = exp(p.Results.lnprefact - obj.nf);
 
+        T0 = obj.PEPO_matrix / mult_fact;
+        
         for i = 1:map.N
-            T = obj.PEPO_matrix / mult_fact;
+            T=T0;
             connections = map.leg_list{i};
             %only keep sublevel 0 for the given tensors
             if connections(1 + 2) < 0
@@ -54,7 +56,12 @@ function M = contract_network(obj, map, opts)
             tensor_list{i} = T;
         end
 
-        M = ncon_optim(tensor_list, map.leg_list);
+        if map.N < 6
+           M = ncon(tensor_list, map.leg_list);
+        else
+           M = ncon_optim(tensor_list, map.leg_list);            
+        end
+        
 
     end
 
