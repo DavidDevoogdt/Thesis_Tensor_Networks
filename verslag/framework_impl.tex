@@ -43,6 +43,39 @@ With some care, the jacobian can be calculated for a general tensor network in a
 
 The non-linear solver can handle rotated and permuted blocks. For instance, a simple loop (square) can be solved by rotating one tensor $T^I_{ \alpha \alpha 0 0}$ 4 times, once for every corner. Another example is the following decomposition:  $  X^I_\alpha X^J_\alpha = T^{I J} $.
 
+\subsection{Sequential linear solver}
+While from the previous section it seems all non-linear problems need to be solved with the non-linear solver, this is in fact not the case. For instance the following corner block can perfectly be solved with the linear solver.
+\begin{equation}
+    \pepob{5}{3}{{
+                "-","-", "-",     "-",
+                "-","1","$\beta$","-",
+                "-","-","$\alpha$","-"}}{{
+                "-","-",
+                "-","-",
+                "-","$\gamma$",
+                "-","$\alpha$",
+                "-","-"}}{{
+                1,1,1,1,1,
+                1,0,0,0,1,
+                1,1,0,0,1}}
+\end{equation}
+The loop is treated exactly the same as regular leg. The error is of the same magnitude as the non-linear solver, but performs much faster, and is therefore the solver of choice. For problems with multiple tensors, which may be a rotated version of each other such as in a 2x3 rectangle, the linear solver can be useful.
+\begin{equation}
+    \pepob{5}{3}{{
+                "-","-", "-",     "-",
+                "-","y","z","-",
+                "-","z","y","-"}}{{
+                "-","-",
+                "-","",
+                "-","x",
+                "-","",
+                "-","-"}}{{
+                1,1,1,1,1,
+                1,0,0,0,1,
+                1,0,0,0,1}}
+\end{equation}
+The idea is to solve each of the tensors with a linear solver. As this is not truly a linear system, the error will not be zero after one pass. But solving the tensors repeatedly lowers the error at each step, giving a iterative procedure. This procedure can be sped up by reusing some parts of the calculations involved in the linear solver. For example, the exponentiated hamiltonian and contraction of all virtual levels that do not involve a given block only need to be performed once.
+
 \subsection{Optimasation}
 
 \subsubsection{Bookkeeping}
@@ -53,9 +86,9 @@ The framework provides some tools to transform these maps into other maps, for i
 
 \subsubsection{Fast contraction}
 
-One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T_{i (\alpha \beta \gamma \delta )} = \delta^i_{(\alpha \beta \gamma \delta )} $ where i encodes the non-zero combinations of legs $(\alpha \beta \gamma \delta)$. After setting the boundary conditions, the PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contraction. Due to its sparsity, this performs quit fast.
-
-\todo{tikz figure}
+One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This quickly becomes a bottleneck.
+This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T^{i}_{  \alpha \beta \gamma \delta } $ where i encodes all the non-empty combinations of legs $(\alpha \beta \gamma \delta)$. On each site, the right boundary conditions need to be applied to get the right geometry. After setting the boundary conditions, the sparse PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contractions. Due to its sparsity, this performs quite fast.
+As an added bonus, removing a tensor from T gives all contractions without this tensor. As both results are sorted list, the subset of contractions containing a given tensor can also be found fast.
 
 \subsubsection{Normalisation}
 
@@ -72,7 +105,7 @@ With $I$ the unit matrix. Next to a global normalisation factor, every block cal
 
 \subsubsection{Internal representation}
 
-Two main internal representations are used to construct the given MPO. Either, the MPO is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that Matlab doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this} library is used.
+Two main internal representations are used to construct the given MPO. Either, the MPO is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that Matlab doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this} library is used. \todo{expand}
 
 \subsection{1D implementation}
 
@@ -126,16 +159,3 @@ The matrix exponential for different number of sites is called on many places. T
 
 \subsubsection{Fast inverses}
 
-\subsection{How to use this code}
-
-All the code neede to generate all the results from this dissertation is available on my github page \url{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}. The starting points to explore the code are in the readme file.
-
-\subsubsection{Source code structure 1D}
-
-The source code for this project can be found on \href{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}{github}. The implementation of these types can be found under \path{src/generateMPO.m}. In this class the different types of MPO can be constructed. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian. Other examples are making $L_n^{-1}$ by sequential invers MPO contractions,...
-
-\path{src/test.m}  contains the code to create the plots to compare different types and orders. The other files in the folder are self-explanatory.
-
-\subsubsection{Source code structure 2D}
-
-\todo{source code 2D}

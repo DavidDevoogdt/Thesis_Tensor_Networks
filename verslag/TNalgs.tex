@@ -1,16 +1,399 @@
 
-While there are many
+\section{MPS algorithms}
 
-\subsection{MPS algorithms}
+This section, and the following one, will introduce some different tensor network algorithms. The gaol is to provide an intuitive expanation how these algorithm work. For rigorous derivations and mathematical details, other sources can be read.
 
 \subsection{Canonical form}
 
+A translation invariant MPS has the following form:
+\begin{equation}\label{mps:uni}
+    \pepob{5}{2}{{
+                "-","-", "-","-",
+                "","","",""}}{{
+                "-",
+                "",
+                "",
+                "",
+                "-"}}{{
+                4,4,4,4,4,
+                4,0,0,0,4}}
+\end{equation}
+It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor.
+\begin{equation}
+    A_l = \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,2,4}}  =X \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,0,4}} X^{-1}
+\end{equation}
+\todo{fix baseline}
+\begin{equation}
+    A_r = \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,3,4}}=Y \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,0,4}} Y^{-1}
+\end{equation}
+and
+\begin{equation}
+    \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "-",
+                "-"}}{{
+                4,4,4,
+                4,6,4}}  = X Y^{-1} = C
+\end{equation}
+Then \cref{mps:uni}  can be written as follows:
+\begin{equation}
+    \pepob{6}{2}{{
+                "-","-", "-","-","-",
+                "","","","",""}}{{
+                "-",
+                "",
+                "",
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,4,4,4,
+                4,2,2,6,3,4}}
+\end{equation}
+Introducing one more tensor:
+\begin{equation}\label{algs:ACC}
+    A_c = \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,7,4}} = \pepob{4}{2}{{
+                "-","-", "-",
+                "","",""}}{{
+                "-",
+                "",
+                "-",
+                "-"}}{{
+                4,4,4,4,
+                4,2,6,4}} = \pepob{4}{2}{{
+                "-","-", "-",
+                "","",""}}{{
+                "-",
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,4,
+                4,6,3,4}}
+\end{equation}
+At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its unique canonical form, the following choice is made
+
+\begin{subequations} \label{algs:mpsid}
+    \begin{alignat}{2}
+                     & \vcenter{ \hbox{ \pepob{3}{2}{{
+                            "","",
+                            "",""}}{{
+                            "",
+                            "",
+                            "-"}}{{
+                            4,2,4,
+        4,2,4}} } }= &                                 & \vcenter{ \hbox{  \pepob{3}{2}{{
+                            "","-",
+                            "","-"}}{{
+                            "",
+                            "-",
+                            "-"}}{{
+                            4,4,4,
+        4,4,4}} } }                                                                       \\
+                     & \vcenter{ \hbox{ \pepob{3}{2}{{
+                            "","",
+                            "",""}}{{
+                            "-",
+                            "",
+                            ""}}{{
+                            4,3,4,
+        4,3,4}} } }= &                                 & \vcenter{ \hbox{  \pepob{3}{2}{{
+                            "","-",
+                            "","-"}}{{
+                            "",
+                            "-",
+                            "-"}}{{
+                            4,4,4,
+                            4,4,4}} } }
+    \end{alignat}
+\end{subequations}
+
+\todo{more on MPS}
+
 \subsubsection{DMRG}
 
-\subsection{PEPS algorithms}
+\section{2D algorithms}
 
-\subsubsection{ PEPS contraction }
+\subsection{ 2D tensor network contraction}
+
+PEPS contraction concerns the following problem:
+\begin{equation}\label{algs:biggrid}
+    \pepob{7}{7}{{
+                "-","-", "-","-","-","-",
+                "",  "", "","","","",
+                "",  "", "","","","",
+                "",  "", "","","","",
+                "",  "", "","","","",
+                "",  "", "","","","",
+                "-", "-", "-","-","-","-",}}{{
+                "-","-", "-","-","-","-",
+                "","", "","","","",
+                "","", "","","","",
+                "","", "","","","",
+                "","", "","","","",
+                "","", "","","","",
+                "-","-", "-","-","-","-",}}{{
+                1,4,4,4,4,4,1,
+                4,0,0,0,0,0,4,
+                4,0,0,0,0,0,4,
+                4,0,0,4,0,0,4,
+                4,0,0,0,0,0,4,
+                4,0,0,0,0,0,4,
+                1,4,4,4,4,4,1,
+            }}
+\end{equation}
+Contract an infinite lattice of identical tensors, with some irregularities on a small patch. For example, the one patch can be used to calculate an expectation value of a certain observable.
+
+\subsubsection{Vumps}
+
+The porpuse of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
+
+The goal is to find a MPS layer for the MPO such that:
+\begin{equation}\label{algs:mpslayermpo}
+    \pepob{5}{3}{{
+                "-","-", "-","-",
+                "","","","",
+                "","","","",}}{{
+                "-", "-",
+                "", "",
+                "", "",
+                "", "",
+                "-", "-",}}{{
+                4,4,4,4,4,
+                4,0,0,0,4,
+                4,2,7,3,4}} =  \lambda  \pepob{5}{2}{{
+                "-","-", "-","-",
+                "","","",""}}{{
+                "-",
+                "",
+                "",
+                "",
+                "-"}}{{
+                4,4,4,4,4,
+                4,2,7,3,4}}
+\end{equation}
+This is very similar to \cref{algs:exp}. Suppose there are tensor which fullfil the conditions stated below:
+
+\begin{subequations} \label{algs:vumpsenv}
+    \begin{alignat}{2}
+                                 & \vcenter{ \hbox{  \pepob{5}{3}{{
+                            "","-", "-","",
+                            "","Gl","","",
+                            "","","",""}}{{
+                            "-","-",
+                            "-","-",
+                            "","",
+                            "-","-",
+                            "",""}}{{
+                            1,4,4,4,1,
+                            1,4,0,4,1,
+        1,5,2,4,1}} }} = \lambda &                                   & \vcenter{ \hbox{    \pepob{5}{3}{{
+                            "-","-", "-","-",
+                            "-","","Gl","-",
+                            "-","","","-"}}{{
+                            "-","-",
+                            "-","-",
+                            "","",
+                            "-","-",
+                            "-","-"}}{{
+                            1,4,4,4,1,
+                            1,4,2,4,1,
+        1,1,5,4,1}}}}                                                                                     \\
+                                 & \vcenter{ \hbox{   \pepob{5}{3}{{
+                            "-","-", "-","-",
+                            "","","Gr","-",
+                            "","","",""}}{{
+                            "-","-",
+                            "-","-",
+                            "","",
+                            "-","-",
+                            "-","-"}}{{
+                            1,4,4,4,1,
+                            1,4,0,4,1,
+        1,4,8,1,1}} }}=  \lambda &                                   & \vcenter{ \hbox{ \pepob{5}{3}{{
+                            "-","-", "-","-",
+                            "-","-","Gr","",
+                            "-","-","",""}}{{
+                            "-","-",
+                            "-","-",
+                            "-","-",
+                            "","",
+                            "-","-"}}{{
+                            1,1,4,4,4,
+                            1,1,4,3,4,
+                            1,1,10,1,1}} }}
+    \end{alignat}
+\end{subequations}
+
+\begin{equation} \label{algs:AC}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "-","-", "-","-",
+                        "","Gl","Gr","-",
+                        "","","",""}}{{
+                        "-","-",
+                        "-","-",
+                        "","",
+                        "-","-",
+                        "-","-"}}{{
+                        1,4,4,4,1,
+                        1,4,0,4,1,
+                        1,5,9,1,1}} }}=  \lambda  \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "",
+                "-"}}{{
+                4,4,4,
+                4,7,4}}
+\end{equation}
+Combining on of the equations \cref{algs:vumpsenv} and one of \cref{algs:mpsid} gives $C$:
+\begin{equation}\label{algs:vumpsenvc}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "-","-", "-","-",
+                        "","Gl","Gr","-",
+                        "","","",""}}{{
+                        "-","-",
+                        "-","-",
+                        "-","-",
+                        "-","-",
+                        "-","-"}}{{
+                        1,4,4,4,1,
+                        1,4,4,4,1,
+                        1,5,11,1,1}} }}  =  \lambda  \pepob{3}{2}{{
+                "-","-",
+                "",""}}{{
+                "-",
+                "-",
+                "-"}}{{
+                4,4,4,
+                4,6,4}}
+\end{equation}
+
+\todo{fix gap}
+
+Then  \cref{algs:mpslayermpo} is solved:
+
+\begin{equation}
+    \begin{split}
+        & \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","","","","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            4,4,4,4,4,4,4,
+                            4,0,0,0,0,0,4,
+                            4,2,2,7,3,3,4}} }}\\
+        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","Gl","","","Gr","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,0,0,0,3,4,
+                            1,5,2,7,8,1,4}}}} \\
+        &=  \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","","Gl","Gr","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,2,0,3,3,4,
+                            1,1,5,9,1,1,1}} }}\\
+        &= \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","","","","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,2,7,3,3,4,
+                            1,1,1,1,1,1,1}} }}
+    \end{split}
+\end{equation}
+
+\todo{check lambdas in literature}
+
+Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations show that the following cycle needs to be solved:
+
+\begin{itemize}
+    \item  $A_c,C  \rightarrow A_l,A_r  $  \cref{algs:ACC}
+    \item  $A_l,A_r  \rightarrow G_l,G_r  $ \cref{algs:vumpsenv}
+    \item  $ G_l,G_r   \rightarrow Ac,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
+\end{itemize}
+
+The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied form below. \cref{algs:vumpsenvc} now becomes
+
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        4,2,7,3,4,
+                        4,2,4,3,4,
+                        1,5,9,1,1}} }}
+\end{equation}
 
 \paragraph{CTMRG}
-
-\paragraph{Vumps}

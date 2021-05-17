@@ -1,0 +1,13 @@
+
+In short, all components are in place in the framework to generate easily and efficiently all the blocks. Since day one, this is a constant work in progress
+
+\subsubsection{Size limitation}
+The main bottleneck is, as expected, calculating the matrix exponential for large systems. The other components are efficient enough to not cause any troubles.
+
+\subsubsection{Lattices}
+The models studied were all on a square lattice. The universal physics does not depend on the details of the model, such as the lattice. It would be beneficial to be able to simulate to these lattices, but here also higher dimensions could be included. In essence all the information of the lattice is contained in the maps generated for each calculation, such as all the connected sites, how to contract them, etcetera. Although undoubtedly many details will need to be changed to use it in practice, the solvers can stay almost the same.
+
+\subsubsection{Symmetries}
+
+At the moment rotation and permutation symmetries can be included in the construction of the blocks. Internal symmetries are not yet included at the moment. Including them could push the computational boundaries further.
+

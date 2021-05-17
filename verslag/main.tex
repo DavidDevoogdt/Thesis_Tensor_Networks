@@ -3,6 +3,11 @@
 
 \usepackage{tikz}
 \usetikzlibrary{external}
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+
+\newcounter{a}
+\newcounter{b}
 
 \usepackage{braket}
 
@@ -113,7 +118,7 @@
 % \mbox{}
 % \newpage
 
-%\includepdf[page={1}]{ titelblad.pdf }
+\includepdf[page={1}]{ titelblad.pdf }
 
 \newpage
 \listoftodos
@@ -123,34 +128,34 @@
 
 \input{tikzsetup}
 
-\addcontentsline{toc}{chapter}{Foreword}
-\section*{Foreword}
-\lipsum{20}
+% \addcontentsline{toc}{chapter}{Foreword}
+% \section*{Foreword}
+% \lipsum{20}
 
-\section*{ Permission of use on loan }
-The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
+% \section*{ Permission of use on loan }
+% The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
 
-\todo{add date}
+% \todo{add date}
 
-\addcontentsline{toc}{chapter}{Abstract}
+% \addcontentsline{toc}{chapter}{Abstract}
 
-\section*{Abstract}
+% \section*{Abstract}
 
-Het abstract is maximum één bladzijde en bevat minstens:
-a) De informatie die werd vermeld op het titelblad (eigen vorm);
-b) Een summiere beschrijving van het werk (vijftien à twintig regels);
-c) Eventueel: drie tot vijf goed gekozen trefwoorden die het onderwerp best
-omschrijven.
+% Het abstract is maximum één bladzijde en bevat minstens:
+% a) De informatie die werd vermeld op het titelblad (eigen vorm);
+% b) Een summiere beschrijving van het werk (vijftien à twintig regels);
+% c) Eventueel: drie tot vijf goed gekozen trefwoorden die het onderwerp best
+% omschrijven.
 
-\addcontentsline{toc}{chapter}{Extended abstract}
+% \addcontentsline{toc}{chapter}{Extended abstract}
 
-\section*{Extended Abstract}
+% \section*{Extended Abstract}
 
-De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met een maximum van zes bladzijden.
+% De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met een maximum van zes bladzijden.
 
-\tableofcontents
+% \tableofcontents
 
-\listoffigures
+% \listoffigures
 
 \mainmatter
 
@@ -165,6 +170,7 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 The aim of this chapter is to give a basic introduction to tensor networks from a computational viewpoint. First the graphical notation for tensors, which is ubiquitous in the field, will be introduced and explained. A incomplete classification of the different kinds of tensor networks will be discussed. Some routine tensor network manipulations are explained. Also, a selection of different algorithms, which are from a computational point of view the reason behind the success of tensor networks, are presented very briefly.
 
 \section{Tensor networks}
+
 \input{tensorNetworks.tex}
 
 \section{Tensor network manipulations}\label{sec:mpomath}
@@ -195,7 +201,19 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 \section{Construction PEPO}
 \input{PEPO2d}
 
-\section{Framework implementation} \label{sec:framework_impl}
+\chapter{Framework implementation}
+
+%“Experience is the name everyone gives to their mistakes.” – Oscar Wilde
+
+\epigraph{An expert is a person who has made all the mistakes that can be made in a very narrow field}{Niels Bohr}
+
+\section{Solvers} \label{sec:framework_impl}
+\input{framework_impl.tex}
+
+\section{How to use}
+\input{how_to_use.tex}
+
+\section{Limitations and outlook}
 \input{framework_impl.tex}
 
 \chapter{Results} \label{chap:results}
@@ -205,14 +223,14 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 \section{Benchmarking}
 \input{benchmark.tex}
 
-\section{Benchmarking}
+\section{Results 1D}
 \input{results1d.tex}
 
-\chapter{Conclusion and lookout}
+\section{Results 2D}
+\input{results2d.tex}
 
-\begin{appendices}
-    \chapter{Source code and documentation}
-\end{appendices}
+\chapter{Conclusion and lookout}
+\input{conclusion_and_outlook.tex}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{bib}

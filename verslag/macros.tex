@@ -31,7 +31,7 @@
         %\def \NameDown  {#4}	
         %\def \NameDown  {#4}	
 
-        \def \legLength {0.6}
+        \def \legLength {0.7}
         \def \radius {0.3}
 
         \pgfmathsetmacro{\step}{2*\radius+\legLength}
@@ -315,38 +315,57 @@
     \end{tikzpicture}}
 
 % \newcommand{\pepob}[5]  { \tikzexternalenable {\begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=0.8]
-\newcommand{\pepob}[5]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=0.8]
-        %\def \NNodes {#1}
-        %\def \NodeName {#2}          
-        %\def \NodeName {#2}          
-        %\def \NodeName {#2}          
-        %\def \NodeName {#2}          
-        %\def \NodeName {#2}          
-        %\def \NameUp   {#3} 
-        %\def \NameUp   {#3} 
-        %\def \NameUp   {#3} 
-        %\def \NameUp   {#3} 
-        %\def \NameUp   {#3} 
-        %\def \NameDown  {#4}	
-        %\def \NameDown  {#4}	
-        %\def \NameDown  {#4}	
-        %\def \NameDown  {#4}	
-        %\def \NameDown  {#4}	
+% \newcommand{\pepob}[5]  { \begin{tikzpicture}[baseline={0-0.5*height("$=$")},scale=1,
+\newcommand{\pepob}[5]  { \begin{tikzpicture}[
+            baseline={([yshift= -2ex ]current bounding box.north)},
+            %baseline={0-0.5*height("$=$")},
+            scale=1,
+            Al/.style = {regular polygon, regular polygon sides=3,
+                    draw, fill=white, text width=0.1,
+                    inner sep=1mm, outer sep=0mm,
+                    shape border rotate=-90},
+            Ar/.style = {regular polygon, regular polygon sides=3,
+                    draw, fill=white, text width=0.1,
+                    inner sep=1mm, outer sep=0mm,
+                    shape border rotate=90},
+            Acc/.style = {diamond, draw, inner sep=1mm},
+            Ac/.style = {rectangle, draw, inner sep=2mm}]
 
-        \def \legLength {1.0}
+        %\pgfmathsetmacro{\llegLength}{ 0.3 }
+
+        \def \legLength { 0.8}
         \def \radius {0.1}
 
-        \pgfmathsetmacro{\step}{2*\radius+\legLength}
+        %\pgfmathtruncatemacro{\llegLength} { 0.8 }
+        %\pgfmathtruncatemacro{\radius} { 0.1 }
+
+        %\pgfmathtruncatemacro{\legLength}{2* \llegLength}
+        %\pgfmathtruncatemacro{\lstep}{\radius+ \llegLength}
+        %\pgfmathtruncatemacro{\step}{2*\lstep}
+        \pgfmathsetmacro{\step}{2*\radius+ \legLength}
+
         \pgfmathsetmacro{\legpos}{\radius+\legLength}
 
         \pgfmathsetmacro{\Nmax}{#1-1}
         \pgfmathsetmacro{\Mmax}{#2-1}
 
+        % define positions of different O's
+
+        \setcounter{a}{0}
+        %\setcounter{a}{0}
+
         \foreach \N in {0,..., \Nmax }{
-                \pgfmathsetmacro{\p}{\N*\step}
+
+                %\pgfmathtruncatemacro{\a}{\thea}
+
+                \pgfmathsetmacro{\p}{  (\N + \thea) *\step   }
+                %\setcounter{b}{0}
 
                 \foreach \M in {0,..., \Mmax }{
-                        \pgfmathsetmacro{\k}{\M*\step}
+
+                        %\pgfmathsetmacro{\p}{ \pp + \theb *\step   }
+
+                        \pgfmathsetmacro{\k}{   \M   *\step  }
 
                         \pgfmathtruncatemacro{\s}{\M*(\Nmax+1)+\N   }
 
@@ -359,14 +378,131 @@
                         \fi
 
                         \ifthenelse{\so = 0}{
-
-                            %\node[] (O\N) at (\p,0) {\nname};
                             \node[circle,draw, radius=\radius] (O\s) at (\p,\k) {\nname};
-
                         }
+
+                        \ifthenelse{\so = 2}{
+                            \node[draw, Al] (O\s) at (\p,\k) {\nname};
+                        }
+
+                        \ifthenelse{\so = 3}{
+                            \node[draw, Ar] (O\s) at (\p,\k) {\nname};
+                        }
+
+                        \ifthenelse{\so = 4}{
+                            \node[draw= none] (O\s) at (\p,\k) {\nname};
+                        }
+
+                        \ifthenelse{\so = 6}{
+                            \node[draw, Acc] (O\s) at (\p,\k) {\nname};
+                        }
+
+                        \ifthenelse{\so = 7}{
+                            \node[draw, Ac] (O\s) at (\p,\k) {\nname};
+                        }
+
+                        %Gl environment
+                        \ifthenelse{\so = 5}{
+
+                            \pgfmathsetmacro{\recl}{  \p + \step - 3*\radius  }
+                            \pgfmathsetmacro{\recr}{  \p + \step + 3*\radius  }
+
+                            \pgfmathsetmacro{\recu}{  \k + 2*\radius }
+                            \pgfmathsetmacro{\recd}{  \k - \step -2*\radius  }
+
+                            % \pgfmathsetmacro{\recl}{  \p  +\step   }
+                            % \pgfmathsetmacro{\mw}{ 2*\radius }
+                            % \pgfmathsetmacro{\mh}{ \step  }
+
+                            % \pgfmathsetmacro{\recu}{  \k - \step /2 }
+
+                            % \node[rectangle,
+                            %     draw,
+                            %     minimum height= 1,
+                            %     anchor=center  ] (O\s) at (\recl,\recu) {Gl};
+
+                            \draw  (\recl,\recu) rectangle node[  ] (O\s)  {Gl}   (\recr,\recd)     ;
+
+                            %\draw node[fill, minimum width= 1  ,minimum height= 1 ] (O\s) at (\recl,\recu) {Gl};
+                            \stepcounter{a}
+                        }
+
+                        \ifthenelse{\so = 8}{
+
+                            \node[draw, Ar] (O\s) at (\p,\k) {\nname};
+
+                            \pgfmathtruncatemacro{\t}{\M*(\Nmax+1)+\N +1  }
+
+                            \pgfmathsetmacro{\recl}{  \p +\step  - 3*\radius  }
+                            \pgfmathsetmacro{\recr}{  \p + \step+  3*\radius  }
+
+                            \pgfmathsetmacro{\recu}{  \k + 2*\radius }
+                            \pgfmathsetmacro{\recd}{  \k - \step -2*\radius  }
+
+                            \draw  (\recl,\recu) rectangle node (O\t)  {Gr}   (\recr,\recd)     ;
+
+                            \draw  (O\s) -- (   O\t.west   |-  O\s  ) ;
+                            \stepcounter{a}
+                        }
+
+                        \ifthenelse{\so = 9}{
+
+                            \node[draw, Ac] (O\s) at (\p,\k) {\nname};
+
+                            \pgfmathtruncatemacro{\t}{\M*(\Nmax+1)+\N +1  }
+
+                            \pgfmathsetmacro{\recl}{  \p +\step  - 3*\radius  }
+                            \pgfmathsetmacro{\recr}{  \p + \step+  3*\radius  }
+
+                            \pgfmathsetmacro{\recu}{  \k + 2*\radius }
+                            \pgfmathsetmacro{\recd}{  \k - \step -2*\radius  }
+
+                            \draw  (\recl,\recu) rectangle node (O\t)  {Gr}   (\recr,\recd)     ;
+
+                            \draw  (O\s) -- (   O\t.west   |-  O\s  ) ;
+                            \stepcounter{a}
+                        }
+
+                        \ifthenelse{\so = 10}{
+
+                            \node[draw = none] (O\s) at (\p,\k) {\nname};
+
+                            \pgfmathtruncatemacro{\t}{\M*(\Nmax+1)+\N +1  }
+
+                            \pgfmathsetmacro{\recl}{  \p +\step  - 3*\radius  }
+                            \pgfmathsetmacro{\recr}{  \p + \step+  3*\radius  }
+
+                            \pgfmathsetmacro{\recu}{  \k + 2*\radius }
+                            \pgfmathsetmacro{\recd}{  \k - \step -2*\radius  }
+
+                            \draw  (\recl,\recu) rectangle node (O\t)  {Gr}   (\recr,\recd)     ;
+
+                            \draw  (O\s) -- (   O\t.west   |-  O\s  ) ;
+                            \stepcounter{a}
+                        }
+
+                        \ifthenelse{\so = 11}{
+
+                            \node[draw , Acc] (O\s) at (\p,\k) {\nname};
+
+                            \pgfmathtruncatemacro{\t}{\M*(\Nmax+1)+\N +1  }
+
+                            \pgfmathsetmacro{\recl}{  \p +\step  - 3*\radius  }
+                            \pgfmathsetmacro{\recr}{  \p + \step+  3*\radius  }
+
+                            \pgfmathsetmacro{\recu}{  \k + 2*\radius }
+                            \pgfmathsetmacro{\recd}{  \k - \step -2*\radius  }
+
+                            \draw  (\recl,\recu) rectangle node (O\t)  {Gr}   (\recr,\recd)     ;
+
+                            \draw  (O\s) -- (   O\t.west   |-  O\s  ) ;
+                            \stepcounter{a}
+                        }
+
                     }
             }
 
+        %connect nodes horizontally with correct name
         \foreach \M in {0,..., \Mmax }{
                 \foreach \N in {1,...,\Nmax}{
 
@@ -392,15 +528,45 @@
                             \pgfmathsetmacro{\to}{  {#5}[\t]  }
                         \fi
 
-                        \pgfmathtruncatemacro{\st}{ \so+\to  }
+                        \ifthenelse{ \equal{\label}{Gl}  }{
 
-                        \ifthenelse{\st = 0}{
-                            \draw (O\t) --  node[above]  {\label} (O\s);
+                            \pgfmathtruncatemacro{\ogl}{ (\M+1)*(\Nmax+1)+\N -1 }
+
+                            \draw (O\ogl.east   |- O\s  )  --  (O\s);
+
+                            \draw (O\t)  --  ( O\ogl.west    |-  O\t  );
+
+                        }{
+
+                            \ifthenelse{ \equal{\label}{Gr}  }{
+
+                                \pgfmathtruncatemacro{\ogl}{ (\M+1)*(\Nmax+1)+\N  }
+
+                                \draw (O\t)  --  ( O\ogl.west    |-  O\t  );
+
+                                \draw (O\ogl.east   |- O\s  )  --  (O\s);
+
+                            }{
+
+                                \ifthenelse{ \NOT  \so = 1  }{
+                                    \ifthenelse{ \NOT  \to = 1}{
+                                        \ifthenelse{ \equal{\label}{-} }{
+
+                                        }
+                                        {
+
+                                            \draw ( O\t.east |- O\s )  --  node[above]  {\label} (O\s);
+                                        }
+                                    }
+                                }
+                            }
+
                         }
 
                     }
             }
 
+        %connect nodes vertically with correct name
         \foreach \N in {0,...,\Nmax }{
                 \foreach \M in {1,..., \Mmax }{
 
@@ -425,11 +591,23 @@
                             \pgfmathsetmacro{\to}{  {#5}[\t]  }
                         \fi
 
-                        \pgfmathtruncatemacro{\st}{ \so+\to  }
+                        % \pgfmathtruncatemacro{\st}{ \so+\to  }
 
-                        \ifthenelse{\st = 0}{
-                            \draw (O\t) --  node[left]  {\label} (O\s);
+                        % \ifthenelse{\st = 0}{
+                        %     \draw (O\t) --  node[left]  {\label} (O\s);
+                        % }
+
+                        \ifthenelse{ \( \NOT  \so = 1 \) \AND \( \NOT  \so = 5 \) }{
+                            \ifthenelse{ \NOT  \to = 1}{
+                                \ifthenelse{ \equal{\label}{-} }{
+
+                                }
+                                {
+                                    \draw (O\t) --  node[left]  {\label} (O\s);
+                                }
+                            }
                         }
+
                     }
             }
 
@@ -446,10 +624,10 @@
 
         %\draw (O0) --  node[above] {1} (O1);
 
-        \pgfmathsetmacro{\s}{\Nmax*\step+0.5}
-        \pgfmathsetmacro{\t}{\Mmax*\step+0.5}
+        % \pgfmathsetmacro{\s}{\Nmax*\step+0.5}
+        % \pgfmathsetmacro{\t}{\Mmax*\step+0.5}
 
-        \draw[draw=none] (-0.5,-0.5) |- (\s,\t) |- cycle;
+        % \draw[draw=none] (-0.5,-0.5) |- (\s,\t) |- cycle;
 
         %\end{tikzpicture}} \tikzexternaldisable}
     \end{tikzpicture}}
