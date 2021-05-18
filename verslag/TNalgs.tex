@@ -147,9 +147,7 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
 
 \subsubsection{DMRG}
 
-\section{2D algorithms}
-
-\subsection{ 2D tensor network contraction}
+\section{2D tensor network contraction}
 
 PEPS contraction concerns the following problem:
 \begin{equation}\label{algs:biggrid}
@@ -179,7 +177,21 @@ PEPS contraction concerns the following problem:
 \end{equation}
 Contract an infinite lattice of identical tensors, with some irregularities on a small patch. For example, the one patch can be used to calculate an expectation value of a certain observable.
 
-\subsubsection{Vumps}
+\subsection{Overview methods}
+
+\subsubsection{Real-space renormalization-group methods}
+
+\subsubsection{corner transfer matrix methods}
+
+\subsubsection{Boundary methods}
+
+\paragraph{  density-matrix renormalization group }
+
+\paragraph{time-evolving block decimation }
+
+\cite{Nietner2020}
+
+\subsection{Vumps}
 
 The porpuse of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
 
@@ -196,7 +208,7 @@ The goal is to find a MPS layer for the MPO such that:
                 "-", "-",}}{{
                 4,4,4,4,4,
                 4,0,0,0,4,
-                4,2,7,3,4}} =  \lambda  \pepob{5}{2}{{
+                4,2,7,3,4}}  \approx  \pepob{5}{2}{{
                 "-","-", "-","-",
                 "","","",""}}{{
                 "-",
@@ -207,8 +219,10 @@ The goal is to find a MPS layer for the MPO such that:
                 4,4,4,4,4,
                 4,2,7,3,4}}
 \end{equation}
-This is very similar to \cref{algs:exp}. Suppose there are tensor which fullfil the conditions stated below:
+This is very similar to \cref{algs:exp}. The expression holds approximately, because the MPS on the left hand side has a larger bond dimension than on the right hand side.
 
+\subsubsection{The equations}
+Suppose there are tensor which fullfil the conditions stated below:
 \begin{subequations} \label{algs:vumpsenv}
     \begin{alignat}{2}
                                  & \vcenter{ \hbox{  \pepob{5}{3}{{
@@ -260,6 +274,80 @@ This is very similar to \cref{algs:exp}. Suppose there are tensor which fullfil 
     \end{alignat}
 \end{subequations}
 
+These eigentensor equations are solved in pratice in a slightly different manner:
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "-","", "","-",
+                        "","","Gr","-",
+                        "","","",""}}{{
+                        "-","-",
+                        "-","-",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        1,4,3,4,1,
+                        1,4,0,4,1,
+                        1,4,8,1,1}} }}=  \lambda  \vcenter{ \hbox{ \pepob{5}{3}{{
+                        "-","", "","",
+                        "-","-","Gr","",
+                        "-","-","",""}}{{
+                        "-","-",
+                        "-","-",
+                        "-","-",
+                        "","",
+                        "",""}}{{
+                        1,1,4,4,1,
+                        1,1,4,4,1,
+                        1,1,10,1,1}} }}
+\end{equation}
+Wher the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mpsid} was used on the right hand side. The blocks in \cref{algs:vumpsenv} form a zipper from the left and right respectively. Each application brings down one of the MPS tensors in the following way.
+\begin{equation}
+    \begin{split}
+        &       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","Gl","","","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,0,0,0,0,4,
+                            1,5,2,2,2,2,4}}}} \\
+        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","","Gl","","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,2,0,0,0,4,
+                            1,1,5,2,2,2,4}}}} \\
+        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            "-","-", "-","-","-","-",
+                            "","","","Gl","","",
+                            "","","","","","",}}{{
+                            "-", "-",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "", "",
+                            "-", "-",}}{{
+                            1,4,4,4,4,4,4,
+                            4,2,2,2,0,0,4,
+                            1,1,1,5,2,2,4}}}} \\
+    \end{split}
+\end{equation}
+The left and right zipper can now move towards each other, until they meet at the center. In order to become the same MPS as before the application to the MPO (\cref{algs:mpslayermpo}), one more condition is needed:
 \begin{equation} \label{algs:AC}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -281,7 +369,7 @@ This is very similar to \cref{algs:exp}. Suppose there are tensor which fullfil 
                 4,4,4,
                 4,7,4}}
 \end{equation}
-Combining on of the equations \cref{algs:vumpsenv} and one of \cref{algs:mpsid} gives $C$:
+This completely determines the problem, but one more equation is used to solve the problem. Combining on of the equations \cref{algs:vumpsenv}, the definitipn of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$:
 \begin{equation}\label{algs:vumpsenvc}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -303,7 +391,6 @@ Combining on of the equations \cref{algs:vumpsenv} and one of \cref{algs:mpsid} 
                 4,4,4,
                 4,6,4}}
 \end{equation}
-
 \todo{fix gap}
 
 Then  \cref{algs:mpslayermpo} is solved:
@@ -379,8 +466,7 @@ Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC},
     \item  $ G_l,G_r   \rightarrow Ac,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
 
-The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied form below. \cref{algs:vumpsenvc} now becomes
-
+The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \cref{algs:vumpsenvc} now becomes:
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -396,4 +482,12 @@ The calculated environment can now be used to solve the original problem. Due to
                         1,5,9,1,1}} }}
 \end{equation}
 
-\paragraph{CTMRG}
+\subsubsection{The derivation}
+While the above derivation is reasonable, it is not very rigorous. The algorithm finds its origins  in tangent space methods, such as explained in \cite{Vanderstraeten2019}.
+
+Not every state in the many body Hillbert space can be represented by an MPS. For a
+
+By carefully constructing the tangent space and making use of the available gauge freedom, a compact expression can be found for the tangent space projector $\mathcal{P}_A$. This projects a state from the many body Hillbert space to the tangent space of an MPS A. For an optimal MPS approximation A, the error made in the approximation should be orthogonal to the tangent space. For \cref{algs:mpslayermpo} this means that the application of the projection of the error on the tangent space should be zero, i.e. the MPS is at a variational minimum.  \cite{Nietner2020}
+
+Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
+
