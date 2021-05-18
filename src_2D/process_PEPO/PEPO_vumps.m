@@ -4,34 +4,18 @@ function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts, save_v
         save_vars = [];
     end
 
-    %     p = inputParser;
-    %
-    %     addRequired(p, 'chi_max')
-    %     addParameter(p, 'name',[])
-    %     addRequired(p, 'maxit' )
-    %
-    %     parse(p, vumps_opts)
-
-    %todo check these params
     opts.charges = 'regular';
     opts.dynamical = 'off';
     opts.dyncharges = 0;
     opts.schmidtcut = 1e-10;
     opts.chimax = 350;
-    %opts.disp='iter';
     opts.disp = vumps_opts.disp;
-    %opts.disp = 'conv';
-    opts.tolmax = 1e-4; %1e-4
+    opts.tolmax = 1e-4;
     opts.tolfactor = 1e4;
     opts.minit = 30;
     opts.dyniter = 5;
     opts.truncate = 0;
     opts.method = 'vumps';
-
-    %opts.save = 1;
-    %opts.name = p.Results.name;
-
-    %opts.method = 'qr';
 
     opts.plot = 'on';
     opts.maxit = vumps_opts.vumps_maxit;

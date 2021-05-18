@@ -1,4 +1,6 @@
 function target2 = contract_con_cells(obj, map, ln_prefactor, target2, con_cells, opts)
+    %substract contrtact cells from target. Could be parallilzed, but not fasterdue to the way matlab handles multiple nested parfors
+
     if nargin < 6
         opts = struct();
     end

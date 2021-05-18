@@ -1,4 +1,5 @@
 function map = make_cross(arr)
+    %nakes array with 1 on cross with length arr
     mx = arr(1) + 1;
     my = arr(2) + 1;
 

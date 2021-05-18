@@ -1,4 +1,5 @@
 function Ising2D_reproces(suffix)
+    %function to redo calculations
 
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');

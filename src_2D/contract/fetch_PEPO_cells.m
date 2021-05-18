@@ -1,4 +1,7 @@
 function tensors = fetch_PEPO_cells(obj, map, legs, ln_prefactor, patterns, xs, extended_patterns, pattern_root, pattern_permutations)
+    %returns all tensors requested by legs.
+    % xs contains the tensors from patterns, and are used instead of currently stored tensor in patters
+    % extended_patterns, pattern_root, pattern_permutations contains all patters which are derived from pattern
 
     if nargin < 4
         ln_prefactor = obj.nf;

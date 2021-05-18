@@ -1,4 +1,5 @@
 function [data, template] = fetch_matfiles(file_name, opts)
+    %helper function to read save files with a given name
 
     if ~isfield(opts, 'save_vars')
         opts.save_vars = 0;

@@ -1,7 +1,7 @@
-%example
-%Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
-
 function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
+    %routine to calculate a phase diagram for transversal ising model in 2D
+    %samples in batch points along m-T / m-g graph such that arc length between points is small
+    %example: Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
 
     %parse opts
     p = inputParser;
@@ -12,6 +12,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
     addParameter(p, 'max_bond_dim', 20)
     addParameter(p, 'unit_cell', 1)
     addParameter(p, 'testing', 0)
+    addParameter(p, 'do_loops', 0)
     parse(p, opts)
 
     %for chi arr: round(2.^(3:0.5:7))
@@ -162,7 +163,11 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
             S_z = [1, 0; 0, -1];
             template.X = S_z; %observable
 
-            template.pepo_opts = struct('testing', p.Results.testing, 'order', p.Results.order, 'max_bond_dim', p.Results.max_bond_dim);
+            template.pepo_opts = struct(...
+                'testing', p.Results.testing, ...
+                'order', p.Results.order, ...
+                'max_bond_dim', p.Results.max_bond_dim, ...
+                'do_loops', p.Results.do_loops);
 
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 

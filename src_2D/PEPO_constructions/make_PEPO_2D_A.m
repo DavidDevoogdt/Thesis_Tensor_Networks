@@ -56,7 +56,8 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
             [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct);
             %[obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct);
         elseif nl == 1
-            [obj, ln_prefact, err] = solve_lin_non_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', 0, 'maxit', 150), @(x) assign_perm(x, pattern), 1);
+            %[obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', 1, 'maxit', 150), @(x) assign_perm(x, pattern), 1);
+            [obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', 0, 'maxit', 150), {rot_90});
         else
             [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map1}, {pattern}, ln_prefact, nl_opts, rot_180);
         end
@@ -288,11 +289,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                             1, 1, 1, 0;
                             0, 1, 1, 0; ], struct);
         %pattern = {[1, 0 ,e , b],[e, 1, 0, c]}
-        %obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1,'maxit',5))
+        %obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1,'maxit',5))
         %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
 
         pattern = {[1, 0, e, b], [e, 1, 0, c]};
-        %[obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct( 'loop_dim', ) );
+        %[obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct( 'svd_split_dim', ) );
         obj = assign_perm(obj, pattern{1}, [1, 0, 0, 1]);
 
         err1 = calculate_error(obj, map, [], 1);
@@ -362,11 +363,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                             1, 1, 1; ], struct);
         pattern = {[b, 0, a, c]};
 
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1, 'maxit', 30), @(x) assign_perm(x, pattern{1}, [1, 0, 1, 1]), 1);
+        obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1, 'maxit', 30), @(x) assign_perm(x, pattern{1}, [1, 0, 1, 1]), 1);
 
         pattern = {[a, 0, c, b]};
 
-        obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1, 'maxit', 30), @(x) assign_perm(x, pattern{1}, [1, 0, 1, 1]), 1);
+        obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1, 'maxit', 30), @(x) assign_perm(x, pattern{1}, [1, 0, 1, 1]), 1);
 
         %alpha_pattern_perm = {rot_90};
         %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);

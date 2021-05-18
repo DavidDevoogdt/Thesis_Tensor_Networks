@@ -1,11 +1,12 @@
-function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, loop_dim, loop)
+function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, svd_split_dim, full_inverse)
+    %code to calculate fast pseudoinverses for a block. use solve_lin_and_assign
 
     if nargin < 6
         lnprefact = obj.nf;
     end
 
     if nargin < 8
-        loop = 0;
+        full_inverse = 0;
     end
 
     %bring all parts without the PEPO cells to solve to the target
@@ -44,6 +45,7 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
         error("pattern not found")
     end
 
+    %make map without the patterns
     rem_map = map;
 
     for pat = 1:num_pats
@@ -53,54 +55,41 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     [dims, dim_arr, bond_pairs, ext_dims] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
 
-    method = nargin < 6;
-
-    inv_eps = obj.copts.inv_eps;
-
-    if loop == 0 %invert leg per leg
-
-        %x_sol =  residual_target;
+    if full_inverse == 0 %invert leg per leg, faster
 
         tensors = fetch_PEPO_cells(obj, map, cc{1}, lnprefact);
 
-        %legs2 = get_legs(map, nums);
+        parts = get_disconnected_parts(rem_map, nums);
 
-        legs = get_legs_2(rem_map, nums);
-        %
+        if ~isempty(parts) % 0--|--1--|--0 removes all blocks
 
-        if ~isempty(legs)
-
-            ext_ord2 = [];
+            %determine and reoder indices according
+            order_pattern_externsions = [];
 
             perm_vect = zeros(map.N - num_pats, 1);
-            perm_dims = zeros(size(legs, 1), 1);
+            perm_dims = zeros(size(parts, 1), 1);
             perm_c = 1;
-            for ii = 1:numel(legs)
+            for ii = 1:numel(parts)
 
-                ext_ord2 = [ext_ord2, legs{ii}{1}];
+                order_pattern_externsions = [order_pattern_externsions, parts{ii}{1}];
 
-                leg = sort(legs{ii}{2});
+                leg = sort(parts{ii}{2});
                 nl = size(leg, 2);
                 perm_vect(perm_c:perm_c + nl - 1) = leg;
                 perm_c = perm_c + nl;
                 perm_dims(ii) = obj.dim^(2 * nl);
             end
 
-            [~, order] = sort(-ext_ord2);
-            eord = cell(numel(legs), 1);
-
             perm_dims = [perm_dims, obj.dim^(2 * num_pats)];
             perm_vect = [perm_vect; nums];
 
-            %x_sol = reshape( permute( x_sol,  [perm_vect',  nums(1) ] ),  [perm_dims', obj.dim^2]);
-            %x_sol_dims = size(x_sol);
-            %perm_basis = 1:5;
+            %fetch the necesarry tensors per leg, and make a new map with only the given leg.
+            A_list = cell(numel(parts), 1);
 
-            A_list = cell(numel(legs), 1);
+            for ii = 1:numel(parts)
+                leg = parts{ii}{2};
 
-            for ii = 1:numel(legs)
-                leg = legs{ii}{2};
-
+                %make newe map with only branch
                 mask = zeros(size(map.num_map));
                 for iii = 1:numel(leg)
                     mask = mask + (map.num_map == leg(iii));
@@ -108,90 +97,70 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
                 mask = mask ~= 0;
 
                 new_map = map.num_map .* mask;
-
-                %make newe map with only branch
-
                 sz = size(new_map);
                 new_map = reshape(new_map, [], 1);
                 [~, ord] = sort(new_map(new_map > 0));
 
                 new_map(new_map > 0) = iorder(ord);
-
                 new_map = reshape(new_map, sz);
-
                 new_map = create_map(new_map, obj.numopts);
 
+                %Contract leg
                 A = ncon(tensors(sort(leg)), new_map.leg_list);
 
+                %reorder: all physical site indices in fron, one index for connected to central tensor
                 size_A = size(A);
-                ext = size_A(2 * numel(leg) + 1:end);
-
-                %ext_perm = find(ext ~= 1);
+                ext = size_A(2 * numel(leg) + 1:end); %not phsycial indices
                 d2 = [2 * numel(leg) + 1:size(size_A, 2)];
-                %patch = d2(ext_perm);
-                %d2(ext_perm) = patch(iorder(external_order_orig)  ) ;
-
                 pvect = [site_ordering_permute(numel(leg))', d2];
-
                 A = reshape(permute(A, pvect), ...
                     [obj.dim^(2 * numel(leg)), prod(ext)]);
 
+                %
                 A_list{ii} = A;
             end
 
+            %transform target according to legs, and reshape
             target_rot = permute(residual_target, perm_vect);
             target_rot = reshape(target_rot, perm_dims);
 
-            x = lin_solver_core(A_list, target_rot, inv_eps);
+            %perfor inversion
+            x = lin_solver_core(A_list, target_rot, obj.copts.inv_eps);
 
-            %fix order
-
-            ext_ord2 = [];
-            for ii = 1:numel(legs)
-
-                ext_ord2 = [ext_ord2, legs{ii}{1}];
-            end
-
-            [~, order] = sort(-ext_ord2);
-
-            x = reshape(x, [ext_dims(iorder(order)), obj.dim^(2 * num_pats)]); %split in dims per leg
-
-            x = permute(x, [order, numel(order) + 1]); %put legs in order according to sites
-
-            x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]); %put back per site
-
+            %reorder external indices
+            [~, order_idx] = sort(-order_pattern_externsions);
+            x = reshape(x, [ext_dims(iorder(order_idx)), obj.dim^(2 * num_pats)]); %split according to dims of legs, and physical dims at end
+            x = permute(x, [order_idx, numel(order_idx) + 1]); %reoder the exteral legs as numbered by rem_map
+            x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]); %split in dimension of external legs of a given site. One inverted leg can be split over multiple sites
             x = permute(x, site_ordering_permute(num_pats, 1)); %put physical dims next to site
 
-        else
+        else % trivial case of 2x1 cell
             x = residual_target;
             x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
             x = permute(x, site_ordering_permute(num_pats, 1));
         end
-    else % do it all at once, slow for large cells
-        %remove target from map to the back and adapt order of target
+    else % do the inversion all at once, slow for large cells
+
+        %remove target from map to the back and adapt order\ of target
 
         target_rot = permute_rhs(residual_target, nums); %put part in back
-
         target_rot = reshape(target_rot, [], obj.dim^(2 * num_pats));
         dd = size(target_rot, 1);
 
         %cast problem to A_ij x_jk = b_ik and solve
-        [A, ~] = contract_partial(obj, num, rem_map, {cc}, lnprefact);
+        [A, ~] = differentiate_x(obj, num, rem_map, cc, lnprefact);
         A_res = reshape(A, dd, []);
         %works always,but potentially slow
 
-        dA = decomposition(A_res, 'qr', 'RankTolerance', inv_eps, 'CheckCondition', false);
+        dA = decomposition(A_res, 'qr', 'RankTolerance', obj.copts.inv_eps, 'CheckCondition', false);
         x = dA \ target_rot;
 
         x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);
         x = permute(x, site_ordering_permute(num_pats, 1));
 
-        %x = lsqminnorm(A_res,target_rot,inv_eps);
     end
 
-    rank_x = NaN;
-
-    x_cell = svd_x_cell(x, dims, bond_pairs, nums, loop_dim);
+    x_cell = svd_x_cell(x, dims, bond_pairs, nums, svd_split_dim);
 
 end
 

@@ -1,4 +1,6 @@
-function l = get_legs_2(map, nums)
+function l = get_disconnected_parts(map, nums)
+    %gets for every disconnected part the external legs (originally connected to the removed patters)
+    %and the numbers of that leg
 
     m_copy = reshape(map.num_map, [], 1);
 
@@ -20,8 +22,8 @@ function l = get_legs_2(map, nums)
 
                 curr = m_copy(p);
 
-                if curr~=0
-                
+                if curr ~= 0
+
                     m_copy(p) = 0;
 
                     list = [list, curr];

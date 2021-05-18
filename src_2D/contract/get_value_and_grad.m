@@ -83,7 +83,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, e
 
                                 map2 = remove_elem(ii, map);
 
-                                [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
+                                [Ai, ~] = differentiate_x(obj, ii, map2, con_cells{con_cell_index}, ln_prefactor, x_cell, root_patterns);
 
                                 Grad_total = Grad_total + Ai;
                             end
@@ -117,8 +117,7 @@ function [F, G] = get_value_and_grad(obj, maps, con_cells_cell, root_patterns, e
 
                                     map2 = remove_elem(ii, map);
 
-                                    %[Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns);
-                                    [Ai, ~] = contract_partial(obj, ii, map2, con_cells(con_cell_index), ln_prefactor, x_cell, root_patterns, extended_patterns, pattern_root, pattern_permutations);
+                                    [Ai, ~] = differentiate_x(obj, ii, map2, con_cells{con_cell_index}, ln_prefactor, x_cell, root_patterns, extended_patterns, pattern_root, pattern_permutations);
 
                                     size_x = size_x_red(2:5);
                                     non_connected = map.leg_list{ii} < 0;

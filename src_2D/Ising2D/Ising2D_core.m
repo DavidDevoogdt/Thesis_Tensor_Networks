@@ -1,4 +1,7 @@
 function Ising2D_core(save_vars, template, x, results, get_exp_opts)
+    %core routine: calculates pepo according to template and temperature/transversal field x,
+    %calculates environment with PEPO and saves to disk in 2 files: results (llightweight) and savevars (Vumps environment,...)
+    %depending on save_vars, just recalculates the expectation value with previous environment and PEPO
 
     if nargin < 5
         get_exp_opts = struct();

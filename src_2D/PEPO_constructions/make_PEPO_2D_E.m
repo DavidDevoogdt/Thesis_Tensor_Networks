@@ -10,7 +10,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         if numel(pattern) == 2
             %only assign this pattern
             [map1, ~] = create_map(make_cross(pattern{1}));
-            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, pattern, ln_prefact, struct("loop_dim", ldim));
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, pattern, ln_prefact, struct("svd_split_dim", ldim));
 
         else
             perms = get_perm(pattern{1});
@@ -269,7 +269,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[0, b, a, 0], [c, 0, 0, a], [1, 0, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ln_prefact, err] = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             obj = rescale_PEPO_pattern(obj, pattern);
 
@@ -407,7 +407,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
             [map, ~] = create_map(m, struct);
 
-            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'svd_split_dim', obj.virtual_level_sizes_horiz(b + 1)));
             [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact, struct);
             [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact, struct);
 
@@ -464,7 +464,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
             [map, ~] = create_map(m, struct);
 
-            [obj, ln_prefact, err] = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', obj.testing));
+            [obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', obj.testing));
             obj = rescale_PEPO_pattern(obj, pattern); %
 
             check_err(obj, map);

@@ -1,4 +1,5 @@
 function data = filter_ising_results(data, opts)
+    %filter out bad points and return the data
 
     if ~isfield(opts, 'tol')
         opts.tol = 1e-10;

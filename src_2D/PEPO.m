@@ -34,7 +34,6 @@ classdef PEPO
 
     methods
 
-        %        function [obj, err_code] = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
         function [obj, err_code] = PEPO(model, opts, make_PEPO_handle)
 
             %parse opts

@@ -1,4 +1,5 @@
-function dd = get_perm(pat, mask, rot)
+function dd = get_perm(pat, mask)
+    %
     %rot mask: 0 -> all perm
     % 1-> keep rotation order
 

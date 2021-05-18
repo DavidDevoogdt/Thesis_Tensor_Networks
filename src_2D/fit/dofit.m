@@ -36,15 +36,20 @@ names = {{
     'Ising2D_g=2.9000e+00_chi=8_08_April_2021_09:52';
     'Ising2D_g=2.9000e+00_chi=11_08_April_2021_10:03';
     'Ising2D_g=2.9000e+00_chi=16_08_April_2021_10:06';
-    }};
+    }, {
+%'Ising2D_g=2.5000e+00_chi=4_15_May_2021_16:47';
+    'Ising2D_g=2.5000e+00_chi=8_15_May_2021_16:47';
+    'Ising2D_g=2.5000e+00_chi=12_15_May_2021_16:47';
+    'Ising2D_g=2.5000e+00_chi=16_15_May_2021_17:14';
+    'Ising2D_g=2.5000e+00_chi=32_15_May_2021_18:46'; }};
 
-T_c_arr = [2 / log(1 + sqrt(2)), 1.980, 1.2737, 0.9];
+T_c_arr = [2 / log(1 + sqrt(2)), 1.980, 1.2737, 0.9, 1.2737];
 
 T_c_noise = rand * 0.01;
 
 T_range = 0.08;
 
-select = 3;
+select = 5;
 Tc = T_c_arr(select);
 names = names{select};
 

@@ -1,4 +1,5 @@
 function obj = cell2matrix(obj, sparse)
+    %takes PEPO obj and puts all individual tensors in on big tensor
 
     if nargin < 2
         sparse = 0;

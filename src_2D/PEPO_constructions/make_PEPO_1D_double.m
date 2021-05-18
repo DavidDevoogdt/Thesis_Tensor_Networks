@@ -37,7 +37,7 @@ function [obj, err_code] = make_PEPO_1D_double(obj)
             end
         end
 
-        [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop_dim', d^(2 * m)));
+        [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('svd_split_dim', d^(2 * m)));
 
         if obj.testing == 1
             e1 = calculate_error(obj, 1:n, obj.numopts);

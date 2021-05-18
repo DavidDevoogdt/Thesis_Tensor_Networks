@@ -57,3 +57,5 @@ verslag/tikz/*
 *.synctec*
 
 
+temp_save.mat
+matlab.mat

@@ -1,24 +1,17 @@
 function M = contract_network(obj, map, opts)
-    %generate all index sets for a given configuration
-
-    %             struct('max_index', [] ,'matrix', [] ,'fixed', []);
+    %contracts network for a given geometry. matrix determines wether is is contracted at once or cell per cell
+    %results can be traced before contraction.
 
     p = inputParser;
-    %addParameter(p, 'max_index', obj.max_index)
     addParameter(p, 'matrix', 0)
-    addParameter(p, 'fixed', zeros(map.internal_legs, 1) - 1)
     addParameter(p, 'lnprefact', obj.nf);
     addParameter(p, 'trace', false);
     addParameter(p, 'non_trace_num', 0);
     parse(p, opts)
 
-    M = zeros(dimension_vector(obj.dim, 2 * map.N2));
-    %M2 = zeros(dimension_vector(obj.dim, 2 * map.N2));
-
     if p.Results.matrix == 0
 
-        %new_opts.max_index = p.Results.max_index;
-
+        M = zeros(dimension_vector(obj.dim, 2 * map.N2));
         con_cells = get_valid_contractions(obj, map, struct);
         M = -contract_con_cells(obj, map, p.Results.lnprefact, M, con_cells, struct('permute', 0));
 

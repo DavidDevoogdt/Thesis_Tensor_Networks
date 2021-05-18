@@ -1,6 +1,10 @@
-function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor, x, pattern, extended_patterns, pattern_root, pattern_permutations)
+function [A, x0_shape] = differentiate_x(obj, num, map, con_cell, ln_prefactor, x, pattern, extended_patterns, pattern_root, pattern_permutations)
+    % takes map with a number of cells removed, and calculates the the dervative
+    % if only 1 element is removed, the output is reordered to calculate the gradient easily
+    % for linear problem, calculates A x = B
+    % x, pattern, extended_patterns, pattern_root, pattern_permutations all represent the for current point. get_value and grad uses this
+    % to calculate value at a given point
 
-    %patterns: match x with pattern given pattern for subs
     if nargin < 5
         ln_prefactor = obj.nf;
     end
@@ -9,40 +13,27 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
     final_order = map.final_order;
     leg_list = map.leg_list;
 
-    % do actual contractions
-    A = [];
-
     mask = map.leg_list_mask;
     num_removed = sum(~mask);
 
-    for con_cell_index = 1:size(con_cells, 2)
-        legs = con_cells{con_cell_index}{1};
+    legs = con_cell{1};
 
-        if nargin < 6
-            temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor);
-        else
-            %temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x);
-            temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x, extended_patterns, pattern_root, pattern_permutations);
-        end
+    if nargin < 6
+        temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor);
+    else
+        temp_list = fetch_PEPO_cells(obj, map, legs, ln_prefactor, pattern, x, extended_patterns, pattern_root, pattern_permutations);
+    end
 
-        x0 = temp_list(~mask);
-        x0_shape = size(x0);
+    x0 = temp_list(~mask);
+    x0_shape = size(x0);
 
-        temp_list(~mask) = []; %remove x0
-        leg_list = leg_list(mask);
+    temp_list(~mask) = []; %remove x0
+    leg_list = leg_list(mask);
 
-        if map.N - num_removed == 0
-            T = 1;
-        else
-            T = ncon(temp_list, leg_list, seq, final_order);
-        end
-
-        if isempty(A)
-            A = T;
-        else
-            A = A + T;
-        end
-
+    if map.N - num_removed == 0
+        A = 1;
+    else
+        A = ncon(temp_list, leg_list, seq, final_order);
     end
 
     if num_removed == 1
@@ -84,6 +75,7 @@ function [A, x0_shape] = contract_partial(obj, num, map, con_cells, ln_prefactor
     else
 
         if map.N - num_removed ~= 0
+            %put physical dims per site, leave external legs alone
             perm_vector = [site_ordering_permute(map.N2 - num_removed); ((2 * (map.N2 - num_removed) + 1):size(size(A), 2)).'];
 
             A = permute(A, perm_vector);

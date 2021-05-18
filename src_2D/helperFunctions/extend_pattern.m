@@ -1,4 +1,5 @@
 function [extened_patterns, pattern_root, pattern_permutations] = extend_pattern(patterns_in, extended_patterns_permutations)
+    %get all patterns from given root pattern and its permutations
 
     n = numel(patterns_in);
     extened_patterns = {};

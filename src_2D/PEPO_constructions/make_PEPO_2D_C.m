@@ -299,7 +299,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %                               1, 1, 1; ], struct);
     %           pattern = {[a, 0, a, a]};
     %
-    %           %obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1), @(x) assign_perm(x, [a,0,a,a], [1, 0, 1, 1]), 0.5)
+    %           %obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', 1), @(x) assign_perm(x, [a,0,a,a], [1, 0, 1, 1]), 0.5)
     %
     %           [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
 

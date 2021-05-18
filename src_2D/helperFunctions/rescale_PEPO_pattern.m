@@ -2,7 +2,7 @@ function obj = rescale_PEPO_pattern(obj, pattern, fact, num)
     %assumes every pattern only occurs once
 
     if nargin < 3
-        fact = 1+1e-2;
+        fact = 1 + 1e-2;
         num = 0;
     end
 

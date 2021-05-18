@@ -530,7 +530,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %         [1, 0, b, a], [b, 1, 0, a]
     %         }, k);
     %         [map, ~] = create_map(map);
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
+    %         obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
     %
     %         [map, pattern] = rotate([
     %                             0, 0, 0, 0;
@@ -540,7 +540,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %         [b, 0, 1, a]
     %         }, k);
     %         [map, ~] = create_map(map);
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
+    %         obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
     %
     %         [map, pattern] = rotate([
     %                             0, 0, 1, 0;
@@ -550,7 +550,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %         [b, 1, 1, a]
     %         }, k);
     %         [map, ~] = create_map(map);
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
+    %         obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
     %
     %         [map, pattern] = rotate([
     %                             0, 1, 0, 0;
@@ -560,7 +560,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %         [1, 1, b, a]
     %         }, k);
     %         [map, ~] = create_map(map);
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
+    %         obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
     %
     %         [map, pattern] = rotate([
     %                             0, 0, 1, 0;
@@ -570,7 +570,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %         [b, 1, 1, a]
     %         }, k);
     %         [map, ~] = create_map(map);
-    %         obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
+    %         obj = solve_sequential_lin_and_assign(obj, map, pattern, ln_prefact, lnopts);
     %
     %     end
 
