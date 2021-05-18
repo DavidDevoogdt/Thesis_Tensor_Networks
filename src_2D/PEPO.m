@@ -12,66 +12,50 @@ classdef PEPO
         H_2_tensor
         PEPO_cell
         nf %normalisation factor
-        max_index
         testing
         visualise
         virtual_level_sizes_horiz
         virtual_level_sizes_vert
         PEPO_matrix
-        current_max_index
-        numopts
-        cycleopts
-        cycle_index
         boundary_matrix_x
         boundary_matrix_y
         boundary_vect
         bounds
-        order
-        inv_eps
-        complex
-        err_tol
         error_code
-        L
-        max_bond_dim
+        copts
+    end
+
+    properties (Constant)
+        numopts = struct('numbered', 1)
+        cycleopts = struct('numbered', 1, ...
+            'v_cyclic', 0, ...
+            'h_cyclic', 1)
     end
 
     methods
 
-        function [obj, err_code] = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
-            numopts.numbered = 1;
-            obj.numopts = numopts;
-
-            cycleopts.numbered = 1;
-            cycleopts.v_cyclic = 0;
-            cycleopts.h_cyclic = 1;
-            obj.cycleopts = cycleopts;
-
-            obj.dim = d;
-            obj.H_1_tensor = H_1_tensor;
-            obj.H_2_tensor = H_2_tensor;
-
-            obj.complex = false;
-            
-            
+        %        function [obj, err_code] = PEPO(d, H_1_tensor, H_2_tensor, order, make_PEPO_handle, opts)
+        function [obj, err_code] = PEPO(model, opts, make_PEPO_handle)
 
             %parse opts
             p = inputParser;
-            addParameter(p, 'testing', 0)
-            addParameter(p, 'visualise', 0)
-            addParameter(p, 'double', 0)
-            addParameter(p, 'inv_eps', 1e-12)
-            addParameter(p, 'err_tol', 1e-13)
-            addParameter(p, 'L', 2)
-            addParameter(p, 'max_bond_dim',20);
+            addParameter(p, 'order', 4) %max number of connected cells in chain. e.g. order 2 = 0--|--1--|--0
+            addParameter(p, 'beta', 0.1)
+            addParameter(p, 'testing', 0) %debug info
+            addParameter(p, 'visualise', 0) %
+            addParameter(p, 'inv_eps', 1e-12) %value for pseudo inverse
+            addParameter(p, 'err_tol', 1e-13) %check whether constructed blocks are good enough
+            addParameter(p, 'max_bond_dim', 20); %truncate bonds larger than this value
+            addParameter(p, 'do_loops', 0); %parameters for 2D construction
+            addParameter(p, 'loop_extension', 0);
+            addParameter(p, 'double_extension', 0);
+            addParameter(p, 'offset_loops', 0);
+            addParameter(p, 'double_loop', 0);
+            addParameter(p, 'complex', false); % complex or real PEPO construction
 
             parse(p, opts)
 
-            obj.L = p.Results.L;
-            obj.max_bond_dim = p.Results.max_bond_dim;
-            
-            obj.err_tol = p.Results.err_tol;
-
-            obj.inv_eps = p.Results.inv_eps;
+            order = p.Results.order;
 
             if mod(order, 2)
                 max_index = (order - 1) / 2;
@@ -79,35 +63,46 @@ classdef PEPO
                 max_index = order / 2;
             end
 
-            if p.Results.double == 1
-                max_index = 2 * max_index + 1;
-            end
+            obj.copts = struct(...
+                'L', max_index, ...
+                'max_bond_dim', p.Results.max_bond_dim, ...
+                'order', order, ...
+                'inv_eps', p.Results.inv_eps, ...
+                'complex', p.Results.complex, ...
+                'err_tol', p.Results.err_tol, ...
+                'do_loops', p.Results.do_loops, ...
+                'loop_extension', p.Results.loop_extension, ...
+                'double_extension', p.Results.double_extension, ...
+                'offset_loops', p.Results.offset_loops, ...
+                'double_loop', p.Results.double_loop ...
+                );
 
-            obj.PEPO_cell = cell(max_index + 8, max_index + 8, max_index + 8, max_index + 8);
-            obj.boundary_matrix_x = cell(max_index + 1, max_index + 2);
-            obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
-            obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
-            obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
+            beta = p.Results.beta;
+
+            obj.dim = model.d;
+            obj.H_1_tensor = -beta * model.H_1_tensor;
+            obj.H_2_tensor = -beta * model.H_2_tensor;
+
+            ncells = 15; %make large enough for all possible simulations
+            obj.PEPO_cell = cell(ncells, ncells, ncells, ncells);
+            %obj.boundary_matrix_x = cell(max_index + 1, max_index + 2);
+            %obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
+            %obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
+            %obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
 
             obj.virtual_level_sizes_horiz = 1;
             obj.virtual_level_sizes_vert = 1;
-
-            obj.max_index = max_index;
-
-            obj.order = order;
-            obj.cycle_index = Inf;
 
             obj.testing = p.Results.testing;
             obj.visualise = p.Results.visualise;
 
             %calculate ln of normailisation fac
-            map = create_map(1:2, numopts);
+            map = create_map(1:2, obj.numopts);
             [~, nf2] = H_exp(obj, map, 0, true);
             obj.nf = nf2;
 
+            d = obj.dim;
             obj.PEPO_cell{1, 1, 1, 1} = reshape(eye(d) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
-
-            %non generic PEPO code
 
             [obj, err_code] = make_PEPO_handle(obj);
 

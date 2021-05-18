@@ -2,15 +2,16 @@
 %Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
 
 function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
-    
+
     %parse opts
     p = inputParser;
     addParameter(p, 'template_name', [])
     addParameter(p, 'par', 0)
-    addParameter(p, 'L', 2)
+    addParameter(p, 'sym', 1)
+    addParameter(p, 'order', 5)
     addParameter(p, 'max_bond_dim', 20)
     addParameter(p, 'unit_cell', 1)
-    addParameter(p, 'testing' ,0)
+    addParameter(p, 'testing', 0)
     parse(p, opts)
 
     %for chi arr: round(2.^(3:0.5:7))
@@ -87,8 +88,8 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
     for i = 1:numel(chi_arr)
 
         %template setup
-        if ~isempty(p.Results.template_name)  %load from file
-            [~, template] = fetch_matfiles( p.Results.template_name{i}, struct);
+        if ~isempty(p.Results.template_name) %load from file
+            [~, template] = fetch_matfiles(p.Results.template_name{i}, struct);
             chi = chi_arr(i);
 
             first = 0;
@@ -103,16 +104,16 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
             vumps_opts = [];
             vumps_opts.vumps_maxit = 1000;
             vumps_opts.tolfixed = 1e-10;
-            
+
             vumps_opts.cell_size = p.Results.unit_cell;
-            
+
             template = [];
 
             chi = chi_arr(i);
 
             fprintf("\n");
 
-            nn = sprintf("Ising2D_%s=%.4e_chi=%d_%s", fixed_var, fixed_val, chi, dt);
+            nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, chi, p.Results.order, p.Results.max_bond_dim, p.Results.sym, dt);
 
             template.name = nn;
             template.name_prefix = sprintf("%s/%s", fold2, nn);
@@ -139,8 +140,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
             if ~exist(dir_name, 'dir')
                 mkdir(dir_name);
             end
-            
-            
+
             if ~p.Results.testing
                 vumps_opts.disp = 'None';
             else
@@ -149,7 +149,12 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
 
             %make template for simulations
             template.vumps_opts = vumps_opts;
-            template.handle = @make_PEPO_2D_A;
+
+            if p.Results.sym == 1
+                template.handle = @make_PEPO_2D_A;
+            else
+                template.handle = @make_PEPO_2D_E;
+            end
 
             template.dir_name = dir_name;
             template.time = dt;
@@ -157,8 +162,8 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
             S_z = [1, 0; 0, -1];
             template.X = S_z; %observable
 
-            template.pepo_opts = struct('testing',p.Results.testing,'L',p.Results.L,'max_bond_dim',p.Results.max_bond_dim);
-            
+            template.pepo_opts = struct('testing', p.Results.testing, 'order', p.Results.order, 'max_bond_dim', p.Results.max_bond_dim);
+
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 
             first = 1;

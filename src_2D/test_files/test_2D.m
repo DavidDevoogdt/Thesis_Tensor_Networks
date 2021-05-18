@@ -12,19 +12,19 @@ function test_2D(model)
     fprintf("%s \n", filename)
 
     model_opts.g = 2.5;
-    %model = 't_ising';
-    model = 'Heisenberg_2D';
+    model = 't_ising';
+    %model = 'Heisenberg_2D';
     %model = 'Heisenberg_2D_X';
 
     simul = models(model, model_opts);
 
     opts.testing = 1;
     opts.visualise = 0;
-    opts.double = 0;
     opts.inv_eps = 1e-12;
     opts.err_tol = 1e-13;
 
-    pepo_order = 6;
+    opts.order = 6;
+
     handle = @make_PEPO_2D_A;
 
     beta_arr = 10.^(log10(1):0.5:2);
@@ -40,11 +40,9 @@ function test_2D(model)
     density_site = 6;
 
     for i = 1:beta_len
-        beta = beta_arr(i);
+        opts.beta = beta_arr(i);
 
-        pepo = PEPO(simul.d, -beta * simul.H_1_tensor, ...
-            -beta * simul.H_2_tensor, ...
-            pepo_order, handle, opts);
+        pepo = PEPO(simul, opts, handle);
 
         err = calculate_error(pepo, num_map, map_opts, 1, density_site);
 

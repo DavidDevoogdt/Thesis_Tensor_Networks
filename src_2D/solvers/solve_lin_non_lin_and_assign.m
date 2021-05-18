@@ -1,4 +1,4 @@
-function [obj,ln_prefact_out,err] = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, assignfn, step)
+function [obj, ln_prefact_out, err] = solve_lin_non_lin_and_assign(obj, map, patterns, ln_prefact, opts, assignfn, step)
 
     obj = fill_rand(obj, patterns, 1 / exp(obj.nf));
 
@@ -20,7 +20,7 @@ function [obj,ln_prefact_out,err] = solve_lin_non_lin_and_assign(obj, map, patte
     %precontract for speeed with matrix calculation and substract pattern
     %cells
 
-    [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {patterns}));
+    [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('pattern', {patterns}));
 
     con_cells = all_con_cells(pat_cells);
     pat_cells = pat_cells(pat_cells == 1);
@@ -68,8 +68,8 @@ function [obj,ln_prefact_out,err] = solve_lin_non_lin_and_assign(obj, map, patte
                 leg = patterns{1};
                 prev_A = obj.PEPO_cell{leg(1) + 1, leg(2) + 1, leg(3) + 1, leg(4) + 1};
             end
-            
-            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, struct('target_site',target_site ,'all_con_cells',{con_cells} ,'pat_cells',pat_cells));
+
+            obj = solve_lin_and_assign(obj, map, patterns(i), ln_prefact_out, struct('target_site', target_site, 'all_con_cells', {con_cells}, 'pat_cells', pat_cells));
 
         end
 
@@ -113,12 +113,18 @@ function [obj,ln_prefact_out,err] = solve_lin_non_lin_and_assign(obj, map, patte
                 step = step * 0.9;
 
                 if step < 0.05
-                    fprintf("not solved, res err %.4e\n", err)
+                    if obj.testing == 1
+
+                        fprintf("not solved, res err %.4e\n", err);
+                    end
                     break;
                 end
 
             else
-                fprintf("not solved, res err %.4e\n", err)
+                if obj.testing == 1
+                    fprintf("not solved, res err %.4e\n", err);
+                end
+
                 break;
             end
         end

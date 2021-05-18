@@ -9,15 +9,15 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
         opts.loop = 0;
     end
 
-    if ~( isfield(opts, 'target_site')  && isfield(opts, 'all_con_cells') && isfield(opts, 'pat_cells'))
+    if ~(isfield(opts, 'target_site') && isfield(opts, 'all_con_cells') && isfield(opts, 'pat_cells'))
 
-        [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('max_index', obj.current_max_index, 'pattern', {pattern}));
-        
+        [all_con_cells, pat_cells] = get_valid_contractions(obj, map, struct('pattern', {pattern}));
+
         [target, ln_prefact_out] = H_exp(obj, map, ln_prefact, true);
         target_site = reshape(permute(target, site_ordering_permute(map.N)), dimension_vector(d^2, map.N));
-        
+
         con_cells = all_con_cells(pat_cells);
-        
+
         if map.N > 0 %do matrix contraction and substract non contracted cells
 
             obj = cell2matrix(obj);
@@ -27,7 +27,7 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
             if nargout == 3
                 target_site_orig = target;
             end
-            
+
             target = target - contract_network(obj, map, struct('matrix', 1, 'lnprefact', ln_prefact_out));
             target_site = reshape(permute(target, site_ordering_permute(map.N)), dimension_vector(obj.dim^2, map.N));
 
@@ -37,16 +37,15 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
             target_site = contract_con_cells(obj, map, ln_prefact_out, target_site, all_con_cells(~pat_cells));
         end
     else
-        
+
         target_site = opts.target_site;
         ln_prefact_out = ln_prefact;
-       
-        
+
         all_con_cells = opts.all_con_cells;
         pat_cells = opts.pat_cells;
-        
+
         con_cells = all_con_cells(pat_cells);
-        
+
     end
 
     if isfield(opts, 'sub_I')
@@ -55,8 +54,6 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
     end
 
     mul_factor = exp(ln_prefact_out - obj.nf);
-
-    
 
     [x_cell, res_target, rank_x, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, opts.loop_dim, opts.loop);
 
@@ -69,16 +66,14 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
             end
         end
     end
-    
-    if nargout == 3
-        [ ~, res_target ]= optimize_con_cells(obj, {map}, {res_con}, {}, {res_target}, ln_prefact_out);
-        
-        %put in right order
-        res_target = permute(reshape( res_target{1} , dimension_vector(d, 2 * map.N)), [1:2:2 * map.N, 2:2:2 * map.N]);
-        
-        err = calculate_error_core( res_target , target_site_orig);
-    end
 
-  
+    if nargout == 3
+        [~, res_target] = optimize_con_cells(obj, {map}, {res_con}, {}, {res_target}, ln_prefact_out);
+
+        %put in right order
+        res_target = permute(reshape(res_target{1}, dimension_vector(d, 2 * map.N)), [1:2:2 * map.N, 2:2:2 * map.N]);
+
+        err = calculate_error_core(res_target, target_site_orig);
+    end
 
 end

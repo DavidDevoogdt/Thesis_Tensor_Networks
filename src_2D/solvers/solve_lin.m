@@ -24,9 +24,9 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
     res_con = con_cells_cell2{1};
 
     if isempty(cc)
-       error('no valid combinations with pattern, try other one')
+        error('no valid combinations with pattern, try other one')
     end
-    
+
     %get locaton of patterns
     num_pats = size(pattern, 2);
     nums = zeros(num_pats, 1) -1;
@@ -55,7 +55,7 @@ function [x_cell, residual_target, rank_x, res_con] = solve_lin(obj, pattern, ma
 
     method = nargin < 6;
 
-    inv_eps = obj.inv_eps;
+    inv_eps = obj.copts.inv_eps;
 
     if loop == 0 %invert leg per leg
 

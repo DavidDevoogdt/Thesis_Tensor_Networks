@@ -1,4 +1,4 @@
-function [x_cell,con_cells, targets] = solve_non_lin(obj, root_patterns, extended_patterns, pattern_root, pattern_permutations, maps, targets, con_cells, opts, lnprefact)
+function [x_cell, con_cells, targets] = solve_non_lin(obj, root_patterns, extended_patterns, pattern_root, pattern_permutations, maps, targets, con_cells, opts, lnprefact)
     p = inputParser;
     addParameter(p, 'optimise', 1)
     addParameter(p, 'Gradient', true)
@@ -62,8 +62,6 @@ function [x_cell,con_cells, targets] = solve_non_lin(obj, root_patterns, extende
         x_cell = [x_cell; permute(x_cell{pattern_root(i)}, real_pat)];
     end
 
-    
-    
     %             if obj.testing == 1
     %                 for i = 1:size(maps,2)
     %                     F = obj.get_value_and_grad(maps(i), con_cells2(i),root_patterns,targets2(i),begin_vec,x_sizes);

@@ -1,11 +1,9 @@
-function err = calculate_error(a,b)
+function err = calculate_error(a, b)
 
-    N = numel(b)^(0.5) ;
-    
-    
+    N = numel(b)^(0.5);
 
-    b = reshape( b , [N,N]);
-    a = reshape( a , [N,N]);
+    b = reshape(b, [N, N]);
+    a = reshape(a, [N, N]);
 
     p = 2;
 
@@ -18,5 +16,5 @@ function err = calculate_error(a,b)
     sum_2 = (sum(diag(S2).^p))^(1 / p);
 
     err = sum_1 / sum_2;
-   
+
 end

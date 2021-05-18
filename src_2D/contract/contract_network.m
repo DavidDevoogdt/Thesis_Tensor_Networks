@@ -4,7 +4,7 @@ function M = contract_network(obj, map, opts)
     %             struct('max_index', [] ,'matrix', [] ,'fixed', []);
 
     p = inputParser;
-    addParameter(p, 'max_index', obj.max_index)
+    %addParameter(p, 'max_index', obj.max_index)
     addParameter(p, 'matrix', 0)
     addParameter(p, 'fixed', zeros(map.internal_legs, 1) - 1)
     addParameter(p, 'lnprefact', obj.nf);
@@ -17,9 +17,9 @@ function M = contract_network(obj, map, opts)
 
     if p.Results.matrix == 0
 
-        new_opts.max_index = p.Results.max_index;
+        %new_opts.max_index = p.Results.max_index;
 
-        con_cells = get_valid_contractions(obj, map, new_opts);
+        con_cells = get_valid_contractions(obj, map, struct);
         M = -contract_con_cells(obj, map, p.Results.lnprefact, M, con_cells, struct('permute', 0));
 
     else
@@ -28,9 +28,9 @@ function M = contract_network(obj, map, opts)
         mult_fact = exp(p.Results.lnprefact - obj.nf);
 
         T0 = obj.PEPO_matrix / mult_fact;
-        
+
         for i = 1:map.N
-            T=T0;
+            T = T0;
             connections = map.leg_list{i};
             %only keep sublevel 0 for the given tensors
             if connections(1 + 2) < 0
@@ -57,11 +57,10 @@ function M = contract_network(obj, map, opts)
         end
 
         if map.N < 6
-           M = ncon(tensor_list, map.leg_list);
+            M = ncon(tensor_list, map.leg_list);
         else
-           M = ncon_optim(tensor_list, map.leg_list);            
+            M = ncon_optim(tensor_list, map.leg_list);
         end
-        
 
     end
 

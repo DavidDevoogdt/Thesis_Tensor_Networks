@@ -19,7 +19,7 @@ function obj = fill_rand(obj, patterns, start_size, force)
         if isempty(obj.PEPO_cell{pat(1), pat(2), pat(3), pat(4)}) || force == true
             pattern_s = [d, d, H(pat(1)), V(pat(2)), H(pat(3)), V(pat(4))];
 
-            if obj.complex == true
+            if obj.copts.complex == true
                 m = rand(pattern_s) + 1i * rand(pattern_s);
             else
                 m = rand(pattern_s);

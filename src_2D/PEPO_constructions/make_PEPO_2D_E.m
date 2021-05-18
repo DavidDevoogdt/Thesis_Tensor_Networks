@@ -10,7 +10,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         if numel(pattern) == 2
             %only assign this pattern
             [map1, ~] = create_map(make_cross(pattern{1}));
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, pattern, ln_prefact, struct("loop_dim", ldim));
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, pattern, ln_prefact, struct("loop_dim", ldim));
 
         else
             perms = get_perm(pattern{1});
@@ -24,15 +24,19 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                     end
                     if isempty(obj.PEPO_cell{ppp(1) + 1, ppp(2) + 1, ppp(3) + 1, ppp(4) + 1})
                         [map1, ~] = create_map(make_cross(ppp));
-                        [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, {ppp}, ln_prefact, struct);
+                        [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, {ppp}, ln_prefact, struct);
                     end
                 end
             end
         end
 
-        err = check_err(obj, map1);
-        
-        
+        %err = check_err(obj, map1);
+        if obj.testing == 1
+            if err > obj.copts.err_tol
+                disp(err);
+            end
+        end
+
     end
 
     function [obj, ln_prefact] = add_loop(obj, arr, ln_prefact)
@@ -42,19 +46,25 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         for i = 1:size(perms, 1)
             dperms = perms{i, 1};
             for j = 1:size(dperms, 1)
-                ppp = dperms(j, :)
+                ppp = dperms(j, :);
                 if isempty(obj.PEPO_cell{ppp(1) + 1, ppp(2) + 1, ppp(3) + 1, ppp(4) + 1})
 
                     [map1, ~] = create_map(make_cross_loop(ppp, ppp > L));
 
                     %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map1}, {ppp}, ln_prefact, nl_opts);
 
-                    [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, {ppp}, ln_prefact, struct);
+                    [obj, ln_prefact, err] = solve_lin_and_assign(obj, map1, {ppp}, ln_prefact, struct);
                 end
             end
         end
 
-        check_err(obj, map1)
+        if obj.testing == 1
+            if err > obj.copts.err_tol
+                disp(err);
+            end
+        end
+
+        %check_err(obj, map1)
 
         %obj = cell2matrix(obj); max(reshape( obj.PEPO_matrix ,[],1))
 
@@ -81,7 +91,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
             nl_opts = struct('Gradient', true, 'Display', 'none', 'maxit', 40);
         end
 
-        obj.current_max_index = 1;
+        %obj.current_max_index = 1;
         obj.virtual_level_sizes_horiz = [1];
         obj.virtual_level_sizes_vert = [1];
 
@@ -89,13 +99,12 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         obj.bounds = [1];
         obj.boundary_vect(obj.bounds) = 1;
 
-        obj.complex = true;
+        %obj.complex = true;
 
-        L = obj.L;
-        max_bond_dim = obj.max_bond_dim;
+        L = obj.copts.L;
 
         for n = 1:L
-            sz = min(d^(2 * n), max_bond_dim);
+            sz = min(d^(2 * n), obj.copts.max_bond_dim);
 
             obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, sz];
             obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, sz];
@@ -118,54 +127,43 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
         %[obj, ln_prefact] = solve_non_lin_and_assign(obj, { create_map( [1, 1] , struct) }, { [0,0,0,0]  }, ln_prefact, struct('Gradient', false, 'Display', 'iter', 'maxit', 20))
 
-        for n = 1:L
+        err01 = 1;
+        for n = 2:obj.copts.order
 
-            if obj.testing == 1
-                fprintf('linear: %d', n)
-            end
-            %%% n-1--|--n--|--n1- block
+            if mod(n, 2) == 0
+                m = n / 2;
 
-            if n ~= 1
-                err01 = calculate_error(obj, 1:(2 * n + 2), obj.cycleopts, 1);
+                if obj.testing == 1
+                    fprintf('linear: %d\n', m)
+                end
+
+                [obj, ln_prefact, ~] = add_lin(obj, {[m - 1, 0, m, 0], [m, 0, m - 1, 0]}, ln_prefact, obj.virtual_level_sizes_horiz(m + 1));
+
+                %rotate
+                obj.PEPO_cell{1, m, 1, m + 1} = permute(obj.PEPO_cell{m, 1, m + 1, 1}, [1, 2, 6, 3, 4, 5]);
+                obj.PEPO_cell{1, m + 1, 1, m} = permute(obj.PEPO_cell{m + 1, 1, m, 1}, [1, 2, 6, 3, 4, 5]);
+
+                %do all other variants
+                if m ~= 1
+                    [obj, ln_prefact, ~] = add_lin(obj, {[m - 1, 0, m, 0]}, ln_prefact);
+                end
+
             else
-                err01 = 1;
+                m = (n - 1) / 2;
+
+                %%% n--|--n block
+                [obj, ln_prefact, err00] = add_lin(obj, {[m, m, 0, 0]}, ln_prefact);
             end
 
-            [obj, ln_prefact, ~] = add_lin(obj, {[n - 1, 0, n, 0], [n, 0, n - 1, 0]}, ln_prefact, obj.virtual_level_sizes_horiz(n + 1));
-
-            %rotate
-            obj.PEPO_cell{1, n, 1, n + 1} = permute(obj.PEPO_cell{n, 1, n + 1, 1}, [1, 2, 6, 3, 4, 5]);
-            obj.PEPO_cell{1, n + 1, 1, n} = permute(obj.PEPO_cell{n + 1, 1, n, 1}, [1, 2, 6, 3, 4, 5]);
-
-            %do all other variants
-            if n ~= 1
-                [obj, ln_prefact, ~] = add_lin(obj, {[n - 1, 0, n, 0]}, ln_prefact);
-            end
-
-            err02 = calculate_error(obj, 1:(2 * n + 2), obj.cycleopts, 1);
+            err02 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
 
             if err02 > err01
                 warning('not converging')
                 error_code = 1;
-
-                obj.PEPO_cell{n + 1, n + 1, 1, 1} = [];
-                obj = assign_perm(obj, [n, n, 0, 0]);
+                return;
             end
 
-            %%% n--|--n block
-
-            if n < 3
-
-                [obj, ln_prefact, ~] = add_lin(obj, {[n, n, 0, 0]}, ln_prefact);
-                err03 = calculate_error(obj, 1:(2 * n + 2), obj.cycleopts, 1);
-
-                if err03 > err02
-                    warning('not converging')
-                    error_code = 1;
-                    obj.PEPO_cell{n + 1, n + 1, 1, 1} = [];
-                    obj = assign_perm(obj, [n, n, 0, 0]);
-                end
-            end
+            err01 = err02;
         end
 
         %%
@@ -235,22 +233,12 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     c = b + 1;
     e = c + 1;
 
-    obj.current_max_index = e;
-    obj.max_index = e;
-
     dd = [6, 8, 8];
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, dd];
 
-    single_loop = 1;
-    single_extensions = 0;
-    offset_loop = 0;
-    double_extension = 0;
-    double_loop = 0;
-    L_loop = 0;
-
-    if single_loop == 1
+    if obj.copts.do_loops == 1
         if obj.testing == 1
             fprintf('simple loop\n')
         end
@@ -263,11 +251,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
         pattern = {[a, a, 0, 0]};
 
-        [obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
+        [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts, alpha_pattern_perm);
         check_err(obj, map);
     end
 
-    if single_extensions == 1
+    if obj.copts.loop_extension == 1
 
         if obj.testing == 1
             fprintf('single_ext\n')
@@ -281,7 +269,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[0, b, a, 0], [c, 0, 0, a], [1, 0, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             obj = rescale_PEPO_pattern(obj, pattern);
 
@@ -295,7 +283,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[0, 1, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -305,7 +293,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 0, 1, 1, 0; ], {[2, 0, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -316,7 +304,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[0, 2, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -326,7 +314,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[1, 1, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -337,7 +325,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[1, 2, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -348,7 +336,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 0, 1, 1, 0; ], {[2, 1, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -359,7 +347,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 0, 1, 1, 0; ], {[2, 2, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -388,7 +376,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
     end
 
-    if offset_loop == 1
+    if obj.copts.offset_loops == 1
 
         if obj.testing == 1
             fprintf('offset loops\n')
@@ -400,7 +388,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 0; ], {[c, b, c, b]}, k);
 
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
             %[obj, ln_prefact] = solve_non_lin_and_assign(obj, {map}, pattern, ln_prefact, nl_opts);
 
             check_err(obj, map);
@@ -408,7 +396,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         end
     end
 
-    if double_extension == 1
+    if obj.copts.double_extension == 1
         if obj.testing == 1
             fprintf('double extension\n')
         end
@@ -419,9 +407,9 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
             [map, ~] = create_map(m, struct);
 
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('loop', 1, 'loop_dim', obj.virtual_level_sizes_horiz(b + 1)));
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern(1), ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern(2), ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -429,7 +417,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 1, 1, 1, 0;
                                 0, 1, 1, 0; ], {[b, 1, 0, a]}, k);
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -437,7 +425,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 1, 1, 1, 1;
                                 0, 1, 1, 0; ], {[b, 1, 1, a]}, k);
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -445,7 +433,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 0, 1, 1, 1;
                                 0, 1, 1, 0; ], {[0, 1, b, a]}, k);
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
@@ -453,36 +441,38 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                                 1, 1, 1, 1;
                                 0, 1, 1, 0; ], {[1, 1, b, a]}, k);
             [map, ~] = create_map(m, struct);
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
             check_err(obj, map);
 
         end
     end
 
-    if double_loop == 1
+    if obj.copts.double_loop == 1
 
         if obj.testing == 1
             fprintf('double loop\n')
         end
 
-        for k=0:1
-             [m, pattern] = rotate([
-                                1, 1, 1 ;
+        for k = 0:1
+            [m, pattern] = rotate([
+                                1, 1, 1;
                                 1, 1, 1; ], {
-                                %[0, 0, b, a], [b, 0, c, a],[c,0,0,a],[0,a,b,0],[b,a,c,0],[c,a,0,0]
-                                [a,0,a,b],[a,b,a,0]
-                                }, k);
-            
+            %[0, 0, b, a], [b, 0, c, a],[c,0,0,a],[0,a,b,0],[b,a,c,0],[c,a,0,0]
+            [a, 0, a, b], [a, b, a, 0]
+            }, k);
+
             [map, ~] = create_map(m, struct);
 
-            obj = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', obj.testing));
+            [obj, ln_prefact, err] = solve_lin_non_lin_and_assign(obj, map, pattern, ln_prefact, struct('display', obj.testing));
             obj = rescale_PEPO_pattern(obj, pattern); %
 
             check_err(obj, map);
         end
-      
+
     end
+
+    L_loop = 0;
 
     if L_loop == 1
 
@@ -497,7 +487,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
             [map, ~] = create_map(m, struct);
             tic
-            [obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+            [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
             toc
             check_err(obj, map);
         end
@@ -521,13 +511,12 @@ function err = check_err(obj, map1)
     end
 
     obj = cell2matrix(obj);
-    msize = max(  abs( reshape(obj.PEPO_matrix,[],1)   )  );
-    if msize>2
-        fprintf('size %.4e',msize);
+    msize = max(abs(reshape(obj.PEPO_matrix, [], 1)));
+    if msize > 2
+        fprintf('size %.4e', msize);
     end
-    
-end
 
+end
 
 function [m, p] = rotate(m, p, k)
     m = rot90(m, k);

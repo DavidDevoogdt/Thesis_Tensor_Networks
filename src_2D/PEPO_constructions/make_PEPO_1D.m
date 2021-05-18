@@ -8,9 +8,7 @@ function [obj, err_code] = make_PEPO_1D(obj)
     obj.bounds = [1];
     obj.boundary_vect(obj.bounds) = 1;
 
-    %[obj, ln_prefact] = solve_non_lin_and_assign(obj, { create_map( [1, 1] , struct( 'h_cyclic',1  )) }, { [0,0,0,0]  }, ln_prefact, struct('Gradient', false, 'Display', 'iter', 'maxit', 20));
-
-    for n = 2:obj.order
+    for n = 2:obj.copts.order
 
         [map, ~] = create_map(1:n, obj.numopts);
 
@@ -20,28 +18,17 @@ function [obj, err_code] = make_PEPO_1D(obj)
         else
             obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, d^(n)];
             obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, d^(n)];
-            obj.current_max_index = n / 2;
 
             m = n / 2;
             pattern = {[m - 1, 0, m, 0], [m, 0, m - 1, 0]};
         end
 
-        [obj, target, ~, ln_prefact, rank_x] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
+        [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct);
 
-        e1 = calculate_error(obj, 1:n + 1, obj.numopts);
-        %e2 = svds(target, 1);
-        fprintf("n=%d residual = %.4e   d_nf %.4e  \n", n, e1, exp(ln_prefact - obj.nf));
-
-        if rank_x == 0 %ineffective step, truncate
-
-            if mod(n, 2) ~= 1
-                obj.virtual_level_sizes_horiz = obj.virtual_level_sizes_horiz(1:end - 1);
-                obj.virtual_level_sizes_vert = obj.virtual_level_sizes_vert(1:end - 1);
-                obj.current_max_index = obj.current_max_index - 1;
-            end
-
-            obj.max_index = obj.current_max_index;
-            break;
+        if obj.testing == 1
+            e1 = calculate_error(obj, 1:n + 1, obj.numopts);
+            fprintf("n=%d residual = %.4e   d_nf %.4e  \n", n, e1, exp(ln_prefact - obj.nf));
         end
+
     end
 end
