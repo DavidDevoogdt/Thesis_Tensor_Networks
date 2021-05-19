@@ -12,7 +12,8 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
     addParameter(p, 'max_bond_dim', 20)
     addParameter(p, 'unit_cell', 1)
     addParameter(p, 'testing', 0)
-    addParameter(p, 'do_loops', 0)
+    addParameter(p, 'do_loops', 1)
+    addParameter(p, 'loop_extension', 0)
     parse(p, opts)
 
     %for chi arr: round(2.^(3:0.5:7))
@@ -114,7 +115,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
 
             fprintf("\n");
 
-            nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, chi, p.Results.order, p.Results.max_bond_dim, p.Results.sym, dt);
+            nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, p.Results.order,chi,  p.Results.max_bond_dim, p.Results.sym, dt);
 
             template.name = nn;
             template.name_prefix = sprintf("%s/%s", fold2, nn);
@@ -167,7 +168,8 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
                 'testing', p.Results.testing, ...
                 'order', p.Results.order, ...
                 'max_bond_dim', p.Results.max_bond_dim, ...
-                'do_loops', p.Results.do_loops);
+                'do_loops', p.Results.do_loops,...
+                'loop_extension',p.Results.loop_extension);
 
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 

@@ -6,13 +6,23 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
 
     d = obj.dim;
 
-    if ~isfield(opts, 'svd_split_dim')
-        opts.svd_split_dim = -1;
+    split_opts = struct;
+    
+    if isfield(opts, 'svd_split_dim')
+        split_opts.svd_split_dim = opts.svd_split_dim;
     end
+    if isfield(opts, 'remove_S')
+        split_opts.remove_S = opts.remove_S;
+    end
+    
     if ~isfield(opts, 'full_inverse')
         opts.full_inverse = 0;
     end
 
+    
+ 
+    
+    
     %contract con_cells for map, if not provided as argument
     if ~(isfield(opts, 'target_site') && isfield(opts, 'all_con_cells') && isfield(opts, 'pat_cells'))
 
@@ -52,7 +62,7 @@ function [obj, ln_prefact_out, err] = solve_lin_and_assign(obj, map, pattern, ln
     mul_factor = exp(ln_prefact_out - obj.nf);
 
     %actually compute inverse
-    [x_cell, res_target, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out, opts.svd_split_dim, opts.full_inverse);
+    [x_cell, res_target, res_con] = solve_lin(obj, pattern, map, con_cells, target_site, ln_prefact_out,split_opts , opts.full_inverse);
 
     %assign cells
     for i = 1:size(x_cell, 2)

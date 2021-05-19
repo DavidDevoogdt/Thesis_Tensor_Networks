@@ -1,4 +1,4 @@
-function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact, svd_split_dim, full_inverse)
+function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact,split_opts , full_inverse)
     %code to calculate fast pseudoinverses for a block. use solve_lin_and_assign
 
     if nargin < 6
@@ -160,7 +160,7 @@ function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_c
 
     end
 
-    x_cell = svd_x_cell(x, dims, bond_pairs, nums, svd_split_dim);
+    x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_opts);
 
 end
 

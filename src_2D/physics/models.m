@@ -3,7 +3,7 @@
 function [simul] = models(model, opts)
 
     p = inputParser;
-    addParameter(p, 'g', 1.05);
+    addParameter(p, 'g', 1);
     addParameter(p, 'J', 1);
     addParameter(p, 'delta', 0.5);
     parse(p, opts)

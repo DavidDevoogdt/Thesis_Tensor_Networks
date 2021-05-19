@@ -1,7 +1,16 @@
-function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
-    if nargin < 5
-        split_dim = -1;
-    end
+function [x_cell] = svd_x_cell(x, dims, bond_pairs, nums,split_opts)
+    
+    p = inputParser;
+    addParameter(p, 'svd_split_dim', -1)
+    addParameter(p, 'remove_S', false)
+    addParameter(p, 'remove_S_fact', 1)
+    parse(p, split_opts)
+
+    
+    split_dim = p.Results.svd_split_dim;
+    remove_S = p.Results.remove_S;
+    remove_S_fact = p.Results.remove_S_fact;
+    
 
     %split x in different cells. SVD across bonds
 
@@ -53,12 +62,22 @@ function x_cell = svd_x_cell(x, dims, bond_pairs, nums, split_dim)
             PU = eye(size(U, 1), split_dim);
             PR = eye(split_dim, size(V, 1));
             DS = diag(S);
+            
+            if remove_S == 1
+                
+                m = max(DS);
+               
+                
+                DS( DS <  m/remove_S_fact   ) = m/remove_S_fact  ;
+                %DS = ones(size(DS));
+            end
+            
             sqrt_S = diag(DS(1:split_dim).^0.5);
 
             L = U * PU * sqrt_S;
             R = sqrt_S * PR * V';
 
-            err = L * R - x_res;
+            %err = L * R - x_res;
 
             parity = find(mask1) > 4; %order of multiplication
 

@@ -114,7 +114,7 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
         Ac = A{4};
         C = A{3};
 
-        %B = TensorConj(Ac); works in symmetric case
+        %B = TensorConj(Ac); % works in symmetric case
 
         [B, ~, ~] = TensorEigs(@(x) get_Bc(x, GL, GR), TensorConj(Ac), 1, 'lm', opts);
 
