@@ -150,3 +150,26 @@ Again, this is a strict variant which needs exactly twice the bond dimension of 
     \end{split}
 \end{equation}
 The construction is very similar to type A
+
+\subsection{Type F}
+
+The idea behind this type is very similar to type D. The blocks look as follows:
+\begin{equation}
+    \begin{split}
+        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+        &\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}+\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}\\
+        &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
+        &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}+\mpob{4}{ {,"1","2'","1",}  }{}{}{}{{,,,,,}}\\
+        &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}}\\
+    \end{split}
+\end{equation}
+
+The  blocks $O^{n-1,n}$ and $O^{n,n-1}$ unitary matrices from the svd decomposition, scaled by the largest singular value. The blocks $O^{n-1,n'}$ and $O^{n',n-1}$ are then used to actually solve the problem for the given chain. In the next step, $O^{n,n}$ is added as usual. The idea here is once again to keep this block small, in order to not cuase any divergences.
+
+\subsection{Conclusion}
+
+Many 1D constructions are discussed here. They can be roughly divided in 2 groups. B, C and E are strict variants, meaning only the explicitly constructed blocks will appear in the final expansion. As a consequence, they have exactly the same predictive power. While B has some advantageous properties such as its final bond dimension and well-defined inverses, type E will be used in the results chapter due to its simplicity and scalability. It also generalises well to 2D, in contrast to type B.
+
+The second category are the unstrict types. Type A has the lowest possible bond dimension to exactly represent a chain of a given length. One hurdle to be overcome are the badly conditioned inverses, when implemented naively. Types D and F try to remedy this. D scales very badly with the maximum number of sites, and has a construction which doesn't fit in with the simple diagrams. The construction was only implemented in 1D code due to this. This type won't be reported, and has a similar performance to type F.
+
+In short, type A, E and F will be reported in \cref{sec:results1d}.

@@ -6,7 +6,7 @@ These will be reduced to a standard matrix problem, and solve with matrix (pseud
 
 The other group, of course, constitutes the nonlinear problems. This includes every problem where a block (or rotated version) occurs more than once, problems which include loops, ...
 
-\subsection{Linear solver}
+\subsection{Linear solver} \label{subsec:linear_solver}
 
 The linear solver is a general purpose block solver which reduces the problem to a set of linear matrix equations. Linear block consist of a tree structure, where the new block is the root of the tree, and all the branches need to be inverted.  Let $ I^m = (i^1_1 i^1_2 \cdots i^1_{n_1})$, then the problem can in general, after some tedious tensor leg bookkeeping, be rewritten in the following form:
 
@@ -80,7 +80,7 @@ The idea is to solve each of the tensors with a linear solver. As this is not tr
 
 \subsubsection{Bookkeeping}
 
-One imporatant aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbourghs for each site, numbers the inernal and external legs and a list to perform the contractions.
+One important aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbours for each site, numbers the internal and external legs and a list to perform the contractions.
 
 The framework provides some tools to transform these maps into other maps, for instance by removing 1 site.
 
