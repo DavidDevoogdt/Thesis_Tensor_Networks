@@ -76,21 +76,21 @@ The loop is treated exactly the same as regular leg. The error is of the same ma
 \end{equation}
 The idea is to solve each of the tensors with a linear solver. As this is not truly a linear system, the error will not be zero after one pass. But solving the tensors repeatedly lowers the error at each step, giving a iterative procedure. This procedure can be sped up by reusing some parts of the calculations involved in the linear solver. For example, the exponentiated hamiltonian and contraction of all virtual levels that do not involve a given block only need to be performed once.
 
-\subsection{Optimasation}
+\section{Optimasation}
 
-\subsubsection{Bookkeeping}
+\subsection{Bookkeeping}
 
 One important aspect of programming these general solvers is to devise a scheme that keeps track of all the involved tensors and transforms to problem to the form discribed above. In the code, the geometric info is represented by a map. This keeps track of the neighbours for each site, numbers the internal and external legs and a list to perform the contractions.
 
 The framework provides some tools to transform these maps into other maps, for instance by removing 1 site.
 
-\subsubsection{Fast contraction}
+\subsection{Fast contraction}
 
 One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This quickly becomes a bottleneck.
 This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T^{i}_{  \alpha \beta \gamma \delta } $ where i encodes all the non-empty combinations of legs $(\alpha \beta \gamma \delta)$. On each site, the right boundary conditions need to be applied to get the right geometry. After setting the boundary conditions, the sparse PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contractions. Due to its sparsity, this performs quite fast.
 As an added bonus, removing a tensor from T gives all contractions without this tensor. As both results are sorted list, the subset of contractions containing a given tensor can also be found fast.
 
-\subsubsection{Normalisation}
+\subsection{Normalisation}
 
 For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the hamiltonian evaluated for a certain geometry. This is a hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
 \begin{align}
@@ -103,59 +103,67 @@ For many of the end results, the PEPO cells can be divided by a normalisation fa
 \end{align}.
 With $I$ the unit matrix. Next to a global normalisation factor, every block calculation calculates a specific normalisation factor such that the largest eigenvalue of $exp(H)$ is of the order 1.
 
-\subsubsection{Internal representation}
+\subsection{Internal representation}
 
 Two main internal representations are used to construct the given MPO. Either, the MPO is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that Matlab doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this} library is used. \todo{expand}
 
-\subsection{1D implementation}
+\subsection{Even faster inverses}
 
-The solution will be denoted by
+% \def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,}}}
+% \def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
+% \def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
+% \def \figfour { \expH{1}{$A^{-1}B$}{{"$i_3$",}}{{"$j_3$",}}{{"u","v"}} }
 
-\def \figoneb {\expH{2}{$A$}{{,}}{{,}}{{,"w"}}}
-\def \figonec {\expH{2}{$A^{-1}$}{{,}}{{,}}{{"w",}}}
-\def \figthreeb {\expH{3}{$B$}{{,,"$i_3$"}}{{,,"$j_3$"}}{{,"v"}}}
+% \begin{equation}
+%     \begin{split}
+%         \combineTikz{ \figoneb }{\figtwob}{1.8} &=  \figthreeb \\
+%         \figtwob &= \figfour
+%     \end{split}
+%     \label{eq_mpoinvdef}
+% \end{equation}
 
-\def \figtwob {\mpo{1}{{"w","v"}}{{"$i_3$",}}{{"$j_3$",}}{} {}}
+While the inversion procedure above states how to make use of pseudoinverses, it was not yet clear in the 1D case it was needed. The 1D implemetation uses a trick to get all the inverses for free from the SVD decomposition. Take the MPO which corresponds to a unitary matrix:
 
-\def \figfour { \expH{1}{$A^{-1}B$}{{"$i_3$",}}{{"$j_3$",}}{{"u","v"}} }
+% \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
-\begin{equation}
-    \begin{split}
-        \figtwob &=  \left[ \figoneb \right ]^{-1}  \figthreeb \\
-        &=  \left[ \figonec  \right ]  \figthreeb\\
-        &= \figfour
-    \end{split}
-    \label{eq_mpoinvdef}
-\end{equation}
-For the first equation the unmarked legs on the same positions need to be contracted with each other. The second line the mirrored positions are contracted.
+% \begin{equation}
+%     \figone  = \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}
+% \end{equation}
 
-If the tensor A is an MPO, the inverse can also be constructed as an mpo. This is espacially usefull if the MPO is created with decomposition for which the inverse can be computed easily, suchs as an svd decomposition.
-
-Take has to be taken with the indices to apply the inverse.
-
-\begin{equation}
-    \begin{split}
-        U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
-        &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
-    \end{split}
-\end{equation}
-If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
-\begin{equation}
-    \mpo{1}{ {"$\delta$","$\alpha$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{\delta i j \alpha}
-\end{equation}
-With the notation from \cref{eq_mpoinvdef} we have:
-\def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
+% \begin{equation}
+%     \begin{split}
+%         U^n_{(\alpha i j) \beta} & A_{\beta \gamma} = B_{\alpha i j \gamma} \\
+%         &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
+%     \end{split}
+% \end{equation}
+% If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
 
 \begin{equation}
-    \OnBlock =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
+    \mpo{1}{ {"$\delta$","$\beta$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O_n$",} } \cong U^{n}_{\alpha (i j \beta)}
 \end{equation}
-The inverse can be applied sequentially.
+Then the inverse MPO can be calcuated by taking its Hermitian conjugate and reshaping.
+\begin{equation}
+    \mpo{1}{ {"$\beta$","$\gamma$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{ (i j \beta)  \gamma }
+\end{equation}
+% With the notation from \cref{eq_mpoinvdef} we have:
+% \def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
+The left inverse looks like
+\begin{equation}
+    2 =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
+\end{equation}
+where the physical indices need to be contracted with the corresponding indices of the right hand side.
 
 \todo{ update}
 
-\subsubsection{buffering results}
+\subsection{Buffering Results}
 
-The matrix exponential for different number of sites is called on many places. The results for chain and cycle are stored in the class to save computing time the next time.
+Some calcalations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
-\subsubsection{Fast inverses}
+\section{Calculating phase diagrams}
+
+\subsection{Points sampling}
+
+\subsection{Storing the information}
+
+\subsection{Fitting}
 
