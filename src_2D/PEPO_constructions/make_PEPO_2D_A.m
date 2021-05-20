@@ -57,7 +57,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
             %[obj, ~, ~, ln_prefact, ~] = solve_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct);
         elseif nl == 1
             %[obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', 1, 'maxit', 150), @(x) assign_perm(x, pattern), 1);
-            [obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', 0, 'maxit', 150), {rot_90});
+            [obj, ln_prefact, err] = solve_sequential_lin_and_assign(obj, map1, {pattern}, ln_prefact, struct('display', obj.testing, 'maxit', 150), {rot_90});
         else
             [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map1}, {pattern}, ln_prefact, nl_opts, rot_180);
         end
@@ -121,7 +121,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                 fprintf('linear: %d\n', m)
             end
 
-            [obj, ln_prefact, err00] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 1);
+            if n== 2
+                [obj, ln_prefact, err00] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
+            else
+                [obj, ln_prefact, err00] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
+            end
 
         else
             m = (n - 1) / 2;
@@ -132,10 +136,12 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
         err02 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
 
-        if err02 > err01
-            warning('not converging')
+        if err02 > err01 && err02> obj.copts.err_tol
+            warning('not converging old %.4e new %.4e n %d',err01, err02,n)
             error_code = 1;
             return;
+            
+            
         end
 
         err01 = err02;
@@ -187,10 +193,11 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 1], ln_prefact);
-
-                %works but slow
-                %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,2] ,ln_prefact);
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 2] ,ln_prefact);
+                
+                %works but slow and high ram consumptio
                 %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,3] ,ln_prefact);
+                %takes to much memory
             otherwise
                 error('not impl')
         end

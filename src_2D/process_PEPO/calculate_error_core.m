@@ -7,14 +7,18 @@ function err = calculate_error(a, b)
 
     p = 2;
 
-    [~, S1, ~] = svds(a, 30);
+    try
+        [~, S1, ~] = svds(a, 30);
 
-    sum_1 = (sum(diag(S1).^p))^(1 / p);
+        sum_1 = (sum(diag(S1).^p))^(1 / p);
 
-    [~, S2, ~] = svds(b, 30);
+        [~, S2, ~] = svds(b, 30);
 
-    sum_2 = (sum(diag(S2).^p))^(1 / p);
+        sum_2 = (sum(diag(S2).^p))^(1 / p);
 
-    err = sum_1 / sum_2;
+        err = sum_1 / sum_2;
+    catch
+       err = Inf; 
+    end
 
 end
