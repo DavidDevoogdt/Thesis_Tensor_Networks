@@ -390,7 +390,7 @@
                         }
 
                         \ifthenelse{\so = 4}{
-                            \node[draw= none] (O\s) at (\p,\k) {\nname};
+                            \node[draw= none, inner sep=0mm  ] (O\s) at (\p,\k) {\nname};
                         }
 
                         \ifthenelse{\so = 6}{
@@ -497,6 +497,28 @@
 
                             \draw  (O\s) -- (   O\t.west   |-  O\s  ) ;
                             \stepcounter{a}
+                        }
+
+                        \ifthenelse{\so = 12}{
+
+                            \node[circle,draw, radius=\radius] (O\s) at (\p,\k) {\nname};
+
+                            \pgfmathsetmacro{\pp}{   \p+\legLength/2 }
+                            \pgfmathsetmacro{\pm}{   \p-\legLength/2  }
+
+                            \pgfmathsetmacro{\kp}{   \k+\legLength/2  }
+                            \pgfmathsetmacro{\km}{   \k-\legLength/2  }
+
+                            \node (Op\s) at (\pp,\kp) {i};
+                            \node (Om\s) at (\pm,\km) {j};
+
+                            \draw (O\s.center)  --  (Op\s);
+                            \draw  (Om\s) --  (O\s);
+                        }
+
+                        \ifthenelse{\so = 13}{
+
+                            \node[draw= none] (O\s) at (\p,\k) { ... };
                         }
 
                     }

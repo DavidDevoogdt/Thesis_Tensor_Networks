@@ -159,11 +159,12 @@ where the physical indices need to be contracted with the corresponding indices 
 
 Some calcalations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
-\section{Calculating phase diagrams}
+\section{Calculating phase diagrams} \label{sec:phase_diag}
 
 \subsection{Points sampling}
 
 \subsection{Storing the information}
 
-\subsection{Fitting}
+\subsection{Fitting}\label{subsec:qphasediag}
 
+\todo{mps bond scaling, ...}

@@ -36,7 +36,7 @@ It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the 
                 4,4,4,
                 4,0,4}} X^{-1}
 \end{equation}
-\todo{fix baseline}
+
 \begin{equation}
     A_r = \pepob{3}{2}{{
                 "-","-",
@@ -106,10 +106,10 @@ Introducing one more tensor:
                 4,4,4,4,
                 4,6,3,4}}
 \end{equation}
-At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its unique canonical form, the following choice is made
+At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its canonical form, the following choice is made
 
 \begin{subequations} \label{algs:mpsid}
-    \begin{alignat}{2}
+    \begin{alignat}{3}
                      & \vcenter{ \hbox{ \pepob{3}{2}{{
                             "","",
                             "",""}}{{
@@ -124,7 +124,7 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
                             "-",
                             "-"}}{{
                             4,4,4,
-        4,4,4}} } }                                                                       \\
+        4,4,4}} } }  &                                 & = I                              \\
                      & \vcenter{ \hbox{ \pepob{3}{2}{{
                             "","",
                             "",""}}{{
@@ -139,7 +139,7 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
                             "-",
                             "-"}}{{
                             4,4,4,
-                            4,4,4}} } }
+        4,4,4}} } }  &                                 & = I
     \end{alignat}
 \end{subequations}
 
@@ -151,29 +151,29 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
 
 PEPS contraction concerns the following problem:
 \begin{equation}\label{algs:biggrid}
-    \pepob{7}{7}{{
-                "-","-", "-","-","-","-",
-                "",  "", "","","","",
-                "",  "", "","","","",
-                "",  "", "","","","",
-                "",  "", "","","","",
-                "",  "", "","","","",
-                "-", "-", "-","-","-","-",}}{{
-                "-","-", "-","-","-","-",
-                "","", "","","","",
-                "","", "","","","",
-                "","", "","","","",
-                "","", "","","","",
-                "","", "","","","",
-                "-","-", "-","-","-","-",}}{{
-                1,4,4,4,4,4,1,
-                4,0,0,0,0,0,4,
-                4,0,0,0,0,0,4,
-                4,0,0,4,0,0,4,
-                4,0,0,0,0,0,4,
-                4,0,0,0,0,0,4,
-                1,4,4,4,4,4,1,
-            }}
+    \rho_{i,j} =\vcenter{ \hbox{ \pepob{7}{7}{{
+                        "-","-", "-","-","-","-",
+                        "",  "", "","","","",
+                        "",  "", "","","","",
+                        "",  "", "","","","",
+                        "",  "", "","","","",
+                        "",  "", "","","","",
+                        "-", "-", "-","-","-","-",}}{{
+                        "-","-", "-","-","-","-",
+                        "","", "","","","",
+                        "","", "","","","",
+                        "","", "","","","",
+                        "","", "","","","",
+                        "","", "","","","",
+                        "-","-", "-","-","-","-",}}{{
+                        1,13,13,13,13,13,1,
+                        13,0,0,0,0,0,13,
+                        13,0,0,0,0,0,13,
+                        13,0,0,12,0,0,13,
+                        13,0,0,0,0,0,13,
+                        13,0,0,0,0,0,13,
+                        1,13,13,13,13,13,1,
+                    }} }}
 \end{equation}
 Contract an infinite lattice of identical tensors, with some irregularities on a small patch. For example, the one patch can be used to calculate an expectation value of a certain observable.
 
@@ -207,8 +207,8 @@ The goal is to find a MPS layer for the MPO such that:
                 "", "",
                 "-", "-",}}{{
                 4,4,4,4,4,
-                4,0,0,0,4,
-                4,2,7,3,4}}  \approx  \pepob{5}{2}{{
+                13,0,0,0,13,
+                13,2,7,3,13}}  \approx  \pepob{5}{2}{{
                 "-","-", "-","-",
                 "","","",""}}{{
                 "-",
@@ -217,7 +217,7 @@ The goal is to find a MPS layer for the MPO such that:
                 "",
                 "-"}}{{
                 4,4,4,4,4,
-                4,2,7,3,4}}
+                13,2,7,3,13}}
 \end{equation}
 This is very similar to \cref{algs:exp}. The expression holds approximately, because the MPS on the left hand side has a larger bond dimension than on the right hand side.
 
@@ -315,9 +315,9 @@ Wher the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mp
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,0,0,0,0,4,
-                            1,5,2,2,2,2,4}}}} \\
-        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            13,2,0,0,0,0,13,
+                            1,5,2,2,2,2,13}}}} \\
+        =&       \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","","Gl","","","",
                             "","","","","","",}}{{
@@ -329,9 +329,9 @@ Wher the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mp
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,2,0,0,0,4,
-                            1,1,5,2,2,2,4}}}} \\
-        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+                            13,2,2,0,0,0,13,
+                            1,1,5,2,2,2,13}}}} \\
+        =&       \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","","","Gl","","",
                             "","","","","","",}}{{
@@ -343,8 +343,8 @@ Wher the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mp
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,2,2,0,0,4,
-                            1,1,1,5,2,2,4}}}} \\
+                            13,2,2,2,0,0,13,
+                            1,1,1,5,2,2,13}}}} \\
     \end{split}
 \end{equation}
 The left and right zipper can now move towards each other, until they meet at the center. In order to become the same MPS as before the application to the MPO (\cref{algs:mpslayermpo}), one more condition is needed:
@@ -409,8 +409,8 @@ Then  \cref{algs:mpslayermpo} is solved:
                             "", "",
                             "-", "-",}}{{
                             4,4,4,4,4,4,4,
-                            4,0,0,0,0,0,4,
-                            4,2,2,7,3,3,4}} }}\\
+                            13,0,0,0,0,0,13,
+                            13,2,2,7,3,3,13}} }}\\
         &=       \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","Gl","","","Gr","",
@@ -423,7 +423,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,0,0,0,3,4,
+                            13,2,0,0,0,3,13,
                             1,5,2,7,8,1,4}}}} \\
         &=  \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
@@ -437,7 +437,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,2,0,3,3,4,
+                            13,2,2,0,3,3,13,
                             1,1,5,9,1,1,1}} }}\\
         &= \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
@@ -451,7 +451,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             "", "",
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
-                            4,2,2,7,3,3,4,
+                            13,2,2,7,3,3,13,
                             1,1,1,1,1,1,1}} }}
     \end{split}
 \end{equation}
@@ -477,8 +477,8 @@ The calculated environment can now be used to solve the original problem. Due to
                         "","",
                         "","",
                         "-","-"}}{{
-                        4,2,7,3,4,
-                        4,2,4,3,4,
+                        13,2,7,3,13,
+                        13,2,4,3,13,
                         1,5,9,1,1}} }}
 \end{equation}
 
