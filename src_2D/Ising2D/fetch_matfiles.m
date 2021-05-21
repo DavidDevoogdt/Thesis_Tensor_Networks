@@ -94,4 +94,12 @@ function [data, template] = fetch_matfiles(file_name, opts)
         end
     end
 
+    %complete incomplete files
+    
+    if ~isfield(data, 'free_var')
+        data.free_var = 'T';
+        data.fixed_var = 'g';
+        data.fixed_val = data.model_params.g;
+    end
+    
 end

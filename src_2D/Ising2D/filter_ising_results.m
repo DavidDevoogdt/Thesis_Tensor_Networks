@@ -9,9 +9,11 @@ function data = filter_ising_results(data, opts)
         opts.Tbound = [0, Inf];
     end
 
-    mask = (data.T > opts.Tbound(1)) & (data.T < opts.Tbound(2)) & (data.err < opts.tol) & (data.err ~= 0);
+    free_var = data.free_var;
+    
+    mask = (data.(free_var) > opts.Tbound(1)) & (data.(free_var) < opts.Tbound(2)) & (data.err < opts.tol) & (data.err ~= 0);
 
-    [~, idx] = sort(data. (data.free_var)(mask));
+    [~, idx] = sort(data.(free_var)(mask));
 
     for i = 1:numel(data.fields)
         nf = data.fields{i};

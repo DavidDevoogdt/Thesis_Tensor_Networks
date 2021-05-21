@@ -1,4 +1,4 @@
-function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
+function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
 
     if ~Fitparams.fitTc
         TC = initials(1);
@@ -26,7 +26,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
     out_data = struct();
     for i = 1:3
         Z = Fitparams.names{i};
-        out_data.(Z).temp = [];
+        out_data.(Z).(free_Var) = [];
         out_data.(Z).fl = [];
         out_data.(Z).fr = [];
         out_data.(Z).gl = [];
@@ -98,7 +98,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
         %do log
 
         %% make dimensionless quantities
-        t = all_data.T - Tc;
+        X_free = all_data.(free_Var) - Tc;
 
         omega = x(6);
         phi = x(8);
@@ -123,7 +123,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
             end
 
             data.(Zz).s_corr = 1 + s_c_1 * delta.^(omega / nu);
-            data.(Zz).temp = t .* delta.^(-1 / nu) - s_d_1 * delta.^(phi / nu);
+            data.(Zz).(free_Var) = X_free .* delta.^(-1 / nu) - s_d_1 * delta.^(phi / nu);
 
             switch Zz
                 case 'm'
@@ -138,24 +138,24 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
                 data.(Zz).f = exp(data.(Zz).f);
             end
 
-            data.(Zz).rtrange = max(data.(Zz).temp) - min(data.(Zz).temp);
+            data.(Zz).rtrange = max(data.(Zz).(free_Var)) - min(data.(Zz).(free_Var));
             data.(Zz).range = max(data.(Zz).f) - min(data.(Zz).f);
 
-            t2 = sort(data.(Zz).temp);
-            n = numel(data.(Zz).temp);
+            t2 = sort(data.(Zz).(free_Var));
+            n = numel(data.(Zz).(free_Var));
             data.(Zz).trange = t2(round(3/4 * n)) - t2(round(1/4 * n));
 
             data.(Zz).fr = data.(Zz).f / data.(Zz).range;
-            data.(Zz).tempr = data.(Zz).temp / data.(Zz).trange;
+            data.(Zz).free_Varr = data.(Zz).(free_Var) / data.(Zz).trange;
 
-            if isempty(out_data.(Zz).temp)
-                out_data.(Zz).tempr = data.(Zz).tempr;
+            if isempty(out_data.(Zz).(free_Var))
+                out_data.(Zz).free_Varr = data.(Zz).free_Varr;
             end
 
             if Fitparams.orthdist
-                [out_data.(Zz).tempr, data.(Zz).res] = DistanceToLine(data.(Zz).fit_f, data.(Zz).fit_df, x0, out_data.(Zz).tempr, data.(Zz).tempr, data.(Zz).fr);
+                [out_data.(Zz).free_Varr, data.(Zz).res] = DistanceToLine(data.(Zz).fit_f, data.(Zz).fit_df, x0, out_data.(Zz).free_Varr, data.(Zz).free_Varr, data.(Zz).fr);
             else
-                data.(Zz).res = data.(Zz).fr - data.(Zz).fit_f(data.(Zz).tempr);
+                data.(Zz).res = data.(Zz).fr - data.(Zz).fit_f(data.(Zz).free_Varr);
             end
 
             bounds = Fitparams.bounds.(Zz);
@@ -188,32 +188,32 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit)
             for ii = 1:3
                 Zz = Fitparams.names{ii};
 
-                tempr_sorted = sort(data.(Zz).tempr);
+                free_Varr_sorted = sort(data.(Zz).free_Varr);
                 f_sorted = sort(data.(Zz).f);
 
                 fact = 1.4;
 
-                xlr = [tempr_sorted(10), tempr_sorted(end - 10)] * fact;
+                xlr = [free_Varr_sorted(10), free_Varr_sorted(end - 10)] * fact;
                 xl = xlr * data.(Zz).trange;
                 yl = [f_sorted(10), f_sorted(end - 10)] * fact;
 
-                data.(Zz).temp_lin = linspace(xlr(1), xlr(2), 200)';
+                data.(Zz).free_Var_lin = linspace(xlr(1), xlr(2), 200)';
 
                 subplot(1, 3, ii)
                 hold off
 
                 if ~Fitparams.logplot(ii)
 
-                    plot(data.(Zz).temp(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
+                    plot(data.(Zz).(free_Var)(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
                     hold on
-                    plot(data.(Zz).temp(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
-                    plot(data.(Zz).temp_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.temp_lin)), '-g');
+                    plot(data.(Zz).(free_Var)(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
+                    plot(data.(Zz).free_Var_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.free_Var_lin)), '-g');
 
                 else
-                    semilogy(data.(Zz).temp(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
+                    semilogy(data.(Zz).(free_Var)(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
                     hold on
-                    semilogy(data.(Zz).temp(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
-                    semilogy(data.(Zz).temp_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.temp_lin)), '-g');
+                    semilogy(data.(Zz).(free_Var)(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
+                    semilogy(data.(Zz).free_Var_lin * data.(Zz).trange, (data.(Zz).range * data.(Zz).fit_f(data.m.free_Var_lin)), '-g');
 
                 end
                 hold off

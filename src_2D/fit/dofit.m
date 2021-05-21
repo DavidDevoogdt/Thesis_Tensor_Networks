@@ -2,54 +2,57 @@ clear all; format long; close all
 
 %% load data
 
-names = {{
-    'Ising2D_g=0.0000e+00_chi=8_08_April_2021_09:52';
-    'Ising2D_g=0.0000e+00_chi=11_08_April_2021_10:11';
-    'Ising2D_g=0.0000e+00_chi=16_08_April_2021_10:43';
-    'Ising2D_g=0.0000e+00_chi=23_08_April_2021_11:50';
-    'Ising2D_g=0.0000e+00_chi=32_08_April_2021_14:41';
-    'Ising2D_g=0.0000e+00_chi=45_08_April_2021_18:59';
-    'Ising2D_g=0.0000e+00_chi=64_09_April_2021_05:59';
-    'Ising2D_g=0.0000e+00_chi=91_11_April_2021_18:25';
-    'Ising2D_g=0.0000e+00_chi=128_16_April_2021_16:04';
-    }, {
-    'Ising2D_g=1.5000e+00_chi=8_08_April_2021_10:15';
-    'Ising2D_g=1.5000e+00_chi=11_08_April_2021_10:28';
-    'Ising2D_g=1.5000e+00_chi=16_08_April_2021_10:48';
-    'Ising2D_g=1.5000e+00_chi=23_08_April_2021_11:29';
-    'Ising2D_g=1.5000e+00_chi=32_08_April_2021_12:19';
-    'Ising2D_g=1.5000e+00_chi=45_08_April_2021_16:50';
-    'Ising2D_g=1.5000e+00_chi=64_09_April_2021_04:35';
-    'Ising2D_g=1.5000e+00_chi=91_10_April_2021_20:23';
-    'Ising2D_g=1.5000e+00_chi=128_13_April_2021_18:47';
-    }, {
-    'Ising2D_g=2.5000e+00_chi=8_08_April_2021_09:52';
-    'Ising2D_g=2.5000e+00_chi=11_08_April_2021_10:02';
-    'Ising2D_g=2.5000e+00_chi=16_08_April_2021_10:17';
-    'Ising2D_g=2.5000e+00_chi=23_08_April_2021_10:52';
-    'Ising2D_g=2.5000e+00_chi=32_08_April_2021_12:39';
-    'Ising2D_g=2.5000e+00_chi=45_08_April_2021_17:46';
-    'Ising2D_g=2.5000e+00_chi=64_09_April_2021_05:52';
-    'Ising2D_g=2.5000e+00_chi=91_10_April_2021_23:23';
-    'Ising2D_g=2.5000e+00_chi=128_14_April_2021_21:21';
-    }, {
-    'Ising2D_g=2.9000e+00_chi=8_08_April_2021_09:52';
-    'Ising2D_g=2.9000e+00_chi=11_08_April_2021_10:03';
-    'Ising2D_g=2.9000e+00_chi=16_08_April_2021_10:06';
-    }, {
-%'Ising2D_g=2.5000e+00_chi=4_15_May_2021_16:47';
-    'Ising2D_g=2.5000e+00_chi=8_15_May_2021_16:47';
-    'Ising2D_g=2.5000e+00_chi=12_15_May_2021_16:47';
-    'Ising2D_g=2.5000e+00_chi=16_15_May_2021_17:14';
-    'Ising2D_g=2.5000e+00_chi=32_15_May_2021_18:46'; }};
+% names = {{
+%     'Ising2D_g=0.0000e+00_chi=8_08_April_2021_09:52';
+%     'Ising2D_g=0.0000e+00_chi=11_08_April_2021_10:11';
+%     'Ising2D_g=0.0000e+00_chi=16_08_April_2021_10:43';
+%     'Ising2D_g=0.0000e+00_chi=23_08_April_2021_11:50';
+%     'Ising2D_g=0.0000e+00_chi=32_08_April_2021_14:41';
+%     'Ising2D_g=0.0000e+00_chi=45_08_April_2021_18:59';
+%     'Ising2D_g=0.0000e+00_chi=64_09_April_2021_05:59';
+%     'Ising2D_g=0.0000e+00_chi=91_11_April_2021_18:25';
+%     'Ising2D_g=0.0000e+00_chi=128_16_April_2021_16:04';
+%     }, {
+%     'Ising2D_g=1.5000e+00_chi=8_08_April_2021_10:15';
+%     'Ising2D_g=1.5000e+00_chi=11_08_April_2021_10:28';
+%     'Ising2D_g=1.5000e+00_chi=16_08_April_2021_10:48';
+%     'Ising2D_g=1.5000e+00_chi=23_08_April_2021_11:29';
+%     'Ising2D_g=1.5000e+00_chi=32_08_April_2021_12:19';
+%     'Ising2D_g=1.5000e+00_chi=45_08_April_2021_16:50';
+%     'Ising2D_g=1.5000e+00_chi=64_09_April_2021_04:35';
+%     'Ising2D_g=1.5000e+00_chi=91_10_April_2021_20:23';
+%     'Ising2D_g=1.5000e+00_chi=128_13_April_2021_18:47';
+%     }, {
+%     'Ising2D_g=2.5000e+00_chi=8_08_April_2021_09:52';
+%     'Ising2D_g=2.5000e+00_chi=11_08_April_2021_10:02';
+%     'Ising2D_g=2.5000e+00_chi=16_08_April_2021_10:17';
+%     'Ising2D_g=2.5000e+00_chi=23_08_April_2021_10:52';
+%     'Ising2D_g=2.5000e+00_chi=32_08_April_2021_12:39';
+%     'Ising2D_g=2.5000e+00_chi=45_08_April_2021_17:46';
+%     'Ising2D_g=2.5000e+00_chi=64_09_April_2021_05:52';
+%     'Ising2D_g=2.5000e+00_chi=91_10_April_2021_23:23';
+%     'Ising2D_g=2.5000e+00_chi=128_14_April_2021_21:21';
+%     }, {
+%     'Ising2D_g=2.9000e+00_chi=8_08_April_2021_09:52';
+%     'Ising2D_g=2.9000e+00_chi=11_08_April_2021_10:03';
+%     'Ising2D_g=2.9000e+00_chi=16_08_April_2021_10:06';
+%     }, {
+% %'Ising2D_g=2.5000e+00_chi=4_15_May_2021_16:47';
+%     'Ising2D_g=2.5000e+00_chi=8_15_May_2021_16:47';
+%     'Ising2D_g=2.5000e+00_chi=12_15_May_2021_16:47';
+%     'Ising2D_g=2.5000e+00_chi=16_15_May_2021_17:14';
+%     'Ising2D_g=2.5000e+00_chi=32_15_May_2021_18:46'; }};
+% 
+% T_c_arr = [2 / log(1 + sqrt(2)), 1.980, 1.2737, 0.9, 1.2737];
 
-T_c_arr = [2 / log(1 + sqrt(2)), 1.980, 1.2737, 0.9, 1.2737];
+[names, T_c_arr] = ising_names(3);
+
 
 T_c_noise = rand * 0.01;
 
-T_range = 0.08;
+T_range = 1;
 
-select = 5;
+select = 1;
 Tc = T_c_arr(select);
 names = names{select};
 
@@ -58,7 +61,7 @@ all_data = struct();
 %all_data.delta = [];
 all_data.m = [];
 all_data.S = [];
-all_data.T = [];
+%all_data.T = [];
 all_data.xi = [];
 all_data.eps_i = [];
 
@@ -66,10 +69,17 @@ for i = 1:numel(names)
     data = fetch_matfiles(names{i}, struct);
     data = filter_ising_results(data, struct('Tbound', [Tc - T_range, Tc + T_range]));
 
+    free_Var = data.free_var;
+    
+    if i == 1 
+        all_data.(free_Var) = [];
+    end
+    
+    
     all_data.eps_i = [all_data.eps_i; data.eps_i];
     all_data.m = [all_data.m; data.m];
     all_data.S = [all_data.S; data.S];
-    all_data.T = [all_data.T; data.T];
+    all_data.(free_Var) = [all_data.(free_Var); data.(free_Var)];
     all_data.xi = [all_data.xi; real(1 ./ data.inv_corr_length)];
 end
 
@@ -96,7 +106,7 @@ Fitparams = struct();
 Fitparams.fitTc = 1;
 Fitparams.fitexp = 0;
 Fitparams.orthdist = 1;
-Fitparams.subleading = 1; %https://arxiv.org/pdf/cond-mat/0505194.pdf
+Fitparams.subleading = 0; %https://arxiv.org/pdf/cond-mat/0505194.pdf
 Fitparams.doFit = [1, 1, 1];
 Fitparams.names = {'m', 'xi', 'S'};
 Fitparams.logplot = [0, 0, 0];
@@ -156,7 +166,7 @@ while true
             param2 = Param;
             param2(17:end) = Param(17:end) .* (1 + 1e-3 * randn(size(param(17:end)))) + 1e-5 * randn(size(param(17:end)));
             %try
-            [param2, error] = fitt(all_data, fitparams, param2, 50);
+            [param2, error] = fitt(all_data, fitparams, param2, 50,free_Var);
             %catch
             %    error = t_err + 1;
             %end
@@ -170,7 +180,7 @@ while true
         error = t_err;
     else
         try
-            [param, error] = fitt(all_data, fitparams, param, 20);
+            [param, error] = fitt(all_data, fitparams, param, 20,free_Var);
         catch
             error = Er + 1;
         end

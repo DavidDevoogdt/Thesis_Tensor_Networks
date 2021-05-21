@@ -1,6 +1,6 @@
 function test
     compare_models(["t_ising","Heisenberg_2D"],  10.^(-3:0.1:1.5) , [2], [4,5]  )
-    %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [7,8,9,10] );
+    %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
 end
 
@@ -164,6 +164,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
         model = models(simulatiemodellen(round), struct);
 
         opts.order = 5;
+        opts.testing=1;
 
         simul.types = [2, 3];
 
