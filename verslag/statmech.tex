@@ -42,12 +42,46 @@ In the following section I will give a very short review of the current tensor n
 % https://arxiv.org/pdf/1901.05824.pdf
 
 \subsubsection{Approximations to  \texorpdfstring{$ \hat{U}(\delta)$}{U}   }
+The goal is to approximately make a MPO for a small timestep $\delta$ which gives a new MPS at time $t+\delta$.
+\paragraph{TEBD}
+Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
+\begin{equation}
+  \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
+\end{equation}
 
-TEBD, MPO $W^{I,II}$
+\begin{equation}
+  \begin{split}
+    \hat{U} = e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }e^{-i \delta \left[ \hat{H}_{\text{even}}, \hat{H}_{\text{odd}} \right] }\\
+    \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
+  \end{split}
+\end{equation}
+This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and aftwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalized to higher order schemes.
+
+\paragraph{ MPO $W^{I,II}$}
+These method directly use the MPO representation of a certain hamiltonian
+\todo{MPO w1 and 2}
+%https://tensornetwork.org/mps/algorithms/timeevo/
+This is a more recent method (2015) to construct an MPO first detailed in \cite{Zaletel2015}. The idea is to generalise
+\begin{equation}
+  1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
+\end{equation}
+The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lays in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^II$ are capeble of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cref{Paeckel2019}
 
 \subsubsection{global Krylov method }
 
-\subsubsection{MPS-local methods }
-local Krylov
-TDVP
+Krylov methods are widely used in linear algebra to calculate eigenvectors. An example is the Lanczos algorithm. These methods are applied to MPS's, but do not fully make use of its structure. For this method, only a MPO representation is needed.
 
+\todo{expand on this}
+
+\subsubsection{MPS-local methods }
+
+\paragraph{local Krylov}
+The krylov methods from previous pragraph can be adapted to work on a reduced basis.
+
+\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further developement of the local krylov method.
+
+Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}).
+\begin{equation}
+  i \frac{\partial \ket{ \Psi( A ) }}{\partial t} = \mathcal{P_{ A( t )} } H  \ket{ \Psi( A ) }
+\end{equation}
+Where the richt hand side is projected on the tanget space, because the left hand side is a also a tangent vector. (See \cite{Vanderstraeten2019}).
