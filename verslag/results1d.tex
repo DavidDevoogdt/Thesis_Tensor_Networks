@@ -5,10 +5,12 @@ In this section the results of the MPO construction detailed in
 The performance of the MPO construction can be compared with the exact diagonalisation of the hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory.A Rough estimated of the amount of RAM $R$ needed to store this complex array is:
 
 \begin{equation}
-    R = d^{2 n} \times 16 bytes
+  R = d^{2 n} \times 16 bytes
 \end{equation}
 
 Which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.
+
+State of the art algoritm for exact diagonalisation, which include all symmetries and are optimased for parallelsation, can calculate up to 50 sites. \cite{Wietek2018}
 
 \subsubsection{norms} \label{mponormdef}
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }
@@ -19,7 +21,7 @@ Which means a 14 site chain already takes up more than 4 GB of RAM. The complexi
 The schatten 2 norm is used in the following analysis, dentoted by ${\| \cdot \|} _{2}$. In the figures the relative error $\epsilon$ is reported.
 
 \begin{equation}
-    \epsilon = \frac{  {  \left \|  \expHBlock - \Mn  \right \|} _{2}  }{ {  \left\|  \expHBlock \right \|}_2}
+  \epsilon = \frac{  {  \left \|  \expHBlock - \Mn  \right \|} _{2}  }{ {  \left\|  \expHBlock \right \|}_2}
 \end{equation}
 
 This norm can only be calculated for a finite number of sites. The influence of the number of sites for a linear  and cyclic \cref{benchmarking:systemsize}. As expected, the cyclic norm represents large systems better for the same number of sites. The linear norm keeps increasing with every added site.
@@ -27,16 +29,16 @@ This norm can only be calculated for a finite number of sites. The influence of 
 Calculating the cyclic norm comes at the extra cost of contracting a cyclic tensor network. In this chapter, the cyclic norm will be given for M=8 sites.
 
 \begin{figure}
-    \begin{subfigure}[]{\linewidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/comp_M_cycl.pdf}
-        \subcaption{Cyclic error}
-    \end{subfigure}
-    \begin{subfigure}[]{\linewidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/Comp_M_lin.pdf}
-        \subcaption{Linear error}
-    \end{subfigure}
-    \caption{ Different error measures for 1D transversal Ising model }
-    \label{benchmarking:systemsize}
+  \begin{subfigure}[]{\linewidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/comp_M_cycl.pdf}
+    \subcaption{Cyclic error}
+  \end{subfigure}
+  \begin{subfigure}[]{\linewidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/Comp_M_lin.pdf}
+    \subcaption{Linear error}
+  \end{subfigure}
+  \caption{ Different error measures for 1D transversal Ising model }
+  \label{benchmarking:systemsize}
 \end{figure}
 
 \subsection{Inversion procedure}
@@ -46,10 +48,10 @@ Calculating the cyclic norm comes at the extra cost of contracting a cyclic tens
 The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for transversal Ising models is shown in \cref{benc:fig:fullinv} . The pseudoinversion has 1 parameter $\sigma_0$, the cutoff below which the sinular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising_full_inverse.pdf }
-    \caption{Error for transversal Ising, computed with full inversion }
-    \label{benc:fig:fullinv}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising_full_inverse.pdf }
+  \caption{Error for transversal Ising, computed with full inversion }
+  \label{benc:fig:fullinv}
 \end{figure}
 
 \paragraph{Truncation}
@@ -67,10 +69,10 @@ The results for the different types are all bundled in \cref{fig:benchmark:tisin
 Now lets focus on the 2 other variants. Type A clearly outperforms type F for all $\beta<2$ by quite some margin. Only for large $\beta$, type F has the upper hand. While not completely clear in the picture, type A has quite a large error for some orders at $\beta \in (2,10) $, but higher orders seems to solve the problem. The construction of type F requires twice the bond dimension, and hence type A performs clearly better overal
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising.pdf}
-    \caption{Comparison type A, E and F for Transversal Ising. }
-    \label{fig:benchmark:tising}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising.pdf}
+  \caption{Comparison type A, E and F for Transversal Ising. }
+  \label{fig:benchmark:tising}
 \end{figure}
 
 \subsubsection{Heisenberg}
@@ -78,10 +80,10 @@ Now lets focus on the 2 other variants. Type A clearly outperforms type F for al
 Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again displayd in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have an divergent error.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_heis_XXX.pdf}
-    \caption{Comparison type A, E and F for Heisenberg model.}
-    \label{fig:benchmark:tHeisenberg}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_heis_XXX.pdf}
+  \caption{Comparison type A, E and F for Heisenberg model.}
+  \label{fig:benchmark:tHeisenberg}
 \end{figure}
 
 \subsubsection{Random}
@@ -130,8 +132,8 @@ To give a representative overview for random hamiltonians, several simulations w
 \subsection{Conclusion}
 
 \begin{itemize}
-    \item strict variant are useless \todo{write  this}
-    \item full smmetry is not needed
-    \item pseudoinverse neccesary
-    \item Type A is the best
+  \item strict variant are useless \todo{write  this}
+  \item full smmetry is not needed
+  \item pseudoinverse neccesary
+  \item Type A is the best
 \end{itemize}

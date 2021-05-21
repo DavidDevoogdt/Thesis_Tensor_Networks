@@ -92,15 +92,144 @@ The plaquette term (\cref{tikzfig:plaquette}) is mainly important at low $\beta$
 
 \subsubsection{Conclusion}
 
-\subsection{Phaese diagram 2D transveral Ising model}
+\subsection{Phase diagram 2D transveral Ising model}
 
 Now we have an idea how accurate the cluster expansions is, we can use it to calculate the thermodynamic properties of the transvere field Ising model. The sampling of points was explained in \cref{sec:phase_diag}
 
+As a reference, \cref{2dtisingphasediag} is shown once more
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
+    \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}}
+    \label{2dtisingphasediag2}
+\end{figure}
+
 \subsubsection{classical Ising phase transition}
-The classical ising model on a square lattice has an exact solution. Onsager calculated the critical temperature to be $T_c = \frac{2 J}{k \ln(1+\sqrt{2}) }$. A test for the construction is to simulate this and compare the fitted (see \cref{subsec:qphasediag} ) results.
+The classical ising model on a square lattice has an exact solution. Onsager calculated the critical temperature to be $T_c = \frac{2 J}{k \ln(1+\sqrt{2}) } \approx 2.69185$. A test for the construction is to simulate this and compare the fitted (see \cref{subsec:qphasediag} ) results.
+
+At the relevant temperature, an order 5 series expansion without loops is sufficient. This keeps the bond dimension small and hence the environment can be computed faster with VUMPS.
+
+The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. Left upper corner shows m vs T. For low T, there is clearly a nonzero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is marek gap, a measure for the system size as explained in \cref{subsec:fss}.
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phasediag/g0/Full.pdf}
+    \caption{  }
+    \label{fig:phase:g0:full}
+\end{figure}
+
+Near criticality they collapse well, but away from the critical point there is quite some systematic variation. The reason is shown in \cref{fig:crit:qtran}. Only in some limited range around the critiacal region, the universal scaling holds.
+
+A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly. the data collapses a lot better as expected.
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
+    \caption{  }
+    \label{fig:phase:g0:zoomed}
+\end{figure}
+In fact, the data collapses so well we could determine the the critical exponents and the temperature with the given data.
+
+\todo{provide numbers for fit}
 
 \subsubsection{g=2.5 phase transition }
 
+The previous example simulated the classical 2D ising model. The question is whether this result will carry on into the quantum regime.The results for the full phase diagram \cref{fig:phase:g25:full} and or points in direct neighbourhood of the phase transition \cref{fig:phase:g25:zoomed} are similar to the 1D case.
+
+Of course, quantitive details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite size scaling.
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phasediag/g25/Full.pdf}
+    \caption{  }
+    \label{fig:phase:g25:full}
+\end{figure}
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
+    \caption{  }
+    \label{fig:phase:g25:zoomed}
+\end{figure}
+
+There is no analytical expression for critical temperature known. With quantum monte carlo techniques, a value of $T_c=1.2737(6)$ is obtained, while state of the art tensor network techniques provide a value of $T_c=1.2737(2)$ \cite{Czarnik2019}
+
+With the series expansion from this paper and Vumps, $T_c=1.2736(6)$, indicating that this faithfully captures the physics. To put his into context: the directly calculated error $\epsilon^{2}$  at $T=1.2$ was around $0.006$.
+
+\subsubsection{Higher order expansions }
+With all the built machinery to construct cluster expansions, is is logical to calculate the phase diagram with increased precision.
+
+\paragraph{loops and extensions}
+Adding loops decreases the error. but there is also a surprising result: all possible loop extensions result in a higher error. The fluctuation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
+The question is wether this is a result of a failing cluster expansion, or inability VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely build from scratch and errors happen, and there is no guarantee that the series even converges. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a':
+\begin{equation}
+    \vcenter{ \hbox{  \pepob{5}{3}{{
+                        "-","-","-","-",
+                        "-","a","$\alpha$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "-","$\alpha$",
+                        "-","$\alpha$",
+                        "-","-"}}{{
+                        1,1,1,1,1,
+                        1,0,0,0,1,
+                        1,1,0,0,1}} }} \\
+    \vcenter{ \hbox{  \pepob{5}{3}{{
+                        "-","-","-","-",
+                        "-","0","$\alpha$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "a'","$\alpha$",
+                        "-","$\alpha$",
+                        "-","-"}}{{
+                        1,1,0,1,1,
+                        1,1,0,0,1,
+                        1,1,0,0,1}} }}
+\end{equation}
+Introduce these variations.
+
+The VUMPS producedure come with 2 implicit assumptions: the original version was derived for hermitian hamiltonians. The MPO resulting from the traced PEPO  from the culster expansion is not an hermition MPO.
+
+A second assumption made during this thesis is that the wave function can be represented by a 1by1 unit cell. Despite efforts made, the multisite version \cite{Nietner2020} doesn't seem to produce sensible results, even for version where 1by1 unit cell does give the right results.
+
+It's clear that more research is needed here. One way to locate the problem would be to use another algorithm to contract the network, such as corner transfer matrix renormalization group (CTMRG) as used in  cite{Czarnik2019}, or even using the single site VUMPS algorithm combined with blocking:
+
+\begin{equation}
+    \vcenter{ \hbox{  \pepob{4}{4}{{
+                        "","-","",
+                        "","","",
+                        "","","",
+                        "","-","",}}{{
+                        "","-","",
+                        "","","",
+                        "","","",
+                        "","-","",}}{{
+                        1,4,4,1,
+                        4,0,0,4,
+                        4,0,0,4,
+                        1,4,4,1}} }} \cong  \vcenter{ \hbox{  \pepob{3}{3}{{
+                        "","",
+                        "","",
+                        "","",}}{{
+                        "","","",
+                        "","","",}}{{
+                        1,4,1,
+                        4,0,4,
+                        1,4,1}} }}
+\end{equation}
+
+\todo{complex matrices instead of real ones??}
+
+\paragraph{Higher order}
+
+Going to higher order (i.e. longer linear chains) and adding the single loop contribution works well. The bond dimension of largest virtual level (3 in this case) can be truncated in the construction. The linear and non-linear solver find the least squares solution to the problems.
+
 \subsubsection{ T=1 quantum phase transition }
+
+Up untill now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g. This comes with a new critical exponent. T = 1 is chosen because an error in the construction is about 1\%. Lower T would mean the results are not as reliable.
+
+\todo{this}
 
 \subsubsection{Tricritical point }
