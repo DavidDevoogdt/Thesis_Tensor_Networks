@@ -159,16 +159,23 @@ where the physical indices need to be contracted with the corresponding indices 
 
 Some calcalations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
-
 \subsection{Profiling}
 
 \todo{profiling}
 
 \section{Calculating phase diagrams} \label{sec:phase_diag}
 
+This section details how the phase diagrams are calculated, stored and the critical parameters fitted. The results are discussed in \cref{subsec:2dpahsediag}
+
 \subsection{Points sampling}
 
+This concens the problem which temperatures to select to calculate the the phase diagram. As  the transition between 2 phases is sharp, an uniform sampling in T is not the best option. A very fine grid is needed to capture the transition well, requiring high computation times.
+The sampling starts by calculating the magnetisation for N  uniformly sample points between 2 temperatures. These calculations are performed in parallel on a multicore server. When they are all finished (or have run for a maximum amount of iterations), all the arch lengths are calculated, and repeatedly a new T point is inserted in the largest interval until N new points are selected. The arch length in the m-T plan can be changed to require more points in the m direction than T direction.
+
 \subsection{Storing the information}
+
+Each run has a template with all the common model info. For each point 2 files are stored. One file contains the info and results, such as temperature, magnetisation, correlation length, etc. The other file is much larger and contains the PEPO tensor, the calculated vumps environments,\dots
+The files of the first kind are used in other calculations, such as fitting procedure.  Reassembling the files into one structure happens in a central function. Another function is able to reprocess already calculated points. The sampling can be continued from where is was last stopped.
 
 \subsection{Fitting}\label{subsec:qphasediag}
 

@@ -33,7 +33,7 @@ The following table defines some of the critical exponents for the Ising system.
     \end{tabular}
 \end{table}
 
-The 2 point correlation function is defined as $ f( x,y) =  \left < m(x) m(y) \right > -  \left<m(x) \right> \left<m(y) \right> $. At larger distances this decays exponentially fast (see \cref{crt:cft} ) $ f(  x,y ) = e^{ -\frac{ |x-y|}{ \xi} } $, where $\xi$ is the correlation length.
+The 2 point correlation function is defined as $ f( x,y) =  \left < m(x) m(y) \right > -  \left<m(x) \right> \left<m(y) \right> $. At larger distances this decays exponentially fast (see \cref{crit:cft} ) $ f(  x,y ) = e^{ -\frac{ |x-y|}{ \xi} } $, where $\xi$ is the correlation length.
 
 for the ordered phase, the following relations hold: $m ~ |t|^{\beta} $ , $\xi(t) \approx |t|^{-\nu} $. At the critical temperature near a quantum phase transition  $ m \approx |g-g_c|^{\frac{1}{\delta}} $.
 
@@ -72,7 +72,19 @@ Indeed, this reduces to \cref{eq:fssansatz} for sufficient large L. Because ther
 
 \subsection{CFT}\label{crit:cft}
 
-\todo{central charge}
+One of the tools to derive some properties of phase transitions is Conformal Field Theory (CFT). CFT is a quantum field theory, which obeys an additional rule: the physics remains invariant under a conformal transformation. The exact form of these transformation is:
+\begin{equation}
+    g'_{\mu \nu}(x') = \Lambda(x) g_{\mu \nu}(x)
+\end{equation}
+
+In 2D, the shape of the correlation functions can be determined exactly, and indeed correspond to the form from previous section.
+
+One of the properties characterising a conformal field theory is the central charge $c$, which can only take a discrete number of values.  In the case of unitary systems with $c \leq  1$, this has  turned out to give a complete classification of possible two dimensional critical behavior. \cite{Ginsparg1988}
+
+For the 2D Ising model, the central charge is $c=1/2$. A scaling relation used in the results chapter is \cite{Calabrese}
+\begin{equation}
+    L e^{  6 S( T,L ) /c }  \sim   \xi
+\end{equation}
 
 \subsection{Quantum phase transitions}
 
@@ -85,6 +97,3 @@ A traditional 2nd order phase transition is driven by a change in temperature. Q
     \label{fig:crit:qtran}
 \end{figure}
 
-\subsection{Quantum to classical mapping}
-
-\todo{Quantum to classical mapping}
