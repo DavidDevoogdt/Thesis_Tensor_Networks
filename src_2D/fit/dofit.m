@@ -45,12 +45,12 @@ clear all; format long; close all
 % 
 % T_c_arr = [2 / log(1 + sqrt(2)), 1.980, 1.2737, 0.9, 1.2737];
 
-[names, T_c_arr] = ising_names(3);
+[names, T_c_arr] = ising_names(4);
 
 
 T_c_noise = rand * 0.01;
 
-T_range = 1;
+T_range = 0.08;
 
 select = 1;
 Tc = T_c_arr(select);
@@ -70,12 +70,11 @@ for i = 1:numel(names)
     data = filter_ising_results(data, struct('Tbound', [Tc - T_range, Tc + T_range]));
 
     free_Var = data.free_var;
-    
+  
     if i == 1 
         all_data.(free_Var) = [];
     end
-    
-    
+
     all_data.eps_i = [all_data.eps_i; data.eps_i];
     all_data.m = [all_data.m; data.m];
     all_data.S = [all_data.S; data.S];
@@ -84,8 +83,6 @@ for i = 1:numel(names)
 end
 
 %% initialise
-%Tc = 2 / log(1 + sqrt(2)); nu = 1; beta = 1/8; c = 1/2;
-
 nu = 1; beta = 1/8; c = 1/2;
 
 %universal
@@ -112,7 +109,7 @@ Fitparams.names = {'m', 'xi', 'S'};
 Fitparams.logplot = [0, 0, 0];
 Fitparams.logfit = [0, 1, 1];
 Fitparams.truncate = 1;
-Fitparams.dodelta = 0;
+Fitparams.dodelta = 1;
 Fitparams.Delta_fun = @eps_to_delta;
 
 Fitparams.m.xlabel = '(T-T_c)\delta^{-1/\nu}';
@@ -151,6 +148,20 @@ param(1) = Tc + T_c_noise; param(2) = nu; param(3) = beta; param(4) = c;
 param(5:16) = zeros(12, 1);
 param(6:2:16) = 1;
 
+%
+fixed_params = struct;
+
+if ~Fitparams.fitTc
+    fixed_params.TC = param(1);
+end
+if ~Fitparams.fitexp
+    fixed_params.NU = param(2);
+    fixed_params.BETA = param(3);
+    fixed_params.C = param(4);
+end
+
+
+
 ctr = 1;
 % iterate until restarts don't cause improvements anymore
 Er = inf; Param = param; tt = tic; tic;
@@ -166,7 +177,7 @@ while true
             param2 = Param;
             param2(17:end) = Param(17:end) .* (1 + 1e-3 * randn(size(param(17:end)))) + 1e-5 * randn(size(param(17:end)));
             %try
-            [param2, error] = fitt(all_data, fitparams, param2, 50,free_Var);
+            [param2, error] = fitt(all_data, fitparams, param2, 50,free_Var,fixed_params);
             %catch
             %    error = t_err + 1;
             %end
@@ -180,42 +191,33 @@ while true
         error = t_err;
     else
         try
-            [param, error] = fitt(all_data, fitparams, param, 20,free_Var);
+            [param, error] = fitt(all_data, fitparams, param, 20,free_Var,fixed_params);
         catch
             error = Er + 1;
         end
     end
 
     if error < Er
-        display(['error: ', num2str(error), ' , critical point: ', num2str(param(1), 10), ' , TC: ', num2str(Tc, 100)])
-        display(['nu: ', num2str(param(2), 10), ', NU: ', num2str(nu, 10), ', beta: ', num2str(param(3), 10), ', BETA: ', num2str(beta, 10)])
+        
+        [x0,data,Tcf,nuf,betaf,cf,ci] =  read_params(param,Fitparams,fixed_params);
+        
+        fprintf("err  %.4e \n", error);
+        fprintf("Tc   %.7f (%.7f)\n", Tcf, Tc);
+        fprintf("beta %.5f (%.2f)\n", betaf, beta);
+        fprintf("nu   %.5f (%.1f)\n", nuf, nu);
+        fprintf("c    %.5f (%.1f)\n", cf, c);
+        
         if fitparams.subleading == 1
-            s_omega = param(6); s_phi = param(8);
-
-            fprintf("subleading:  omega %.2f  phi %.2f\n", s_omega, s_phi);
+            fprintf("subleading  m:  omega %.3f  phi %.3f\n", data.m.params(2), data.m.params(4));
+            fprintf("subleading  S:  omega %.3f  phi %.3f\n", data.S.params(2), data.S.params(4));
+            fprintf("subleading xi:  omega %.3f  phi %.3f\n", data.xi.params(2), data.xi.params(4));
         end
 
         Param = param; Er = error;
         disp(' ')
     end
 
-    if toc > 60 * 60 * 3
-        break
-    end
-    %if rand(1) < 0.2
     param = Param .* (1 + 1e-3 * randn(size(param))) + 1e-4 * randn(size(param));
-    %else
-    %    param = param .* (1 + 1e-4 * randn(size(param))) + 1e-5 * randn(size(param));
-    %end
-
-    %param = param .* (1 + 1e-4 * randn(size(param))) + 1e-4 * randn(size(param));
-
-    if ~Fitparams.fitTc
-        param(1) = Tc;
-    end
-    if ~Fitparams.fitexp
-        param(2) = nu; param(3) = beta; param(4) = c;
-    end
 
     fitparams = Fitparams;
 
@@ -228,11 +230,20 @@ end
 
 function delta = eps_to_delta(eps_i, c_i)
 
-    if nargin < 2
-        %c_i = [-1/3,-1/2,-1,1,1/2,1/3]/(2*sum(1+1/2+1/3));
-        c_i = [-1, 1] / 2;
+    ff= 0;
+
+    if nargin < 2 
+        ff=1;
+    else
+        if isempty(c_i)
+            ff=1;
+        end
     end
 
+    if ff==1
+       c_i = [-1, 1] / 2; 
+    end
+    
     delta = zeros(size(eps_i, 1), 1);
 
     for j = 1:numel(c_i)

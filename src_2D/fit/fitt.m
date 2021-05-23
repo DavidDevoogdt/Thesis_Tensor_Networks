@@ -1,13 +1,4 @@
-function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
-
-    if ~Fitparams.fitTc
-        TC = initials(1);
-    end
-    if ~Fitparams.fitexp
-        NU = initials(2);
-        BETA = initials(3);
-        C = initials(4);
-    end
+function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,fixed_params)
 
     options = optimoptions('lsqnonlin', 'Display', 'iter');
     options.FunctionTolerance = 1e-12;
@@ -15,6 +6,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
     options.StepTolerance = 1e-12;
     options.MaxFunctionEvaluations = 1e8;
     options.MaxIterations = maxit;
+    
     if Fitparams.fitTc
         options.Display = 'iter';
     else
@@ -33,91 +25,50 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
         out_data.(Z).gr = [];
     end
 
-    teller = 0; fun(initials);
+    teller = 0;
+    
+    
     [param, resnorm, residual, exitflag, output] = lsqnonlin(@(x)fun(x), initials, [], [], options);
-    param = real(param);
-
-    if ~Fitparams.fitTc
-        param(1) = TC;
-    end
-    if ~Fitparams.fitexp
-        param(2) = NU;
-        param(3) = BETA;
-        param(4) = C;
-    end
-
-    teller = numel(param);
-    fun(param);
 
     function res = fun(x)
-        x = real(x);
+       
         teller = teller + 1;
 
-        if Fitparams.fitTc
-            Tc = x(1);
-        else
-            Tc = TC;
-        end
-
-        if Fitparams.fitexp
-            nu = x(2); beta = x(3); c = x(4);
-        else
-            nu = NU; beta = BETA; c = C;
-        end
-
-        data = struct();
-
-        %% read out params
-        x0 = x(5 + 12);
-
-        data.m.sfunparam = x(12 + 6:12 + 9 + 8 * Fitparams.m.N);
-        data.xi.sfunparam = x(12 + 6 + 8 * Fitparams.m.N:12 + 9 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N);
-        data.S.sfunparam = x(6 + 12 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N:9 + 12 + 8 * Fitparams.m.N + 8 * Fitparams.xi.N + 8 * Fitparams.S.N);
-
-        data.m.params = x(5:8);
-        data.xi.params = x(9:12);
-        data.S.params = x(13:16);
-
-        if Fitparams.dodelta == 1
-
-            ci = x(end - 5:end);
-            ci = [ci, -sum(ci)];
-
-            ci = ci / sum(abs(ci));
-
-            delta = Fitparams.Delta_fun(all_data.eps_i, ci);
-        else
-            delta = Fitparams.Delta_fun(all_data.eps_i);
-        end
+        [x0,data,Tc,nu,beta,c,ci] =  read_params(x,Fitparams,fixed_params);
+        
+        delta = Fitparams.Delta_fun( all_data.eps_i, ci);
 
         %% make scaling functions and derivatives of scaling functions
         [data.m.fit_f, data.m.fit_df, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr] = ScalingFunction(1, 1, x0, beta / nu, data.m.sfunparam, Fitparams.m.N, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr);
         [data.xi.fit_f, data.xi.fit_df, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.xi.sfunparam, Fitparams.xi.N, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr);
         [data.S.fit_f, data.S.fit_df, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.S.sfunparam, Fitparams.S.N, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr);
 
-        %do log
 
         %% make dimensionless quantities
         X_free = all_data.(free_Var) - Tc;
-
-        omega = x(6);
-        phi = x(8);
 
         res = [];
         mask = [];
 
         for ii = 1:3
+            %Zz = m,S or xi
             Zz = Fitparams.names{ii};
 
+            %define fit func
             if Fitparams.logfit(ii)
                 data.(Zz).fit_df = @(x)data.(Zz).fit_df(x) ./ data.(Zz).fit_f(x);
                 data.(Zz).fit_f = @(x)log(data.(Zz).fit_f(x));
             end
 
+            %get finite size scaling factors, and function values
             if ~Fitparams.subleading
+                omega = 0;
+                phi = 0;
                 s_c_1 = 0;
                 s_d_1 = 0;
             else
+                omega = data.(Zz).params(2);
+                phi = data.(Zz).params(4);
                 s_c_1 = data.(Zz).params(1);
                 s_d_1 = data.(Zz).params(3);
             end
@@ -138,6 +89,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
                 data.(Zz).f = exp(data.(Zz).f);
             end
 
+            %normalise data before fitting
             data.(Zz).rtrange = max(data.(Zz).(free_Var)) - min(data.(Zz).(free_Var));
             data.(Zz).range = max(data.(Zz).f) - min(data.(Zz).f);
 
@@ -152,14 +104,15 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
                 out_data.(Zz).free_Varr = data.(Zz).free_Varr;
             end
 
+            %get error for normalised data
             if Fitparams.orthdist
                 [out_data.(Zz).free_Varr, data.(Zz).res] = DistanceToLine(data.(Zz).fit_f, data.(Zz).fit_df, x0, out_data.(Zz).free_Varr, data.(Zz).free_Varr, data.(Zz).fr);
             else
                 data.(Zz).res = data.(Zz).fr - data.(Zz).fit_f(data.(Zz).free_Varr);
             end
 
+            %get mask for fitting data outside of fitting bounds
             bounds = Fitparams.bounds.(Zz);
-
             data.(Zz).mask = (data.(Zz).f > bounds(1)) & (data.(Zz).f < bounds(2));
 
             if isempty(mask)
@@ -169,12 +122,13 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
             end
 
         end
+        %apply mask to error measure
         for ii = 1:3
             Zz = Fitparams.names{ii};
             if Fitparams.doFit(ii)
 
                 %apply mask
-                %ata.(Zz).res(~mask) = 0;
+                %data.(Zz).res(~mask) = 0;
 
                 res = [res, data.(Zz).res];
             end
@@ -186,12 +140,13 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
             clf
 
             for ii = 1:3
+                
                 Zz = Fitparams.names{ii};
 
                 free_Varr_sorted = sort(data.(Zz).free_Varr);
                 f_sorted = sort(data.(Zz).f);
 
-                fact = 1.4;
+                fact = 3;
 
                 xlr = [free_Varr_sorted(10), free_Varr_sorted(end - 10)] * fact;
                 xl = xlr * data.(Zz).trange;
@@ -203,7 +158,6 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
                 hold off
 
                 if ~Fitparams.logplot(ii)
-
                     plot(data.(Zz).(free_Var)(mask), data.(Zz).f(mask), '.b', 'MarkerSize', 4);
                     hold on
                     plot(data.(Zz).(free_Var)(~mask), data.(Zz).f(~mask), '.r', 'MarkerSize', 4);
@@ -218,7 +172,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
                 end
                 hold off
 
-                set(gca, 'ylim', yl);
+                %set(gca, 'ylim', yl);
                 set(gca, 'xlim', xl);
 
                 xlabel(Fitparams.(Zz).xlabel);
@@ -228,6 +182,8 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var)
 
             drawnow
         end
-
     end
 end
+
+
+
