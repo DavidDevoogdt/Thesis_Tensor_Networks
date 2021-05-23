@@ -12,65 +12,65 @@ The limitations on the PEPO contraction can be somewhat relaxed by not computing
 
 The final error measures are defined by:
 \begin{equation}\label{res2d:err_Def}
-    \rho^1_{i,j} =\vcenter{ \hbox{ \pepob{8}{8}{{
-                        "-","-", "-","-","-","-","-",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "-", "-", "-","-","-","-","",}}{{
-                        "-","-", "-","-","-","-","-",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "-","-", "-","-","-","-","",}}{{
-                        1,13,1,1,1,1,1,1,
-                        1,0,1,1,1,1,1,1,
-                        1,0,1,1,1,1,1,1,
-                        1,0,1,1,1,1,1,1,
-                        1,0,1,1,1,1,1,1,
-                        1,0,0,0,1,1,1,1,
-                        13,12,0,0,0,0,0,13,
-                        1,13,1,1,1,1,1,1,
-                    }} }}
+  \rho^1_{i,j} =\vcenter{ \hbox{ \pepob{8}{8}{{
+            "-","-", "-","-","-","-","-",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "-", "-", "-","-","-","-","",}}{{
+            "-","-", "-","-","-","-","-",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "-","-", "-","-","-","-","",}}{{
+            1,13,1,1,1,1,1,1,
+            1,0,1,1,1,1,1,1,
+            1,0,1,1,1,1,1,1,
+            1,0,1,1,1,1,1,1,
+            1,0,1,1,1,1,1,1,
+            1,0,0,0,1,1,1,1,
+            13,12,0,0,0,0,0,13,
+            1,13,1,1,1,1,1,1,
+          }} }}
 \end{equation}
 and
 \begin{equation}\label{res2d:err_Def}
-    \rho^2_{i,j} =\vcenter{ \hbox{ \pepob{8}{8}{{
-                        "-","-", "-","-","-","-","-",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "",  "", "","","","","",
-                        "-", "-", "-","-","-","-","",}}{{
-                        "-","-", "-","-","-","-","-",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "","", "","","","","",
-                        "-","-", "-","-","-","-","",}}{{
-                        1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,
-                        1,1,1,0,0,1,1,1,
-                        13,0,0,12,0,0,0,13,
-                        13,0,0,0,0,0,0,13,
-                        1,1,1,1,1,1,1,1,
-                    }} }}
+  \rho^2_{i,j} =\vcenter{ \hbox{ \pepob{8}{8}{{
+            "-","-", "-","-","-","-","-",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "",  "", "","","","","",
+            "-", "-", "-","-","-","-","",}}{{
+            "-","-", "-","-","-","-","-",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "","", "","","","","",
+            "-","-", "-","-","-","-","",}}{{
+            1,1,1,1,1,1,1,1,
+            1,1,1,1,1,1,1,1,
+            1,1,1,1,1,1,1,1,
+            1,1,1,1,1,1,1,1,
+            1,1,1,0,0,1,1,1,
+            13,0,0,12,0,0,0,13,
+            13,0,0,0,0,0,0,13,
+            1,1,1,1,1,1,1,1,
+          }} }}
 \end{equation}
 For the first one, all the blocks in the expansion are present in, and it is cyclical in both x and y. The second reduced density matrix is only cyclic in one direction, but includes more loop type contributions. Both relative errors will be used, defined by :
 \begin{equation}
-    \epsilon^{\alpha} = \frac{  {  \left \|  \rho^{\alpha}_{exact,  i,j}- \rho^{\alpha}_{ i,j}  \right \|} _{2}  }{ {  \left\|  \rho^{\alpha}_{exact,  i,j} \right \|}_2} \quad \alpha \in [1,2]
+  \epsilon^{\alpha} = \frac{  {  \left \|  \rho^{\alpha}_{exact,  i,j}- \rho^{\alpha}_{ i,j}  \right \|} _{2}  }{ {  \left\|  \rho^{\alpha}_{exact,  i,j} \right \|}_2} \quad \alpha \in [1,2]
 \end{equation}
 For the given error measures, series expansion up till order 5 can be tested. The second norm takes the most time to compute, due to the larger complexity of contracting the tensor network.
 
@@ -83,10 +83,10 @@ The truncation parameter $\sigma_0$ was optimal at a value of about $\sigma_0=10
 The plaquette term (\cref{tikzfig:plaquette}) is mainly important at low $\beta$ to keep the error low, and also has some considarable influence at higher temperatures.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/2D_Err01_t_sing.pdf}
-    \caption{ }
-    \label{fig:res2d:n1:tising}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/2D_Err01_t_sing.pdf}
+  \caption{ }
+  \label{fig:res2d:n1:tising}
 \end{figure}
 \todo{fix caption}
 
@@ -101,10 +101,10 @@ Now we have an idea how accurate the cluster expansions is, we can use it to cal
 As a reference, \cref{2dtisingphasediag} is shown once more
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
-    \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}}
-    \label{2dtisingphasediag2}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
+  \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}}
+  \label{2dtisingphasediag2}
 \end{figure}
 
 \subsubsection{classical Ising phase transition}
@@ -115,10 +115,10 @@ At the relevant temperature, an order 5 series expansion without loops is suffic
 The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. Left upper corner shows m vs T. For low T, there is clearly a nonzero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is marek gap, a measure for the system size as explained in \cref{subsec:fss}.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phasediag/g0/Full.pdf}
-    \caption{  }
-    \label{fig:phase:g0:full}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phasediag/g0/Full.pdf}
+  \caption{  }
+  \label{fig:phase:g0:full}
 \end{figure}
 
 \todo{new figure with entropy formula fixed 6S/c instead of cS/6}
@@ -127,10 +127,10 @@ Near criticality they collapse well, but away from the critical point there is q
 
 A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly. the data collapses a lot better as expected.
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
-    \caption{  }
-    \label{fig:phase:g0:zoomed}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
+  \caption{  }
+  \label{fig:phase:g0:zoomed}
 \end{figure}
 In fact, the data collapses so well we could determine the the critical exponents and the temperature with the given data.
 
@@ -143,17 +143,17 @@ The previous example simulated the classical 2D ising model. The question is whe
 Of course, quantitive details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite size scaling.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phasediag/g25/Full.pdf}
-    \caption{  }
-    \label{fig:phase:g25:full}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phasediag/g25/Full.pdf}
+  \caption{  }
+  \label{fig:phase:g25:full}
 \end{figure}
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
-    \caption{  }
-    \label{fig:phase:g25:zoomed}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
+  \caption{  }
+  \label{fig:phase:g25:zoomed}
 \end{figure}
 
 There is no analytical expression for critical temperature known. With quantum monte carlo techniques, a value of $T_c=1.2737(6)$ is obtained, while state of the art tensor network techniques provide a value of $T_c=1.2737(2)$ \cite{Czarnik2019}
@@ -165,10 +165,10 @@ With the series expansion from this paper and Vumps, $T_c=1.2736(6)$, indicating
 Up untill now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}.
 
 \begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phasediag/t07/full.pdf}
-    \caption{Results for $T=0.7$ phase transition. The green points are a truncated order 6 construction, the others order 5.  }
-    \label{fig:phase:t07:full}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phasediag/t07/full.pdf}
+  \caption{Results for $T=0.7$ phase transition. The green points are a truncated order 6 construction, the others order 5.  }
+  \label{fig:phase:t07:full}
 \end{figure}
 
 Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expension is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quit different magnetisation fpr large g. This shows that for $g>0.7$, order 5 is not sufficient anymore.
@@ -177,7 +177,7 @@ Clearly, the results do not collapse as well as for the other models. The reason
 
 Now that we know the critical transveral field can be determined, all the tools are present to extrapolate the Tricritical point, indicated by a red dot in \cref{2dtisingphasediag2}. To achieve this, the following scaling relation can be used:
 \begin{equation}
-    T_c = \left| g_c-g_{c,q} \right|^{z \nu_{3D}}
+  T_c = \left| g_c-g_{c,q} \right|^{z \nu_{3D}}
 \end{equation}
 Near the critical point, the critical temperature $T_c$ and the critical transversal field $g_c$ are related to each other by the value of the quantum critical point $g_{c,q}$ and critical exponent $z=1$ and $\nu_{3D} \approx 0.62998$ \cite{Hesselmann2016}.
 
@@ -190,30 +190,30 @@ With all the built machinery to construct cluster expansions, is logical to calc
 Adding loops decreases the error. but there is also a surprising result: all possible loop extensions result in a higher error. The fluctuation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
 The question is wether this is a result of a failing cluster expansion, or inability VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely build from scratch and errors happen, and there is no guarantee that the series even converges. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a':
 \begin{equation}
-    \vcenter{ \hbox{  \pepob{5}{3}{{
-                        "-","-","-","-",
-                        "-","a","$\alpha$","-",
-                        "-","-","$\alpha$","-"}}{{
-                        "-","-",
-                        "-","-",
-                        "-","$\alpha$",
-                        "-","$\alpha$",
-                        "-","-"}}{{
-                        1,1,1,1,1,
-                        1,0,0,0,1,
-                        1,1,0,0,1}} }} \\
-    \vcenter{ \hbox{  \pepob{5}{3}{{
-                        "-","-","-","-",
-                        "-","0","$\alpha$","-",
-                        "-","-","$\alpha$","-"}}{{
-                        "-","-",
-                        "-","-",
-                        "a'","$\alpha$",
-                        "-","$\alpha$",
-                        "-","-"}}{{
-                        1,1,0,1,1,
-                        1,1,0,0,1,
-                        1,1,0,0,1}} }}
+  \vcenter{ \hbox{  \pepob{5}{3}{{
+            "-","-","-","-",
+            "-","a","$\alpha$","-",
+            "-","-","$\alpha$","-"}}{{
+            "-","-",
+            "-","-",
+            "-","$\alpha$",
+            "-","$\alpha$",
+            "-","-"}}{{
+            1,1,1,1,1,
+            1,0,0,0,1,
+            1,1,0,0,1}} }} \\
+  \vcenter{ \hbox{  \pepob{5}{3}{{
+            "-","-","-","-",
+            "-","0","$\alpha$","-",
+            "-","-","$\alpha$","-"}}{{
+            "-","-",
+            "-","-",
+            "a'","$\alpha$",
+            "-","$\alpha$",
+            "-","-"}}{{
+            1,1,0,1,1,
+            1,1,0,0,1,
+            1,1,0,0,1}} }}
 \end{equation}
 Introduce these variations.
 
@@ -224,27 +224,27 @@ A second assumption made during this thesis is that the wave function can be rep
 It's clear that more research is needed here. One way to locate the problem would be to use another algorithm to contract the network, such as corner transfer matrix renormalization group (CTMRG) as used in  cite{Czarnik2019}, or even using the single site VUMPS algorithm combined with blocking:
 
 \begin{equation}
-    \vcenter{ \hbox{  \pepob{4}{4}{{
-                        "","-","",
-                        "","","",
-                        "","","",
-                        "","-","",}}{{
-                        "","-","",
-                        "","","",
-                        "","","",
-                        "","-","",}}{{
-                        1,4,4,1,
-                        4,0,0,4,
-                        4,0,0,4,
-                        1,4,4,1}} }} \cong  \vcenter{ \hbox{  \pepob{3}{3}{{
-                        "","",
-                        "","",
-                        "","",}}{{
-                        "","","",
-                        "","","",}}{{
-                        1,4,1,
-                        4,0,4,
-                        1,4,1}} }}
+  \vcenter{ \hbox{  \pepob{4}{4}{{
+            "","-","",
+            "","","",
+            "","","",
+            "","-","",}}{{
+            "","-","",
+            "","","",
+            "","","",
+            "","-","",}}{{
+            1,4,4,1,
+            4,0,0,4,
+            4,0,0,4,
+            1,4,4,1}} }} \cong  \vcenter{ \hbox{  \pepob{3}{3}{{
+            "","",
+            "","",
+            "","",}}{{
+            "","","",
+            "","","",}}{{
+            1,4,1,
+            4,0,4,
+            1,4,1}} }}
 \end{equation}
 
 \todo{complex matrices instead of real ones??}
@@ -257,13 +257,18 @@ Care has to be taken in order to not violate one of the conclusions in 1D: never
 
 \subsubsection{Better extrapolation}
 
+The spirit behind finite size scaling is to calculate more with the data availalbe. In \cref{subsec:fss}, 2 additional varariations were suggested. One is to account for the subleading finite size corrections, the other to cange the way of calculating $\delta$.
+
 \paragraph{subleading corrections}
-\todo{subleading corrections}
-\paragraph{ Choice  $\delta$ in }
+Intruducing subleading corrections requires 4 parameters for each fitted universal function: $\omega$,$\phi$,$c$ and $d$ from \cref{ea:subleadparam}. Compared to the one parameter $T_c$ or $g_c$, this is a lot and can be used to make many graphs collapse into a singlge graph. The analysis in \cite{Wang2006} curefully estimates the error made with the fitting procedure. A similar amount of rigour would be required to fully trust the results.
 
-\todo{c i for delta variational}
+Nevertheless, fitting with subleading corrections results in critical temperatures close to the ones fitted without, and the subleading exponents are close to 1, as expected from the subleading series expansion.
 
-\cite{Nietner2020}
+\paragraph{ Choice  $\delta$  }
+
+Different choices of $c_i$ in \cref{eq:cit_delta} are possible to construct $\delta$.  Variantional optimisation was doen as suggested in \cite{Nietner2020}. Both the x and y axis should be normalised, because depending on $\delta$ the scale changes. If scaled based on the outer points, there is a flaw in the fitting procedure.  The variational minimum goes to a point where at least for one point $\delta$ is extremely close to 0, and hence everything on the x axis except that point is pinched together, resulting in very small relative error. Therefore, it is better to normalise according to the points a e.g. 25th percentile and 75th percentile of the range on the  axis.
+
+This improves the collapse, but is not clear how much the prediction of $T_c$ or $g_c$ is improved.
 
 \section{Conclusion}
 

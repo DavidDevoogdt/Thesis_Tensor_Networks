@@ -58,15 +58,15 @@ Suppose $\lambda_i$ are the eigenvalues of \cref{vumps_transfer_eigs} order from
     \epsilon_i = - \log( \left | \lambda_i  \right |  )
 \end{equation}
 Then
-\begin{equation}
-    \delta = - \sum_i c_i \epsilon_i
+\begin{equation} \label{eq:cit_delta}
+    \delta = - \sum_i c_i \epsilon_i  \quad \sum_i c_i = 0
 \end{equation}
 The intuition behind this is as follows: for a MPS approximation, the gaps in the transfer spectrum go always to zero for sufficient large bond dimension. The distance between these gaps is thus a measure for the system size.
 
 \subsubsection{subleading corrections}
 In \cite{Beach2005}, it is argued that the form proposed in \cref{eq:fssansatz} does also not fully take into account the finite size effects. Subleading correction could be introduced as follows:
-\begin{equation}
-    A(T,L) = L^{\kappa / \nu} ( 1+c L^{-\omega} ) f_A( t L ^{1/ \nu} -d L^{-phi/nu} )
+\begin{equation}\label{ea:subleadparam}
+    A(T,L) = L^{\kappa / \nu} ( 1+c L^{-\omega} ) f_A( t L ^{1/ \nu} -d L^{-\phi/\nu} )
 \end{equation}
 Indeed, this reduces to \cref{eq:fssansatz} for sufficient large L. Because there is always data need around the critical point, the original procedure could be biased and result in wrong parameters. On the other hand, introducing extra parameters can lead to overfitting, again not improving the result.
 

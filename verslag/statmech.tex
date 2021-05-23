@@ -5,29 +5,29 @@ While it is often possible to find exact MPO representation to represent a wide 
 
 The physics of a system in thermodynamical equilibrium can be derived from it's partition function Z. The classical formula generalises to a density matrix $\rho$ as follows:
 \begin{equation}
-    \begin{split}
-        Z &= \sum e^{ - \beta E_n} \\
-        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
-        &= \Tr( e^{ - \beta \hat{H} } )
-    \end{split}
+  \begin{split}
+    Z &= \sum e^{ - \beta E_n} \\
+    &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
+    &= \Tr( e^{ - \beta \hat{H} } )
+  \end{split}
 \end{equation}
 The first line is the partition function for clasical discrete systems. The index n runs of all possible microstates. It is known that the propability to find the system in a given microstates is given by:
 \begin{equation}
-    p_i = \frac{\sum e^{ - \beta E_i}}{Z}
+  p_i = \frac{\sum e^{ - \beta E_i}}{Z}
 \end{equation}
 An useful quantity is the density matrix $\rho$.
 \begin{equation}
-    \begin{split}
-        \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
-        &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
-    \end{split}
+  \begin{split}
+    \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
+    &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
+  \end{split}
 \end{equation}
 Whith this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
 \begin{equation}
-    \begin{split}
-        Z &= \Tr( \rho) \\
-        \Braket{X} &= \Tr(\rho \hat{X})
-    \end{split}
+  \begin{split}
+    Z &= \Tr( \rho) \\
+    \Braket{X} &= \Tr(\rho \hat{X})
+  \end{split}
 \end{equation}
 
 \subsection{Time evolutions}
@@ -43,17 +43,17 @@ In the following section I will give a very short review of the current tensor n
 
 \subsubsection{Approximations to  \texorpdfstring{$ \hat{U}(\delta)$}{U}   }
 The goal is to approximately make a MPO for a small timestep $\delta$ which gives a new MPS at time $t+\delta$.
-\paragraph{TEBD}
+\paragraph{TEBD}\label{para:TEBD}
 Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
 \begin{equation}
-    \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
+  \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
 \end{equation}
 
 \begin{equation}\label{trotter_exp}
-    \begin{split}
-        \hat{U} = e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }e^{-i \delta \left[ \hat{H}_{\text{even}}, \hat{H}_{\text{odd}} \right] }\\
-        \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
-    \end{split}
+  \begin{split}
+    \hat{U} = e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }e^{-i \delta \left[ \hat{H}_{\text{even}}, \hat{H}_{\text{odd}} \right] }\\
+    \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
+  \end{split}
 \end{equation}
 This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and aftwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalized to higher order schemes.
 
@@ -63,7 +63,7 @@ These method directly use the MPO representation of a certain hamiltonian
 %https://tensornetwork.org/mps/algorithms/timeevo/
 This is a more recent method (2015) to construct an MPO first detailed in \cite{Zaletel2015}. The idea is to generalise
 \begin{equation}
-    1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
+  1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
 \end{equation}
 The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lays in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^II$ are capeble of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cref{Paeckel2019}
 
@@ -82,7 +82,7 @@ The krylov methods from previous pragraph can be adapted to work on a reduced ba
 
 Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}).
 \begin{equation}
-    i \frac{\partial \ket{ \Psi( A ) }}{\partial t} = \mathcal{P_{ A( t )} } H  \ket{ \Psi( A ) }
+  i \frac{\partial \ket{ \Psi( A ) }}{\partial t} = \mathcal{P_{ A( t )} } H  \ket{ \Psi( A ) }
 \end{equation}
 Where the richt hand side is projected on the tanget space, because the left hand side is a also a tangent vector. (See \cite{Vanderstraeten2019}).
 
@@ -92,16 +92,19 @@ In a certain sense, a quantum model in d dimensions can be mapped to a classical
 
 Due to the Lie product formula
 \begin{equation}
-    e^(A+B) = \lim_{M \to \infty } ( e^{A/M} e^{B/M}  )^M
+  e^{A+B} = \lim_{M \to \infty } ( e^{A/M} e^{B/M}  )^M
 \end{equation}
 we can rewrite
 \begin{equation}
-    \begin{split}
-        Z &= \sum e^{ - \beta E_n} \\
-        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
-        &= \sum_{n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M-1} | e^{ - \beta \hat{H} /M }  | n_M} \\
-        &= \sum_{  n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M-1} | e^{ - \beta \hat{H} /M }  | n_M} \\
-    \end{split}
+  \begin{split}
+    Z &= \sum_n e^{ - \beta E_n} \\
+    &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
+    &= \sum_{n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
+    &= \sum_{  n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
+  \end{split}
 \end{equation}
-This result applies M MPO layers, and hence this is a tensor network with 1 higher dimension.
-\todo{improve}
+Where completeness relations $ I = \sum_{n_i}  \ket{ n_i } \bra{ n_i}  $ inserted M times in line 3. This is similar to a path inegral.
+
+The quantum imaginary time has become a spatial dimension. The quantum model of d dimensions now has the structure of a classical model in d+1 dimensions.
+
+In this way, the 2D transversal field ising model can be mapped to the 3D classical Ising model. \cite{Hsieh}

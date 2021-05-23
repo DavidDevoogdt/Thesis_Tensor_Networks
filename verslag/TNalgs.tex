@@ -179,21 +179,92 @@ Contract an infinite lattice of identical tensors, with some irregularities on a
 
 \subsection{Overview methods}
 
+As this is a difficult task, and often the bottleneck in simulations, many algorithms exist to perform this. The classification is taken from \cite{Nietner2020}
+
 \subsubsection{Real-space renormalization-group methods}
 
-\subsubsection{corner transfer matrix methods}
+The general idea is to course grain the tensor network. Of the many methods, historically the first one was Tensor renormalization group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with a SVD in 2 different ways, depending on the position on the lattice. ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the SVD step.
+
+\begin{figure}
+  \center
+  \includegraphics[width=0.5 \textwidth]{Figuren/tnalgs/TRG.png}
+  \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
+  \label{fig:tnalgs:trg}
+\end{figure}
+
+Many other variants exist, such as Tensor Network Renormalization (TNR), which wont be discussed here.
+
+\subsubsection{Corner transfer matrix  methods}
+
+Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as descirbed in \cite{orus}. The full network is approximated by 4 corner matrices and 4 C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some of the tensors are taken together in step 2. As a final step, the tensor are suitably truncated. Once this cycle converges, the environment is known.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.8\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figuren/tnalgs/CTMRG_Def.png   }
+    \caption{Definition of environment}
+    \label{fig:tnalgs:ctmrg:a}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.7\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figuren/tnalgs/CTMRG.png   }
+    \caption{3 steps of CTMRG}
+    \label{fig:tnalgs:ctmrg:b}
+  \end{subfigure}
+  \caption{  Figures adapted from \cite{orus} }
+  \label{fig:tnalgs:ctmrg}
+\end{figure}
+
+Note that many important details are not written down here, and this is merely to give some intuition about tensor network contraction algorithms.
 
 \subsubsection{Boundary methods}
 
-\paragraph{  density-matrix renormalization group }
+The goal of these methods is to find an MPS fixed point for the infinite lattice:
 
-\paragraph{time-evolving block decimation }
+\begin{equation}\label{algs:mpslayermpo}
+  \pepob{5}{3}{{
+        "-","-", "-","-",
+        "","","","",
+        "","","","",}}{{
+        "-", "-",
+        "", "",
+        "", "",
+        "", "",
+        "-", "-",}}{{
+        4,4,4,4,4,
+        13,0,0,0,13,
+        13,2,7,3,13}}  \approx  \pepob{5}{2}{{
+        "-","-", "-","-",
+        "","","",""}}{{
+        "-",
+        "",
+        "",
+        "",
+        "-"}}{{
+        4,4,4,4,4,
+        13,2,7,3,13}}
+\end{equation}
 
-\cite{Nietner2020}
+\paragraph{Time-evolving block decimation }
+
+Time-evolving block decimation was introudec as a method to calculate thermal states (this will also be encountered later on in \cref{para:TEBD}). It can also be used for contraction.
+
+The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards trunctued.
+
+\begin{figure}
+  \center
+  \includegraphics[width=0.5 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
+  \caption{  Figure taken from \cite{Ran202}.  }
+  \label{fig:tnalgs:tebd}
+\end{figure}
+
+\todo{update}
 
 \subsection{Vumps}
 
-The porpuse of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
+The purpuse of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
 
 The goal is to find a MPS layer for the MPO such that:
 \begin{equation}\label{algs:mpslayermpo}
