@@ -161,11 +161,13 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 
 \mainmatter
 
+%H1
+
 \chapter{Introduction}
 
 \epigraph{There is nothing new to be discovered in physics now. All that remains is more and more precise measurement.}{Lord Kelvin, 1900}
 
-\input{introduction.tex}
+\input{H1_intro.tex}
 
 \chapter{Tensor networks}
 
@@ -173,35 +175,35 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 
 \section{Tensor networks}
 
-\input{tensorNetworks.tex}
+\input{H2_TN.tex}
 
 \section{Tensor network manipulations}\label{sec:mpomath}
-\input{MPOmath}
+\input{H2_TN_math}
 
 \section{Tensor network algorithms}
-\input{TNalgs.tex}
+\input{H2_TN_algs.tex}
 
 \chapter{Strongly correlated matter}
 
 \section{Phases and Criticality} \label{sec:PhasesAndCrit}
-\input{criticality.tex}
+\input{H3_phases.tex}
 
 \section{Models}
-\input{qphasediag}
+\input{H3_models.tex}
 
 \section{Operator exponentials}
-\input{statmech.tex}
+\input{H3_exponentials.tex}
 
 \chapter{Construction Cluster expansion}
 
 \section{Introduction}
-\input{construction_intro.tex}
+\input{H4_intro.tex}
 
 \section{Construction MPO}
-\input{mpo1d}
+\input{H4_construction_1D.tex}
 
 \section{Construction PEPO}
-\input{PEPO2d}
+\input{H4_construction_2D.tex}
 
 \chapter{Framework implementation}
 
@@ -210,13 +212,13 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 \epigraph{An expert is a person who has made all the mistakes that can be made in a very narrow field}{Niels Bohr}
 
 \section{Solvers} \label{sec:framework_impl}
-\input{framework_impl.tex}
+\input{H5_solvers.tex}
 
 \section{How to use}
-\input{how_to_use.tex}
+\input{H5_how_to_use.tex }
 
 \section{Limitations and outlook}
-\input{impl_outlook.tex  }
+\input{H5_conclusion.tex  }
 
 \chapter{Results} \label{chap:results}
 
@@ -228,13 +230,13 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 This section explains the acuracy and performance of the given cluster expansions. The first section compares the different constructions in 1D based on the error relative to the exact solution. The best algorithm will form the basis for the 2D results. First, similarly to 1D, the results will be checked based on the error relative to the exact solution. Then, the expansion is used to calculate the phase diagram of the 2D transversal field Ising model.
 
 \section{Results 1D}\label{sec:results1d}
-\input{results1d.tex}
+\input{H6_1D.tex  }
 
 \section{Results 2D}
-\input{results2d.tex}
+\input{H6_2D.tex}
 
 \chapter{Conclusion and lookout}
-\input{conclusion_and_outlook.tex}
+\input{H6_conclusion}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{bib}
