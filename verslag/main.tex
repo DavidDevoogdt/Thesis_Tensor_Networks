@@ -171,19 +171,25 @@ De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met
 
 \chapter{Tensor networks}
 
-The aim of this chapter is to give a basic introduction to tensor networks from a computational viewpoint. First the graphical notation for tensors, which is ubiquitous in the field, will be introduced and explained. A incomplete classification of the different kinds of tensor networks will be discussed. Some routine tensor network manipulations are explained. Also, a selection of different algorithms, which are from a computational point of view the reason behind the success of tensor networks, are presented very briefly.
+\section{Introduction}
+\input{H2_introduction.tex}
 
 \section{Tensor networks}
-
 \input{H2_TN.tex}
 
 \section{Tensor network manipulations}\label{sec:mpomath}
 \input{H2_TN_math}
 
-\section{Tensor network algorithms}
+%\section{Tensor network algorithms}
 \input{H2_TN_algs.tex}
 
+\section{Conclusion}
+\input{H2_conclusion.tex}
+
 \chapter{Strongly correlated matter}
+
+\section{Introduction}
+\input{H3_intro.tex}
 
 \section{Phases and Criticality} \label{sec:PhasesAndCrit}
 \input{H3_phases.tex}
@@ -193,6 +199,9 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 
 \section{Operator exponentials}
 \input{H3_exponentials.tex}
+
+\section{Conclusion}
+\input{H3_conclusion.tex}
 
 \chapter{Construction Cluster expansion}
 
@@ -205,11 +214,17 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 \section{Construction PEPO}
 \input{H4_construction_2D.tex}
 
-\chapter{Framework implementation}
+\section{Conclusion}
+\input{H4_conclusion.tex}
+
+\chapter{Framework implementation}\label{chap5}
 
 %“Experience is the name everyone gives to their mistakes.” – Oscar Wilde
 
 \epigraph{An expert is a person who has made all the mistakes that can be made in a very narrow field}{Niels Bohr}
+
+\section{Introdcution}
+\input{H5_introduction.tex}
 
 \section{Solvers} \label{sec:framework_impl}
 \input{H5_solvers.tex}
@@ -227,7 +242,8 @@ The aim of this chapter is to give a basic introduction to tensor networks from 
 %\section{Benchmarking}
 %\input{benchmark.tex}
 
-This section explains the acuracy and performance of the given cluster expansions. The first section compares the different constructions in 1D based on the error relative to the exact solution. The best algorithm will form the basis for the 2D results. First, similarly to 1D, the results will be checked based on the error relative to the exact solution. Then, the expansion is used to calculate the phase diagram of the 2D transversal field Ising model.
+\section{Introduction}
+\input{H6_introduction.tex}
 
 \section{Results 1D}\label{sec:results1d}
 \input{H6_1D.tex  }

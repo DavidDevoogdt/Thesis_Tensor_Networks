@@ -1,6 +1,12 @@
+This is the key chapter of the whole thesis. Here, the novel method to construct the operator $e^{-\beta \hat{H}}$, is explained in detail. The basis of the method was first introduced in \cite{Vanhecke2021}. There are many variations on the same idea. Some of the most notable examples in 1D will be discussed. At this point, no simulation results will be given. These can be found in \cref{chap:results}. The section mentions some objective info about the construction, such as the bond dimension.
+
+The 2D construction will generalise the best result from 1D. First, an anologous construction as in 1D will be presented. As can be expected, also some new ideas are needed to capture the rich phsycis of the models in 2D
+
+The question of how to construct these cluster expansions and other implementation details are reported in \cref{chap5}.
+
 \subsection{Notation}
 
-In the following, the external legs and virtual level 0 will be omitted:
+First, some extra clarification on the notation is needed in order to avoid confusion. In the following, the external legs and virtual level 0 will be omitted. Also, all the physical indices will not be shown. This should not be confused with the diagram earlier.
 
 \begin{equation}
     \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
@@ -14,11 +20,13 @@ In the following, the external legs and virtual level 0 will be omitted:
     \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
 \end{equation}
 
-This hamiltonian consists of 1 and 2 site operators. Of course more general hamiltonians can also be captured.
+The goals is capture the exponential of the hamiltonian operator $\hat{H}$
 \begin{equation}
     \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
 \end{equation}
-The same notation will be used to denote the hamiltonin evaluated on the given geometry:
+This hamiltonian consists of 1 and 2 site operators. Of course more general hamiltonians can also be captured.
+
+The notation for the contraction of the tensor network will also be used to denote the hamiltonian evaluated on the given geometry:
 
 \begin{alignat}{3}
     H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
@@ -27,6 +35,8 @@ The same notation will be used to denote the hamiltonin evaluated on the given g
     +                                                      & H_2 &  & \otimes H_2 &  & \otimes 1   \nonumber \\
     +                                                      & 1   &  & \otimes H_2 &  & \otimes H_2 \nonumber \\
 \end{alignat}
+
+This also works in 2D.
 
 \subsection{Idea}
 This chapter shows the main construction of dissertation. A cluster expansion is used to approximate $e^{ \hat{H} }$ for every possible geometry. The goal is to make a MPO/PEPO which captures the tensor exponential in the thermodynamic limit.
@@ -62,8 +72,4 @@ At this stage, all seperated networks with maximally 2 connected sites in a row 
     \end{split}
 \end{equation}
 
-It is clear that the right-hand side of \cref{constr:intro:gen} can alsoe be ommited, as it is just evaluating the exponentiated hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously.
-
-\subsection{Preview}
-
-In the following sections some possible configurations in 1D and 2D will be discussed. At this point, the focus is on the construction and its bond dimension. The results will be discussed later in \cref{chap:results}. T
+It is clear that the right-hand side of \cref{constr:intro:gen} can be ommited, as it is just evaluating the exponentiated hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously. This very compact notation will be able to capture the essence of the different constructions.

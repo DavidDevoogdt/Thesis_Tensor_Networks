@@ -66,3 +66,26 @@ These models have different names depending on the values of $J_{\alpha} $ with 
 
 \subsection{Random}
 It's also possible to construct random hamiltonians. \todo{in basis: hermitian H}
+
+\subsection{Quantum to classical mapping}
+
+In a certain sense, a quantum model in d dimensions can be mapped to a classical model in d+1 dimension.
+
+Due to the Lie product formula
+\begin{equation}
+    e^{A+B} = \lim_{M \to \infty } ( e^{A/M} e^{B/M}  )^M
+\end{equation}
+we can rewrite
+\begin{equation}
+    \begin{split}
+        Z &= \sum_n e^{ - \beta E_n} \\
+        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
+        &= \sum_{n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
+        &= \sum_{  n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
+    \end{split}
+\end{equation}
+Where completeness relations $ I = \sum_{n_i}  \ket{ n_i } \bra{ n_i}  $ inserted M times in line 3. This is similar to a path inegral.
+
+The quantum imaginary time has become a spatial dimension. The quantum model of d dimensions now has the structure of a classical model in d+1 dimensions.
+
+In this way, the 2D transversal field ising model can be mapped to the 3D classical Ising model. \cite{Hsieh}
