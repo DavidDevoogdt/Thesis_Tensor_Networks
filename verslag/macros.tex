@@ -521,6 +521,36 @@
               \node[draw= none] (O\s) at (\p,\k) { ... };
             }
 
+            \ifthenelse{\so = 14}{
+
+              \node[circle,draw, radius=\radius] (O\s) at (\p,\k) {\nname};
+
+              \pgfmathsetmacro{\pp}{   \p+\legLength/2 }
+              \pgfmathsetmacro{\pm}{   \p-\legLength/2  }
+
+              \pgfmathsetmacro{\kp}{   \k+\legLength/2  }
+              \pgfmathsetmacro{\km}{   \k-\legLength/2  }
+
+              \node (Op\s) at (\pp,\kp) {};
+              \node (Om\s) at (\pm,\km) {};
+
+              \draw (O\s.center)  --  (Op\s);
+              \draw  (Om\s) --  (O\s);
+            }
+
+            \ifthenelse{\so = 15}{
+
+              \node[circle,draw, radius=\radius] (O\s) at (\p,\k) {\nname};
+
+              \pgfmathsetmacro{\pp}{   \p+\legLength/2 }
+
+              \pgfmathsetmacro{\kp}{   \k+\legLength/2  }
+
+              \node (Op\s) at (\pp,\kp) {};
+
+              \draw (O\s.center)  --  (Op\s);
+            }
+
           }
       }
 

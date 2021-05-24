@@ -5,19 +5,8 @@ This section, and the following one, will introduce some different tensor networ
 
 \subsection{Canonical form}
 
-A translation invariant MPS has the following form:
-\begin{equation}\label{mps:uni}
-    \pepob{5}{2}{{
-                "-","-", "-","-",
-                "","","",""}}{{
-                "-",
-                "",
-                "",
-                "",
-                "-"}}{{
-                4,4,4,4,4,
-                4,0,0,0,4}}
-\end{equation}
+A translation invariant MPS has the following form shown in \cref{mps:uni}
+
 It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor.
 \begin{equation}
     A_l = \pepob{3}{2}{{
@@ -143,20 +132,53 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
     \end{alignat}
 \end{subequations}
 
-\todo{entropy from MPS}
+The tensors below are the conjugated version of the tensors above. There is still some freedom: an unitary gauge transformation can still be applied. With this choice, it is possible to bring $C$ in diagonal form.
 
-\todo{more on MPS}
+\subsubsection{Entropy}
 
-\subsubsection{expectation value}
+The canonical form above is very convenient to calculate the entropy, which is given by
+\begin{equation}
+    S = -\sum_i \alpha_i^2 \log (\alpha_i^2 )
+\end{equation}
+where $\alpha_i$ are the singular values of $C$.
 
-% \subsubsection{DMRG}
+\subsubsection{expectation value}\cref{subsec:exp_val_1d}
+
+One properties of MPS is that expectation values can be calculated exactly. suppose we have an operator $\hat{O}$ acting on a single site of the MPS: $\Braket{ \Psi |  \hat{O} | \Psi  }$
+\begin{equation}
+    \vcenter{\hbox{\pepob{5}{3}{{
+                        "","", "","",
+                        "-","-","-","-",
+                        "","","","",}}{{
+                        "-", "-",
+                        "", "",
+                        "", "",
+                        "", "",
+                        "-", "-",}}{{
+                        13,2,7,3,13,
+                        1,4,0,4,1,
+                        13,2,7,3,13}} }}  =   \vcenter{\hbox{\pepob{5}{3}{{
+                        "","", "","",
+                        "-","-","-","-",
+                        "","","","",}}{{
+                        "-", "*-",
+                        "", "",
+                        "", "",
+                        "", "",
+                        "-", "-",}}{{
+                        1,4,7,4,1,
+                        1,4,0,4,1,
+                        1,4,7,4,1}} }}
+\end{equation}
+where we made use of \cref{algs:mpsid}. Similar techniques allow to calculate correlatetion functions, energies, ...
 
 \section{tensor network contraction}
 
+The contraction in this section is somewhat different. The MPO with the same $S_n =  (i_1 i_2 \cdots i_n) = (j_1 j_2 \cdots j_n)$ represents the probability of finding the system in state $S_n$.  This will be needed in \cref{subsec:statmech}. On a patch, an operator X is applied. This could be a measurement.
+
 \subsection{1D problem}
 
-Suppose that the there is an MPO representation of $ e^{ - \beta \hat{H} } $ A and that the mpo represenation for X Y is localised over n sites, then the expactation value is given by:
-
+Suppose that the there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expecatation value $ \Braket{X}$ is given by:
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
@@ -316,8 +338,7 @@ Equation \cref{sm:expecatation_X} can now be easily caclulated:
 \end{equation}
 
 \subsection{2D problem}
-
-PEPS contraction concerns the following problem:
+PEPS contraction concerns a similar problem, but in 2D. Here, instead of already applying operator X, the (one site) reduced density matrix $ \rho_{i,j}$ is computed:
 \begin{equation}\label{algs:biggrid}
     \rho_{i,j} =\vcenter{ \hbox{ \pepob{7}{7}{{
                         "-","-", "-","-","-","-",
@@ -343,7 +364,7 @@ PEPS contraction concerns the following problem:
                         1,13,13,13,13,13,1,
                     }} }}
 \end{equation}
-Contract an infinite lattice of identical tensors, with some irregularities on a small patch. For example, the one patch can be used to calculate an expectation value of a certain observable.
+This problem is much harder than in 1D. For instance, the related problem of calculating the expecatation value of on operator, similar to \cref{subsec:exp_val_1d} in 1D, is  \#P-Hard \cite{Orus2014}.
 
 \subsection{Overview methods}
 
@@ -355,7 +376,7 @@ The general idea is to course grain the tensor network. Of the many methods, his
 
 \begin{figure}
     \center
-    \includegraphics[width=0.5 \textwidth]{Figuren/tnalgs/TRG.png}
+    \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/TRG.png}
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
     \label{fig:tnalgs:trg}
 \end{figure}

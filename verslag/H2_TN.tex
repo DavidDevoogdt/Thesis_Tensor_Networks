@@ -87,42 +87,123 @@ Explicit translational invariance is given by tensor $C^i_{\alpha \beta }$ that 
     \ket{\Psi} = \Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M  ) \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
 \end{equation}
 
-\begin{equation}
+\begin{equation}\label{eq:general_mps}
     \mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }}
 \end{equation}
 
 \subsection{Classification}
 
+Tensor networks come in many shapes and many forms. During this thesis, we will mainly encounter the types explained here.
+
 \subsubsection{MPS}
+
+A general MPS is of the form \cref{eq:general_mps}. For an infinite extended chain with translation invariance, it is logical to assume an unit cell:
+\begin{equation}\label{mps:uni}
+    \pepob{5}{2}{{
+                "-","-", "-","-",
+                "","","",""}}{{
+                "-",
+                "",
+                "",
+                "",
+                "-"}}{{
+                4,4,4,4,4,
+                13,0,0,0,13}}
+\end{equation}
+This will be the form we will work with in this thesis. Of course, larger unit cells are also possible.
+
+MPS are dense. This means that (with a bond dimension exponential in the system size) the MPS can represent every state in the full Hilbert space.  \cite{Orus2014}. However, the low energy states can typically be represented by a much lower bond dimension.
+
+This can be explain in terms of the so called 'area law': the entropy low energy states often scale with the boundary area of volume. MPS exactly follow this area law.
 
 \subsubsection{MPO}
 
-Similarly, a Matrix Product Operator (MPO) is of the following form:
+Similarly to an MPS, a Matrix Product Operator (MPO) is of the following form:
 
 \begin{equation} \label{def_mpo}
     \begin{split}
         \hat{O} &= \sum Tr(A^{i_1 j_1} A^{i_2 j_2} \cdots A^{i_n j_n} M) \\
-        & \times \ket{i_1}\bra{j_1} \otimes \ket{i_2}\bra{j_2} \otimes \cdots \otimes \ket{i_n}\bra{j_n}
+        & \times \ket{i_1}\bra{j_1} \otimes \ket{i_2}\bra{j_2} \otimes \cdots \otimes \ket{i_n}\bra{j_n} \\
+        &\mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"$j_1$","$j_2$",,"$j_n$","-"}}{{0,0,1,0,0}}{{"A", "A",,"A","M" }}
     \end{split}
 \end{equation}
 
-\mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"$j_1$","$j_2$",,"$j_n$","-"}}{{0,0,1,0,0}}{{"A", "A",,"A","M" }}
+The matrix M contains the boundary conditions of the operator. Its clear that this can again be made translation invariant. Acting with an MPS on a MPO $\hat{O} \ket{\Psi} $ again results in a MPS, as expected.
 
-The matrix M contains the boundary conditions of the operator. Many Hamiltonians can be represented by an MPO. For ins
+An uniform MPO is denoted by:
+\begin{equation}
+    \pepob{5}{3}{{
+                "-","-", "-","-",
+                "","","","",
+                "-","-", "-","-",}}{{
+                "-","-",
+                "","",
+                "","",
+                "","",
+                "-","-",}}{{
+                4,4,4,4,4,
+                13,0,0,0,13,
+                4,4,4,4,4,}}
+\end{equation}
+
+This can also be reinterpreted as an MPS with physical bond dimension $D^2$, by grouping the i and j indices together per site.
 
 \subsubsection{PEPS}
-
-%https://arxiv.org/pdf/1306.2164.pdf
-Exact contraction is hashtag P-Hard:
-
-No exact canonical form
+Projected entangled pair states (PEPS) are the 2D equivalent of MPS. In the visualisation, the physical indices come out of the plane.
+\begin{equation}
+    \vcenter{ \hbox{ \pepob{5}{5}{{
+                        "-","-", "-","-",
+                        "",  "", "","",
+                        "",  "", "","",
+                        "",  "", "","",
+                        "-", "-", "-","-",}}{{
+                        "-","-", "-","-",
+                        "","", "","",
+                        "","", "","",
+                        "","", "","",
+                        "-","-", "-","-",}}{{
+                        1,13,13,13,1,
+                        13,15,15,15,13,
+                        13,15,15,15,13,
+                        13,15,15,15,13,
+                        1,13,13,13,1,
+                    }} }}
+\end{equation}
 
 \subsubsection{PEPO}
 
+The operator version of PEPS is called PEPO. The depiction looks as follows:
+\begin{equation}
+    \vcenter{ \hbox{ \pepob{5}{5}{{
+                        "-","-", "-","-",
+                        "",  "", "","",
+                        "",  "", "","",
+                        "",  "", "","",
+                        "-", "-", "-","-",}}{{
+                        "-","-", "-","-",
+                        "","", "","",
+                        "","", "","",
+                        "","", "","",
+                        "-","-", "-","-",}}{{
+                        1,13,13,13,1,
+                        13,14,14,14,13,
+                        13,14,14,14,13,
+                        13,14,14,14,13,
+                        1,13,13,13,1,
+                    }} }}
+\end{equation}
+
 \subsubsection{Others}
 
-MERA,TTN,
+To show there exist many more tensor network beside the ones treated in this thesis, 2 examples are shown in \cref{fig:tnalgs:ttn_mera}.
 
-\todo{ ather tns }
+Two Tree tensor networks (TTNs)  are shown. The red indices are physical. MERA (c) is also shown. These tensor network are specific because they can be contracted exactly, as opposed to for instance PEPS.
+
+\begin{figure}
+    \center
+    \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/tnns_and_mera.png}
+    \caption{ (a) and (b) two different TTNSs and (c) MERA. Figure taken from \cite{Ran2020}.  }
+    \label{fig:tnalgs:ttn_mera}
+\end{figure}
 
 %https://link.springer.com/content/pdf/10.1007%2F978-3-030-34489-4.pdf
