@@ -7,7 +7,7 @@ This section, and the following one, will introduce some different tensor networ
 
 A translation invariant MPS has the following form shown in \cref{mps:uni}
 
-It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor.
+It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a guage transformation.
 \begin{equation}
     A_l = \pepob{3}{2}{{
                 "-","-",
@@ -253,7 +253,7 @@ Suppose that the there is an MPO representation A that gives the probability of 
 
 In the thermodynamic limit there are an infinity number of A to the left and the right. This can be simulated by taking the left and right fixed points of the traced MPO A corresponding to the largest eigenvector $\lambda$.
 
-\begin{equation}
+\begin{equation}\label{algs:exp}
     \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
         \clip (-1.4,-1) rectangle (1,1);
         \node[] (N0) at (-1,0) {$G_l$};
@@ -436,20 +436,17 @@ The goal of these methods is to find an MPS fixed point for the infinite lattice
                 13,2,7,3,13}}
 \end{equation}
 
-\paragraph{Time-evolving block decimation }
+\paragraph{Time-evolving block decimation}
 
-Time-evolving block decimation was introudec as a method to calculate thermal states (this will also be encountered later on in \cref{fig:tnalgs:tebd}). It can also be used for contraction.
-
-The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards trunctued.
+Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{fig:tnalgs:tebd}). It can also be used as a power method for contraction.
+The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards truncated. When this procedure is applied enough times, a fixed point is reached.
 
 \begin{figure}
     \center
     \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
-    \caption{  Figure taken from \cite{Ran202}.  }
+    \caption{  Figure taken from \cite{Ran2020}.  }
     \label{fig:tnalgs:tebd}
 \end{figure}
-
-\todo{update}
 
 \subsection{Vumps}
 
@@ -651,7 +648,6 @@ This completely determines the problem, but one more equation is used to solve t
                 4,4,4,
                 4,6,4}}
 \end{equation}
-\todo{fix gap}
 
 Then  \cref{algs:mpslayermpo} is solved:
 

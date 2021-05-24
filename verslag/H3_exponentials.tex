@@ -1,5 +1,5 @@
 
-While it is often possible to find exact MPO representation to represent a wide class of hamiltonians \todo{find citation and examples}, it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate i is given by $p_i\exp{ - \beta \hat{H_i} }$. This is often called "imaginary" time, due to the substitution $\beta = i t$. \todo{explain link CFT}. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world obsevations of these systems at finite temperature.
+While it is often possible to find exact MPO representation to represent a wide class of hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate i is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called "imaginary" time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world obsevations of these systems at finite temperature.
 
 \subsection{Statistical mechanics}\label{subsec:statmech}
 
@@ -30,11 +30,23 @@ Whith this notation, the partition function Z and ensemble average of an operato
     \end{split}
 \end{equation}
 
-\subsection{Time evolutions}
-In quantum field theory, \todo{LSZ theorema herbekijken}, calculation of n-point correlation functions is extremely important to understand a given field theory.
+\subsection{Applications}
 
-\paragraph{subsubsection}{ground state}
-One practical way of finding the ground state is cooling an intitial stata down very small T.
+\subsubsection{Temporal correlation functions}
+The dynamical behaviour of a system can be captured by its dynamic correlation function:
+\begin{equation}
+    \begin{split}
+        C(r,t) &= \left<  \hat{X}(0,0) \hat{X}(r,t)  \right >\\
+        &=  \left<  \hat{X}(0)  e^{i \hat{H} t}  \hat{X}(r)  e^{-i \hat{H} t}   \right >
+    \end{split}
+\end{equation}
+This requires time evolution operators $e^{-i \hat{H} t}$.
+
+\subsubsection{subsubsection}{ground state}
+One practical way of finding the ground state $ \ket{E_0}$ is to cool down a given random state $ \ket{\Psi(0)}$ to very small T (large $\beta$) \cite{Orus2014}:
+\begin{equation}
+    \ket{E_0} = \lim_{\beta \leftarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } \quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)}
+\end{equation}
 
 \subsection{Tensor network methods}
 In the following section I will give a very short review of the current tensor network methods to simulate real or imaginary time evolution. This overview is mainly based on the review paper \cite{Paeckel2019}.

@@ -42,7 +42,20 @@ Many matrix decompositions exist. Some useful examples here are SVD decompositio
 
 \subsubsection{Truncation}
 
-\todo{svd truncation}
+The above procedure also gives a way to truncate the bond dimension: first take together 2 neighbouring sites, then perform an SVD $T = U \Sigma V^{\dagger}$. Split as follows:
+\begin{equation}
+    T = \begin{bmatrix}
+        U_1 & U_2 \\
+    \end{bmatrix} \begin{bmatrix}
+        \Sigma_1 & 0        \\
+        0        & \Sigma_2 \\
+    \end{bmatrix} \begin{bmatrix}
+        V_1 & V_2\\\end{bmatrix}^{\dagger}
+\end{equation}
+Where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor.
+\begin{equation}
+    min_{rank(A) \leq n } \| T-A  \|  = \| T- \hat{T}  \|
+\end{equation}
 
 \subsubsection{Virtual levels}
 In the previous example, the levels were indicate with a block index or virtual level. The idea is to create seperate the contraction into blocks. This is completely analogous to matrix block multipliction. This wil be a more natural form to represent the algorithm. Of course, one can easily switch between block representation and the full one.
@@ -67,11 +80,11 @@ This a a standard matrix equation and can hence be solved with linear algebra pa
 
 \subsubsection{Contraction order}
 
-\todo{contraction order}
+Tensor network diagram determine unambigously the result of a contraction. This does not mean all contraction orders are equivalent. The number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two differen contraction orders are shown in \cref{fig:tnalgs:cont_ord}.
 
-\subsubsection{Gauge freedom}
-
-\todo{gauge}
-
-%https://arxiv.org/pdf/1306.2164.pdf
-
+\begin{figure}
+    \center
+    \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/contraction_order.png}
+    \caption{ (a) Contraction of 3 tensors in $O(D^4)$ time (b) Contraction of same tensors in $O(D^5)$ time. Figure taken from \cite{Orus2014}.  }
+    \label{fig:tnalgs:cont_ord}
+\end{figure}

@@ -189,7 +189,7 @@ With the given blocks, the following combination is also possible
                 1,1,0,0,1}}
 \end{equation}
 This results in very large errors, and it would require many more blocks to be added in order to counteract this. Luckily, there are many options in 2D. One example is:
-\begin{equation}
+\begin{equation}\label{eq:loop_1ext}
     \pepob{5}{3}{{
                 "-","-", "-",     "-",
                 "-","1","$\beta$","-",
@@ -312,8 +312,9 @@ But this block introduces an infinite tiling, corrupting the expansion.
 
 Here it starts to get really tricky.
 
+\todo{add more}
+
 \subsubsection{Bond dimension}
 
-\cref{tikzfig:plaquetter}
+While for the linear blocks it is clear what the bond dimension should be, this is not the case for the graphs with loops. This problem of the ranks cannot be directly solved for tensor ring decomposition \cite{Zhao2016}, but need to be deduced during the construction. In practice, a bond dimension of 6 is enough to fully solve \cref{tikzfig:plaquetter} (for physical dimension 2). For \cref{eq:loop_1ext}, at least bond dimension 8 is required for $\beta$ and $\gamma$ level. This is also sufficient to solve longer extensions and multiple extensions from one corner.
 
-\todo{bonddim}
