@@ -16,7 +16,7 @@ One of the most basic manipulations is to group some legs of a tensor into one l
 The dimension of the new leg is the product of the dimension of the individual legs. Contracting 2 merged legs with 2 merged legs is exactly the same as contracting them separately. The both The 4 leg tensor and matrix contain exactly the same information.
 Manipulating this in memory requires both permute and reshape commands. This requires some time, the internal representation of the matrix changes.
 
-\subsubsection{decomposition} \label{decompMPO}
+\subsubsection{Decomposition} \label{decompMPO}
 
 The grouping above can be applied to decompose a tensor into 2 tensor with matrix techniques. An example, which will be needed later on, is give here.
 
@@ -40,10 +40,14 @@ For an exact representation, the bond dimension of virtual level v is:
 
 Many matrix decompositions exist. Some useful examples here are SVD decomposition, eigenvalue decomposition, QR, $\cdots$.
 
-\subsubsection{virtual levels}
+\subsubsection{Truncation}
+
+\todo{svd truncation}
+
+\subsubsection{Virtual levels}
 In the previous example, the levels were indicate with a block index or virtual level. The idea is to create seperate the contraction into blocks. This is completely analogous to matrix block multipliction. This wil be a more natural form to represent the algorithm. Of course, one can easily switch between block representation and the full one.
 
-\subsubsection{inverse}
+\subsubsection{Inversion}
 Suppose we want to find a MPO O for given tensors A and B such that the following holds:
 
 \def \figone {\expH{2}{$A$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_2$"}}{{"u",}}}
@@ -61,24 +65,13 @@ Again, the indices can be taken toghether in the following way: $\alpha = (u i_1
 \end{equation}
 This a a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution. Linear solver are generally much faster. As this is one of the core problems to solve both in 1D and 2D, this will be discussed in detail in \cref{sec:framework_impl}.
 
-\subsubsection{contraction order}
+\subsubsection{Contraction order}
 
 \todo{contraction order}
 
 \subsubsection{Gauge freedom}
 
 \todo{gauge}
-\subsubsection{truncation}
-
-\todo{svd truncation}
-
-\subsection{MPS algoritms}
 
 %https://arxiv.org/pdf/1306.2164.pdf
-
-\subsubsection{cononical form}
-
-schmidt decomp,
-
-\subsubsection{DMRG}
 
