@@ -45,7 +45,7 @@ function Ising2D_reproces(suffix)
 
             template.vumps_opts = vumps_opts;
 
-            template.handle = @make_PEPO_2D_A;
+            template.handle = @make_PEPO_2D_sym;
             S_z = [1, 0; 0, -1];
             template.X = S_z; %observable
 

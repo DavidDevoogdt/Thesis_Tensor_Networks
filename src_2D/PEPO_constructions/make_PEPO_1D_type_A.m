@@ -28,8 +28,14 @@ function [obj, err_code] = make_PEPO_1D(obj)
 
         [obj, ln_prefact, err] = solve_lin_and_assign(obj, map, pattern, ln_prefact, struct('svd_split_dim',sz) );
 
+        
+
+        
         if obj.testing == 1
             e1 = calculate_error(obj, 1:n + 1, obj.numopts);
+            
+
+            
             fprintf("n=%d residual = %.4e   d_nf %.4e  \n", n, e1, exp(ln_prefact - obj.nf));
         end
 

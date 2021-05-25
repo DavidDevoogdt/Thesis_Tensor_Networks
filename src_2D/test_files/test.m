@@ -1,5 +1,5 @@
 function test
-    compare_models(["t_ising","Heisenberg_2D"],  10.^(-3:0.1:1.5) , [2], [4,5]  )
+    compare_models(["random"], 10.^(-3:0.2:1.5), [2, 3, 4], [3, 4, 5, 6, 7])
     %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
 end
@@ -14,7 +14,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
         model = models(simulatiemodellen(round), struct);
 
         simul.Order_arr = order;
-        simul.types =  types;
+        simul.types = types;
 
         simul.M = 11;
         simul.beta_arr = beta_arr;
@@ -41,11 +41,10 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
         set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
         %%%
 
-        opts = struct('max_bond_dim', 64);
-        opts.inv_eps = 1e-15;
+        opts = struct('max_bond_dim', 20);
+        opts.inv_eps = 1e-12;
         %opts = struct;
-        
-        
+
         %loop over different orders
         for j = 1:order_size
             opts.order = simul.Order_arr(j);
@@ -61,29 +60,29 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
                 for t = 1:size(simul.types, 2)
                     switch simul.types(t)
                         case 2
-                            handle = @make_PEPO_1D;
+                            handle = @make_PEPO_1D_type_A;
                             pepo = PEPO(model, opts, handle);
 
                             fprintf(".");
 
-                            err_02 = calculate_error(pepo, map,[], 1);
+                            err_02 = calculate_error(pepo, map, [], 1);
 
                             fprintf(" err 02 %.4e", err_02);
                             plot_structure{2, i} = err_02;
                         case 3
-                            handle = @make_PEPO_1D_double;
+                            handle = @make_PEPO_1D_type_E;
                             pepo = PEPO(model, opts, handle);
 
                             fprintf(".");
-                            err_03 = calculate_error(pepo,map,[], 1);
+                            err_03 = calculate_error(pepo, map, [], 1);
 
                             fprintf(" err 03 %.4e", err_03);
                             plot_structure{3, i} = err_03;
                         case 4
-                            handle = @make_PEPO_1D_Z;
+                            handle = @make_PEPO_1D_type_F;
                             pepo = PEPO(model, opts, handle);
                             fprintf(".");
-                            err_04 = calculate_error(pepo, map,[], 1);
+                            err_04 = calculate_error(pepo, map, [], 1);
 
                             fprintf(" err 04 %.4e", err_04);
                             plot_structure{4, i} = err_04;
@@ -108,7 +107,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
                         legend_Arr{plot_counter} = sprintf("A:%d", opts.order);
                         plot_counter = plot_counter + 1;
                         hold on
-                   case 3
+                    case 3
                         colour = colors{2};
                         colour(4) = alphas(j);
                         loglog(simul.beta_arr, abs(cell2mat(plot_structure(3, :))), "LineStyle", line_spec(j), "Color", colour);
@@ -154,7 +153,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
     end
 end
 
-function compare_M(simulatiemodellen, beta_arr,M)
+function compare_M(simulatiemodellen, beta_arr, M)
     models_len = size(simulatiemodellen, 2);
 
     for round = 1:models_len
@@ -164,7 +163,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
         model = models(simulatiemodellen(round), struct);
 
         opts.order = 5;
-        opts.testing=1;
+        opts.testing = 1;
 
         simul.types = [2, 3];
 
@@ -192,8 +191,6 @@ function compare_M(simulatiemodellen, beta_arr,M)
         set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
         %%%
 
-       
-
         %loop over different orders
 
         plot_structure = zeros(5, M_size, beta_len);
@@ -201,7 +198,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
         for i = 1:beta_len
             opts.beta = simul.beta_arr(i);
 
-            fprintf("beta %.4e order %d \n",  opts.beta , opts.order);
+            fprintf("beta %.4e order %d \n", opts.beta, opts.order);
 
             for t = 1:size(simul.types, 2)
                 switch simul.types(t)
@@ -209,7 +206,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
                         handle = @make_PEPO_1D;
                         pepo02 = PEPO(model, opts, handle);
                     case 3
-                        handle = @make_PEPO_1D_double;
+                        handle = @make_PEPO_1D_type_E;
                         pepo03 = PEPO(model, opts, handle);
 
                     case 4
@@ -259,14 +256,14 @@ function compare_M(simulatiemodellen, beta_arr,M)
                     case 2
                         colour = colors{1};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(reshape(plot_structure(2, j, :),[],1)), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(simul.beta_arr, abs(reshape(plot_structure(2, j, :), [], 1)), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("A: M %d", M(j));
                         plot_counter = plot_counter + 1;
                         hold on
                     case 3
                         colour = colors{2};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(reshape(plot_structure(3, j, :),[],1)), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(simul.beta_arr, abs(reshape(plot_structure(3, j, :), [], 1)), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("E: M %d", M(j));
                         plot_counter = plot_counter + 1;
                         hold on
@@ -274,7 +271,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
                         error('check this')
                         colour = colors{3};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(reshape(plot_structure(4, j, :),[],1)), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(simul.beta_arr, abs(reshape(plot_structure(4, j, :), [], 1)), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("A: M %d", M(j));
                         plot_counter = plot_counter + 1;
                         hold on
@@ -282,7 +279,7 @@ function compare_M(simulatiemodellen, beta_arr,M)
                         error('check this')
                         colour = colors{4};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(reshape(plot_structure(5, j, :),[],1)), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(simul.beta_arr, abs(reshape(plot_structure(5, j, :), [], 1)), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("D: M %d", M(j));
                         plot_counter = plot_counter + 1;
                         hold on

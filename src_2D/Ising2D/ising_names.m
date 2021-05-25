@@ -78,8 +78,20 @@ function [names, T_c_arr] = ising_names(n)
                 'TIM_T=0.7_order_5_chi=11_trunc_20_sym=1_21_May_2021_15:57';
                 'TIM_T=0.7_order_5_chi=16_trunc_20_sym=1_21_May_2021_16:26';
                 'TIM_T=0.7_order_5_chi=23_trunc_20_sym=1_21_May_2021_16:28';
+                'TIM_T=0.7_order_6_chi=8_trunc_20_sym=1_22_May_2021_10:09'; %L=6 bd=20  
                 }};
             T_c_arr = [2.82];
+            
+        case 4
+            names = {{
+            'TIM_T=0.7_order_6_chi=8_trunc_20_sym=1_22_May_2021_10:09'; %L=6 bd=20    
+            'TIM_T=0.7_order_6_chi=11_trunc_20_sym=1_22_May_2021_14:45';
+            'TIM_T=0.7_order_6_chi=16_trunc_20_sym=1_22_May_2021_14:45';
+            'TIM_T=0.7_order_6_chi=23_trunc_20_sym=1_22_May_2021_20:26';
+            }};
+        
+            T_c_arr = [2.8544731];
+            
     end
 
 end

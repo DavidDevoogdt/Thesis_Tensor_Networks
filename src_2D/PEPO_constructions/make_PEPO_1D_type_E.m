@@ -1,4 +1,4 @@
-function [obj, err_code] = make_PEPO_1D_double(obj)
+function [obj, err_code] = make_PEPO_1D_type_E(obj)
     err_code = 0;
 
     d = obj.dim;

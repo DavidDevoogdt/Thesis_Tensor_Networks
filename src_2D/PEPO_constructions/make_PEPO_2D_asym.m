@@ -1,4 +1,4 @@
-function [obj, error_code] = make_PEPO_2D_A(obj)
+function [obj, error_code] = make_PEPO_2D_asym(obj)
 
     load_save = 0;
 
@@ -157,7 +157,7 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
             err02 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
 
-            if err02 > err01 && err02> obj.copts.err_tol
+            if err02 > err01 && err02 > obj.copts.err_tol
                 warning('not converging')
                 error_code = 1;
                 return;

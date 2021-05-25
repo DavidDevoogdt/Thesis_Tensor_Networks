@@ -1,4 +1,4 @@
-function [obj, error_code] = make_PEPO_2D_A(obj)
+function [obj, error_code] = make_PEPO_2D_sym(obj)
 
     %setup and size definitions
     d = obj.dim;
@@ -110,9 +110,9 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     %blocks (same as 1D chain), checks whether cyclic error improves with extra added blocks
     obj.PEPO_cell{1, 1, 1, 1} = reshape((expm(obj.H_1_tensor)) / exp(obj.nf), [d, d, 1, 1, 1, 1]);
 
-    err01 = 1;
-
     for n = 2:obj.copts.order
+
+        err01 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
 
         if mod(n, 2) == 0
             m = n / 2;
@@ -121,27 +121,26 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                 fprintf('linear: %d\n', m)
             end
 
-            if n== 2
-                [obj, ln_prefact, err00] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
+            if n == 2
+                [obj, ln_prefact, err02] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
             else
-                [obj, ln_prefact, err00] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
+                [obj, ln_prefact, err02] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
             end
 
         else
             m = (n - 1) / 2;
 
             %%% n--|--n block
-            [obj, ln_prefact, err00] = add_lin(obj, [m, m, 0, 0], ln_prefact);
+            [obj, ln_prefact, err02] = add_lin(obj, [m, m, 0, 0], ln_prefact);
         end
 
-        err02 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
+        %err02 = calculate_error(obj, 1:n + 1, obj.cycleopts, 1);
 
-        if err02 > err01 && err02> obj.copts.err_tol
-            warning('not converging old %.4e new %.4e n %d',err01, err02,n)
+        if err02 > err01 && err02 > obj.copts.err_tol
+            warning('not converging old %.4e new %.4e n %d', err01, err02, n)
             error_code = 1;
             return;
-            
-            
+
         end
 
         err01 = err02;
@@ -157,23 +156,23 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         fprintf('non linear blocks \n')
     end
 
-    for n = 1:L
+    for n = 3:obj.copts.order
         switch n
-            case 1
+            case 3
                 [obj, ln_prefact, ~] = add_lin(obj, [1, 1, 1, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [1, 1, 1, 1], ln_prefact);
 
-            case 2
+            case 4
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 1, 1, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 1, 1, 1], ln_prefact);
-
+            case 5
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 1, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 1, 1], ln_prefact);
 
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 1], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [2, 2, 2, 2], ln_prefact);
-            case 3
+            case 6
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 1, 1, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 1, 1, 1], ln_prefact);
 
@@ -184,6 +183,8 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 2, 1], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 2, 2, 2], ln_prefact);
 
+            case 7
+
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 1, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 1, 1], ln_prefact);
 
@@ -193,8 +194,8 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
 
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 1], ln_prefact);
-                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 2] ,ln_prefact);
-                
+                [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 2], ln_prefact);
+
                 %works but slow and high ram consumptio
                 %[obj,ln_prefact,~] = add_lin(obj, [3,3,3,3] ,ln_prefact);
                 %takes to much memory
@@ -268,19 +269,21 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
         end
 
         %loops with 1 or more legs
-        for n = 1:L
+        for n = 3:obj.copts.order
             switch n
-                case 1
+                case 3
                     [obj, ln_prefact] = add_loop(obj, [1, 0], ln_prefact);
                     [obj, ln_prefact] = add_loop(obj, [1, 1], ln_prefact);
-                case 2
+                case 4
                     [obj, ln_prefact] = add_loop(obj, [2, 0], ln_prefact);
                     [obj, ln_prefact] = add_loop(obj, [2, 1], ln_prefact);
+                case 5
                     [obj, ln_prefact] = add_loop(obj, [2, 2], ln_prefact);
-                case 3
+                case 6
                     [obj, ln_prefact] = add_loop(obj, [3, 0], ln_prefact);
                     [obj, ln_prefact] = add_loop(obj, [3, 1], ln_prefact);
                     [obj, ln_prefact] = add_loop(obj, [3, 2], ln_prefact);
+                case 7
                     [obj, ln_prefact] = add_loop(obj, [3, 3], ln_prefact);
                 otherwise
                     error('not impl')
@@ -389,18 +392,18 @@ function [obj, error_code] = make_PEPO_2D_A(obj)
     end
     %obj = cell2matrix(obj); max(reshape( obj.PEPO_matrix ,[],1))
 
-    if obj.testing == 1
-        calculate_error(obj, [
-                        1, 1, 1;
-                        1, 1, 1; ], [], 1)
-        calculate_error(obj, [
-                        1, 1, 0;
-                        1, 1, 1;
-                        0, 1, 1; ], [], 1)
-        %         calculate_error(obj, [
-        %                         1, 1, 1;
-        %                         1, 1, 1;
-        %                         0, 1, 1; ], [], 1)
-    end
+    %     if obj.testing == 1
+    %         calculate_error(obj, [
+    %                         1, 1, 1;
+    %                         1, 1, 1; ], [], 1)
+    %         calculate_error(obj, [
+    %                         1, 1, 0;
+    %                         1, 1, 1;
+    %                         0, 1, 1; ], [], 1)
+    %         %         calculate_error(obj, [
+    %         %                         1, 1, 1;
+    %         %                         1, 1, 1;
+    %         %                         0, 1, 1; ], [], 1)
+    %     end
 
 end

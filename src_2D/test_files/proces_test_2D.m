@@ -8,25 +8,58 @@
 
 function test
 
-    filenames = {'2D_05-20-21_18-43-17';%'2D_05-20-21_16-02-11';
-                 %'2D_05-20-21_16-01-39';
-                 '2D_05-20-21_16-42-07';
-                 %'2D_05-20-21_16-42-11';
-                 %'2D_05-20-21_17-25-55';
-                 '2D_05-20-21_19-37-08';
-                 '2D_05-20-21_20-27-31';
-                 '2D_05-21-21_08-59-27'
-                 '2D_05-21-21_13-54-44';};
-             
-    labels = {%'$\epsiolon^1$ no loops, $\sigma_0=10^{-12}$';
-             '$\epsilon^1$ no loops';
-             '$\epsilon^1$ plaquette';
-             %'no loops, $\sigma_0=10^{-13}$';
-             %'$\epsiolon^1$plaquette, $\sigma_0=10^{-10}$';
-             '$\epsilon^1$ extensions';
-             '$\epsilon^2$ no loops';
-             '$\epsilon^2$ plaquette';
-             '$\epsilon^2$ extensions';};
+    %model = 't_ising';
+    model = 'heis';
+
+    switch model
+        case 't_ising'
+
+            filenames = {
+                '2D_05-20-21_18-43-17';%'2D_05-20-21_16-02-11';
+                         %'2D_05-20-21_16-01-39';
+                         '2D_05-20-21_16-42-07';
+                         %'2D_05-20-21_16-42-11';
+                         %'2D_05-20-21_17-25-55';
+                         '2D_05-20-21_19-37-08';
+                         '2D_05-20-21_20-27-31';
+                         '2D_05-21-21_08-59-27'
+                         '2D_05-21-21_13-54-44';
+                         };
+
+            labels = {
+                %'$\epsiolon^1$ no loops, $\sigma_0=10^{-12}$';
+                     '$\epsilon^1$ no loops';
+                     '$\epsilon^1$ plaquette';
+                     %'no loops, $\sigma_0=10^{-13}$';
+                     %'$\epsiolon^1$plaquette, $\sigma_0=10^{-10}$';
+                     '$\epsilon^1$ extensions';
+                     '$\epsilon^2$ no loops';
+                     '$\epsilon^2$ plaquette';
+                     '$\epsilon^2$ extensions';
+                     };
+        case 'heis'
+           filenames = {
+               '2D_05-24-21_08-55-47';
+               '2D_05-24-21_09-30-36';
+               '2D_05-24-21_10-15-02';
+               '2D_05-24-21_11-43-54';
+               '2D_05-24-21_17-58-43';
+               '2D_05-25-21_10-47-32';
+               };
+                     
+                     
+            labels = {
+                     '$\epsilon^1$ no loops';
+                     '$\epsilon^1$ plaquette';
+                     '$\epsilon^1$ extensions';
+                     '$\epsilon^2$ no loops';
+                     '$\epsilon^2$ plaquette';
+                     '$\epsilon^2$ extensions';
+                     };
+
+        otherwise
+            error(unknow)
+    end
 
     fold = mfilename('fullpath');
     pathparts = strsplit(fold, '/');
