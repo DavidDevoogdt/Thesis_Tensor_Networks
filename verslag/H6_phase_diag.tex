@@ -1,19 +1,19 @@
 
-Now we have an idea how accurate the cluster expansions is, we can use it to calculate the thermodynamic properties of the transvere field Ising model. The sampling of points was explained in \cref{sec:phase_diag}
+Now we have an idea how accurate the cluster expansions is, we can use it to calculate the thermodynamic properties of the transvere field Ising model. The sampling of points was explained in \cref{sec:phase_diag}.
 
 As a reference, \cref{2dtisingphasediag} is shown once more
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
     \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}}
     \label{2dtisingphasediag2}
 \end{figure}
 
+At the relevant temperature, an order 5 series expansion without loops is sufficient. This keeps the bond dimension small and hence the environment can be computed faster with VUMPS.
+
 \subsection{Classical Ising phase transition}
 The classical ising model on a square lattice has an exact solution. Onsager calculated the critical temperature to be $T_c = \frac{2 J}{k \ln(1+\sqrt{2}) } \approx 2.69185$. A test for the construction is to simulate this and compare the fitted (see \cref{subsec:qphasediag} ) results.
-
-At the relevant temperature, an order 5 series expansion without loops is sufficient. This keeps the bond dimension small and hence the environment can be computed faster with VUMPS.
 
 The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. Left upper corner shows m vs T. For low T, there is clearly a nonzero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is marek gap, a measure for the system size as explained in \cref{subsec:fss}.
 
@@ -65,7 +65,7 @@ With the series expansion from this paper and Vumps, $T_c=1.2736(6)$, indicating
 
 \subsection{T=0.7 quantum phase transition }\label{tphasetranssubsec}
 
-Up untill now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}.
+Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}.
 
 \begin{figure}
     \center
@@ -74,17 +74,26 @@ Up untill now, the phase diagram in \cref{2dtisingphasediag2} was explored at co
     \label{fig:phase:t07:full}
 \end{figure}
 
-Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expension is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quit different magnetisation fpr large g. This shows that for $g>0.7$, order 5 is not sufficient anymore.
+Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quite different magnetisation for large g. This shows that for $g>0.7$, order 5 is not sufficient anymore.
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/phasediag/t07/zoomed2.pdf}
+    \caption{Results for $T=0.7$ phase transition. The cluster expension is of order 6.}
+    \label{fig:phase:t07:full2}
+\end{figure}
+
+A more accurate version is shown in \cref{fig:phase:t07:full2}. Here, all the cluster expansions are of order 6 with a total bond dimension of ($D = 1+4+16+20$) instead of ($D = 1+4+16$). The results, fitted without $\chi=8$ due to obvious finite size effects, show a much better collapse.
 
 \subsection{Tricritical point}
 
-Now that we know the critical transveral field can be determined, all the tools are present to extrapolate the Tricritical point, indicated by a red dot in \cref{2dtisingphasediag2}. To achieve this, the following scaling relation can be used:
+Now that we know the critical transveral field can be determined, all the tools are present to extrapolate the tricritical point, indicated by a red dot in \cref{2dtisingphasediag2}. To achieve this, the following scaling relation can be used:
 \begin{equation}
     T_c = \left| g_c-g_{c,q} \right|^{z \nu_{3D}}
 \end{equation}
 Near the critical point, the critical temperature $T_c$ and the critical transversal field $g_c$ are related to each other by the value of the quantum critical point $g_{c,q}$ and critical exponent $z=1$ and $\nu_{3D} \approx 0.62998$ \cite{Hesselmann2016}.
 
-This could perfectly be done, given enough computation time to calculate for many temperatures the critical transversal field with a finite size scaling, similar to \cref{tphasetranssubsec}. Possibly, also a scaling in truncation dimension for the cluster expansion is needed.
+This could perfectly be done, given enough computation time to calculate for many temperatures the critical transversal field with a finite size scaling, similar to \cref{tphasetranssubsec}. Possibly, also a scaling in truncation dimension D for the cluster expansion is needed.
 
 \subsection{Going beyond }
 With all the built machinery to construct cluster expansions, is logical to calculate the phase diagram with increased precision.
@@ -95,7 +104,7 @@ Going to higher order (i.e. longer linear chains) and adding the single loop con
 
 Care has to be taken in order to not violate one of the conclusions in 1D: never construct a longer chain than the previously fully solved one. For instance if the bond is truncated to 10, the linear chains can be constructed up till order 4. This means \cref{eq:cross_terms:order4} can be added but not \cref{eq:cross_terms:order5}, because the longest chains are order 5. Level 5 can still be constructed and contracted easily, but virtual level 3 has a bond dimension of 64. Compared to the previous bond dimensions (1,4 and 16) this is quite large and needs to be truncated.
 
-\subsubsection{Loops and extensions}\cref{subsec:results:loops_and_ext}
+\subsubsection{Loops and extensions}\label{subsec:results:loops_and_ext}
 Adding loops decreases the error. but there is also a surprising result: all possible loop extensions result in a higher error. The fluctuation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
 The question is wether this is a result of a failing cluster expansion, or inability VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely build from scratch and errors happen, and there is no guarantee that the series even converges. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a':
 \begin{equation}
@@ -158,7 +167,7 @@ It's clear that more research is needed here. One way to locate the problem woul
 
 \todo{complex matrices instead of real ones??}
 
-\subsubsection{Better extrapolation}
+\subsubsection{Better extrapolation}\label{sssec:better_Extrap}
 
 The spirit behind finite size scaling is to calculate more with the data availalbe. In \cref{subsec:fss}, 2 additional varariations were suggested. One is to account for the subleading finite size corrections, the other to cange the way of calculating $\delta$.
 
@@ -174,3 +183,8 @@ Different choices of $c_i$ in \cref{eq:cit_delta} are possible to construct $\de
 This improves the collapse, but is not clear how much the prediction of $T_c$ or $g_c$ is improved.
 
 \subsection{Conclusion}
+
+The conclusion from the direct results in \cref{sec:results2d} seems to carry over to a lattice in the thermodynamic limit very well. Comparison with the critical temperatures from literature confirmed that this method is able to approximate the operator $\exp(-\beta \hat{H})$ very well, even for a cluster expansion of order 5 without loops. This has only a bond dimension of 21, enabling the use of larger VUMPS bond dimension.
+
+The path for determining a value for the tricritical, an important test for any method, is clear and mostly requires more precise data. With more data points, and carefull analysis of the end results, the techniques of \cref{sssec:better_Extrap} could be used to calculated even more precise results.
+

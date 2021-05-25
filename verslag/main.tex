@@ -53,6 +53,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{gensymb} % /textdegree
 
+\usepackage{acronym}
+
+
 \usepackage{fancyvrb}
 
 \usepackage{epigraph}
@@ -192,6 +195,21 @@ The author(s) gives (give) permission to make this master dissertation available
 \setcounter{tocdepth}{3}
 \tableofcontents
 
+\newpage
+
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\section*{List of Acronyms}
+\begin{acronym}
+    \acro{MPS}{Matrix Product State}
+    \acro{MPO}{Matrix Product Operator}
+    \acro{PEPS}{Projected Entangled Pairs State}
+    \acro{PEPO}{Projected Entangled Pairs Operator}
+    \acro{VUMPS}{variational uniform Matrix Product State algorithm}
+    \acro{TEBD}{Time Evolving Block Decimation}
+    \acro{SVD}{Singular Value Decomposition}
+    \acro{CFT}{Conformal Field Theory}
+\end{acronym}
+
 % \listoffigures
 
 \mainmatter
@@ -288,7 +306,7 @@ The author(s) gives (give) permission to make this master dissertation available
 \section{Results 1D}\label{sec:results1d}
 \input{H6_1D.tex  }
 
-\section{Results 2D}
+\section{Results 2D}\label{sec:results2d}
 \input{H6_2D.tex}
 
 \section{Phase diagram 2D transveral Ising model} \label{subsec:2dpahsediag}

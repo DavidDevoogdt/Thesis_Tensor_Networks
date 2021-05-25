@@ -136,7 +136,7 @@ One particular task is to determine all the possible combinations of virtual lev
 This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T^{i}_{  \alpha \beta \gamma \delta } $ where i encodes all the non-empty combinations of legs $(\alpha \beta \gamma \delta)$. On each site, the right boundary conditions need to be applied to get the right geometry. After setting the boundary conditions, the sparse PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contractions. Due to its sparsity, this performs quite fast.
 As an added bonus, removing a tensor from T gives all contractions without this tensor. As both results are sorted list, the subset of contractions containing a given tensor can also be found fast.
 
-\subsection{Normalisation}\cref{subsec:nf}
+\subsection{Normalisation}\label{subsec:nf}
 
 For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the hamiltonian evaluated for a certain geometry. This is a hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
 \begin{align}
@@ -204,10 +204,12 @@ where the physical indices need to be contracted with the corresponding indices 
 Some calcalations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
 \subsection{Profiling}
+To get a sense of the speed, constructing a 2D PEPO up till order 6 with level 3 truncated at bond dimension 20 with loop extensions takes about 25 seconds on my pc. The most time intensive processes are performing the contractions. For larger systems, the time limiting factor is calculating the exponential of the hamiltonian. 
 
 \subsection{Calculating the error}
 
-\todo{profiling}
+Every solver returns the residual error for the new block. This comes at almost no cost, because all the calculations are already done during the solve.
+
 
 \section{Calculating phase diagrams} \label{sec:phase_diag}
 
