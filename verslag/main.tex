@@ -115,12 +115,12 @@
 
 %https://www.ugent.be/ea/nl/faculteit/studentenadministratie/masterproef/vorm1920.pdf
 
-%\includepdf[page={1}]{ titelblad.pdf }
+\includepdf[page={1}]{ titelblad.pdf }
 
-% \newpage
-% \thispagestyle{empty}
-% \mbox{}
-% \newpage
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
 
 \includepdf[page={1}]{ titelblad.pdf }
 
@@ -136,28 +136,58 @@
 \section*{Foreword}
 \lipsum{20}
 
-\section*{ Permission of use on loan }
+\section*{Permission of use on loan }
 The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
 
 \today
 
 \todo{date}
 
+\newpage
+
 \addcontentsline{toc}{chapter}{Abstract}
+
+%\section*{Abstract}
+
+%\includepdf[page={1}]{ abstract.pdf }
+
+%\thispagestyle{plain}
+%\begin{titlepage}
+\begin{center}
+
+    \Large{\textsc{Cluster Expansion of Thermal States using Tensor
+            Networks}} \\  [0.2cm]
+
+    David Devoogdt \footnote{Student number: 01608249 }\\ [0.3cm]
+
+    \normalsize{Supervisors: Dr. Laurens Vanderstraeten, Prof. Frank Verstraete} \\
+    \normalsize{Counsellors: Bram Vanhecke} \\ [0.2cm]
+    Faculty of Engineering and Architecture Ghent University\\[0.2cm]
+    \small{Master's dissertation submitted in order to obtain the academic degree of \\
+        Master of Science in Engineering Physics} \\ [0.2cm]
+    \normalsize{Academic year 2020-2021} \\  %Academiejaar
+
+\end{center}
+
+%\end{titlepage}
 
 \section*{Abstract}
 
-Het abstract is maximum één bladzijde en bevat minstens:
-a) De informatie die werd vermeld op het titelblad (eigen vorm);
-b) Een summiere beschrijving van het werk (vijftien à twintig regels);
-c) Eventueel: drie tot vijf goed gekozen trefwoorden die het onderwerp best
-omschrijven.
+\input{abstract.tex}
+
+% Het abstract is maximum één bladzijde en bevat minstens:
+% a) De informatie die werd vermeld op het titelblad (eigen vorm);
+% b) Een summiere beschrijving van het werk (vijftien à twintig regels);
+% c) Eventueel: drie tot vijf goed gekozen trefwoorden die het onderwerp best
+% omschrijven.
+
+\section*{Keywords}
+
+\newpage
 
 \addcontentsline{toc}{chapter}{Extended abstract}
 
-\section*{Extended Abstract}
-
-De extended abstract heeft een standaardlengte van minimaal twee bladzijden, met een maximum van zes bladzijden.
+\includepdf[pages={1-},pagecommand={\thispagestyle{plain}}]{ Extended_abstract.pdf }
 
 \setcounter{tocdepth}{3}
 \tableofcontents
