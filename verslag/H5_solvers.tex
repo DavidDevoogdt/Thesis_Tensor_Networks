@@ -116,7 +116,7 @@ The framework is equipped with 3 different solvers, designed to solve different 
 [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map}, {pattern}, 
                 ln_prefact, struct, {rot_90});
 \end{verbatim}
-They only need a map, which is the gemetry of the problem, and a pattern, i.e. the new block to add. \verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as discussed will be discussed in the next \cref{subsec:nf}.
+They only need a map, which is the gemetry of the problem, and a pattern, i.e. the new block to add.\verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as discussed will be discussed in the next \cref{subsec:nf}.
 
 Whenever the linear solver can be used, it is the solver of choice. The sparse full inverse procedure is fast and handles the ill-conditioned inverses very well. The sequential linear solver builds on this solver to handle the introduction of multiple new tensors, possibly related to each other through a permutation.
 
@@ -222,9 +222,17 @@ The sampling starts by calculating the magnetisation for N  uniformly sample poi
 
 \subsection{Storing the information}
 
-Each run has a template with all the common model info. For each point 2 files are stored. One file contains the info and results, such as temperature, magnetisation, correlation length, etc. The other file is much larger and contains the PEPO tensor, the calculated vumps environments,\dots
-The files of the first kind are used in other calculations, such as fitting procedure.  Reassembling the files into one structure happens in a central function. Another function is able to reprocess already calculated points. The sampling can be continued from where is was last stopped.
+Each run has a template with all the common model info. For each point 2 files are stored. One file contains the info and results, such as temperature, magnetisation, correlation length, etc. The other file is much larger and contains the PEPO tensor, the calculated VUMPS environments, \dots
+The files of the first kind are used in other calculations, such as fitting procedure.  Reassembling the files into one structure happens in a central function. Another function is able to reprocess already calculated points. The sampling can be continued from where it was last stopped.
 
 \subsection{Fitting}\label{subsec:qphasediag}
 
-\todo{mps bond scaling, ...}
+The coded performs a finite size scaling as explained in \cref{subsec:fss}.
+
+The fitting procedure works as follows: a function $f_X$ defined by a limited number of parameters is made for every observable $X \in \{ m , \xi, S \}$. The parametrisation is chosen such that it has the right scaling behaviour, and the analytical derivative is known.
+
+The code performs a non-linear optimisation, where the error is either the vertical distance to $f_X$ or the orthogonal distance. The fitted function and parameters are determined simultaneously.
+
+The optimisation runs for a limited number of cycles. Afterwards, a random displacement is made to the parameters of the current best fit. This is repeated until convergence.
+
+The code to perform this collapse was originally written by Bram Vanhecke and adapted to its current form. This includes the possibility to fit he subleading corrections and $c_i$ to calculate $\delta$.

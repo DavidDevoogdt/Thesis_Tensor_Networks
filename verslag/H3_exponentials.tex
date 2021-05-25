@@ -42,7 +42,7 @@ The dynamical behaviour of a system can be captured by its dynamic correlation f
 \end{equation}
 This requires time evolution operators $e^{-i \hat{H} t}$.
 
-\subsubsection{subsubsection}{ground state}
+\subsubsection{Ground state}
 One practical way of finding the ground state $ \ket{E_0}$ is to cool down a given random state $ \ket{\Psi(0)}$ to very small T (large $\beta$) \cite{Orus2014}:
 \begin{equation}
     \ket{E_0} = \lim_{\beta \leftarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } \quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)}
@@ -77,9 +77,9 @@ This is a more recent method (2015) to construct an MPO first detailed in \cite{
 \begin{equation}
     1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
 \end{equation}
-The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lays in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^II$ are capeble of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cref{Paeckel2019}
+The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lays in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^II$ are capeble of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}
 
-\subsubsection{global Krylov method }
+\subsubsection{Global Krylov method }
 
 Krylov methods are widely used in linear algebra to calculate eigenvectors. An example is the Lanczos algorithm. These methods are applied to MPS's, but do not fully make use of its structure. For this method, only a MPO representation is needed.
 

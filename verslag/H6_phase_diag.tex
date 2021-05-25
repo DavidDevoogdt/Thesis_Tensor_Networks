@@ -106,7 +106,7 @@ Care has to be taken in order to not violate one of the conclusions in 1D: never
 
 \subsubsection{Loops and extensions}\label{subsec:results:loops_and_ext}
 Adding loops decreases the error. but there is also a surprising result: all possible loop extensions result in a higher error. The fluctuation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
-The question is wether this is a result of a failing cluster expansion, or inability VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely build from scratch and errors happen, and there is no guarantee that the series even converges. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a':
+The question is wether this is a result of a failing cluster expansion, or inability VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely build from scratch and errors happen, and there is no guarantee that the series even converge. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a':
 \begin{equation}
     \vcenter{ \hbox{  \pepob{5}{3}{{
                         "-","-","-","-",
@@ -133,11 +133,13 @@ The question is wether this is a result of a failing cluster expansion, or inabi
                         1,1,0,0,1,
                         1,1,0,0,1}} }}
 \end{equation}
-Introduce these variations.
+Introduce these fluctuations in the calculated magnetisation.
 
-The VUMPS producedure come with 2 implicit assumptions: the original version was derived for hermitian hamiltonians. The MPO resulting from the traced PEPO  from the culster expansion is not an hermition MPO.
+The VUMPS producedure come with 2 implicit assumptions. Firstly \cref{subsec:vumps_below_alt} the procedure for finding $B$ from below was explained. In the case tested here, the PEPO is rotation invariant and real. Solving the same equation with but with complex tensors, results in wrong magnetisation. For models like Heisenberg, complex tensors are needed to solve the equations. Switching to complex tensors can also not be seen in the error measures. This suggests the used method for finding B was incorrect.
 
-A second assumption made during this thesis is that the wave function can be represented by a 1by1 unit cell. Despite efforts made, the multisite version \cite{Nietner2020} doesn't seem to produce sensible results, even for version where 1by1 unit cell does give the right results.
+Implemting the suggested solution in \cref{subsec:vumps_below_alt} would come at no extra cost: the tensor is exactly rotation invariant and hence the fixed point form below is automatically known in this case.
+
+A second assumption made during this thesis is that the wave function can be represented by a 1 by 1 unit cell. Despite efforts made, the multisite version \cite{Nietner2020} doesn't seem to produce sensible results, even for version where 1 by 1 unit cell does give the right results.
 
 It's clear that more research is needed here. One way to locate the problem would be to use another algorithm to contract the network, such as corner transfer matrix renormalization group (CTMRG) as used in  cite{Czarnik2019}, or even using the single site VUMPS algorithm combined with blocking:
 
@@ -165,8 +167,6 @@ It's clear that more research is needed here. One way to locate the problem woul
                         1,4,1}} }}
 \end{equation}
 
-\todo{complex matrices instead of real ones??}
-
 \subsubsection{Better extrapolation}\label{sssec:better_Extrap}
 
 The spirit behind finite size scaling is to calculate more with the data availalbe. In \cref{subsec:fss}, 2 additional varariations were suggested. One is to account for the subleading finite size corrections, the other to cange the way of calculating $\delta$.
@@ -188,3 +188,4 @@ The conclusion from the direct results in \cref{sec:results2d} seems to carry ov
 
 The path for determining a value for the tricritical, an important test for any method, is clear and mostly requires more precise data. With more data points, and carefull analysis of the end results, the techniques of \cref{sssec:better_Extrap} could be used to calculated even more precise results.
 
+The results also indicate that the current procedure to determine the magnetisation with VUMPS, and in particular the question of how to close the VUMPS environment from below as introduced in \cref{subsec:vumps_below_alt}, deserves some closer attention in the future.

@@ -667,7 +667,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             4,4,4,4,4,4,4,
                             13,0,0,0,0,0,13,
                             13,2,2,7,3,3,13}} }}\\
-        &=       \vcenter{ \hbox{ \pepob{7}{3}{{
+        =&       \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","Gl","","","Gr","",
                             "","","","","","",}}{{
@@ -681,7 +681,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             1,4,4,4,4,4,4,
                             13,2,0,0,0,3,13,
                             1,5,2,7,8,1,4}}}} \\
-        &=  \vcenter{ \hbox{ \pepob{7}{3}{{
+        =&  \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","","Gl","Gr","","",
                             "","","","","","",}}{{
@@ -695,7 +695,7 @@ Then  \cref{algs:mpslayermpo} is solved:
                             1,4,4,4,4,4,4,
                             13,2,2,0,3,3,13,
                             1,1,5,9,1,1,1}} }}\\
-        &= \vcenter{ \hbox{ \pepob{7}{3}{{
+        =& \vcenter{ \hbox{ \pepob{7}{3}{{
                             "-","-", "-","-","-","-",
                             "","","","","","",
                             "","","","","","",}}{{
@@ -722,8 +722,8 @@ Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC},
     \item  $ G_l,G_r   \rightarrow Ac,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
 
-The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \cref{algs:vumpsenvc} now becomes:
-\begin{equation}
+The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \cref{algs:biggrid} now becomes:
+\begin{equation}\label{vumps_Below}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
                         "","Gl","Gr","",
@@ -734,7 +734,24 @@ The calculated environment can now be used to solve the original problem. Due to
                         "","",
                         "-","-"}}{{
                         13,2,7,3,13,
-                        13,2,4,3,13,
+                        13,2,12,3,13,
+                        1,5,9,1,1}} }}
+\end{equation}
+
+As always, the identity \cref{algs:mpsid} can be used to simplify the equation
+
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        1,4,7,4,1,
+                        1,4,12,4,1,
                         1,5,9,1,1}} }}
 \end{equation}
 
@@ -748,6 +765,124 @@ By carefully constructing the tangent space and making use of the available gaug
 Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
 
 \subsubsection{Multisite}
+In \cite{Nietner2020}, a version of VUMPS is proposed that can compute the environment of a m by n unit cell with only a linear increase in computation cost. Larger unit cells might be needed for groundstates with non-trivial unit cell .
 
-\subsubsection{Calculating the MPS from below}
+\subsubsection{Calculating the MPS from below}\label{subsec:vumps_below_alt}
+
+One questions, which does not seem to be answered in literature, is which tensor $B$ to use to complete the contraction from below for a complete general MPO:
+
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        1,4,16,4,1,
+                        1,4,12,4,1,
+                        1,5, 9  ,1,1}} }}
+\end{equation}
+
+The reason for this doubt will be explained in \cref{subsec:results:loops_and_ext}. As method suggested to me, and used throughout this thesis, is finding the largest eigenvalue from below (similar to \cref{algs:AC}):
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        1,4,16,4,1,
+                        1,4,0,4,1,
+                        1,5, 18  ,1,1}} }}  = \lambda   \vcenter{ \hbox{  \pepob{3}{2}{{
+                        "","",
+                        "-","-"}}{{
+                        "-",
+                        "",
+                        "-"}}{{
+                        4,16,4,
+                        4,4,4}} }}
+\end{equation}
+The idea is to use the same environments $G_l$ and $G_r$, but find the fixed point from below. This has some problems: $B$ cannote be brought into a canonical form according to \cref{algs:ACC} (in combination with the analogue of \cref{algs:vumpsenvc}), and hence does not represent a fixed point MPS as was the case from above. This also doesn't work in the multisite setting.
+
+This is not completely surprising, suppose we have a fixed point MPS $B$ (denoted in bold) from below (for instance obtained by performing the VUMPS algorithm on an MPO rotated by 180 degrees), then contracting the upper half plane and the lower half plane amounts to:
+
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        13,22,25,23,13,
+                        13,2,12,3,13,
+                        1,5,9,1,1}} }}
+\end{equation}
+
+To solve this equation, left and right fixed point need to be calculated
+\begin{equation}\label{eq:vumps_B_own}
+    \vcenter{ \hbox{   \pepob{3}{2}{{
+                        "","",
+                        "",""}}{{
+                        "",
+                        "",
+                        "-"}}{{
+                        24, 22 ,4,
+                        4,  2 ,4}} }} = \lambda    \vcenter{ \hbox{  \pepob{3}{2}{{
+                        "","",
+                        "",""}}{{
+                        "",
+                        "-",
+                        "-"}}{{
+                        24, 4 ,1,
+                        4,  4 ,1}} }}
+\end{equation}
+Then (with $Fr$ the analogous fixed point from the right side) the problem becomes:
+\begin{equation}
+    \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","Gl","Gr","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        1,24,25,26,1,
+                        1,4,12,4,1,
+                        1,5, 9  ,1,1}} }}
+\end{equation}
+
+Of course both methods could also be equal, if the following holds (up to a factor):
+\begin{equation}
+    \vcenter{ \hbox{  \pepob{3}{2}{{
+                        "","",
+                        "-","-"}}{{
+                        "-",
+                        "",
+                        "-"}}{{
+                        4,16,4,
+                        4,4,4}} }} =   \vcenter{ \hbox{   \pepob{5}{3}{{
+                        "","", "","",
+                        "","","","",
+                        "","","",""}}{{
+                        "-","-",
+                        "","",
+                        "","",
+                        "","",
+                        "-","-"}}{{
+                        4,24,25,26,4,
+                        1,1, 4,1,1,
+                        1,1, 1  ,1,1}} }}
+\end{equation}
+
+Some numerical investigation is needed to test whether or this method gives a more correct result.
 

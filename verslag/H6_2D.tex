@@ -4,7 +4,7 @@ The results in 1D are very promising, but the real open challenges are situated 
 
 Once again, a suitable norm has to be derived. The situation is more difficult than in 1D, because contracting a PEPO tensor network has a much larger computational complexity than in 1D. Ideally, the norm would be calculated on a nxn cyclical grid (2D grid on a torus). Here n has to be at least 1 larger than the largest explicitly constructed chain.
 
-In practice, this is not achievable in reasonable amount of time. The limitations are twofold: the maximum number of sites to calclate the matrix exponential is still around 14, and the contraction of the tensor network is limited to \todo{number}
+In practice, this is not achievable in reasonable amount of time. The limitations are twofold: the maximum number of sites to calclate the matrix exponential is still around 14, and the contraction of the tensor network on a torus is limited to 3 by 3. This not capture the long chains.
 
 The limitations on the PEPO contraction can be somewhat relaxed by not computing the full network, but computing the reduced density matrix. Here, most of the sites have their physical indices traced out, except for one site.
 

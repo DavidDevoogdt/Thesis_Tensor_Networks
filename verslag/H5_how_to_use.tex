@@ -1,12 +1,27 @@
 
-All the code neede to generate all the results from this dissertation is available on my github page \url{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}. The starting points to explore the code are in the readme file.
+All the code neede to generate all the results from this dissertation is available on my github page \url{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}. The starting points to explore the code are in the readme file. The most important folder is \verb#src_2D#, as the 1D code is on all levels inforior. This is mainly due to the superior solvers in 2D
 
 \subsection{Source code structure 1D}
 
-The source code for this project can be found on \href{https://github.com/DavidDevoogdt/Thesis_Tensor_Networks}{github}. The implementation of these types can be found under \path{src/generateMPO.m}. In this class the different types of MPO can be constructed. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian. Other examples are making $L_n^{-1}$ by sequential invers MPO contractions,...
+The implementation of the different MPO types can be found under \path{src_1D/generateMPO.m}. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated hamiltonian for the given input hamiltonian. Another example is constructing the inverse by sequential inverse MPO contraction,...
 
-\path{src/test.m}  contains the code to create the plots to compare different types and orders. The other files in the folder are self-explanatory.
+\path{src_1D/test_old.m} contains the code to create the plots to compare different types and orders.
 
 \subsection{Source code structure 2D}
 
-\todo{source code 2D}
+To use the code, go to the root folder and execute  \verb#doPath.m#
+The constuction of the PEPO's happen in \path{src_2D/PEPO_constructions/}. The names coincide with the names in the pdf.
+
+The results from \cref{sec:results1d} and \cref{sec:results2d} are made with  \verb#test.m# and \verb#test_2D.m#. The plotting in 2D happens with \verb#proces_test_2D.m#
+
+Generating a phase diagram can be done with \verb#pIsing2D_par#. The $g=2.5$ transition reported in \cref{subsec:2dpahsediag} can be generated with
+\begin{verbatim}
+Ising2D_par(8, 2.5, 'g', struct('testing',0,'unit_cell',1,
+                           'par',1,'order',5,'do_loops',1));
+\end{verbatim}
+and visualised with \verb#proces_Ising2D.m#
+
+Finally, fitting the curves happens with \verb#dofit.m#
+
+\subsection{VUMPS code}
+One external package is not checked in on git: MatlabTrack. This is used in  \verb#src_2D/process_PEPO/PEPO_vumps.m# to calculate the VUMPS environment. This proprietary code was written by the QuantumGroup@UGent. To obtain the code, go to \path{https://quantumghent.github.io/software/}

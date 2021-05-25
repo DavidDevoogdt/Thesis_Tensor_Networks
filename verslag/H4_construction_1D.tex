@@ -22,7 +22,7 @@ The $O^{n n}$ block is in defined for a chain with an odd number of sites. The c
 
 In this scheme, virtual level n has dimension $d^n$. Of course, this dimension can be lowered if some error is allowed for the longest chain.
 
-\subsubsection{discussion}
+\subsubsection{Discussion}
 
 Type A can form long chains, which where not explicitly optimised for. The question arise whether this will results in accurate results for cyclic systems or not.
 
@@ -48,7 +48,7 @@ Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$.The f
 
 The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the left inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$.
 
-\subsubsection{dimension} From the construction the bond dimension grows from the left to the right. For the last step, there are only $d^2$ non zero singular values.  Each steps adds $d^2$ to the dimension.
+\subsubsection{Dimension} From the construction the bond dimension grows from the left to the right. For the last step, there are only $d^2$ non zero singular values.  Each steps adds $d^2$ to the dimension.
 For the last step, only $d^2$ non zero singular values need to be keeped. With the following natation:
 \begin{equation}
     \begin{split}
@@ -92,7 +92,7 @@ This type implements the same strict type as Type B, but in a different way. No 
 \end{equation}
 and so forth. All but one MPO elements are chosen to be the identity matrix. The middle one is the exponentiated hamiltonian with reshaped legs.
 
-\subsubsection{discussion}
+\subsubsection{Discussion}
 As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B.
 
 \subsection{Type D}
@@ -114,10 +114,10 @@ Similar to type A,
 
 Matrix $D_n$ is the singular value diagonal matrix devided by a normalisation factor $\phi$. Both U and V are multiplied by $  \sqrt{\phi} $.
 
-\subsubsection{discussion}
+\subsubsection{Discussion}
 It's not completely clear what the values of $\phi$ should be.  If $\phi$ is to large, large chains are not surpressed. If phi is to small, the $O^{n n}$ blocks will become large and hence the chain will diverge again. A reasonable value is the sum of the singular values. Other combination could be tried.
 
-\subsubsection{matrisation}
+\subsubsection{Matrisation}
 The cost of this type lies in the fact that it has no compact way of casting it to a matrix. The following works, but has quite a large dimension:
 
 \begin{tabular}{ccc|cc|cc|cc}
