@@ -1,24 +1,24 @@
-The goal of numerical techniques is to simulate the physics of real world systems. These are, to some extend, captured by different models. Models are a simplified mathematical description that captures some relevant physics of more complicated systems. This section introduces some specific models, their relevance and some properties. These models will be used later te benchmark the developed tensor network expansion.
+The goal of numerical techniques is to simulate the physics of real world systems. These are, to some extent, captured by different models. Models are a simplified mathematical description that captures some relevant physics of more complicated systems. This section introduces some specific models, their relevance and some properties. These models will be used later to benchmark the developed tensor network expansion.
 
 \subsection{Ising model}
 
 The prototypical example of a model in the field of strongly correlated matter is the Ising model. It was first introduced 1925 by Ernest Ising, as a model to capture ferromagnetism. He proved that for a linear chain, there is no phase transition at finite temperature. He wrongly concluded that this would also be the case in higher dimensions, but it turned out t be one of the deepest and far-reaching problems in 20th century \cite{Taroni2015}.
 
-The Ising model, in essence, assigns an energy contribution to neighbouring spins. These spins sit on a fixed position on a chain (1D) or lattice (2D/3D/...). In classical Ising, the operators in the Hamiltonian all commute with each other. An energy is assign between neighbouring spins and possible and energy for alignment with an external magnitic field in the same direction. In quantum Ising model, a transversal field is added. Often, the particles on the grid are spin 1/2 particles, but of course other particles are possible.
+The Ising model, in essence, assigns an energy contribution to neighbouring spins. These spins sit on a fixed position on a chain (1D) or lattice (2D/3D/...). In classical Ising, the operators in the Hamiltonian all commute with each other. An energy is assign between neighbouring spins and possible and energy for alignment with an external magnetic field in the same direction. In quantum Ising model, a transversal field is added. Often, the particles on the grid are spin 1/2 particles, but of course other particles are possible.
 
 Many generalizations exist for the Ising model. \todo{q potts,...}
 
 \subsubsection{Classical Ising}
 
-The classical ising model is given by the following hamiltonian:
+The classical Ising model is given by the following hamiltonian:
 \begin{equation}
     H = -J \left (  \sum_{<i j>} \sigma_i \sigma_j + h \sum_i \sigma_i \right )
 \end{equation}
 where $<i j>$ runs over all neighbouring lattice sites. The possible values of $\sigma$ depends on the spin dimension. For spin $1/2$ lattices $\sigma \in {-1,+1}$. g encodes the interaction strength of the external magnetic field.
 
-The sign J determines the low temperature ground state. A positive J will tend to allign all neighbouring spins at low temperature. This is often called ferromagnetic, because all the aligned spins cause a macroscopic magnitisation. On the other hand, a negative J causes neighbouring spins to have an opposite sign.
+The sign J determines the low temperature ground state. A positive J will tend to align all neighbouring spins at low temperature. This is often called ferromagnetic, because all the aligned spins cause a macroscopic magnetisation. On the other hand, a negative J causes neighbouring spins to have an opposite sign.
 
-Depending on the sign of the longitudinal field h, the spins tend to align or anti align with this external field. This lifts the degeneracy of the groundstate.
+Depending on the sign of the longitudinal field h, the spins tend to align or anti align with this external field. This lifts the degeneracy of the ground state.
 
 \paragraph{1D}
 
@@ -30,7 +30,7 @@ In 2D, it becomes important to define the lattice. Here, and in the simulations,
 
 Only the $h=0$ case the is solved analytically. For higher dimensions, no analytical solution is known. For these cases, we need to use numerical techniques if we want to understand the behaviour of these models.
 
-On different lattices, interesting thins can happen. For instance, the groundstate of an antiferromagnet on a triangular lattice is not obvious to determine. The spins tend to antiallign, but at least 2 of 3 spins on the corner of a triangle have to align. Remarkably, as will be explained in \cref{sec:PhasesAndCrit}, the physics at the phase transition does remain invariant when the lattice is changed.
+On different lattices, interesting thins can happen. For instance, the ground state of an antiferromagnet on a triangular lattice is not obvious to determine. The spins tend to antialign, but at least 2 of 3 spins on the corner of a triangle have to align. Remarkably, as will be explained in \cref{sec:PhasesAndCrit}, the physics at the phase transition does remain invariant when the lattice is changed.
 
 \subsubsection{Quantum Ising}
 
@@ -50,7 +50,7 @@ Different to the classical case, the 1D model already contains a phase transitio
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
-    \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}}
+    \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}.}
     \label{2dtisingphasediag}
 \end{figure}
 
