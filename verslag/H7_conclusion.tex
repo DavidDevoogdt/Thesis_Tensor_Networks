@@ -1,7 +1,7 @@
 \section{Conclusion}
 
 In \cref{chap1} the quantum many-body problem was introduced as one of the challenges facing modern physics. The problem is not related to the theory, but to the practical difficulty of calculating and simulating the properties of strongly correlated matter. A macroscopic overview of one class of techniques, tensor networks, was given.
-In \cref{chap2}, a brief introduction to tensor networks was given. The focus was mainly to provide some insight in the algorithm using the graphical tensor network notation. In particular, the VUMPS algorithm was explained. Also a technique was suggested to close the environment from below, because the current procedure only seems to work in specific cases \cref{subsec:results:loops_and_ext}.
+In \cref{chap2}, a brief introduction to tensor networks was given. The focus was mainly to provide some insight in the algorithm using the graphical tensor network notation. In particular, the VUMPS algorithm was explained. Also, a technique was suggested to close the environment from below, because the current procedure only seems to work in specific cases \cref{subsec:results:loops_and_ext}.
 \Cref{chap3} explains some concepts related to phases and phase transitions. The critical exponents associated with continuous phase transitions are discussed, together with a practical way called finite size scaling to obtain them from simulations. This sections also gives an overview of 2 important models in the field: the Heisenberg model and the Ising model in different dimension. Finally, the need for operator exponentials and tensor network methods to simulate time evolution are discussed.
 \Cref{chap4} is the center point of this dissertation: it explains how the cluster expansions are made. This is written down in a very compact way, making abstraction of all implementation details and results.
 \Cref{chap5} details the working of the 3 different solvers: a linear solver, a non-linear solver and a sequential linear solver. The linear solver must be implemented with great care in order to handle the ill conditioned inverses. This is done by calculating the pseudo-inverse instead of a full inverse. This can be done at the cost of an SVD decomposition per leg, while maintain the accuracy of inverting all the legs at once. Also, an algorithm for determining all possible virtual indices of a given map using PEPS contraction is given.  A starting point for exploring the source code is given.
@@ -13,7 +13,7 @@ The cluster expansions have a lot of potential. In the course of one master diss
 
 \paragraph{Real time evolution}
 
-Some first test in 1D \cref{subsec_rt_evo} show that the method also works for real time evolution. \Cref{rt_tn_methods} introduced some methods to calculate time evolutions with tensor networks. Crucially, all these methods come with a detailed error analysis. For instance, some methods have a proven error per step of $O \left( \frac{t}{N}^2  \right)$ , resulting in an error of $O \left( \frac{t^2}{N}  \right)$ at time t. This can be made arbitrarily small.
+Some first test in 1D \cref{subsec_rt_evo} show that the method also works for real time evolution. \Cref{rt_tn_methods} introduced some methods to calculate time evolutions with tensor networks. Crucially, all these methods come with a detailed error analysis. For instance, some methods have a proven error per step of $O \left( \frac{t}{N}^2  \right)$, resulting in an error of $O \left( \frac{t^2}{N}  \right)$ at time t. This can be made arbitrarily small.
 
 \paragraph{Quantum critical point}
 
@@ -25,7 +25,7 @@ The whole thesis, a square lattice was used. This is definitely not the only cho
 
 \paragraph{Higher dimensions}
 
-A promising conclusion from \cref{subsec:2dpahsediag} is that a combination of linear blocks and simple loops seems sufficient to construct a good tensor network. This opens up the path to create a 3D version of the the operator $e^{\beta \hat{H}}$.
+A promising conclusion from \cref{subsec:2dpahsediag} is that a combination of linear blocks and simple loops seems sufficient to construct a good tensor network. This opens up the path to create a 3D version of the operator $e^{\beta \hat{H}}$.
 
 \paragraph{Symmetries}
 

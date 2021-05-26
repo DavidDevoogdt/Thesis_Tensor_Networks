@@ -2,15 +2,13 @@ In this section the results of the MPO construction detailed in
 
 \subsection{Exact tensor matrix exponential } \label{chap_bench}
 
-The performance of the MPO construction can be compared with the exact diagonalisation of the hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory.A Rough estimated of the amount of RAM $R$ needed to store this complex array is:
-
+The performance of the MPO construction can be compared with the exact diagonalisation of the hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A Rough estimated of the amount of RAM $R$ needed to store this complex array is
 \begin{equation}
     R = d^{2 n} \times 16 bytes
 \end{equation}
+which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.
 
-Which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.
-
-State of the art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites. \cite{Wietek2018}
+State-of-the-art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites. \cite{Wietek2018}
 
 \subsubsection{Norms} \label{mponormdef}
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }

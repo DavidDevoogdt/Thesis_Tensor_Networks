@@ -24,11 +24,11 @@ The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 dif
     \label{fig:phase:g0:full}
 \end{figure}
 
-\todo{new figure with entropy formula fixed 6S/c instead of cS/6}
+\todo{New figure with entropy formula fixed 6S/c instead of cS/6}
 
 Near criticality, they collapse well, but away from the critical point there is quite some systematic variation. The reason is shown in \cref{fig:crit:qtran}. Only in some limited range around the critical region, the universal scaling holds.
 
-A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly. the data collapses a lot better as expected.
+A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly, the data collapses a lot better as expected.
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
@@ -100,7 +100,7 @@ With all the built machinery to construct cluster expansions, is logical to calc
 
 \subsubsection{Higher order}
 
-Going to higher order (i.e. longer linear chains) and adding the single loop contribution works well. The bond dimension of largest virtual level (3 in this case) can be truncated in the construction. The linear and non-linear solver find the least squares solution to the problems.
+Going to higher order (i.e. longer linear chains) and adding the single loop contribution works well. The bond dimension of the largest virtual level (3 in this case) can be truncated in the construction. The linear and non-linear solver find the least squares solution to the problems.
 
 Care has to be taken in order to not violate one of the conclusions in 1D: never construct a longer chain than the previously fully solved one. For instance if the bond is truncated to 10, the linear chains can be constructed up till order 4. This means \cref{eq:cross_terms:order4} can be added but not \cref{eq:cross_terms:order5}, because the longest chains are order 5. Level 5 can still be constructed and contracted easily, but virtual level 3 has a bond dimension of 64. Compared to the previous bond dimensions (1,4 and 16) this is quite large and needs to be truncated.
 
