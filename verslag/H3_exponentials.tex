@@ -1,9 +1,9 @@
 
-While it is often possible to find exact MPO representation to represent a wide class of hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate i is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called "imaginary" time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world obsevations of these systems at finite temperature.
+While it is often possible to find exact MPO representation to represent a wide class of hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate $i$ is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called "imaginary" time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world observations of these systems at finite temperature.
 
 \subsection{Statistical mechanics}\label{subsec:statmech}
 
-The physics of a system in thermodynamical equilibrium can be derived from it's partition function Z. The classical formula generalises to a density matrix $\rho$ as follows:
+The physics of a system in thermodynamic equilibrium can be derived from its partition function Z. The classical formula generalises to a density matrix $\rho$ as follows:
 \begin{equation}
     \begin{split}
         Z &= \sum e^{ - \beta E_n} \\
@@ -11,7 +11,7 @@ The physics of a system in thermodynamical equilibrium can be derived from it's 
         &= \Tr( e^{ - \beta \hat{H} } )
     \end{split}
 \end{equation}
-The first line is the partition function for clasical discrete systems. The index n runs of all possible microstates. It is known that the propability to find the system in a given microstates is given by:
+The first line is the partition function for classical discrete systems. The index n runs of all possible microstates. It is known that the probability to find the system in a given microstate is given by:
 \begin{equation}
     p_i = \frac{\sum e^{ - \beta E_i}}{Z}
 \end{equation}
@@ -22,7 +22,7 @@ An useful quantity is the density matrix $\rho$.
         &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
     \end{split}
 \end{equation}
-Whith this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
+With this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
 \begin{equation}
     \begin{split}
         Z &= \Tr( \rho) \\
@@ -53,7 +53,7 @@ In the following section I will give a very short review of the current tensor n
 
 % https://arxiv.org/pdf/1901.05824.pdf
 
-\subsubsection{Approximations to  \texorpdfstring{$ \hat{U}(\delta)$}{U}   }
+\subsubsection{Approximations to \texorpdfstring{$ \hat{U}(\delta)$}{U}}
 The goal is to approximately make a MPO for a small timestep $\delta$ which gives a new MPS at time $t+\delta$.
 \paragraph{TEBD}\label{para:TEBD}
 Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
@@ -67,34 +67,31 @@ Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Su
         \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
     \end{split}
 \end{equation}
-This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and aftwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalized to higher order schemes.
+This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalised to higher order schemes.
 
 \paragraph{ MPO $W^{I,II}$}
-These method directly use the MPO representation of a certain hamiltonian
-\todo{MPO w1 and 2}
+These methods directly use the MPO representation of a certain hamiltonian
 %https://tensornetwork.org/mps/algorithms/timeevo/
 This is a more recent method (2015) to construct an MPO first detailed in \cite{Zaletel2015}. The idea is to generalise
 \begin{equation}
     1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
 \end{equation}
-The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lays in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^II$ are capeble of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}
+The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lay in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^{II}$ are capable of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}.
 
-\subsubsection{Global Krylov method }
+\subsubsection{Global Krylov method}
 
 Krylov methods are widely used in linear algebra to calculate eigenvectors. An example is the Lanczos algorithm. These methods are applied to MPS's, but do not fully make use of its structure. For this method, only a MPO representation is needed.
 
-\todo{expand on this}
+\subsubsection{MPS-local methods}
 
-\subsubsection{MPS-local methods }
+\paragraph{Local Krylov}
+The Krylov methods from previous paragraph can be adapted to work on a reduced basis.
 
-\paragraph{local Krylov}
-The krylov methods from previous pragraph can be adapted to work on a reduced basis.
-
-\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further developement of the local krylov method.
+\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method.
 
 Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}).
 \begin{equation}
     i \frac{\partial \ket{ \Psi( A ) }}{\partial t} = \mathcal{P_{ A( t )} } H  \ket{ \Psi( A ) }
 \end{equation}
-Where the richt hand side is projected on the tanget space, because the left hand side is a also a tangent vector. (See \cite{Vanderstraeten2019}).
+Where the richt hand side is projected on the tanget space, because the left-hand side is also a tangent vector. (See \cite{Vanderstraeten2019}).
 

@@ -1,7 +1,7 @@
 
 \subsection{Graphical notation}
 
-Before explaing tensor networks, some graphical notation should be introduced. This really is a way to conveniently write vectors, matrices an in general tensors without the need to introduce many labels. A tensor T is represented by a circle with a number of external legs, according to the number of external indices. Connected legs are summed. Some examples are shown in \cref{tab:grafical_not}. Every leg which is connected to multiple tensors, is contracted.
+Before explaining tensor networks, some graphical notation should be introduced. This really is a way to conveniently write vectors, matrices an in general tensors without the need to introduce many labels. A tensor T is represented by a circle with a number of external legs, according to the number of external indices. Connected legs are summed. Some examples are shown in \cref{tab:grafical_not}. Every leg which is connected to multiple tensors, is contracted.
 
 \begin{table}[]
     \centering
@@ -78,10 +78,9 @@ This requires an exponential number $d^n$ of coefficients C where d is the dimen
 \begin{equation}
     \mpo{4}{{"-",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"$C^1$", "$C^2$",,"$C^n$", }}
 \end{equation}
+where summation over shared indices is implied. It is always possible to find such a representation by means of matrix decomposition (see \cref{sec:mpomath}). The summation over $\alpha_i$ are called a virtual bond and their dimension is denoted by $\chi$. At this point, this is not yet an improvement because the bond dimension needs to be exponentially large in order to represent the tensor C exactly.
 
-Where summation over shared indices is implied. It is always possible to find such a representation by means of matrix decomposition (see \cref{sec:mpomath}). The summation over $\alpha_i$ are called a virtual bond and their dimension is denoted by $\chi$. At this point, this is not yet an improvement because the bond dimension needs to be exponentially large in order to represent the tensor C exactly.
-
-Explicit translational invariance is given by tensor $C^i_{\alpha \beta }$ that don't depend on the location. The chain is closed by a matrix M which contains the boundary condiditions. Setting $\alpha_n = \alpha_0$. We can now write this as a Trace over matrix products:
+Explicit translational invariance is given by tensor $C^i_{\alpha \beta }$ that don't depend on the location. The chain is closed by a matrix M which contains the boundary conditions. Setting $\alpha_n = \alpha_0$. We can now write this as a Trace over matrix products:
 
 \begin{equation}
     \ket{\Psi} = \Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M  ) \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
@@ -114,7 +113,7 @@ This will be the form we will work with in this thesis. Of course, larger unit c
 
 MPS are dense. This means that (with a bond dimension exponential in the system size) the MPS can represent every state in the full Hilbert space.  \cite{Orus2014}. However, the low energy states can typically be represented by a much lower bond dimension.
 
-This can be explain in terms of the so called 'area law': the entropy low energy states often scale with the boundary area of volume. MPS exactly follow this area law.
+This can be explained in terms of the so called 'area law': the entropy low energy states often scale with the boundary area of volume. MPS exactly follow this area law.
 
 \subsubsection{MPO}
 
@@ -128,9 +127,9 @@ Similarly to an MPS, a Matrix Product Operator (MPO) is of the following form:
     \end{split}
 \end{equation}
 
-The matrix M contains the boundary conditions of the operator. Its clear that this can again be made translation invariant. Acting with an MPS on a MPO $\hat{O} \ket{\Psi} $ again results in a MPS, as expected.
+The matrix M contains the boundary conditions of the operator. It's clear that this can again be made translation invariant. Acting with an MPS on a MPO $\hat{O} \ket{\Psi} $ again results in an MPS, as expected.
 
-An uniform MPO is denoted by:
+A uniform MPO is denoted by:
 \begin{equation}
     \pepob{5}{3}{{
                 "-","-", "-","-",
@@ -148,7 +147,9 @@ An uniform MPO is denoted by:
 
 This can also be reinterpreted as an MPS with physical bond dimension $D^2$, by grouping the i and j indices together per site.
 
-\paragraph{Examples of MPO hamiltonians} \cref{mpo_hamil}
+\paragraph{Examples of MPO hamiltonians} \label{mpo_hamil}
+
+\todo{MPO examples}
 
 \subsubsection{PEPS}
 Projected entangled pair states (PEPS) are the 2D equivalent of MPS. In the visualisation, the physical indices come out of the plane.

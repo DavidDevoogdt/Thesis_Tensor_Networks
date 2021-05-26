@@ -1,6 +1,6 @@
 This is the key chapter of the whole thesis. Here, the novel method to construct the operator $e^{-\beta \hat{H}}$, is explained in detail. The basis of the method was first introduced in \cite{Vanhecke2021}. There are many variations on the same idea. Some of the most notable examples in 1D will be discussed. At this point, no simulation results will be given. These can be found in \cref{chap:results}. The section mentions some objective info about the construction, such as the bond dimension.
 
-The 2D construction will generalise the best result from 1D. First, an anologous construction as in 1D will be presented. As can be expected, also some new ideas are needed to capture the rich phsycis of the models in 2D
+The 2D construction will generalise the best result from 1D. First, an analogous construction as in 1D will be presented. As can be expected, also some new ideas are needed to capture the rich physics of the models in 2D
 
 The question of how to construct these cluster expansions and other implementation details are reported in \cref{chap5}.
 
@@ -20,7 +20,7 @@ First, some extra clarification on the notation is needed in order to avoid conf
     \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
 \end{equation}
 
-The goals is capture the exponential of the hamiltonian operator $\hat{H}$
+The goal is capture the exponential of the hamiltonian operator $\hat{H}$
 \begin{equation}
     \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
 \end{equation}
@@ -41,8 +41,6 @@ This also works in 2D.
 \subsection{Idea}
 This chapter shows the main construction of dissertation. A cluster expansion is used to approximate $e^{ \hat{H} }$ for every possible geometry. The goal is to make a MPO/PEPO which captures the tensor exponential in the thermodynamic limit.
 
-\todo{symmetry, speed}
-
 The main idea is to make an extensive expansion by adding blocks which solve the model exactly on a local patch. Crucially, the expansion is not in the inverse temperature $\beta$ but in the size of the patches. The local patches are separated by a virtual level 0 bond.
 
 To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that hamiltonian.
@@ -50,7 +48,7 @@ To make this somewhat more precise, the first steps of the expansion are shown h
     \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
 \end{equation}
 
-If there were no 2 site interaction, this already captures the full diagonilsation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions previously introduced interaction are subtracted from the diagonalised hamiltonian.
+If there were no 2 site interaction, this already captures the full diagonalisation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions previously introduced interaction are subtracted from the diagonalised hamiltonian.
 
 \begin{equation}
     \begin{split}
@@ -59,7 +57,7 @@ If there were no 2 site interaction, this already captures the full diagonilsati
     \end{split}
 \end{equation}
 
-At this stage, all seperated networks with maximally 2 connected sites in a row are diagonalised exactly. Notice that here, 2  new blocks are introduced: $\mpo{1}{ {0,1}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}$ and of course also $\mpo{1}{ {1,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}$. As can be seen, the dimension of sublevel 1 needs to be $d^2$, with d the dimension of physical level. Although different possible constructions already differ in the next step, one more step is added to make te construction and notation clear.
+At this stage, all separated networks with maximally 2 connected sites in a row are diagonalised exactly. Notice that here, 2  new blocks are introduced: $\mpo{1}{ {0,1}  }{ {"$i$",}}{ {"$j$",}}{}{{"",}}$ and of course also $\mpo{1}{ {1,0}}{ {"$i$",}}{ {"$j$",}}{}{{"",}}$. As can be seen, the dimension of sublevel 1 needs to be $d^2$, with d the dimension of physical level. Although different possible constructions already differ in the next step, one more step is added to make te construction and notation clear.
 
 \begin{equation}\label{constr:intro:gen}
     \begin{split}
