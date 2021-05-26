@@ -138,6 +138,25 @@ To give a representative overview for random hamiltonians, several simulations w
 %     \label{fig:benchmark:Random}
 % \end{figure}
 
+
+\subsection{Real time evolution} \label{subsec_rt_evo}
+
+The method can also be used to construct real time evolution. \Cref{fig:benchmark:tising_time} shows the error of the matrix exponential in function of the time step $t = -i \beta $. 
+
+Also here, the results are promising. The construction handles complex matrices well. similar to previous conclusion, type A performs better than type F, which performs better than type E.
+
+The error of type A becomes quite large for high temperatures (not visible on figure), while type F keeps the errors low. 
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_t_ising_time.pdf}
+    \caption{Comparison type A, E and F for transversal Ising model. The horizontal axis represents the time step, not the inverse temperature. Virtual level 3 is truncated to $\chi=20$.  }
+    \label{fig:benchmark:tising_time}
+\end{figure}
+
+This is not by any means a complete analysis of the real time evolution operator, but just a numeric example.
+
+
 \subsection{Conclusion}
 
 \begin{itemize}

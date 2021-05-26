@@ -9,4 +9,26 @@ In \cref{chap2}, a brief introduction to tensor networks was given. The focus wa
 
 \section{Outlook}
 
+The cluster expansions have a lot of potential. In the course of one master dissertation, it is not possible to look into every possibility because a lot of groundwork need to be covered. Here are some interesting prospects: 
 
+\paragraph{Real time evolution}
+
+Some first test in 1D \cref{subsec_rt_evo} show that the method also works for real time evolution. \Cref{rt_tn_methods} introduced some methods to calculate time evolutions with tensor networks. Crucially, all these methods come with a detailed error analysis. For instance, some methods have a proven error per step of $O \left( \frac{t}{N}^2  \right)$ , resulting in an error of $O \left( \frac{t^2}{N}  \right)$ at time t. This can be made arbitrarily small.
+
+\paragraph{Quantum critical point}
+
+As stated in \cref{subsec:tricrit}, it should be possible to calculate the quantum critical point of the transverse Ising model using the current methods. This would allow to compare this method better with other methods in literature.
+
+\paragraph{Lattices}
+
+The whole thesis, a square lattice was used. This is definitely not the only choice. Other lattices could potentially result in even lower errors. Due to the generality of the solvers, this should be within reach given more time.
+
+\paragraph{Higher dimensions}
+
+A promising conclusion from \cref{subsec:2dpahsediag} is that a combination of linear blocks and simple loops seems sufficient to construct a good tensor network. This opens up the path to create a 3D version of the the operator $e^{\beta \hat{H}}$.  
+
+\paragraph{Symmetries}
+
+The boundaries of simulation could be pushed beyond what is possible in the current framework by incorporating all symmetries available (both spatial and internal). This already exists for diagonalisation (e.g. see \cite{Wietek2018}). Pushing the results.
+
+\todo{reference}

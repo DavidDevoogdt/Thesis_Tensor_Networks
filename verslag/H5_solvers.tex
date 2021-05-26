@@ -8,6 +8,8 @@ The other group, of course, constitutes the nonlinear problems. This includes ev
 
 \subsection{Linear solver} \label{subsec:linear_solver}
 
+\todo{make tikz figures}
+
 \subsubsection{Full inverse}
 
 The linear solver is a general purpose block solver which reduces the problem to a set of linear matrix equations. Linear block consist of a tree structure, where the new block is the root of the tree, and all the branches need to be inverted.  Let $ I^m = (i^1_1 i^1_2 \cdots i^1_{n_1})$ be all the phsycial indices of one leg m and $\alpha^m$ the index between leg m and unknown matrix X. Then the problem can in general, after some tedious tensor leg bookkeeping, be rewritten in the following form:
@@ -27,7 +29,7 @@ The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
     A     & = U \Sigma V^{\dagger}     \\
     A^{+} & = V \Sigma^{+} U^{\dagger}
 \end{align}
-Where for $\Sigma^{+}$ all the nonzero diagonal elements are replaced by there inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g. $\sigma_0 = 10^{-12}$ is set to zero.
+Where for $\Sigma^{+}$ all the nonzero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g. $\sigma_0 = 10^{-12}$ is set to zero.
 
 The problem with this full inverse is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this method still becomes infeasible for very quickly.
 
