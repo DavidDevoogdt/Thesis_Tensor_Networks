@@ -20,13 +20,13 @@ First, some extra clarification on the notation is needed in order to avoid conf
     \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
 \end{equation}
 
-The goal is capture the exponential of the hamiltonian operator $\hat{H}$
+The goal is capture the exponential of the Hamiltonian operator $\hat{H}$
 \begin{equation}
     \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
 \end{equation}
-This hamiltonian consists of 1 and 2 site operators. Of course more general hamiltonians can also be captured.
+This Hamiltonian consists of 1 and 2 site operators. Of course more general Hamiltonians can also be captured.
 
-The notation for the contraction of the tensor network will also be used to denote the hamiltonian evaluated on the given geometry:
+The notation for the contraction of the tensor network will also be used to denote the Hamiltonian evaluated on the given geometry:
 
 \begin{alignat}{3}
     H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
@@ -43,12 +43,12 @@ This chapter shows the main construction of dissertation. A cluster expansion is
 
 The main idea is to make an extensive expansion by adding blocks which solve the model exactly on a local patch. Crucially, the expansion is not in the inverse temperature $\beta$ but in the size of the patches. The local patches are separated by a virtual level 0 bond.
 
-To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that hamiltonian.
+To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that Hamiltonian.
 \begin{equation}
     \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
 \end{equation}
 
-If there were no 2 site interaction, this already captures the full diagonalisation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions previously introduced interaction are subtracted from the diagonalised hamiltonian.
+If there were no 2 site interaction, this already captures the full diagonalisation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions previously introduced interaction are subtracted from the diagonalised Hamiltonian.
 
 \begin{equation}
     \begin{split}
@@ -70,4 +70,4 @@ At this stage, all separated networks with maximally 2 connected sites in a row 
     \end{split}
 \end{equation}
 
-It is clear that the right-hand side of \cref{constr:intro:gen} can be ommited, as it is just evaluating the exponentiated hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously. This very compact notation will be able to capture the essence of the different constructions.
+It is clear that the right-hand side of \cref{constr:intro:gen} can be ommited, as it is just evaluating the exponentiated Hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously. This very compact notation will be able to capture the essence of the different constructions.

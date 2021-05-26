@@ -1,4 +1,4 @@
-This section serves as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the oprations translate to the 2D case.
+This section serves as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the operations translate to the 2D case.
 
 The MPS's are processed by transforming the tensor into a matrix, performing some matrix calculations and casting it back into its original form. In this way, the standard methods from linear algebra can be used. This section gives some examples how this is done in practice:
 
@@ -13,12 +13,12 @@ One of the most basic manipulations is to group some legs of a tensor into one l
         &= T^{ (i_1 j_1 ) (i_2 j_2) } \\
     \end{split}
 \end{equation}
-The dimension of the new leg is the product of the dimension of the individual legs. Contracting 2 merged legs with 2 merged legs is exactly the same as contracting them separately. The both The 4 leg tensor and matrix contain exactly the same information.
-Manipulating this in memory requires both permute and reshape commands. This requires some time, the internal representation of the matrix changes.
+The dimension of the new leg is the product of the dimension of the individual legs. Contracting 2 merged legs with 2 merged legs is exactly the same as contracting them separately. The 4 leg tensor and matrix contain exactly the same information.
+Manipulating this in memory requires both permute and reshape commands. This requires some time as the internal representation of the matrix changes.
 
 \subsubsection{Decomposition} \label{decompMPO}
 
-The grouping above can be applied to decompose a tensor into 2 tensor with matrix techniques. An example, which will be needed later on, is give here.
+The grouping above can be applied to decompose a tensor into 2 tensors with matrix techniques. An example, which will be needed later on, is give here.
 
 \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
@@ -31,11 +31,11 @@ The grouping above can be applied to decompose a tensor into 2 tensor with matri
     \end{split}
 \end{equation}
 
-The indices U,V and W represent blocks indices. Step 2 reshapes and groups the indices on to one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
+The indices U, V and W represent block indices. Step 2 reshapes and groups the indices on to one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
 
-For an exact representation, the bond dimension of virtual level v is:
+For an exact representation, the bond dimension of virtual level v is the product of the dimensions of the outer legs
 \begin{equation}
-    \dim{v} = \min( \dim{u}, \dim{v}) + 2 \dim{i}
+    \dim{v} = \min( \dim{u}, \dim{v}) \cdot ( \dim{i}  ) ^2 .
 \end{equation}
 
 Many matrix decompositions exist. Some useful examples here are SVD decomposition, eigenvalue decomposition, QR, $\cdots$.
@@ -52,13 +52,13 @@ The above procedure also gives a way to truncate the bond dimension: first take 
     \end{bmatrix} \begin{bmatrix}
         V_1 & V_2\\\end{bmatrix}^{\dagger}
 \end{equation}
-Where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor.
+where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor.
 \begin{equation}
     min_{rank(A) \leq n } \| T-A  \|  = \| T- \hat{T}  \|
 \end{equation}
 
 \subsubsection{Virtual levels}
-In the previous example, the levels were indicate with a block index or virtual level. The idea is to create seperate the contraction into blocks. This is completely analogous to matrix block multipliction. This wil be a more natural form to represent the algorithm. Of course, one can easily switch between block representation and the full one.
+In the previous example, the levels were indicated with a block index or virtual level. The idea is to separate the contraction into blocks. This is completely analogous to matrix block multiplication. This will be a more natural form to represent the algorithm. Of course, one can easily switch between block representation and the full one.
 
 \subsubsection{Inversion}
 Suppose we want to find a MPO O for given tensors A and B such that the following holds:
@@ -72,17 +72,17 @@ Suppose we want to find a MPO O for given tensors A and B such that the followin
     \combineTikz{ \figone }{\figtwo}{1.8} =  \figthree
 \end{equation}
 
-Again, the indices can be taken toghether in the following way: $\alpha = (u i_1 j_1  i_2 j_2)$ and $\beta = (i_3 j_3 v)$:
+Again, the indices can be taken together in the following way: $\alpha = (u i_1 j_1  i_2 j_2)$ and $\beta = (i_3 j_3 v)$:
 \begin{equation}
     A_{\alpha \gamma} O_{\gamma \beta} = B_{\alpha \beta}
 \end{equation}
-This a a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution. Linear solver are generally much faster. As this is one of the core problems to solve both in 1D and 2D, this will be discussed in detail in \cref{sec:framework_impl}.
+This is a standard matrix equation and can hence be solved with linear algebra packages. Note that it is not necessary to calculate $A^{-1}$ to obtain the solution, linear solver are generally much faster. As this is one of the core problems to solve both in 1D and 2D, this will be discussed in detail in \cref{sec:framework_impl}.
 
 \subsubsection{Contraction order}
 
-Tensor network diagram determine unambigously the result of a contraction. This does not mean all contraction orders are equivalent. The number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two differen contraction orders are shown in \cref{fig:tnalgs:cont_ord}.
+Tensor network diagram determine unambiguously the result of a contraction. This does not mean all contraction orders are equivalent. The number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two different contraction orders are shown in \cref{fig:tnalgs:cont_ord}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/contraction_order.png}
     \caption{ (a) Contraction of 3 tensors in $O(D^4)$ time (b) Contraction of same tensors in $O(D^5)$ time. Figure taken from \cite{Orus2014}.  }

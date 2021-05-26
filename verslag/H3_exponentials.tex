@@ -1,5 +1,5 @@
 
-While it is often possible to find exact MPO representation to represent a wide class of hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate $i$ is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called “imaginary” time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world observations of these systems at finite temperature.
+While it is often possible to find exact MPO representation to represent a wide class of Hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate $i$ is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called “imaginary” time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world observations of these systems at finite temperature.
 
 \subsection{Statistical mechanics}\label{subsec:statmech}
 
@@ -11,22 +11,22 @@ The physics of a system in thermodynamic equilibrium can be derived from its par
         &= \Tr( e^{ - \beta \hat{H} } )
     \end{split}
 \end{equation}
-The first line is the partition function for classical discrete systems. The index n runs of all possible microstates. It is known that the probability to find the system in a given microstate is given by:
+The first line is the partition function for classical discrete systems. The index n runs over all possible microstates. It is known that the probability to find the system in a given microstate is given by
 \begin{equation}
-    p_i = \frac{\sum e^{ - \beta E_i}}{Z}
+    p_i = \frac{\sum e^{ - \beta E_i}}{Z} .
 \end{equation}
-An useful quantity is the density matrix $\rho$.
+An useful quantity is the density matrix $\rho$:
 \begin{equation}
     \begin{split}
         \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
-        &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j}
+        &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j} .
     \end{split}
 \end{equation}
 With this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
 \begin{equation}
     \begin{split}
         Z &= \Tr( \rho) \\
-        \Braket{X} &= \Tr(\rho \hat{X})
+        \Braket{X} &= \Tr(\rho \hat{X}) .
     \end{split}
 \end{equation}
 
@@ -45,7 +45,7 @@ This requires time evolution operators $e^{-i \hat{H} t}$.
 \subsubsection{Ground state}
 One practical way of finding the ground state $ \ket{E_0}$ is to cool down a given random state $ \ket{\Psi(0)}$ to very small T (large $\beta$) \cite{Orus2014}:
 \begin{equation}
-    \ket{E_0} = \lim_{\beta \leftarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } \quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)}
+    \ket{E_0} = \lim_{\beta \rightarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } ,\quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)} .
 \end{equation}
 
 \subsection{Tensor network methods}\label{rt_tn_methods}
@@ -70,7 +70,7 @@ Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Su
 This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalised to higher order schemes.
 
 \paragraph{ MPO $W^{I,II}$}
-These methods directly use the MPO representation of a certain hamiltonian
+These methods directly use the MPO representation of a certain Hamiltonian
 %https://tensornetwork.org/mps/algorithms/timeevo/
 This is a more recent method (2015) to construct an MPO first detailed in \cite{Zaletel2015}. The idea is to generalise
 \begin{equation}
@@ -85,13 +85,11 @@ Krylov methods are widely used in linear algebra to calculate eigenvectors. An e
 \subsubsection{MPS-local methods}
 
 \paragraph{Local Krylov}
-The Krylov methods from previous paragraph can be adapted to work on a reduced basis.
+The Krylov methods from the previous paragraph can be adapted to work on a reduced basis.
 
-\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method.
-
-Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}).
+\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method. Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}). The Schrödinger equation becomes
 \begin{equation}
-    i \frac{\partial \ket{ \Psi( A ) }}{\partial t} = \mathcal{P_{ A( t )} } H  \ket{ \Psi( A ) }
+    i \frac{\partial \ket{ \Psi( A(t) ) }}{\partial t} = \mathcal{P}_{ A ( t) }  H  \ket{ \Psi( A (t) ) } .
 \end{equation}
-Where the richt hand side is projected on the tanget space, because the left-hand side is also a tangent vector. (See \cite{Vanderstraeten2019}).
+Where the right-hand side is projected on the tangent space, because the left-hand side is also a tangent vector. (See \cite{Vanderstraeten2019}).
 

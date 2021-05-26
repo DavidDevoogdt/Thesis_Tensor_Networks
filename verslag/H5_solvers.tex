@@ -29,7 +29,7 @@ The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
     A     & = U \Sigma V^{\dagger}     \\
     A^{+} & = V \Sigma^{+} U^{\dagger}
 \end{align}
-Where for $\Sigma^{+}$ all the nonzero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g. $\sigma_0 = 10^{-12}$ is set to zero.
+Where for $\Sigma^{+}$ all the non-zero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g. $\sigma_0 = 10^{-12}$ is set to zero.
 
 The problem with this full inverse is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this method still becomes infeasible for very quickly.
 
@@ -49,18 +49,18 @@ While this method is very quick and scales well, in practice it results in unsta
 
 \subsubsection{Sparse full inverse}
 
-Luckily the problem can be resolved by first performing an SVD decomposition of $A^m_{ I^m \alpha^m } = U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the hermitian transpose to the leg m of B. The Tensor $S = S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be (pseudo)-inverted at once. For a full rank construction, $S$  is already diagonal. For truncated constructions (or inverses involving loops), this is no longer the case.
-The last step consist of applying all the matrices $V^m$ to the right-hand side.This is shown in this equation
+Luckily the problem can be resolved by first performing an SVD decomposition of $A^m_{ I^m \alpha^m } = U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the Hermitian transpose to the leg m of B. The Tensor $S = S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be (pseudo)-inverted at once. For a full rank construction, $S$  is already diagonal. For truncated constructions (or inverses involving loops), this is no longer the case.
+The last step consist of applying all the matrices $V^m$ to the right-hand side. This is shown in this equation
 \begin{alignat}{1}
-    A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j } & =  B_{  I_1  I_2 \cdots I_m   j }              \\%%%%%%%%%%%%%%%%%%
-    U^1_{ I_1 \beta^1 } S^1_{\beta^1 \gamma^1}  V^{1\dagger}_{\gamma^1 \alpha^1}                                            & \nonumber                                      \\
-    U^2_{ I_2 \beta^2 } S^2_{\beta^2 \gamma^2}  V^{2\dagger}_{\gamma^2 \alpha^2}                                            & \cdots  \nonumber                              \\
-    U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}                                            & \nonumber                                      \\
-    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B_{  I_1  I_2 \cdots I_m   j }              \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    S_{ (\beta^1 \beta^2 \cdots \beta^m) (\gamma^1  \gamma^2 \cdots \gamma^m)  }                                            & \nonumber                                      \\
-    V^{1\dagger}_{\gamma^1 \alpha^1}   V^{2\dagger}_{\gamma^2 \alpha^2}  \cdots  V^{m\dagger}_{\gamma^m \alpha^m}           & \nonumber                                      \\
-    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B'_{  \beta_1  \beta_2 \cdots \beta_m   j }
-\end{alignat}.
+    A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j } & =  B_{  I_1  I_2 \cdots I_m   j }               \\%%%%%%%%%%%%%%%%%%
+    U^1_{ I_1 \beta^1 } S^1_{\beta^1 \gamma^1}  V^{1\dagger}_{\gamma^1 \alpha^1}                                            & \nonumber                                       \\
+    U^2_{ I_2 \beta^2 } S^2_{\beta^2 \gamma^2}  V^{2\dagger}_{\gamma^2 \alpha^2}                                            & \cdots  \nonumber                               \\
+    U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}                                            & \nonumber                                       \\
+    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B_{  I_1  I_2 \cdots I_m   j }               \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    S_{ (\beta^1 \beta^2 \cdots \beta^m) (\gamma^1  \gamma^2 \cdots \gamma^m)  }                                            & \nonumber                                       \\
+    V^{1\dagger}_{\gamma^1 \alpha^1}   V^{2\dagger}_{\gamma^2 \alpha^2}  \cdots  V^{m\dagger}_{\gamma^m \alpha^m}           & \nonumber                                       \\
+    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B'_{  \beta_1  \beta_2 \cdots \beta_m   j }.
+\end{alignat}
 
 The complexity is determined by the SVD decomposition of the individual legs. Due to its sparsity, S does not take much space to construct and is quite fast to pseudo-invert. Doing the pseudo-inverse at once means that it has the same precision as the full pseudo-inverse, as desired.
 
@@ -86,9 +86,9 @@ The algorithm will treat this as 2 legs.
 
 \subsection{Nonlinear solver}
 
-In some cases, the above solver does not return the best possible solution to a given problem. The reason is that it is not able to incorporate symmetries or solve problems where the new blocks appear more than once. A new solver is needed which does not rely on methods from linear algebra, but on more general non-linear least squares solvers.
+In some cases, the above solver does not return the best possible solution to a given problem. The reason is that it is not able to incorporate symmetries or solve problems where the new blocks appear more than once. A new solver is needed which does not rely on methods from linear algebra, but on more general nonlinear least squares solvers.
 
-In essence, the non-linear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$ , and if possible also the Jacobian, i.e. $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. This info is used to choose a direction and a step size, minimising the error. An improved point x is chosen by the algorithm, until some convergence criterium is reached. The implementation uses MATLAB fsolve routine, which uses Levenberg-Marquardt algorithm under the hood.
+In essence, the nonlinear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$, and if possible also the Jacobian, i.e. $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. This info is used to choose a direction and a step size, minimising the error. An improved point x is chosen by the algorithm, until some convergence criterium is reached. The implementation uses MATLAB fsolve routine, which uses Levenberg-Marquardt algorithm under the hood.
 
 \subsubsection{Automatic differentiation}
 With some care, the Jacobian can be calculated for a general tensor network in an automated way. Suppose we want to differentiate the contracted tensor $T^{i_1  \cdots i_n  }$ with respect to one of the PEPO blocks $x_n = O^{i_n }_{\alpha \beta \gamma \delta}$. Denote $I=(i_1 \cdots i_n )$ and $J=(i_m  \alpha \beta \gamma \delta)$, and this block only occurs once. Then $  J_{I J}  = \frac{\partial T^{i_1  \cdots i_n  } }{  \partial O^{i_m }_{\alpha \beta \gamma \delta} } = T^{i_1 \cdots i_n } _{ i_m  \alpha \beta \gamma \delta}  \delta^{i_n}_{i_m}   $  amounts to  contracting the network with the tensor $x_m$ removed, and treating the non-contracted indices as external ones.
@@ -97,13 +97,13 @@ If a tensor appears in multiple places, the sum rule for derivatives has to be u
 
 \subsubsection{Symmetry}
 
-The non-linear solver can handle rotated and permuted blocks. For instance, a simple loop (square) can be solved by rotating one tensor $T^I_{ \alpha \alpha 0 0}$ 4 times, once for every corner. The Jacobian should be adapted according to the chain rule. Another example is the following decomposition:  $  X^I_\alpha X^J_\alpha = T^{I J} $, which is used in \cref{eq:rotsympepo}.
+The nonlinear solver can handle rotated and permuted blocks. For instance, a simple loop (square) can be solved by rotating one tensor $T^I_{ \alpha \alpha 0 0}$ 4 times, once for every corner. The Jacobian should be adapted according to the chain rule. Another example is the following decomposition:  $  X^I_\alpha X^J_\alpha = T^{I J} $, which is used in \cref{eq:rotsympepo}.
 
 \subsubsection{Combining problems}
-As only solver, the non-linear solver can solve multiple (non-neighbouring) tensors at once, and do this for multiple maps at once.
+As only solver, the nonlinear solver can solve multiple (non-neighbouring) tensors at once, and do this for multiple maps at once.
 
 \subsection{Sequential linear solver}
-While from the previous section it seems all non-linear problems need to be solved with the non-linear solver, this is in fact not the case. This solver takes as input multiple new tensors, and solves them one by one. As this is not truly a linear system, the error will not be zero after one pass. But solving the tensors repeatedly lowers the error at each step, giving an iterative procedure. This procedure can be sped up by reusing some parts of the calculations involved in the linear solver. For example, the exponentiated hamiltonian and contraction of all virtual levels that do not involve the optimised blocks only needs to be performed once.
+While from the previous section it seems all nonlinear problems need to be solved with the nonlinear solver, this is in fact not the case. This solver takes as input multiple new tensors, and solves them one by one. As this is not truly a linear system, the error will not be zero after one pass. But solving the tensors repeatedly lowers the error at each step, giving an iterative procedure. This procedure can be sped up by reusing some parts of the calculations involved in the linear solver. For example, the exponentiated Hamiltonian and contraction of all virtual levels that do not involve the optimised blocks only needs to be performed once.
 
 The step is chosen as follows: suppose X is the current tensor and X' the newly computed one. Then the tensor is updated as follows: $X \leftarrow X + \alpha (X'-X)$. If the error has increased, the step is made smaller. The algorithm stops after a number of steps or when a certain threshold is reached.
 
@@ -118,11 +118,11 @@ The framework is equipped with 3 different solvers, designed to solve different 
 [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map}, {pattern}, 
                 ln_prefact, struct, {rot_90});
 \end{verbatim}
-They only need a map, which is the geometry of the problem, and a pattern, i.e. the new block to add.\verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as discussed will be discussed in the next \cref{subsec:nf}.
+They only need a map, which is the geometry of the problem, and a pattern, i.e. the new block to add. \verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as discussed will be discussed in the next \cref{subsec:nf}.
 
 Whenever the linear solver can be used, it is the solver of choice. The sparse full inverse procedure is fast and handles the ill-conditioned inverses very well. The sequential linear solver builds on this solver to handle the introduction of multiple new tensors, possibly related to each other through a permutation.
 
-The non-linear solver is at the moment only the fastest for small highly non-linear problems, such as solving \cref{tikzfig:plaquetter} in a rotation invariant manner. The non-linear solver can optimise multiple problems at once, and could be extended to fully use internal symmetries of the model.
+The nonlinear solver is at the moment only the fastest for small highly nonlinear problems, such as solving \cref{tikzfig:plaquetter} in a rotation invariant manner. The nonlinear solver can optimise multiple problems at once, and could be extended to fully use internal symmetries of the model.
 
 \section{Optimisation}
 
@@ -140,15 +140,15 @@ As an added bonus, removing a tensor from T gives all contractions without this 
 
 \subsection{Normalisation}\label{subsec:nf}
 
-For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the hamiltonian evaluated for a certain geometry. This is a hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
+For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the Hamiltonian evaluated for a certain geometry. This is a Hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
 \begin{align}
     exp(  H_{d^N} - N \alpha I  ) & =  Q exp(  D- N \log(\alpha ) I    ) Q^{\dagger} \\
                                   & =  Q \begin{bmatrix} exp(D_{1 1} - N \log(\alpha )) &        &                                     \\
                                                & \ddots &                                     \\
                                                &        & exp(D_{ d^N d^N} - N \log(\alpha )) \\
     \end{bmatrix}  Q^{\dagger}      \\
-                                  & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }
-\end{align}.
+                                  & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }.
+\end{align}
 With $I$ the unit matrix. Next to a global normalisation factor, every block calculation calculates a specific normalisation factor such that the largest eigenvalue of $exp(H)$ is of the order 1.
 
 \subsection{Internal representation}
@@ -199,14 +199,14 @@ The left inverse looks like
 \begin{equation}
     2 =  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }
 \end{equation}
-where the physical indices need to be contracted with the corresponding indices of the right hand side.
+where the physical indices need to be contracted with the corresponding indices of the right-hand side.
 
 \subsection{Buffering Results}
 
-Some calcalations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
+Some calculations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
 \subsection{Profiling}
-To get a sense of the speed, constructing a 2D PEPO up till order 6 with level 3 truncated at bond dimension 20 with loop extensions takes about 25 seconds on my pc. The most time intensive processes are performing the contractions. For larger systems, the time limiting factor is calculating the exponential of the hamiltonian.
+To get a sense of the speed, constructing a 2D PEPO up till order 6 with level 3 truncated at bond dimension 20 with loop extensions takes about 25 seconds on my pc. The most time intensive processes are performing the contractions. For larger systems, the time limiting factor is calculating the exponential of the Hamiltonian.
 
 \subsection{Calculating the error}
 
@@ -228,11 +228,11 @@ The files of the first kind are used in other calculations, such as fitting proc
 
 \subsection{Fitting}\label{subsec:qphasediag}
 
-The coded performs a finite size scaling as explained in \cref{subsec:fss}.
+The coded performs a finite-size scaling as explained in \cref{subsec:fss}.
 
 The fitting procedure works as follows: a function $f_X$ defined by a limited number of parameters is made for every observable $X \in \{ m , \xi, S \}$. The parametrisation is chosen such that it has the right scaling behaviour, and the analytical derivative is known.
 
-The code performs a non-linear optimisation, where the error is either the vertical distance to $f_X$ or the orthogonal distance. The fitted function and parameters are determined simultaneously.
+The code performs a nonlinear optimisation, where the error is either the vertical distance to $f_X$ or the orthogonal distance. The fitted function and parameters are determined simultaneously.
 
 The optimisation runs for a limited number of cycles. Afterwards, a random displacement is made to the parameters of the current best fit. This is repeated until convergence.
 

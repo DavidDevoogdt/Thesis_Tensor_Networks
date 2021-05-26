@@ -1,11 +1,10 @@
-
 \section{MPS algorithms}
 
-This section and the following one, will introduce some different tensor network algorithms. The gaol is to provide an intuitive explanation how these algorithms work. For rigorous derivations and mathematical details, other sources can be read.
+This section and the following one, will introduce some different tensor network algorithms. The gaol is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, other sources can be read. \todo{bron MPS}
 
 \subsection{Canonical form}
 
-A translation invariant MPS has the following form shown in \cref{mps:uni}
+A translation invariant MPS has the form shown in \cref{mps:uni}
 
 It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a gauge transformation.
 \begin{equation}
@@ -142,7 +141,7 @@ The canonical form above is very convenient to calculate the entropy, which is g
 \end{equation}
 where $\alpha_i$ are the singular values of $C$.
 
-\subsubsection{Expectation value}\cref{subsec:exp_val_1d}
+\subsubsection{Expectation value}\label{subsec:exp_val_1d}
 
 One property of MPS is that expectation values can be calculated exactly. Suppose we have an operator $\hat{O}$ acting on a single site of the MPS: $\Braket{ \Psi |  \hat{O} | \Psi  }$
 \begin{equation}
@@ -170,7 +169,7 @@ One property of MPS is that expectation values can be calculated exactly. Suppos
                         1,4,0,4,1,
                         1,4,7,4,1}} }}
 \end{equation}
-where we made use of \cref{algs:mpsid}. Similar techniques allow calculating correlation functions, energies, ...
+where we made use of \cref{algs:mpsid}. Similar techniques allow for the calculation of correlation functions, energies, ...
 
 \section{Tensor network contraction}
 
@@ -178,7 +177,7 @@ The contraction in this section is somewhat different. The MPO with the same $S_
 
 \subsection{1D problem}
 
-Suppose that the there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expectation value $ \Braket{X}$ is given by:
+Suppose that there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expectation value $ \Braket{X}$ is given by:
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
@@ -249,14 +248,14 @@ Suppose that the there is an MPO representation A that gives the probability of 
         \end{tikzpicture}
     }
     \label{sm:expecatation_X}
-\end{equation}
+\end{equation}.
 
-In the thermodynamic limit there are an infinity number of A to the left and the right. This can be simulated by taking the left and right fixed points of the traced MPO A corresponding to the largest eigenvector $\lambda$.
+In the thermodynamic limit there are an infinite number of A to the left and the right. This can be simulated by taking the left and right fixed points $Gl$ and $Gr$ of the traced MPO A corresponding to the largest eigenvector $\lambda$.
 
 \begin{equation}\label{algs:exp}
     \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
         \clip (-1.4,-1) rectangle (1,1);
-        \node[] (N0) at (-1,0) {$G_l$};
+        \node[] (N0) at (-1,0) {$Gl$};
         \node[] (N2) at (1,0) {};
         \node[circle, draw] (N1) at (0,0) {A};
         \draw  (N0) -- (N1) ;
@@ -267,7 +266,7 @@ In the thermodynamic limit there are an infinity number of A to the left and the
     \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")}, scale=0.9 ]
         \clip (-.4,0.5) rectangle (1,-0.5);
         \node[] (N2) at (1,0) {};
-        \node[] (N1) at (0,0) {$G_l$};
+        \node[] (N1) at (0,0) {$Gl$};
         \draw  (N1) -- (N2) ;
     \end{tikzpicture}
 \end{equation}
@@ -276,7 +275,7 @@ In the thermodynamic limit there are an infinity number of A to the left and the
     \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
         \clip (-1,-1) rectangle (1.4,1);
         \node[] (N0) at (-1,0) {};
-        \node[] (N2) at (1,0) {$G_r$};
+        \node[] (N2) at (1,0) {$Gr$};
         \node[circle, draw] (N1) at (0,0) {A};
         \draw  (N0) -- (N1) ;
         \draw  (N1) -- (N2) ;
@@ -285,7 +284,7 @@ In the thermodynamic limit there are an infinity number of A to the left and the
     = \lambda
     \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
         \clip (0,-0.5) rectangle (1.4,0.5);
-        \node[] (N2) at (1,0) {$G_l$};
+        \node[] (N2) at (1,0) {$Gl$};
         \node[] (N1) at (0,0) {};
         \draw  (N1) -- (N2) ;
     \end{tikzpicture}
@@ -298,7 +297,7 @@ Equation \cref{sm:expecatation_X} can now be easily calculated:
         \begin{tikzpicture} [   ]
             \clip (-0.5,-1) rectangle (4.5,2);
 
-            \node[] (N1) at (0,0) {$G_l$};
+            \node[] (N1) at (0,0) {$Gl$};
             \node[circle, draw] (N2) at (1,0) {A};
             \node[circle, draw] (X2) at (1,1) {X};
 
@@ -308,7 +307,7 @@ Equation \cref{sm:expecatation_X} can now be easily calculated:
             \node[circle, draw] (N4) at (3 ,0) {A};
             \node[circle, draw] (X4) at (3,1) {X};
 
-            \node[] (N5) at (4 ,0) {$G_r$};
+            \node[] (N5) at (4 ,0) {$Gr$};
 
             \draw  (N1) -- (N2) ;
             \draw  (N2) -- (N3) ;
@@ -329,8 +328,8 @@ Equation \cref{sm:expecatation_X} can now be easily calculated:
         \lambda^n
         \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
             \clip (-0.5,-0.5) rectangle (1.4,0.5);
-            \node[] (N2) at (1,0) {$G_r$};
-            \node[] (N1) at (0,0) {$G_r$};
+            \node[] (N2) at (1,0) {$Gr$};
+            \node[] (N1) at (0,0) {$Gr$};
             \draw  (N1) -- (N2) ;
         \end{tikzpicture}
     }
@@ -364,17 +363,17 @@ PEPS contraction concerns a similar problem, but in 2D. Here, instead of already
                         1,13,13,13,13,13,1,
                     }} }}
 \end{equation}
-This problem is much harder than in 1D. For instance, the related problem of calculating the expectation value of on operator, similar to \cref{subsec:exp_val_1d} in 1D, is  \#P-Hard \cite{Orus2014}.
+This problem is much harder than in 1D. For instance, the related problem of calculating the expectation value of an operator, similar to \cref{subsec:exp_val_1d} in 1D, is  \#P-Hard \cite{Orus2014}.
 
 \subsection{Overview methods}
 
-As this is a difficult task, and often the bottleneck in simulations, many algorithms exist to perform this. The classification is taken from \cite{Nietner2020}.
+As 2D contraction is a difficult task, and often the bottleneck in simulations, many algorithms exist to perform this. The classification is taken from \cite{Nietner2020}.
 
 \subsubsection{Real-space renormalisation-group methods}
 
 The general idea is to course grain the tensor network. Of the many methods, historically the first one was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an SVD in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the SVD step.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/TRG.png}
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
@@ -385,9 +384,9 @@ Many other variants exist, such as Tensor Network Renormalisation (TNR), which w
 
 \subsubsection{Corner transfer matrix  methods}
 
-Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices and 4 C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensor are suitably truncated. Once this cycle converges, the environment is known.
+Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.8\textwidth}
         \centering
@@ -438,10 +437,12 @@ The goal of these methods is to find an MPS fixed point for the infinite lattice
 
 \paragraph{Time-evolving block decimation}
 
-Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{fig:tnalgs:tebd}). It can also be used as a power method for contraction.
+Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{para:TEBD}). It can also be used as a power method for contraction.
 The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards truncated. When this procedure is applied enough times, a fixed point is reached.
 
-\begin{figure}
+\todo{explain this}
+
+\begin{figure}[H]
     \center
     \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
     \caption{  Figure taken from \cite{Ran2020}.  }
@@ -451,35 +452,12 @@ The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and af
 \subsection{VUMPS}
 
 The purpose of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
+The goal is to find an MPS layer for the MPO (see \cref{algs:exp}). The expression holds approximately, because the MPS on the left-hand side has a larger bond dimension than on the right-hand side.
 
-The goal is to find an MPS layer for the MPO such that:
-\begin{equation}\label{algs:mpslayermpo}
-    \pepob{5}{3}{{
-                "-","-", "-","-",
-                "","","","",
-                "","","","",}}{{
-                "-", "-",
-                "", "",
-                "", "",
-                "", "",
-                "-", "-",}}{{
-                4,4,4,4,4,
-                13,0,0,0,13,
-                13,2,7,3,13}}  \approx  \pepob{5}{2}{{
-                "-","-", "-","-",
-                "","","",""}}{{
-                "-",
-                "",
-                "",
-                "",
-                "-"}}{{
-                4,4,4,4,4,
-                13,2,7,3,13}}
-\end{equation}
-This is very similar to \cref{algs:exp}. The expression holds approximately, because the MPS on the left-hand side has a larger bond dimension than on the right-hand side.
+\todo{bond dim op figuur}
 
 \subsubsection{The equations}
-Suppose there are tensors which fulfil the conditions stated below:
+Suppose there are tensors which fulfil the conditions stated below
 \begin{subequations} \label{algs:vumpsenv}
     \begin{alignat}{2}
                                  & \vcenter{ \hbox{  \pepob{5}{3}{{
@@ -529,7 +507,7 @@ Suppose there are tensors which fulfil the conditions stated below:
                             1,1,4,3,4,
                             1,1,10,1,1}} }}
     \end{alignat}
-\end{subequations}
+\end{subequations}.
 
 These eigentensor equations are solved in practice in a slightly different manner:
 \begin{equation}\label{vumps_transfer_eigs}
@@ -626,7 +604,7 @@ The left and right zipper can now move towards each other, until they meet at th
                 4,4,4,
                 4,7,4}}
 \end{equation}
-This completely determines the problem, but one more equation is used to solve the problem. Combining on of the equations \cref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$:
+This completely determines the problem, but one more equation is used to solve the problem. Combinationing one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$:
 \begin{equation}\label{algs:vumpsenvc}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -712,15 +690,15 @@ Then  \cref{algs:mpslayermpo} is solved:
     \end{split}
 \end{equation}
 
-Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations show that the following cycle needs to be solved:
+Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle needs to be solved:
 
 \begin{itemize}
     \item  $A_c,C  \rightarrow A_l,A_r  $  \cref{algs:ACC}
-    \item  $A_l,A_r  \rightarrow G_l,G_r  $ \cref{algs:vumpsenv}
-    \item  $ G_l,G_r   \rightarrow Ac,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
+    \item  $A_l,A_r  \rightarrow Gl,Gr  $ \cref{algs:vumpsenv}
+    \item  $ Gl,Gr   \rightarrow A_c,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
 
-The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \cref{algs:biggrid} now becomes:
+The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \Cref{algs:biggrid} now becomes:
 \begin{equation}\label{vumps_Below}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -736,7 +714,7 @@ The calculated environment can now be used to solve the original problem. Due to
                         1,5,9,1,1}} }}
 \end{equation}
 
-As always, the identity \cref{algs:mpsid} can be used to simplify the equation
+As always, the identity \eqref{algs:mpsid} can be used to simplify the equation
 
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
@@ -754,20 +732,14 @@ As always, the identity \cref{algs:mpsid} can be used to simplify the equation
 \end{equation}
 
 \subsubsection{The derivation}\label{vumps_Deriv}
-While the above derivation is reasonable, it is not very rigorous. The algorithm finds its origins  in tangent space methods, such as explained in \cite{Vanderstraeten2019}.
-
-Not every state in the many body Hillbert space can be represented by an MPS. For a
-
-By carefully constructing the tangent space and making use of the available gauge freedom, a compact expression can be found for the tangent space projector $\mathcal{P}_A$. This projects a state from the many body Hillbert space to the tangent space of an MPS A. For an optimal MPS approximation A, the error made in the approximation should be orthogonal to the tangent space. For \cref{algs:mpslayermpo} this means that the application of the projection of the error on the tangent space should be zero, i.e. the MPS is at a variational minimum.  \cite{Nietner2020}
-
-Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
+While the above derivation is reasonable, it is not very rigorous. The algorithm finds its origins  in tangent space methods, such as explained in \cite{Vanderstraeten2019}. Not every state in the many body Hilbert space can be represented by an MPS. By carefully constructing the tangent space and making use of the available gauge freedom, a compact expression can be found for the tangent space projector $\mathcal{P}_A$. This projects a state from the many body Hilbert space to the tangent space of an MPS A. For an optimal MPS approximation A, the error made in the approximation should be orthogonal to the tangent space. For \cref{algs:mpslayermpo} this means that the application of the projection of the error on the tangent space should be zero, i.e. the MPS is at a variational minimum   \cite{Nietner2020}. Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
 
 \subsubsection{Multisite}
-In \cite{Nietner2020}, a version of VUMPS is proposed that can compute the environment of an m by n unit cell with only a linear increase in computation cost. Larger unit cells might be needed for ground states with non-trivial unit cell.
+In \cite{Nietner2020}, a version of VUMPS is proposed that can compute the environment of an m by n unit cell with only a linear increase in computation cost. Larger unit cells might be needed for ground states with a non-trivial unit cell.
 
 \subsubsection{Calculating the MPS from below}\label{subsec:vumps_below_alt}
 
-One questions, which does not seem to be answered in literature, is which tensor $B$ to use to complete the contraction from below for a complete general MPO:
+One question, which does not seem to be answered in literature, is which tensor $B$ to use to complete the contraction from below for a complete general MPO:
 
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
@@ -784,7 +756,7 @@ One questions, which does not seem to be answered in literature, is which tensor
                         1,5, 9  ,1,1}} }}
 \end{equation}
 
-The reason for this doubt will be explained in \cref{subsec:results:loops_and_ext}. As method suggested to me, and used throughout this thesis, is finding the largest eigenvalue from below (similar to \cref{algs:AC}):
+The reason for this doubt will be explained in \cref{subsec:results:loops_and_ext}. A method suggested to me, and used throughout this thesis, is finding the largest eigenvalue from below (similar to \cref{algs:AC}):
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -806,7 +778,7 @@ The reason for this doubt will be explained in \cref{subsec:results:loops_and_ex
                         4,16,4,
                         4,4,4}} }}
 \end{equation}
-The idea is to use the same environments $G_l$ and $G_r$, but find the fixed point from below. This has some problems: $B$ can not be brought into a canonical form according to \cref{algs:ACC} (in combination with the analogue of \cref{algs:vumpsenvc}), and hence does not represent a fixed point MPS as was the case from above. This also doesn't work in the multisite setting.
+The idea is to use the same environments $Gl$ and $Gr$, but find the fixed point from below. This has some problems: $B$ can not be brought into a canonical form according to \cref{algs:ACC} (in combination with the analogue of \cref{algs:vumpsenvc}), and hence does not represent a fixed point MPS as was the case from above. This also doesn't work in the multisite setting.
 
 It is not completely surprising, suppose we have a fixed point MPS $B$ (denoted in bold) from below (for instance obtained by performing the VUMPS algorithm on an MPO rotated by 180 degrees), then contracting the upper half plane and the lower half plane amounts to:
 
@@ -824,8 +796,7 @@ It is not completely surprising, suppose we have a fixed point MPS $B$ (denoted 
                         13,2,12,3,13,
                         1,5,9,1,1}} }}
 \end{equation}
-
-To solve this equation, left and right fixed point need to be calculated
+To solve this equation, the left and the right fixed points need to be calculated
 \begin{equation}\label{eq:vumps_B_own}
     \vcenter{ \hbox{   \pepob{3}{2}{{
                         "","",
@@ -882,5 +853,5 @@ Of course both methods could also be equal, if the following holds (up to a fact
                         1,1, 1  ,1,1}} }}
 \end{equation}
 
-Some numerical investigation is needed to test whether or this method gives a more correct result.
+Some numerical investigation is needed to test whether or not this method gives a more correct result.
 

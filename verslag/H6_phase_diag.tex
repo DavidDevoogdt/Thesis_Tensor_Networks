@@ -15,9 +15,9 @@ At the relevant temperature, an order 5 series expansion without loops is suffic
 \subsection{Classical Ising phase transition}
 The classical Ising model on a square lattice has an exact solution. Onsager calculated the critical temperature to be $T_c = \frac{2 J}{k \ln(1+\sqrt{2}) } \approx 2.69185$. A test for the construction is to simulate this and compare the fitted (see \cref{subsec:qphasediag}) results.
 
-The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. Left upper corner shows m vs T. For low T, there is clearly a non-zero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is the Marek gap, a measure for the system size as explained in \cref{subsec:fss}.
+The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. Left upper corner shows m vs T. For low T, there is clearly a non-zero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite-size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is the Marek gap, a measure for the system size as explained in \cref{subsec:fss}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g0/Full.pdf}
     \caption{  }
@@ -29,7 +29,7 @@ The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 dif
 Near criticality, they collapse well, but away from the critical point there is quite some systematic variation. The reason is shown in \cref{fig:crit:qtran}. Only in some limited range around the critical region, the universal scaling holds.
 
 A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly, the data collapses a lot better as expected.
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
     \caption{  }
@@ -43,16 +43,16 @@ The numerical fit (with starting point away from  critical temperature), results
 
 The previous example simulated the classical 2D Ising model. The question is whether this result will carry on into the quantum regime. The results for the full phase diagram \cref{fig:phase:g25:full} and or points in direct neighbourhood of the phase transition \cref{fig:phase:g25:zoomed} are similar to the 1D case.
 
-Of course, quantitative details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite size scaling.
+Of course, quantitative details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite-size scaling.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g25/Full.pdf}
     \caption{  }
     \label{fig:phase:g25:full}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
     \caption{  }
@@ -67,7 +67,7 @@ With the series expansion from this paper and VUMPS, $T_c=1.2736(6)$, indicating
 
 Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/t07/full.pdf}
     \caption{Results for $T=0.7$ phase transition. The green points are a truncated order 6 construction, the others order 5.  }
@@ -76,14 +76,14 @@ Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at con
 
 Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quite different magnetisation for large g. This shows that for $g>0.7$, order 5 is not sufficient any more.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/t07/zoomed2.pdf}
     \caption{Results for $T=0.7$ phase transition. The cluster expansion is of order 6.}
     \label{fig:phase:t07:full2}
 \end{figure}
 
-A more accurate version is shown in \cref{fig:phase:t07:full2}. Here, all the cluster expansions are of order 6 with a total bond dimension of ($D = 1+4+16+20$) instead of ($D = 1+4+16$). The results, fitted without $\chi=8$ due to obvious finite size effects, show a much better collapse.
+A more accurate version is shown in \cref{fig:phase:t07:full2}. Here, all the cluster expansions are of order 6 with a total bond dimension of ($D = 1+4+16+20$) instead of ($D = 1+4+16$). The results, fitted without $\chi=8$ due to obvious finite-size effects, show a much better collapse.
 
 \subsection{Tricritical point}\cref{subsec:tricrit}
 
@@ -93,14 +93,14 @@ Now that we know the critical transversal field can be determined, all the tools
 \end{equation}
 Near the critical point, the critical temperature $T_c$ and the critical transversal field $g_c$ are related to each other by the value of the quantum critical point $g_{c,q}$ and critical exponent $z=1$ and $\nu_{3D} \approx 0.62998$ \cite{Hesselmann2016}.
 
-This could perfectly be done, given enough computation time to calculate for many temperatures the critical transversal field with a finite size scaling, similar to \cref{tphasetranssubsec}. Possibly, also a scaling in truncation dimension D for the cluster expansion is needed.
+This could perfectly be done, given enough computation time to calculate for many temperatures the critical transversal field with a finite-size scaling, similar to \cref{tphasetranssubsec}. Possibly, also a scaling in truncation dimension D for the cluster expansion is needed.
 
 \subsection{Going beyond}
 With all the built machinery to construct cluster expansions, is logical to calculate the phase diagram with increased precision.
 
 \subsubsection{Higher order}
 
-Going to higher order (i.e. longer linear chains) and adding the single loop contribution works well. The bond dimension of the largest virtual level (3 in this case) can be truncated in the construction. The linear and non-linear solver find the least squares solution to the problems.
+Going to higher order (i.e. longer linear chains) and adding the single loop contribution works well. The bond dimension of the largest virtual level (3 in this case) can be truncated in the construction. The linear and nonlinear solver find the least squares solution to the problems.
 
 Care has to be taken in order to not violate one of the conclusions in 1D: never construct a longer chain than the previously fully solved one. For instance if the bond is truncated to 10, the linear chains can be constructed up till order 4. This means \cref{eq:cross_terms:order4} can be added but not \cref{eq:cross_terms:order5}, because the longest chains are order 5. Level 5 can still be constructed and contracted easily, but virtual level 3 has a bond dimension of 64. Compared to the previous bond dimensions (1,4 and 16) this is quite large and needs to be truncated.
 
@@ -169,7 +169,7 @@ It's clear that more research is needed here. One way to locate the problem woul
 
 \subsubsection{Better extrapolation}\label{sssec:better_Extrap}
 
-The spirit behind finite size scaling is to calculate more with the data available. In \cref{subsec:fss}, 2 additional variations were suggested. One is to account for the subleading finite size corrections, the other to change the way of calculating $\delta$.
+The spirit behind finite-size scaling is to calculate more with the data available. In \cref{subsec:fss}, 2 additional variations were suggested. One is to account for the subleading finite-size corrections, the other to change the way of calculating $\delta$.
 
 \paragraph{Subleading corrections}
 Introducing subleading corrections requires 4 parameters for each fitted universal function: $\omega$,$\phi$,$c$ and $d$ from \cref{ea:subleadparam}. Compared to the one parameter $T_c$ or $g_c$, this is a lot and can be used to make many graphs collapse into a single graph. The analysis in \cite{Wang2006} carefully estimates the error made with the fitting procedure. A similar amount of rigour would be required to fully trust the results.
