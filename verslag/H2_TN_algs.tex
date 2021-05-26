@@ -4,43 +4,40 @@ This section and the following one, will introduce some different tensor network
 
 \subsection{Canonical form}
 
-A translation invariant MPS has the form shown in \cref{mps:uni}
-
-It can be easily seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a gauge transformation.
+A translation invariant MPS has the form shown in \cref{mps:uni} It can easily be seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a gauge transformation. Defining
 \begin{equation}
-    A_l = \pepob{3}{2}{{
-                "-","-",
-                "",""}}{{
-                "-",
-                "",
-                "-"}}{{
-                4,4,4,
-                4,2,4}}  =X \pepob{3}{2}{{
-                "-","-",
-                "",""}}{{
-                "-",
-                "",
-                "-"}}{{
-                4,4,4,
-                4,0,4}} X^{-1}
-\end{equation}
-
-\begin{equation}
-    A_r = \pepob{3}{2}{{
-                "-","-",
-                "",""}}{{
-                "-",
-                "",
-                "-"}}{{
-                4,4,4,
-                4,3,4}}=Y \pepob{3}{2}{{
-                "-","-",
-                "",""}}{{
-                "-",
-                "",
-                "-"}}{{
-                4,4,4,
-                4,0,4}} Y^{-1}
+    \begin{split}
+        &A_l = \pepob{3}{2}{{
+                    "-","-",
+                    "",""}}{{
+                    "-",
+                    "",
+                    "-"}}{{
+                    4,4,4,
+                    4,2,4}}  =X \pepob{3}{2}{{
+                    "-","-",
+                    "",""}}{{
+                    "-",
+                    "",
+                    "-"}}{{
+                    4,4,4,
+                    4,0,4}} X^{-1} \\
+        &A_r = \pepob{3}{2}{{
+                    "-","-",
+                    "",""}}{{
+                    "-",
+                    "",
+                    "-"}}{{
+                    4,4,4,
+                    4,3,4}}=Y \pepob{3}{2}{{
+                    "-","-",
+                    "",""}}{{
+                    "-",
+                    "",
+                    "-"}}{{
+                    4,4,4,
+                    4,0,4}} Y^{-1}
+    \end{split}
 \end{equation}
 and
 \begin{equation}
@@ -51,9 +48,9 @@ and
                 "-",
                 "-"}}{{
                 4,4,4,
-                4,6,4}}  = X Y^{-1} = C
+                4,6,4}}  = X Y^{-1} = C ,
 \end{equation}
-Then \cref{mps:uni}  can be written as follows:
+\cref{mps:uni}  becomes
 \begin{equation}
     \pepob{6}{2}{{
                 "-","-", "-","-","-",
@@ -65,7 +62,7 @@ Then \cref{mps:uni}  can be written as follows:
                 "",
                 "-"}}{{
                 4,4,4,4,4,4,
-                4,2,2,6,3,4}}
+                13,2,2,6,3,13}} .
 \end{equation}
 Introducing one more tensor:
 \begin{equation}\label{algs:ACC}

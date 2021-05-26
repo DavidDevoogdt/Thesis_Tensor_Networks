@@ -1,52 +1,49 @@
 
 \subsection{Type A}
-This type was originally proposed in \cite{Vanhecke2021}. The first few blocks in the expansion are the following:
-
+This type was originally proposed in \cite{Vanhecke2021}. The first few blocks in the expansion are
 \begin{equation}
     \begin{split}
         &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
         &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
         &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
         &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}}\\
+        &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} .
     \end{split}
 \end{equation}
-
-The following types of blocks appear in the cluster expansion
-
-\mpo{1}{ {"n","m"}  }{}{}{}{},\mpo{1}{ {"m ","n"}  }{}{}{}{} and \mpo{1}{ {"n","n"}  }{}{}{}{} with $n \in \mathbb{N}_0$ and $m=n-1$.
-
-The $O^{n n}$ block is in defined for a chain with an odd number of sites. The contraction of $O^{n m }$ and $O^{m n} $ is defined by for a chain with even order. The decomposition is defined up to a gauge transformation.
+The following types of blocks appear in the cluster expansion:
+\begin{equation}
+    \mpo{1}{ {"n","m"}  }{}{}{}{},\mpo{1}{ {"m ","n"}  }{}{}{}{} and \mpo{1}{ {"n","n"}  }{}{}{}{}
+\end{equation}
+with $n \in \mathbb{N}_0$ and $m=n-1$. The $O^{n n}$ block is in defined for a chain with an odd number of sites. The contraction of $O^{n m }$ and $O^{m n} $ is defined by a chain with even order. The decomposition is defined up to a gauge transformation.
 
 \subsubsection{Dimension}
 
-In this scheme, virtual level n has dimension $d^n$. Of course, this dimension can be lowered if some error is allowed for the longest chain.
+In this scheme, virtual level n has dimension $d^{2*n}$.  This dimension can be truncated if some error is allowed for the longest chain.
 
 \subsubsection{Discussion}
 
-Type A can form long chains, which where not explicitly optimised for. The question arise whether this will result in accurate results for cyclic systems or not.
+Type A can form long chain, e.g.
+\mpob{10}{ {0,1,1,1,1,1,0,1,1,1,1,0}  }{}{}{}{{"","","","","","","","","","","",}}. The block $O^{1 1}$ is only defined to solve the matrix exponential exactly for 3 neighbouring sites. Therefore, the question arises whether these long chains will improve the error or make it worse for cyclic systems.
 
 \subsection{Type B}
 
-Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$. The first few blocks are:
+Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$. The first few blocks are
 \begin{equation}
     \begin{split}
         &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
         &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
         &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
         &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}\\
+        &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}.
     \end{split}
-\end{equation}.
-
+\end{equation}
+The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the left inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$.
 \def \rhs{\expH{2}{ $L_{m}^{-1}  M_{n+1} $ }{{"$i_n$","$i_{n+1}$"}}{{"$j_n$","$j_{n+1}$"}}{{"m","0"}}  }
 \begin{equation}
     \begin{split}
         \mpo{2}{ {"m","n","0"}  }{ { "$i_n$","$i_{n+1}$"}}{ { "$j_n$","$j_{n+1}$"}}{}{} =  U^n  \Sigma V^{\dagger}\\
     \end{split}
 \end{equation}
-
-The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the left inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$.
 
 \subsubsection{Dimension} From the construction the bond dimension grows from the left to the right. For the last step, there are only $d^2$ non-zero singular values.  All steps add $d^2$ to the dimension.
 For the last step, only $d^2$ non-zero singular values need to be kept. With the following natation:
@@ -56,23 +53,21 @@ For the last step, only $d^2$ non-zero singular values need to be kept. With the
         \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \\
     \end{split}
 \end{equation}
-The bond dimension of lower virtual levels can be reduced if we can solve the following equations simultaneously:
-
 Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
 \begin{equation}
     \begin{split}
-        S=A^{m} A^{n} &= A'^{m} A'^{n} \\
-        T=A^{m} B^{n} &= A'^{m} B'^{n} \\
+        S=A^{n} A^{n}  \\
+        T=A^{n} B^{n+1} .
     \end{split}
 \end{equation}
-Such matrices with optimal bond dimension can be found with generalised SVD. Generalised SVD decomposes 2 matrices as follows:
+This can be used to decrease the bond dimension of the MPO. Matrices with optimal bond dimension can be calculated with generalised SVD. Generalised SVD decomposes 2 matrices as
 \begin{equation}
     \begin{split}
         S^{\dagger} = (U \Sigma_1) Q^{\dagger} \\
-        T^{\dagger} = (V \Sigma_2) Q^{\dagger}
+        T^{\dagger} = (V \Sigma_2) Q^{\dagger}.
     \end{split}
 \end{equation}
-The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  This is higher than the dimension of type A.
+Identification gives $A^m = Q$ The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  This is higher than the dimension of type A.
 
 \subsubsection{Discussion}
 The bond dimension is larger than type A, but the long chains from type A are absent. The left inverse is always well-defined and doesn't need any computation, because Hermitian matrix U can be inverted easily. One major drawback is that for long chains, the virtual bonds are very large before they can be shrunk with the gsvd procedure.
@@ -90,20 +85,20 @@ This type implements the same strict type as Type B, but in a different way. No 
         &\mpob{5}{ {,"1'''","2'''","3'''","4'''",}  }{}{}{}{{,,,,,}}\\
     \end{split}
 \end{equation}
-and so forth. All but one MPO elements are chosen to be the identity matrix. The middle one is the exponentiated Hamiltonian with reshaped legs.
+and so forth. The primed indices have no special meaning, and could also be numbered starting from the largest index of the previous block +1. All but one MPO elements are chosen to be the identity matrix. The middle one is the exponentiated Hamiltonian with reshaped legs.
 
 \subsubsection{Discussion}
 As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B.
 
 \subsection{Type D}
 
-This type uses a different setup which tries to capture the best of both Type A and B. Type  could handle long range correlation better because of the introduction of $O^{n n}$, but the inverse was not necessarily well-defined. Type B had well conditioned inverses, but performed in most of the cases worse. The block appearing in type D are as follows:
-
-\mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{}
-
-Similar to type A,
-
 \def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
+
+This type uses a different setup which tries to capture the best of both Type A and B. Type  could handle long range correlation better because of the introduction of $O^{n n}$, but the inverse was not necessarily well-defined. Type B had well conditioned inverses, but performed in most of the cases worse. The block appearing in type D are as follows:
+\begin{equation}
+    \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{} ,
+\end{equation}
+which is similar to type A.
 \begin{equation}
     \begin{split}
         \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} &= \rhs \\
@@ -111,7 +106,6 @@ Similar to type A,
     \end{split}
     \label{eq_nmn_level}
 \end{equation}
-
 Matrix $D_n$ is the singular value diagonal matrix divided by a normalisation factor $\phi$. Both U and V are multiplied by $  \sqrt{\phi} $.
 
 \subsubsection{Discussion}

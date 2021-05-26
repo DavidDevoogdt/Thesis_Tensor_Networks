@@ -30,19 +30,15 @@ The grouping above can be applied to decompose a tensor into 2 tensors with matr
         &\cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}
     \end{split}
 \end{equation}
-
-The indices U, V and W represent block indices. Step 2 reshapes and groups the indices on to one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs.
-
-For an exact representation, the bond dimension of virtual level v is the product of the dimensions of the outer legs
+The indices U, V and W represent block indices. Step 2 reshapes and groups the indices on to one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs. For an exact representation, the bond dimension of virtual level v is the product of the dimensions of the outer legs
 \begin{equation}
     \dim{v} = \min( \dim{u}, \dim{v}) \cdot ( \dim{i}  ) ^2 .
 \end{equation}
-
 Many matrix decompositions exist. Some useful examples here are SVD decomposition, eigenvalue decomposition, QR, $\cdots$.
 
 \subsubsection{Truncation}
 
-The above procedure also gives a way to truncate the bond dimension: first take together 2 neighbouring sites, then perform an SVD $T = U \Sigma V^{\dagger}$. Split as follows:
+The above procedure also gives a way to truncate the bond dimension: first take together 2 neighbouring sites, then perform an SVD $T = U \Sigma V^{\dagger}$. Split as
 \begin{equation}
     T = \begin{bmatrix}
         U_1 & U_2 \\
@@ -50,7 +46,7 @@ The above procedure also gives a way to truncate the bond dimension: first take 
         \Sigma_1 & 0        \\
         0        & \Sigma_2 \\
     \end{bmatrix} \begin{bmatrix}
-        V_1 & V_2\\\end{bmatrix}^{\dagger}
+        V_1 & V_2\\\end{bmatrix}^{\dagger},
 \end{equation}
 where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor.
 \begin{equation}
