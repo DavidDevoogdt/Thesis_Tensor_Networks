@@ -1,20 +1,17 @@
-In this section the results of the MPO construction detailed in
 
 \subsection{Exact tensor matrix exponential } \label{chap_bench}
 
-The performance of the MPO construction can be compared with the exact diagonalisation of the Hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A Rough estimated of the amount of RAM $R$ needed to store this complex array is
+The performance of the MPO construction can be compared with the exact diagonalisation of the Hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A rough estimation of the amount of RAM $R$ needed to store this complex array is
 \begin{equation}
-    R = d^{2 n} \times 16 bytes
+    R = d^{2 n} \times 16 \; \text{bytes}
 \end{equation}
-which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.
-
-State-of-the-art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites. \cite{Wietek2018}
+which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.  State-of-the-art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites. \cite{Wietek2018}
 
 \subsubsection{Norms} \label{mponormdef}
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }
 \def \Mn {\mpo{4}{ {0,,,,0}  }{}{}{{0,0,1,0,0}}{}}
 
-The schatten 2 norm is used in the following analysis, denoted by ${\| \cdot \|} _{2}$. In the figures the relative error $\epsilon$ is reported.
+The Schatten 2 norm is used in the following analysis, denoted by ${\| \cdot \|} _{2}$. In the figures the relative error $\epsilon$ is reported.
 
 \begin{equation}
     \epsilon = \frac{  {  \left \|  \expHBlock - \Mn  \right \|} _{2}  }{ {  \left\|  \expHBlock \right \|}_2}
@@ -39,9 +36,9 @@ Calculating the cyclic norm comes at the extra cost of contracting a cyclic tens
 
 \subsection{Inversion procedure}\label{subsec:inversion_procedure}
 
-\subsubsection{Full pseudo-inversion}
+\subsubsection{Full pseudoinversion}
 
-The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for transversal Ising models is shown in \cref{benc:fig:fullinv}. The pseudoinversion has 1 parameter $\sigma_0$, the cutoff below which the singular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
+The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for transversal Ising models is shown in \cref{benc:fig:fullinv}. The pseudoinversion has 1 parameter $\sigma_0$, the cut-off below which the singular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
 
 \begin{figure}[H]
     \center
@@ -60,9 +57,9 @@ With these basic definitions and findings out of the way, the different series e
 
 \subsubsection{Ising}
 
-The results for the different types are all bundled in \cref{fig:benchmark:tising}. The vertical axis show the logarithm of the relative error $\epsilon$, horizontal axis the normalised inverse $beta= \frac{J}{T}$. The most surprising finding is the fact that the strict type E performs worse than the others. For low $\beta$, it is more than 5 orders of magnitude worse, Taken together with its large bond dimension, this expansion  and all other strict variants are seen to be of no use.
+The results for the different types are all bundled in \cref{fig:benchmark:tising}. The vertical axis shows the logarithm of the relative error $\epsilon$, horizontal axis the normalised inverse $\beta= \frac{J}{T}$. The most surprising finding is the fact that the strict type E performs worse than the others. For low $\beta$, the difference is more than 5 orders of magnitude. Taken together with its large bond dimension, this expansion  and all other strict variants are seen to be of no use.
 
-Now lets focus on the 2 other variants. Type A clearly outperforms type F for all $\beta<2$ by quite some margin. Only for large $\beta$, type F has the upper hand. While not completely clear in the picture, type A has quite a large error for some orders at $\beta \in (2,10) $, but higher orders seems to solve the problem. The construction of type F requires twice the bond dimension, and hence type A performs clearly better overal
+Now lets focus on the 2 other variants. Type A clearly outperforms type F for all $\beta<2$ by quite some margin. Only for large $\beta$, type F has the upper hand. While not completely clear in the picture, type A has quite a large error for some orders at $\beta \in (2,10) $, but higher orders seem to solve the problem. The construction of type F requires twice the bond dimension, and hence type A performs clearly better overall.
 
 \begin{figure}[H]
     \center
@@ -73,7 +70,7 @@ Now lets focus on the 2 other variants. Type A clearly outperforms type F for al
 
 \subsubsection{Heisenberg}
 
-Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again displayed in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have an divergent error.
+Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again displayed in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have a divergent error.
 
 \begin{figure}[H]
     \center
@@ -84,9 +81,7 @@ Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again 
 
 \subsubsection{Random}
 
-To give a representative overview for random Hamiltonians, several simulations were run. \todo{fix}
-
-\cref{fig:benchmark:trand} shows the results for 2 random Hamiltonians. This is done to ensure that the chosen models are not too 'simple'. The results show once again that the strict variant performs worse than the other 2. In comparison to the previous models, Type F performs very well, especially at high $\beta$.
+To give a representative overview for random Hamiltonians, several simulations were run. The construction for the random Hamiltonian was explained in \cref{randhamexpl}. \Cref{fig:benchmark:trand} shows the results for 2 random Hamiltonians. This test result is added to ensure that the chosen models are not too 'simple'. The results show once again that the strict variant performs worse than the other 2. In comparison to the previous models, type F performs very well, especially at high $\beta$.
 
 \begin{figure}[H]
     \begin{subfigure}[]{\textwidth}
@@ -136,11 +131,7 @@ To give a representative overview for random Hamiltonians, several simulations w
 
 \subsection{Real time evolution} \label{subsec_rt_evo}
 
-The method can also be used to construct real time evolution. \Cref{fig:benchmark:tising_time} shows the error of the matrix exponential in function of the time step $t = -i \beta $.
-
-Also here, the results are promising. The construction handles complex matrices well. Similar to previous conclusion, type A performs better than type F, which performs better than type E.
-
-The error of type A becomes quite large for high temperatures (not visible on figure), while type F keeps the errors low.
+The method can also be used to construct real time evolution. \Cref{fig:benchmark:tising_time} shows the error of the matrix exponential in function of the time step $t = -i \beta $. Also here, the results are promising. The construction handles complex matrices well. Similar to the previous conclusion, type A performs better than type F, which performs better than type E. The error of type A becomes quite large for high temperatures (not visible on figure), while type F keeps the errors low.
 
 \begin{figure}[H]
     \center
@@ -153,7 +144,4 @@ This is not by any means a complete analysis of the real time evolution operator
 
 \subsection{Conclusion}
 
-The biggest lesson, which took some time to figure out, was the correct way to implement the inversion procedure. It is essential that the pseudoinverse is taken for all the legs at once.
-The different types were tested against each other, and it is clear that type A is clear that type A is better in almost all situations. The strict variants score worse. Type F keeps the inverses well-defined, and this shows at large $\beta$. Also, real time evolution works well.
-The truncation procedure works as expected. A longer chain should not be constructed when a shorter chain was not solved fully (e.g. due to a truncation of the previous level)
-Constructions with explicit rotation symmetry (see \cref{sec:symm}) perform exactly as good as the ones without.
+The biggest lesson, which took some time to figure out, was the correct way to implement the inversion procedure. It is essential that the pseudoinverse is taken for all the legs at once. The different types were tested against each other, and it is clear that type A is better in almost all situations. The strict variants score worse. Type F keeps the inverses well-defined, and this shows at large $\beta$. Also, real time evolution works well. The truncation procedure works as expected. A longer chain should not be constructed when a shorter chain was not solved fully (e.g. due to a truncation of the previous level). Constructions with explicit rotation symmetry (see \cref{sec:symm}) perform exactly as good as the ones without.

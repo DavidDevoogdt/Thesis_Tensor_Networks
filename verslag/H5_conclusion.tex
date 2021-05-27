@@ -3,7 +3,7 @@ In short, all components are in place in the framework to generate easily and ef
 
 \subsection{Implementation}
 
-By far the largest amount of invested in this thesis was creating and testing this framework from the ground up (except the fitting code). Implementation of the maps and solvers in its full generality is a very error-prone problem. In hindsight, the 1D framework may seem unneeded, given that the 2D framework is even better. This is not the case. Constructing the 2D framework was only possible due to the lessons learned (and mistakes made) in the 1D code.
+By far the largest amount of time invested in this thesis was creating and testing this framework from the ground up (except the fitting code). Implementation of the maps and solvers in its full generality is a very error-prone problem. In hindsight, the 1D framework may seem unneeded, given that the 2D framework is even better. This is not the case. Constructing the 2D framework was only possible due to the lessons learned (and mistakes made) in the 1D code.
 
 \subsection{Code quality}
 The first and most important goal of writing numerical code is of course that it compiles and that the results are as correct. But this is only the first step. The 2D framework neatly orders the different task is functions to avoid as much code duplication as possible. For instance, there are functions generating and manipulating maps, which depends on the geometry of the problem. Other functions only use the bonds and contractions listed in that map object, and hence another lattice can be used without changing the other components too much.

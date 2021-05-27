@@ -2,11 +2,7 @@ The results in 1D are very promising, but the real open challenges are situated 
 
 \subsection{Norm}
 
-Once again, a suitable norm has to be derived. The situation is more difficult than in 1D, because contracting a PEPO tensor network has a much larger computational complexity than in 1D. Ideally, the norm would be calculated on an n by n cyclical grid (2D grid on a torus). Here n has to be at least 1 larger than the largest explicitly constructed chain.
-
-In practice, this is not achievable in reasonable amount of time. The limitations are twofold: the maximum number of sites to calculate the matrix exponential is still around 14, and the contraction of the tensor network on a torus is limited to 3 by 3. This not capture the long chains.
-
-The limitations on the PEPO contraction can be somewhat relaxed by not computing the full network, but computing the reduced density matrix. Here, most of the sites have their physical indices traced out, except for one site.
+Once again, a suitable norm has to be derived. The situation is more difficult than in 1D, because contracting a PEPO tensor network has a much larger computational complexity than in 1D. Ideally, the norm would be calculated on an n by n cyclical grid (2D grid on a torus). Here n has to be at least 1 larger than the largest explicitly constructed chain. In practice, this is not achievable in a reasonable amount of time. The limitations are twofold: the maximum number of sites to calculate the matrix exponential is still around 14, and the contraction of the tensor network on a torus is limited to 3 by 3. This not capture the long chains.  The limitations on the PEPO contraction can be somewhat relaxed by not computing the full network, but computing the reduced density matrix. Here, most of the sites have their physical indices traced out, except for one site.
 
 The final error measures are defined by:
 \begin{equation}\label{res2d:err_Def}
@@ -66,11 +62,11 @@ and
                         1,1,1,1,1,1,1,1,
                     }} }}
 \end{equation}
-For the first one, all the blocks in the expansion are present in, and it is cyclical in both x and y. The second reduced density matrix is not cyclic, but includes more loop type contributions. Both relative errors will be used, defined by :
+For the first one, all the blocks in the expansion can be fitted into the geometry. The norms is cyclical in both x and y, given less biased results as in 1D. The second reduced density matrix is not cyclic, but includes more loop type contributions. Both relative errors will be used, defined by
 \begin{equation}\label{eq:2d_norms}
-    \epsilon^{\alpha} = \frac{  {  \left \|  \rho^{\alpha}_{exact,  i,j}- \rho^{\alpha}_{ i,j}  \right \|} _{2}  }{ {  \left\|  \rho^{\alpha}_{exact,  i,j} \right \|}_2} \quad \alpha \in [1,2]
+    \epsilon^{\alpha} = \frac{  {  \left \|  \rho^{\alpha}_{exact,  i,j}- \rho^{\alpha}_{ i,j}  \right \|} _{2}  }{ {  \left\|  \rho^{\alpha}_{exact,  i,j} \right \|}_2} \quad \alpha \in [1,2] .
 \end{equation}
-For the given error measures, series expansion up till order 5 can be tested. The second norm takes the most time to compute, due to the larger complexity of contracting the tensor network.
+For the given error measures, cluster expansions up till order 5 can be tested. The second norm takes the most time to compute, due to the larger complexity of contracting the tensor network.
 
 \subsection{Models}
 

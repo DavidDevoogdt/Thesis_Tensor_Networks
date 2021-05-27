@@ -27,3 +27,4 @@ ket
 matrisation
 pseudoinverses
 DMRG
+pseudoinvert
