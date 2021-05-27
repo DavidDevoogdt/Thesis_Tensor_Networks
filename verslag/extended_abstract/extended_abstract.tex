@@ -65,10 +65,12 @@ Networks}
     \input{../abstract.tex}
 \end{abstract}
 
-\section{Introduction}
+\section{Overview}
+
+Understanding the many-body quantum problem remains a challenge. Strongly correlated matter has many interesting phases which are not yet understood, including high-T superconductors, topological ordered phases, quantum spin liquids \cite{Orus2014}. One method to simulate these materials numerically are tensor networks. This work introduces a new method to calculate the exponential of a Hamiltonian with local interactions. This allows to evolve a quantum state in time and calculate the macroscopic properties at a finite temperature. As an example. The new method is used to calculate phase transitions of the transversal Ising model.
 
 \section{Tensor Networks}
-
+\subsection{MPS}
 Matrix Product States (MPS) form an ansatz to describe the
 \begin{equation}
     \ket{\Psi} = \sum_{i_1 i_2 \cdots i_n } C^{i_1 i_2 \cdots i_n} \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
@@ -133,28 +135,30 @@ While contraction over all possible virtual levels on 3 sites is denoted by
     \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} .
 \end{equation}
 
-\section{Strongly correlated matter}
+% \section{Strongly correlated matter}
 
-\subsection{Transversal Ising}
+% Tensor networks are 
 
-\begin{figure}[h!]
-    \center
-    \includegraphics[width=\linewidth]{../Figuren/phsyics/2disingphase.png}
-    \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}.}
-    \label{2dtisingphasediag}
-\end{figure}
+% \subsection{Transversal Ising}
 
-\subsection{Criticality}
+% \begin{figure}[h!]
+%     \center
+%     \includegraphics[width=\linewidth]{../Figuren/phsyics/2disingphase.png}
+%     \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}.}
+%     \label{2dtisingphasediag}
+% \end{figure}
 
-\subsection{operator exponentials}
+% \subsection{Criticality}
 
-\subsection{TN contraction}
+% \subsection{operator exponentials}
+
+% \subsection{TN contraction}
 
 \section{Cluster Expansion}
 
 The novel method to construct a PEPO $e^{-\beta \hat{H}}$ with cluster expansions. An example is given by \cref{PEPO_3}.  This was first introduced in \cite{Vanhecke2021}. The goal is capture the exponential of the Hamiltonian operator $\hat{H}$
-\begin{equation}
-    \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
+\begin{equation}\label{H_eq}
+    \hat{H} = -J \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right )
 \end{equation}
 This Hamiltonian consists of 1 and 2 site operators. Of course more general Hamiltonians can also be used. The notation for the contraction of the tensor network will also be used to denote the Hamiltonian evaluated on the given geometry
 \begin{alignat}{3}
@@ -245,7 +249,7 @@ The blocks $O^{n n+1}$ are unitary up to a constant factor. The primed blocks so
 
 \subsection{2D}
 In hindsight of the results, the construction in 2D is a generalisation of type A. The linear blocks, which are given by a tree graph, will be a direct generalisation. The non-linear blocks are used to account for loops.
-\subsubsection{Linear}
+\subsubsection{Linear blocks}
 The generalisation of an MPO to 2D is called a PEPO (project entangle pair operator). These PEPO's are graphically depicted by the same symbol
 \begin{equation}
     \mpob{1}{ {,}  }{}{}{}{{,,}} = \vcenter{ \hbox{ \pepob{4}{3}{{
@@ -299,7 +303,7 @@ reduced the number of blocks that need to be solved significantly. Also T and + 
 \end{equation}
 From here on, it can again be generalised to longer chains and +'s. Care has to be taken to construct the blocks in the right order.
 
-\subsubsection{Nonlinear}
+\subsubsection{Nonlinear blocks}
 Not all finite size patches are covered with the blocks introduced in the previous section. The lowest order block not covered is
 \begin{equation}\label{tikzfig:plaquetter}
     {\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}}.
@@ -371,13 +375,6 @@ Here $B$ is the exponentiated Hamiltonian the + geometry minus the contraction o
 
 \subsubsection{Nonlinear Solver}
 A nonlinear solver takes steps in the direction that lowers the residual error $\epsilon$. This procedure can be sped up if the gradient is known. Inspection of \cref{extract_x} shows that the derivative  $\frac{\partial  \epsilon_{I^1 I^2 I^3 I^4 j }  }  { X_{\alpha_1 \alpha_2 \alpha_3 \alpha_1 } }   = A_{I^1 I^2 I^3 I^4 \alpha_1 \alpha_2 \alpha_3 \alpha_4 j } $. Or more simply contraction of the network but with X removed. This can be extended to more complex situation with the chain rule.
-\subsection{other}
-
-\begin{itemize}
-    \item symmmetry
-    \item truncation
-    \item contraction
-\end{itemize}
 
 \subsubsection{Truncation}
 The highest virtual level can be truncation in bond dimension. Introducing a block to solve a chain longer than the last exactly solved blocks leads to diverging results
@@ -396,8 +393,7 @@ The cluster expansions are tested in 2 ways. In 1D and 2D, the error $\epsilon$ 
 In 1D, the error is calculated on a cyclic system of 11 sites. The results are shown in \cref{fig:benchmark:tising}. All the cluster expansion get better with increasing order. Type A outperforms the other 2 types by quite some margin. This conclusion is also true for the Heisenberg model and random 2 site Hamiltonians. The results in 2D show a similar trend. The error in 2D is of the same order of magnitude. The plaquette term \cref{tikzfig:plaquetter} is needed, the extensions are optional. The results show that real time evolution ($t = - i \beta$) also performs well.
 
 \subsection{2D Transversal Ising}
-
-A cluster expansion of order 5 with loops is used to simulate the phase transition of the transversal Ising model at g=0 (classical) and g=2.5. The simulated magnetisation $ \braket{m}$ and the data collapse of m, entropy $S$ and correlation length $\xi$ for g=2.5 is shown in \cref{fig:phase:g25:zoomed}. $\delta$ is a measure for the size of the system. \Cref{fig:phase:g25:zoomed} shows a very clear data collapse. For g=0, the fitted critical temperature $T_c = 2.691(9)$. Onsager's analytical solution is $T_c = 2.69185$. For $g=2.5$, the fitted value $T_c=1.2736(6)$ agrees well with values from literature, e.g. $T_c=1.2737(2)$ obtained with a competing tensor network technique and $T_c=1.2737(6)$ obtained with quantum Monte Carlo. \cite{Czarnik2019} Higher precision can be achieved with cluster expansions of higher order.
+The transversal Ising model is of the form \cref{H_eq}, with $H_1=g  \sigma ^x$ and $H_2= \sigma^z$. For low temperature, the spins tend to align forming a magnet. For high T, the magnetisation disappears. The transversal field cause the spins to align in the direction of the transversal field. A cluster expansion of order 5 with loops is used to simulate the phase transition of the transversal Ising model at g=0 (classical) and g=2.5. The simulated magnetisation $ \braket{m}$ and the data collapse of m, entropy $S$ and correlation length $\xi$ for g=2.5 is shown in \cref{fig:phase:g25:zoomed}. $\delta$ is a measure for the size of the system. \Cref{fig:phase:g25:zoomed} shows a very clear data collapse. For g=0, the fitted critical temperature $T_c = 2.691(9)$. Onsager's analytical solution is $T_c = 2.69185$. For $g=2.5$, the fitted value $T_c=1.2736(6)$ agrees well with values from literature, e.g. $T_c=1.2737(2)$ obtained with a competing tensor network technique and $T_c=1.2737(6)$ obtained with quantum Monte Carlo. \cite{Czarnik2019} Higher precision can be achieved with cluster expansions of higher order.
 
 \begin{figure}[h!]
     \center
@@ -408,9 +404,8 @@ A cluster expansion of order 5 with loops is used to simulate the phase transiti
 
 \section{Outlook}
 
-The results agree well with exact exponentiation and with critical values from literature, proving that these cluster expansion can compete with other methods.  \todo{more}
+The results agree well with exact exponentiation and with critical values from literature, proving that these cluster expansion can compete with other methods. With current methods, it is possible to simulate the quantum critical point of the Ising model. The linear blocks and plaquette term seem to be sufficient to make an accurate cluster expansion, making the generalisation to 3D within reach.
 
-With current methods,
 \bibliographystyle{plain}
 \bibliography{../bib.bib}
 \end{document}
