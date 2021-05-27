@@ -46,7 +46,7 @@ The previous example simulated the classical 2D Ising model. The question is whe
 \begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
-    \caption{ Data collapse for $g=2.5$ phase transition of transversal Ising Model. Data points are taken from $T \in \left[ T_c -0.08, T_c +0.08 \right]$ }
+    \caption{ Data collapse for $g=2.5$ phase transition of transversal Ising Model. Data points are taken from $T \in \left[ T_c -0.08, T_c +0.08 \right]$. }
     \label{fig:phase:g25:zoomed}
 \end{figure}
 
@@ -90,7 +90,7 @@ Going to higher order (i.e. longer linear chains) and adding the single loop con
 Care has to be taken in order to not violate one of the conclusions in 1D: never construct a longer chain than the previously fully solved one. For instance if the bond is truncated to 10, the linear chains can be constructed up till order 4. This means \cref{eq:cross_terms:order4} can be added but not \cref{eq:cross_terms:order5}, because the longest chains are order 5. Level 5 can still be constructed and contracted easily, but virtual level 3 has a bond dimension of 64. Compared to the previous bond dimensions (1,4 and 16) this is quite large and needs to be truncated.
 
 \subsubsection{Loops and extensions}\label{subsec:results:loops_and_ext}
-Adding loops decreases the error. But there is also a surprising result: all possible loop extensions result in a higher error when the environment is calculated in the thermodynamic limit. The fluctuation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
+Adding loops decreases the direct error. But there is also a surprising result: all possible loop extensions result in a higher error when the environment is calculated in the thermodynamic limit. The fluctuation of the magnetisation increases drastically. With increasing bond dimension $\chi$, this is somewhat better but still not good enough.
 The question is whether this is a result of a failing cluster expansion, or the inability of VUMPS to calculate the correct environment. During my thesis, my focus has largely been on the first case. After all, the framework was completely built from scratch and errors happen, and there is no guarantee that the series even converges. But introduction of very strict variants, such as the generalization to type E, where left/upper extension have level a and the right/lower extensions are of type a'
 \begin{equation}
     \vcenter{ \hbox{  \pepob{5}{3}{{
