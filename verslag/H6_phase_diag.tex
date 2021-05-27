@@ -3,7 +3,7 @@ Now we have an idea how accurate the cluster expansions is, we can use it to cal
 
 As a reference, \cref{2dtisingphasediag} is shown once more
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
     \caption{Phase diagram for 2D transversal Ising model. Figure taken from \cite{Hesselmann2016}.}
@@ -17,17 +17,17 @@ The classical Ising model on a square lattice has an exact solution. Onsager cal
 
 The results are shown in \cref{fig:phase:g0:full}. Each of the figures has 4 different subplots. The left upper corner shows m vs T. For low T, there is clearly a non-zero macroscopic magnetisation, while high T has a zero expectation value as expected. The other three plots show the data collapse of the finite-size scaling of the entanglement entropy $S$, the correlation length $\xi$ and the magnetisation $m$. $\delta$ is the Marek gap, a measure for the system size as explained in \cref{subsec:fss}.
 \todo{New figure with entropy formula fixed 6S/c instead of cS/6}
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g0/Full.pdf}
-    \caption{  }
+    \caption{ Data collapse for $g=0$ phase transition of transversal Ising Model. }
     \label{fig:phase:g0:full}
 \end{figure}
 Near criticality, they collapse well, but away from the critical point there is quite some systematic variation. The reason is shown in \cref{fig:crit:qtran}. Only in some limited range around the critical region, the universal scaling holds. A more zoomed in version is shown in \cref{fig:phase:g0:zoomed}. Clearly, the data collapses a lot better as expected.
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g0/zoomed.pdf}
-    \caption{  }
+    \caption{ Data collapse for $g=0$ phase transition of transversal Ising Model. Data points are taken from $T \in \left[ T_c -0.08, T_c +0.08 \right]$ }
     \label{fig:phase:g0:zoomed}
 \end{figure}
 In fact, the data collapses so well that the critical exponents and the temperature could be determined with the given data. The numerical fit (with starting point away from  critical temperature), results in a numerical value of $T_c = 2.691(9) $.
@@ -36,17 +36,17 @@ In fact, the data collapses so well that the critical exponents and the temperat
 
 The previous example simulated the classical 2D Ising model. The question is whether this result will carry on into the quantum regime. The results for the full phase diagram are shown in \cref{fig:phase:g25:full} and points in the direct neighbourhood of the phase transition are shown in \cref{fig:phase:g25:zoomed}, similar to the classical case. Of course, quantitative details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite-size scaling.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g25/Full.pdf}
-    \caption{  }
+    \caption{ Data collapse for $g=2.5$ phase transition of transversal Ising Model. }
     \label{fig:phase:g25:full}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/g25/zoomed.pdf}
-    \caption{  }
+    \caption{ Data collapse for $g=2.5$ phase transition of transversal Ising Model. Data points are taken from $T \in \left[ T_c -0.08, T_c +0.08 \right]$ }
     \label{fig:phase:g25:zoomed}
 \end{figure}
 
@@ -54,7 +54,7 @@ There is no known analytical expression for the critical temperature. With quant
 
 \subsection{T=0.7 quantum phase transition}\label{tphasetranssubsec}
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/t07/full.pdf}
     \caption{Results for $T=0.7$ phase transition. The green points are a truncated order 6 construction, the others order 5.  }
@@ -63,7 +63,7 @@ There is no known analytical expression for the critical temperature. With quant
 
 Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}. Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quite different magnetisation for large g. This shows that for $g>0.7$, order 5 is not sufficient any more.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/phasediag/t07/zoomed2.pdf}
     \caption{Results for $T=0.7$ phase transition. The cluster expansion is of order 6.}

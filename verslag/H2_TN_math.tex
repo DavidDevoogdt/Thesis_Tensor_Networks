@@ -1,5 +1,4 @@
 This section serves as an introduction of tensor network manipulations. The overview mainly focusses on MPS/MPO networks, but most of the operations translate to the 2D case.
-
 The MPS's are processed by transforming the tensor into a matrix, performing some matrix calculations and casting it back into its original form. In this way, the standard methods from linear algebra can be used. This section gives some examples how this is done in practice:
 
 \subsection{Basics}
@@ -78,7 +77,7 @@ This is a standard matrix equation and can hence be solved with linear algebra p
 
 Tensor network diagram determine unambiguously the result of a contraction. This does not mean all contraction orders are equivalent. The number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two different contraction orders are shown in \cref{fig:tnalgs:cont_ord}.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/contraction_order.png}
     \caption{ (a) Contraction of 3 tensors in $O(D^4)$ time (b) Contraction of same tensors in $O(D^5)$ time. Figure taken from \cite{Orus2014}.  }

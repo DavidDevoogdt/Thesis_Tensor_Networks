@@ -21,7 +21,7 @@ This norm can only be calculated for a finite number of sites. The influence of 
 
 Calculating the cyclic norm comes at the extra cost of contracting a cyclic tensor network. In this chapter, the cyclic norm will be given for M=11 sites.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \begin{subfigure}[]{\linewidth}
         \includegraphics[width=\textwidth]{Figuren/benchmarking/comp_M_cycl.pdf}
         \subcaption{Cyclic error}
@@ -40,7 +40,7 @@ Calculating the cyclic norm comes at the extra cost of contracting a cyclic tens
 
 The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for transversal Ising models is shown in \cref{benc:fig:fullinv}. The pseudoinversion has 1 parameter $\sigma_0$, the cut-off below which the singular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising_full_inverse.pdf }
     \caption{Error for transversal Ising, computed with full inversion }
@@ -61,7 +61,7 @@ The results for the different types are all bundled in \cref{fig:benchmark:tisin
 
 Now lets focus on the 2 other variants. Type A clearly outperforms type F for all $\beta<2$ by quite some margin. Only for large $\beta$, type F has the upper hand. While not completely clear in the picture, type A has quite a large error for some orders at $\beta \in (2,10) $, but higher orders seem to solve the problem. The construction of type F requires twice the bond dimension, and hence type A performs clearly better overall.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising.pdf}
     \caption{Comparison type A, E and F for Transversal Ising. }
@@ -72,7 +72,7 @@ Now lets focus on the 2 other variants. Type A clearly outperforms type F for al
 
 Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again displayed in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have a divergent error.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/benchmarking/t_heis_XXX.pdf}
     \caption{Comparison type A, E and F for Heisenberg model.}
@@ -83,7 +83,7 @@ Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again 
 
 To give a representative overview for random Hamiltonians, several simulations were run. The construction for the random Hamiltonian was explained in \cref{randhamexpl}. \Cref{fig:benchmark:trand} shows the results for 2 random Hamiltonians. This test result is added to ensure that the chosen models are not too 'simple'. The results show once again that the strict variant performs worse than the other 2. In comparison to the previous models, type F performs very well, especially at high $\beta$.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \begin{subfigure}[]{\textwidth}
         \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_Raand.pdf}
         \subcaption{}
@@ -98,7 +98,7 @@ To give a representative overview for random Hamiltonians, several simulations w
     \label{fig:benchmark:trand}
 \end{figure}
 
-% \begin{figure}[H]
+% \begin{figure}[h!]
 %     \begin{subfigure}[]{\textwidth}
 %         \includegraphics[width=\textwidth]{Figuren/benchmarking/rand_01.pdf}
 %         \subcaption{test}
@@ -115,7 +115,7 @@ To give a representative overview for random Hamiltonians, several simulations w
 %     \caption{test }
 % \end{figure}
 
-% \begin{figure}[H]\ContinuedFloat
+% \begin{figure}[h!]\ContinuedFloat
 %     \begin{subfigure}[]{\textwidth}
 %         \includegraphics[width=\textwidth]{Figuren/benchmarking/rand_03.pdf}
 %         \subcaption{test}
@@ -133,7 +133,7 @@ To give a representative overview for random Hamiltonians, several simulations w
 
 The method can also be used to construct real time evolution. \Cref{fig:benchmark:tising_time} shows the error of the matrix exponential in function of the time step $t = -i \beta $. Also here, the results are promising. The construction handles complex matrices well. Similar to the previous conclusion, type A performs better than type F, which performs better than type E. The error of type A becomes quite large for high temperatures (not visible on figure), while type F keeps the errors low.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_t_ising_time.pdf}
     \caption{Comparison type A, E and F for transversal Ising model. The horizontal axis represents the time step, not the inverse temperature. Virtual level 3 is truncated to $\chi=20$.  }

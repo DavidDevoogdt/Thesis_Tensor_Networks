@@ -1,9 +1,8 @@
-The construction can be written down quite compactly as done in the previous section, but actually implementing the code in full generality is somewhat more complex. In practice, the 1D and 2D implementation were performed separately. Where a part of the code but mainly the ideas and lessons learned from 1D were taken to the 2D code. Of course, the 1D construction is just a subset of the 2D implementation. In fact, the 2D implementation even outperforms the 1D implementation for reasons with will be explained later. The main focus of this chapter will go to the 2D implementation. At the end some particular optimisations in 1D will be highlighted.
-
+The construction can be written down quite compactly as done in the previous section, but actually implementing the code in full generality is somewhat more complex. In practice, the 1D and 2D implementation were performed separately. Where a part of the code but mainly the ideas and lessons learned from 1D were taken to the 2D code.
+Of course, the 1D construction is just a subset of the 2D implementation. In fact, the 2D implementation even outperforms the 1D implementation for reasons with will be explained later. The main focus of this chapter will go to the 2D implementation. At the end some particular optimisations in 1D will be highlighted.
 Solving the blocks introduced in the previous sections need 2 different approaches. The graphs of the maps can be split in 2 groups. The first one, considers problems where there are no loops and at most one node with more than 2 legs Examples include:
 $\pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}}$ and $\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}$.
 These will be reduced to a standard matrix problem, and solve with matrix (pseudo-) inversion.
-
 The other group, of course, constitutes the nonlinear problems. This includes every problem where a block (or rotated version) occurs more than once, problems which include loops, ...
 
 \subsection{Linear solver} \label{subsec:linear_solver}
@@ -202,15 +201,15 @@ Here $i^M_N$ has the following meaning: M numbers the different legs or branches
 
 An example of this procedure is
 \begin{align}
-    \pepoat                    & =  \blockat                                       \\
-    \pepobt                    & =  \blockbt                                       \\
+    \pepoat                 \; & =  \;\blockat                                     \\
+    \pepobt                 \; & =  \;\blockbt                                     \\
     \vcenter{\hbox{ \pepoct }} & =\vcenter{\hbox{  \blockct }} . \label{extract_x}
 \end{align}
 On the first line, the original problem is shown. Block X is the newly introduced block. The right-hand side $B$ is the residual error, i.e. the exponentiated Hamiltonian minus all possible contractions in the network. The second line reorders and groups the physical indices in legs, and transforms the right-hand side accordingly. The third line shows the tensors in the form of \cref{axb}, including the matching labels.
 
 \subsubsection{Full inverse}
 
-One way of solving this equation is by performing by contracting the different matrices $A_i$ to one matrix A $$A = A^1 \otimes A^2 \cdots \otimes A^m$$. The equation to solve is
+One way of solving this equation is by performing by contracting the different matrices $A_i$ to one matrix A $A = A^1 \otimes A^2 \cdots \otimes A^m$. The equation to solve is
 \begin{equation}
     \begin{split}
         &A_{ I^1  I^2 \cdots I^n \alpha^1 \alpha^2 \cdots \alpha^m   } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } \\
@@ -218,7 +217,6 @@ One way of solving this equation is by performing by contracting the different m
     \end{split}
 \end{equation}
 The most fastest way to solve this system is by using a linear solver. This results in some numerical problems. This is a result of the potentially ill conditioned inverses of legs $A_i$, inherent to the construction. A pseudoinverse of the full matrix can be easily obtained and resolves this issue (see for numerical example \cref{subsec:inversion_procedure}).
-
 The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
 \begin{align}
     A     & = U \Sigma V^{\dagger}      \\
@@ -312,9 +310,7 @@ The framework is equipped with 3 different solvers, designed to solve different 
 \end{verbatim}
 They only need a map, which is the geometry of the problem, and a pattern, i.e. the new block to add. \verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as will be discussed in the next \cref{subsec:nf}.
 
-Whenever the linear solver can be used, it is the solver of choice. The sparse full inverse procedure is fast and handles the ill-conditioned inverses very well. The sequential linear solver builds on this solver to handle the introduction of multiple new tensors, possibly related to each other through a permutation.
-
-The nonlinear solver is at the moment only the fastest for small highly nonlinear problems, such as solving \cref{tikzfig:plaquetter} in a rotation invariant manner. The nonlinear solver can optimise multiple problems at once, and could be extended to fully use internal symmetries of the model.
+Whenever the linear solver can be used, it is the solver of choice. The sparse full inverse procedure is fast and handles the ill-conditioned inverses very well. The sequential linear solver builds on this solver to handle the introduction of multiple new tensors, possibly related to each other through a permutation. The nonlinear solver is at the moment only the fastest for small highly nonlinear problems, such as solving \cref{tikzfig:plaquetter} in a rotation invariant manner. The nonlinear solver can optimise multiple problems at once, and could be extended to fully use internal symmetries of the model.
 
 \section{Optimisation}
 

@@ -11,17 +11,13 @@ The implementation of the different MPO types can be found under \path{src_1D/ge
 
 To use the code, go to the root folder and execute  \verb#doPath.m#
 The construction of the PEPO's happen in \path{src_2D/PEPO_constructions/}. The names coincide with the names in the pdf.
-
 The results from \cref{sec:results1d} and \cref{sec:results2d} are made with  \verb#test.m# and \verb#test_2D.m#. The plotting in 2D happens with \verb#proces_test_2D.m#
-
 Generating a phase diagram can be done with \verb#pIsing2D_par#. The $g=2.5$ transition reported in \cref{subsec:2dpahsediag} can be generated with
 \begin{verbatim}
 Ising2D_par(8, 2.5, 'g', struct('testing',0,'unit_cell',1,
                            'par',1,'order',5,'do_loops',1));
 \end{verbatim}
-and visualised with \verb#proces_Ising2D.m#
-
-Finally, fitting the curves happens with \verb#dofit.m#
+and visualised with \verb#proces_Ising2D.m# Finally, fitting the curves happens with \verb#dofit.m#
 
 \subsection{VUMPS code}
 One external package is not checked in on git: MatlabTrack. This is used in  \verb#src_2D/process_PEPO/PEPO_vumps.m# to calculate the VUMPS environment. This proprietary code was written by the QuantumGroup@UGent. To obtain the code, go to \path{https://quantumghent.github.io/software/}

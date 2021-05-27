@@ -91,8 +91,7 @@ Introducing one more tensor:
                 4,4,4,4,
                 4,6,3,4}}
 \end{equation}
-At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its canonical form, the following choice is made:
-
+At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its canonical form, the following choice is made
 \begin{subequations} \label{algs:mpsid}
     \begin{alignat}{3}
                      & \vcenter{ \hbox{ \pepob{3}{2}{{
@@ -124,10 +123,9 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
                             "-",
                             "-"}}{{
                             4,4,4,
-        4,4,4}} } }  &                                 & = I
+        4,4,4}} } }  &                                 & = I .
     \end{alignat}
 \end{subequations}
-
 The tensors below are the conjugated version of the tensors above. There is still some freedom: a unitary gauge transformation can still be applied. With this choice, it is possible to bring $C$ in diagonal form.
 
 \subsubsection{Entropy}
@@ -174,7 +172,7 @@ The contraction in this section is somewhat different. The MPO with the same $S_
 
 \subsection{1D problem}
 
-Suppose that there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expectation value $ \Braket{X}$ is given by:
+Suppose that there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expectation value $ \Braket{X}$ is given by
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
@@ -243,52 +241,47 @@ Suppose that there is an MPO representation A that gives the probability of a st
             \draw (O1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (O1.south);
             \draw (O5.north)   ..  controls +(0.4,1.4) and +(0.4,-1.4)  .. (O5.south);
         \end{tikzpicture}
-    }
+    }.
     \label{sm:expecatation_X}
-\end{equation}.
-
+\end{equation}
 In the thermodynamic limit there are an infinite number of A to the left and the right. This can be simulated by taking the left and right fixed points $Gl$ and $Gr$ of the traced MPO A corresponding to the largest eigenvector $\lambda$.
-
 \begin{equation}\label{algs:exp}
-    \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
-        \clip (-1.4,-1) rectangle (1,1);
-        \node[] (N0) at (-1,0) {$Gl$};
-        \node[] (N2) at (1,0) {};
-        \node[circle, draw] (N1) at (0,0) {A};
-        \draw  (N0) -- (N1) ;
-        \draw  (N1) -- (N2) ;
-        \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
-    \end{tikzpicture}
-    = \lambda
-    \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")}, scale=0.9 ]
-        \clip (-.4,0.5) rectangle (1,-0.5);
-        \node[] (N2) at (1,0) {};
-        \node[] (N1) at (0,0) {$Gl$};
-        \draw  (N1) -- (N2) ;
-    \end{tikzpicture}
+    \begin{split}
+        \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
+            \clip (-1.4,-1) rectangle (1,1);
+            \node[] (N0) at (-1,0) {$Gl$};
+            \node[] (N2) at (1,0) {};
+            \node[circle, draw] (N1) at (0,0) {A};
+            \draw  (N0) -- (N1) ;
+            \draw  (N1) -- (N2) ;
+            \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
+        \end{tikzpicture}
+        &= \lambda
+        \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")}, scale=0.9 ]
+            \clip (-.4,0.5) rectangle (1,-0.5);
+            \node[] (N2) at (1,0) {};
+            \node[] (N1) at (0,0) {$Gl$};
+            \draw  (N1) -- (N2) ;
+        \end{tikzpicture} \\
+        \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
+            \clip (-1,-1) rectangle (1.4,1);
+            \node[] (N0) at (-1,0) {};
+            \node[] (N2) at (1,0) {$Gr$};
+            \node[circle, draw] (N1) at (0,0) {A};
+            \draw  (N0) -- (N1) ;
+            \draw  (N1) -- (N2) ;
+            \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
+        \end{tikzpicture}
+        &= \lambda
+        \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
+            \clip (0,-0.5) rectangle (1.4,0.5);
+            \node[] (N2) at (1,0) {$Gl$};
+            \node[] (N1) at (0,0) {};
+            \draw  (N1) -- (N2) ;
+        \end{tikzpicture}
+    \end{split}
 \end{equation}
-
-\begin{equation}
-    \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
-        \clip (-1,-1) rectangle (1.4,1);
-        \node[] (N0) at (-1,0) {};
-        \node[] (N2) at (1,0) {$Gr$};
-        \node[circle, draw] (N1) at (0,0) {A};
-        \draw  (N0) -- (N1) ;
-        \draw  (N1) -- (N2) ;
-        \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
-    \end{tikzpicture}
-    = \lambda
-    \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
-        \clip (0,-0.5) rectangle (1.4,0.5);
-        \node[] (N2) at (1,0) {$Gl$};
-        \node[] (N1) at (0,0) {};
-        \draw  (N1) -- (N2) ;
-    \end{tikzpicture}
-\end{equation}
-
-Equation \cref{sm:expecatation_X} can now be easily calculated:
-
+Equation \cref{sm:expecatation_X} can now be easily calculated
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
@@ -329,7 +322,7 @@ Equation \cref{sm:expecatation_X} can now be easily calculated:
             \node[] (N1) at (0,0) {$Gr$};
             \draw  (N1) -- (N2) ;
         \end{tikzpicture}
-    }
+    } .
     \label{sm:expecatation_X_2}
 \end{equation}
 
@@ -370,7 +363,7 @@ As 2D contraction is a difficult task, and often the bottleneck in simulations, 
 
 The general idea is to course grain the tensor network. Of the many methods, historically the first one was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an SVD in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the SVD step.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/TRG.png}
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
@@ -383,7 +376,7 @@ Many other variants exist, such as Tensor Network Renormalisation (TNR), which w
 
 Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.8\textwidth}
         \centering
@@ -434,12 +427,12 @@ The goal of these methods is to find an MPS fixed point for the infinite lattice
 
 \paragraph{Time-evolving block decimation}
 
-Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{para:TEBD}). It can also be used as a power method for contraction.
+Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{rt_tn_methods}). It can also be used as a power method for contraction.
 The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards truncated. When this procedure is applied enough times, a fixed point is reached.
 
 \todo{explain this}
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \center
     \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
     \caption{  Figure taken from \cite{Ran2020}.  }
@@ -601,7 +594,7 @@ The left and right zipper can now move towards each other, until they meet at th
                 4,4,4,
                 4,7,4}}
 \end{equation}
-This completely determines the problem, but one more equation is used to solve the problem. Combinationing one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$:
+This completely determines the problem, but one more equation is used to solve the problem. Combinationing one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$
 \begin{equation}\label{algs:vumpsenvc}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -621,11 +614,9 @@ This completely determines the problem, but one more equation is used to solve t
                 "-",
                 "-"}}{{
                 4,4,4,
-                4,6,4}}
+                4,6,4}}.
 \end{equation}
-
-Then  \cref{algs:mpslayermpo} is solved:
-
+Then  \cref{algs:mpslayermpo} is solved
 \begin{equation}
     \begin{split}
         & \vcenter{ \hbox{ \pepob{7}{3}{{
@@ -683,19 +674,16 @@ Then  \cref{algs:mpslayermpo} is solved:
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
                             13,2,2,7,3,3,13,
-                            1,1,1,1,1,1,1}} }}
+                            1,1,1,1,1,1,1}} }}.
     \end{split}
 \end{equation}
-
 Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle needs to be solved:
-
 \begin{itemize}
     \item  $A_c,C  \rightarrow A_l,A_r  $  \cref{algs:ACC}
     \item  $A_l,A_r  \rightarrow Gl,Gr  $ \cref{algs:vumpsenv}
     \item  $ Gl,Gr   \rightarrow A_c,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
-
-The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \Cref{algs:biggrid} now becomes:
+The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \Cref{algs:biggrid} now becomes
 \begin{equation}\label{vumps_Below}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -708,11 +696,9 @@ The calculated environment can now be used to solve the original problem. Due to
                         "-","-"}}{{
                         13,2,7,3,13,
                         13,2,12,3,13,
-                        1,5,9,1,1}} }}
+                        1,5,9,1,1}} }}.
 \end{equation}
-
-As always, the identity \eqref{algs:mpsid} can be used to simplify the equation
-
+As always, the identity \eqref{algs:mpsid} can be used to simplify the equation to
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -725,7 +711,7 @@ As always, the identity \eqref{algs:mpsid} can be used to simplify the equation
                         "-","-"}}{{
                         1,4,7,4,1,
                         1,4,12,4,1,
-                        1,5,9,1,1}} }}
+                        1,5,9,1,1}} }}.
 \end{equation}
 
 \subsubsection{The derivation}\label{vumps_Deriv}
@@ -826,8 +812,7 @@ Then (with $Fr$ the analogous fixed point from the right side) the problem becom
                         1,4,12,4,1,
                         1,5, 9  ,1,1}} }}
 \end{equation}
-
-Of course both methods could also be equal, if the following holds (up to a factor):
+Of course both methods could also be equal, if the following holds (up to a factor)
 \begin{equation}
     \vcenter{ \hbox{  \pepob{3}{2}{{
                         "","",
@@ -847,8 +832,7 @@ Of course both methods could also be equal, if the following holds (up to a fact
                         "-","-"}}{{
                         4,24,25,26,4,
                         1,1, 4,1,1,
-                        1,1, 1  ,1,1}} }}
+                        1,1, 1  ,1,1}} }}.
 \end{equation}
-
 Some numerical investigation is needed to test whether or not this method gives a more correct result.
 
