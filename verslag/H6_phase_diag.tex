@@ -10,7 +10,7 @@ As a reference, \cref{2dtisingphasediag} is shown once more
     \label{2dtisingphasediag2}
 \end{figure}
 
-At the relevant temperature, an order 5 series expansion without loops is sufficient. This keeps the bond dimension small and hence the environment can be computed faster with VUMPS.
+At the relevant temperature, an order 5 series expansion without loops is sufficient. This keeps the bond dimension small and hence the environment can be computed faster with \Gls{VUMPS}.
 
 \subsection{Classical Ising phase transition}
 The classical Ising model on a square lattice has an exact solution. Onsager calculated the critical temperature to be $T_c = \frac{2 J}{k \ln(1+\sqrt{2}) } \approx 2.69185 J/k$.  The units are normalised with $J=k=1$. A test for the construction is to simulate this and compare the fitted (see \cref{subsec:qphasediag}) results.
@@ -34,7 +34,7 @@ In fact, the data collapses so well that the critical exponents and the temperat
 
 \subsection{g=2.5 phase transition}
 
-The previous example simulated the classical 2D Ising model. The question is whether this result will carry on into the quantum regime. The results for the full phase diagram are shown in \cref{fig:phase:g25:full} and points in the direct neighbourhood of the phase transition are shown in \cref{fig:phase:g25:zoomed}, similar to the classical case. Of course, quantitative details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point MPS. This is not necessarily a problem, as this gives better data for the finite-size scaling.
+The previous example simulated the classical 2D Ising model. The question is whether this result will carry on into the quantum regime. The results for the full phase diagram are shown in \cref{fig:phase:g25:full} and points in the direct neighbourhood of the phase transition are shown in \cref{fig:phase:g25:zoomed}, similar to the classical case. Of course, quantitative details are different: the phase transition happens at $T\approx 1.274$ and the maximum magnetisation is lower than 1, in accordance to \cref{2dtisingphasediag}. The variation of m around the critical temperature for different bond dimensions is much higher. A much larger $\chi$ is needed for the fixed point \Gls{MPS}. This is not necessarily a problem, as this gives better data for the finite-size scaling.
 
 \begin{figure}[h!]
     \center
@@ -50,7 +50,7 @@ The previous example simulated the classical 2D Ising model. The question is whe
     \label{fig:phase:g25:zoomed}
 \end{figure}
 
-There is no known analytical expression for the critical temperature. With quantum Monte Carlo techniques, a value of $T_c=1.2737(6)$ is obtained, while state-of-the-art tensor network techniques provide a value of $T_c=1.2737(2)$ \cite{Czarnik2019}. With the series expansion from this paper and VUMPS, $T_c=1.2736(6)$, indicating that this faithfully captures the physics. To put his into context: the directly calculated error $\epsilon^{2}$  at $T=1.2$ was around $0.006$. This result was achieved for a PEPO with bond dimension 21 (order 5, no loops).
+There is no known analytical expression for the critical temperature. With quantum Monte Carlo techniques, a value of $T_c=1.2737(6)$ is obtained, while state-of-the-art \Gls{TN} techniques provide a value of $T_c=1.2737(2)$ \cite{Czarnik2019}. With the series expansion from this paper and \Gls{VUMPS}, $T_c=1.2736(6)$, indicating that this faithfully captures the physics. To put his into context: the directly calculated error $\epsilon^{2}$  at $T=1.2$ was around $0.006$. This result was achieved for a PEPO with bond dimension 21 (order 5, no loops).
 
 \subsection{T=0.7 quantum phase transition}\label{tphasetranssubsec}
 
@@ -61,7 +61,7 @@ There is no known analytical expression for the critical temperature. With quant
     \label{fig:phase:t07:full}
 \end{figure}
 
-Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}. Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The green and blue curve both have MPS bond dimension $\chi=8$, but predict quite different magnetisation for large g. This shows that for $g>0.7$, order 5 is not sufficient any more.
+Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}. Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough. The green curve is order 6, where virtual level is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The green and blue curve both have \Gls{MPS} bond dimension $\chi=8$, but predict quite different magnetisation for large g. This shows that for $g>0.7$, order 5 is not sufficient any more.
 
 \begin{figure}[h!]
     \center
@@ -120,11 +120,11 @@ The question is whether this is a result of a failing cluster expansion, or the 
 \end{equation}
 also introduce these fluctuations in the calculated magnetisation.
 
-The VUMPS procedure comes with 2 implicit assumptions. Firstly, in \cref{subsec:vumps_below_alt} the procedure for finding $B$ from below was explained. In the case tested here, the PEPO is rotationally invariant and real. Solving the same equation but with complex tensors, results in wrong magnetisation. For models like Heisenberg, complex tensors are needed to solve the rotationally invariant equations. Switching to complex tensors has no effect on the direct error measures. This suggests the used method for finding B was incorrect. Implementing the suggested solution in \cref{subsec:vumps_below_alt} would come at no extra cost: the tensor is exactly rotation invariant and hence the fixed point form below is automatically known in this case.
+The \Gls{VUMPS} procedure comes with 2 implicit assumptions. Firstly, in \cref{subsec:vumps_below_alt} the procedure for finding $B$ from below was explained. In the case tested here, the PEPO is rotationally invariant and real. Solving the same equation but with complex tensors, results in wrong magnetisation. For models like Heisenberg, complex tensors are needed to solve the rotationally invariant equations. Switching to complex tensors has no effect on the direct error measures. This suggests the used method for finding B was incorrect. Implementing the suggested solution in \cref{subsec:vumps_below_alt} would come at no extra cost: the tensor is exactly rotation invariant and hence the fixed point form below is automatically known in this case.
 
 A second assumption made during this thesis is that the wave function can be represented by a 1 by 1 unit cell. Despite efforts made, the multisite version \cite{Nietner2020} doesn't seem to produce sensible results, even for PEPO's where the 1 by 1 unit cell does give the right results.
 
-It's clear that more research is needed here. One way to locate the problem would be to use another algorithm to contract the network, such as corner transfer matrix renormalization group (CTMRG) as used in  \cite{Czarnik2019}, or even using the single site VUMPS algorithm combined with blocking:
+It's clear that more research is needed here. One way to locate the problem would be to use another algorithm to contract the network, such as corner transfer matrix renormalization group (CTMRG) as used in  \cite{Czarnik2019}, or even using the single site \Gls{VUMPS} algorithm combined with blocking:
 
 \begin{equation}
     \vcenter{ \hbox{  \pepob{4}{4}{{
@@ -165,6 +165,6 @@ Different choices of $c_i$ in \cref{eq:cit_delta} are possible to construct $\de
 
 \subsection{Conclusion}
 
-The conclusion from the direct results in \cref{sec:results2d} seems to carry over to a lattice in the thermodynamic limit very well. Comparison with the critical temperatures from literature confirmed that this method is able to approximate the operator $\exp(-\beta \hat{H})$ very well, even for a cluster expansion of order 5 without loops. This has only a bond dimension of 21, enabling the use of larger VUMPS bond dimension.
+The conclusion from the direct results in \cref{sec:results2d} seems to carry over to a lattice in the thermodynamic limit very well. Comparison with the critical temperatures from literature confirmed that this method is able to approximate the operator $\exp(-\beta \hat{H})$ very well, even for a cluster expansion of order 5 without loops. This has only a bond dimension of 21, enabling the use of larger \Gls{VUMPS} bond dimension.
 The path for determining a value for the tricritical, an important test for any method, is clear and mostly requires more precise data. With more data points, and careful analysis of the end results, the techniques of \cref{sssec:better_Extrap} could be used to calculated even more precise results.
-The results also indicate that the current procedure to determine the magnetisation with VUMPS, and in particular the question of how to close the VUMPS environment from below as introduced in \cref{subsec:vumps_below_alt}, deserves some closer attention in the future.
+The results also indicate that the current procedure to determine the magnetisation with \Gls{VUMPS}, and in particular the question of how to close the \Gls{VUMPS} environment from below as introduced in \cref{subsec:vumps_below_alt}, deserves some closer attention in the future.

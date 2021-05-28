@@ -1,10 +1,10 @@
-\section{MPS algorithms}
+\section{\Gls{MPS} algorithms}
 
-This section and the following one, will introduce some different tensor network algorithms. The gaol is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, other sources can be read. \todo{bron MPS}
+This section and the following one, will introduce some different \Gls{TN} algorithms. The goal is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, see  \cite{Vanderstraeten2019} .
 
 \subsection{Canonical form}
 
-A translation invariant MPS has the form shown in \cref{mps:uni} It can easily be seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a gauge transformation. Defining
+A translation invariant \Gls{MPS} is of the form \cref{mps:uni}. It can easily be seen that inserting $X X^{-1}$ on each bond doesn't change the contracted tensor. This is called a gauge transformation. Defining
 \begin{equation}
     \begin{split}
         &A_l = \pepob{3}{2}{{
@@ -64,7 +64,7 @@ and
                 4,4,4,4,4,4,
                 13,2,2,6,3,13}} .
 \end{equation}
-Introducing one more tensor:
+Introducing one more tensor
 \begin{equation}\label{algs:ACC}
     A_c = \pepob{3}{2}{{
                 "-","-",
@@ -89,9 +89,9 @@ Introducing one more tensor:
                 "",
                 "-"}}{{
                 4,4,4,4,
-                4,6,3,4}}
+                4,6,3,4}}.
 \end{equation}
-At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in its canonical form, the following choice is made
+At the moment the matrices $X$ and $Y$ are not yet defined. To bring an \Gls{MPS} A in its canonical form, the following choice is made
 \begin{subequations} \label{algs:mpsid}
     \begin{alignat}{3}
                      & \vcenter{ \hbox{ \pepob{3}{2}{{
@@ -126,9 +126,9 @@ At the moment the matrices $X$ and $Y$ are not yet defined. To bring an MPS A in
         4,4,4}} } }  &                                 & = I .
     \end{alignat}
 \end{subequations}
-The tensors below are the conjugated version of the tensors above. There is still some freedom: a unitary gauge transformation can still be applied. With this choice, it is possible to bring $C$ in diagonal form.
+The tensors below are the conjugated version of the tensors above. There is still some freedom: a unitary gauge transformation can still be applied. With this choice, it is possible to bring $C$ in diagonal form. \cite{Vanderstraeten2019}
 
-\subsubsection{Entropy}
+\subsection{Entropy}
 
 The canonical form above is very convenient to calculate the entropy, which is given by
 \begin{equation}
@@ -136,9 +136,9 @@ The canonical form above is very convenient to calculate the entropy, which is g
 \end{equation}
 where $\alpha_i$ are the singular values of $C$.
 
-\subsubsection{Expectation value}\label{subsec:exp_val_1d}
+\subsection{Expectation value}\label{subsec:exp_val_1d}
 
-One property of MPS is that expectation values can be calculated exactly. Suppose we have an operator $\hat{O}$ acting on a single site of the MPS: $\Braket{ \Psi |  \hat{O} | \Psi  }$
+One property of \Gls{MPS} is that expectation values can be calculated exactly. Suppose we have an operator $\hat{O}$ acting on a single site of the \Gls{MPS}: $\Braket{ \Psi |  \hat{O} | \Psi  }$
 \begin{equation}
     \vcenter{\hbox{\pepob{5}{3}{{
                         "","", "","",
@@ -166,30 +166,30 @@ One property of MPS is that expectation values can be calculated exactly. Suppos
 \end{equation}
 where we made use of \cref{algs:mpsid}. Similar techniques allow for the calculation of correlation functions, energies, ...
 
-\section{Tensor network contraction}
+\section{\Gls{TN} contraction}
 
-The contraction in this section is somewhat different. The MPO with the same $S_n =  (i_1 i_2 \cdots i_n) = (j_1 j_2 \cdots j_n)$ represents the probability of finding the system in state $S_n$.  This will be needed in \cref{subsec:statmech}. On a patch, an operator X is applied. This could be a measurement.
+Suppose we have an \Gls{MPO} $\hat{O}$that represents a probability of finding encountering a given state: $ \hat{O} \ket{\Psi_i} = p_i \ket{\Psi_i} $. The average value of a local measurement X is given by $ \sum_i \braket{ \Psi_i | \hat{X} \hat{O} | \Psi_i} = \Tr( \hat{X} \hat{O})$. This will be needed in \cref{subsec:statmech}. This section explains how to do this with tensor networks for infinite system sizes.
 
 \subsection{1D problem}
 
-Suppose that there is an MPO representation A that gives the probability of a state, and an operator X which performs a measurement over a number of sites. The expectation value $ \Braket{X}$ is given by
+The normalised probability is given by
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
             \clip (-1.5,-1) rectangle (5.5,2);
 
             \node[] (N0) at (-1,0) {...};
-            \node[circle, draw] (N1) at (0,0) {A};
-            \node[circle, draw] (N2) at (1,0) {A};
+            \node[circle, draw] (N1) at (0,0) {O};
+            \node[circle, draw] (N2) at (1,0) {O};
             \node[circle, draw] (X2) at (1,1) {X};
 
             \node[] (N3) at (2 ,0) {...};
             \node[] (X3) at (2,1) {...};
 
-            \node[circle, draw] (N4) at (3 ,0) {A};
+            \node[circle, draw] (N4) at (3 ,0) {O};
             \node[circle, draw] (X4) at (3,1) {X};
 
-            \node[circle, draw] (N5) at (4 ,0) {A};
+            \node[circle, draw] (N5) at (4 ,0) {O};
             \node[] (N6) at (5 ,0) {...};
 
             \draw  (N0) -- (N1) ;
@@ -218,13 +218,13 @@ Suppose that there is an MPO representation A that gives the probability of a st
             \clip  (-1.5,-3) rectangle (5.5,-1);
 
             \node[] (O0) at (-1,-2) {...};
-            \node[circle, draw] (O1) at (0,-2) {A};
-            \node[circle, draw] (O2) at (1,-2) {A};
+            \node[circle, draw] (O1) at (0,-2) {O};
+            \node[circle, draw] (O2) at (1,-2) {O};
 
             \node[] (O3) at (2 ,-2) {...};
-            \node[circle, draw] (O4) at (3 ,-2) {A};
+            \node[circle, draw] (O4) at (3 ,-2) {O};
 
-            \node[circle, draw] (O5) at (4 ,-2) {A};
+            \node[circle, draw] (O5) at (4 ,-2) {O};
             \node[] (O6) at (5 ,-2) {...};
 
             \draw  (O0) -- (O1) ;
@@ -244,14 +244,14 @@ Suppose that there is an MPO representation A that gives the probability of a st
     }.
     \label{sm:expecatation_X}
 \end{equation}
-In the thermodynamic limit there are an infinite number of A to the left and the right. This can be simulated by taking the left and right fixed points $Gl$ and $Gr$ of the traced MPO A corresponding to the largest eigenvector $\lambda$.
+In the thermodynamic limit there are an infinite number of A to the left and the right. This can be solved by taking the left and right fixed points $Gl$ and $Gr$ of the traced \Gls{MPO} A corresponding to the largest eigenvector $\lambda$.
 \begin{equation}\label{algs:exp}
     \begin{split}
         \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
             \clip (-1.4,-1) rectangle (1,1);
             \node[] (N0) at (-1,0) {$Gl$};
             \node[] (N2) at (1,0) {};
-            \node[circle, draw] (N1) at (0,0) {A};
+            \node[circle, draw] (N1) at (0,0) {O};
             \draw  (N0) -- (N1) ;
             \draw  (N1) -- (N2) ;
             \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
@@ -267,7 +267,7 @@ In the thermodynamic limit there are an infinite number of A to the left and the
             \clip (-1,-1) rectangle (1.4,1);
             \node[] (N0) at (-1,0) {};
             \node[] (N2) at (1,0) {$Gr$};
-            \node[circle, draw] (N1) at (0,0) {A};
+            \node[circle, draw] (N1) at (0,0) {O};
             \draw  (N0) -- (N1) ;
             \draw  (N1) -- (N2) ;
             \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
@@ -288,13 +288,13 @@ Equation \cref{sm:expecatation_X} can now be easily calculated
             \clip (-0.5,-1) rectangle (4.5,2);
 
             \node[] (N1) at (0,0) {$Gl$};
-            \node[circle, draw] (N2) at (1,0) {A};
+            \node[circle, draw] (N2) at (1,0) {O};
             \node[circle, draw] (X2) at (1,1) {X};
 
             \node[] (N3) at (2 ,0) {...};
             \node[] (X3) at (2,1) {...};
 
-            \node[circle, draw] (N4) at (3 ,0) {A};
+            \node[circle, draw] (N4) at (3 ,0) {O};
             \node[circle, draw] (X4) at (3,1) {X};
 
             \node[] (N5) at (4 ,0) {$Gr$};
@@ -327,7 +327,7 @@ Equation \cref{sm:expecatation_X} can now be easily calculated
 \end{equation}
 
 \subsection{2D problem}
-PEPS contraction concerns a similar problem, but in 2D. Here, instead of already applying operator X, the (one site) reduced density matrix $ \rho_{i,j}$ is computed:
+\Gls{PEPS} contraction concerns a similar problem, but in 2D. Here, instead of already applying operator X, the (one site) reduced density matrix $ \rho_{i,j}$ is computed:
 \begin{equation}\label{algs:biggrid}
     \rho_{i,j} =\vcenter{ \hbox{ \pepob{7}{7}{{
                         "-","-", "-","-","-","-",
@@ -357,11 +357,11 @@ This problem is much harder than in 1D. For instance, the related problem of cal
 
 \subsection{Overview methods}
 
-As 2D contraction is a difficult task, and often the bottleneck in simulations, many algorithms exist to perform this. The classification is taken from \cite{Nietner2020}.
+As 2D contraction is a difficult task, and often the bottleneck in simulations, many algorithms exist to perform this. The classification presented here is taken from \cite{Nietner2020}.
 
 \subsubsection{Real-space renormalisation-group methods}
 
-The general idea is to course grain the tensor network. Of the many methods, historically the first one was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an SVD in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the SVD step.
+The general idea behind these methods is to course grain the \Gls{TN}. The first  algorithm in this group of methods was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an \Gls{SVD} in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the \Gls{SVD} step.
 
 \begin{figure}[h!]
     \center
@@ -369,12 +369,9 @@ The general idea is to course grain the tensor network. Of the many methods, his
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
     \label{fig:tnalgs:trg}
 \end{figure}
-
 Many other variants exist, such as Tensor Network Renormalisation (TNR), which will not be discussed here.
 
 \subsubsection{Corner transfer matrix  methods}
-
-Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known.
 
 \begin{figure}[h!]
     \centering
@@ -395,11 +392,11 @@ Another method goes by the name Corner transfer matrix renormalisation group (CT
     \label{fig:tnalgs:ctmrg}
 \end{figure}
 
-Note that many important details are not written down here, and this is merely to give some intuition about tensor network contraction algorithms.
+Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known. Note that many important details are not written down here, and this is merely to give some intuition about \Gls{TN} contraction algorithms.
 
 \subsubsection{Boundary methods}
 
-The goal of these methods is to find an MPS fixed point for the infinite lattice:
+The goal of these methods is to find an \Gls{MPS} fixed point for the infinite lattice:
 
 \begin{equation}\label{algs:mpslayermpo}
     \pepob{5}{3}{{
@@ -427,27 +424,23 @@ The goal of these methods is to find an MPS fixed point for the infinite lattice
 
 \paragraph{Time-evolving block decimation}
 
-Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{rt_tn_methods}). It can also be used as a power method for contraction.
-The idea is shown in \cref{fig:tnalgs:tebd}. The boundary MPS is applied, and afterwards truncated. When this procedure is applied enough times, a fixed point is reached.
+Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{rt_tn_methods}). It can also be used as a power method for contraction. The boundary \Gls{MPS} is applied to the MPO, and afterwards truncated the enlarged MPO is truncated. This is done by performing a truncation between all the even and odd sites, and afterwards between all odd and even sites. When this procedure is applied enough times, a fixed point is reached.
 
-\todo{explain this}
+% \todo{explain this}
 
-\begin{figure}[h!]
-    \center
-    \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
-    \caption{  Figure taken from \cite{Ran2020}.  }
-    \label{fig:tnalgs:tebd}
-\end{figure}
+% \begin{figure}[h!]
+%     \center
+%     \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
+%     \caption{  Figure taken from \cite{Ran2020}.  }
+%     \label{fig:tnalgs:tebd}
+% \end{figure}
 
 \subsection{VUMPS}
 
-The purpose of this section is to give some intuition on the variational uniform Matrix Product State  (VUMPS) algorithm, which will be used later on in this thesis.
-The goal is to find an MPS layer for the MPO (see \cref{algs:exp}). The expression holds approximately, because the MPS on the left-hand side has a larger bond dimension than on the right-hand side.
-
-\todo{bond dim op figuur}
+The purpose of this section is to give some intuition on the variational uniform Matrix Product State  (\Gls{VUMPS}) algorithm, which will be used later on in this thesis. The goal is to find an \Gls{MPS} layer for the \Gls{MPO} (see \cref{algs:exp}). The expression holds approximately, because the \Gls{MPS} on the left-hand side has a larger bond dimension than on the right-hand side.
 
 \subsubsection{The equations}
-Suppose there are tensors which fulfil the conditions stated below
+The method looks for tensors $Gl$ and $Gr$ which fulfil the conditions
 \begin{subequations} \label{algs:vumpsenv}
     \begin{alignat}{2}
                                  & \vcenter{ \hbox{  \pepob{5}{3}{{
@@ -495,11 +488,10 @@ Suppose there are tensors which fulfil the conditions stated below
                             "-","-"}}{{
                             1,1,4,4,4,
                             1,1,4,3,4,
-                            1,1,10,1,1}} }}
+                            1,1,10,1,1}} }} \;.
     \end{alignat}
-\end{subequations}.
-
-These eigentensor equations are solved in practice in a slightly different manner:
+\end{subequations}
+These eigentensor equations are solved in practice in a slightly different manner
 \begin{equation}\label{vumps_transfer_eigs}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","", "","-",
@@ -523,9 +515,9 @@ These eigentensor equations are solved in practice in a slightly different manne
                         "",""}}{{
                         1,1,4,4,1,
                         1,1,4,4,1,
-                        1,1,10,1,1}} }}
+                        1,1,10,1,1}} }}\; ,
 \end{equation}
-Where the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mpsid} was used on the right-hand side. The blocks in \cref{algs:vumpsenv} form a zipper from the left and right respectively. Each application brings down one of the MPS tensors in the following way.
+where the $ Ar  $ tensor was connected from below on both sides and \cref{algs:mpsid} was used on the right-hand side. The blocks in \cref{algs:vumpsenv} form a zipper from the left and right respectively. Each application brings down one of the \Gls{MPS} tensors in the following way
 \begin{equation}
     \begin{split}
         &       \vcenter{ \hbox{ \pepob{7}{3}{{
@@ -569,10 +561,10 @@ Where the $ Ar  $ tensor was connected from below on both sides and \cref{algs:m
                             "-", "-",}}{{
                             1,4,4,4,4,4,4,
                             13,2,2,2,0,0,13,
-                            1,1,1,5,2,2,13}}}} \\
+                            1,1,1,5,2,2,13}}}} \; .
     \end{split}
 \end{equation}
-The left and right zipper can now move towards each other, until they meet at the center. In order to become the same MPS as before the application to the MPO (\cref{algs:mpslayermpo}), one more condition is needed:
+The left and right zipper can now move towards each other, until they meet at the center. One more condiiton is needed to fullful \cref{algs:mpslayermpo}:
 \begin{equation} \label{algs:AC}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -592,9 +584,9 @@ The left and right zipper can now move towards each other, until they meet at th
                 "",
                 "-"}}{{
                 4,4,4,
-                4,7,4}}
+                4,7,4}} \; .
 \end{equation}
-This completely determines the problem, but one more equation is used to solve the problem. Combinationing one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and one of \cref{algs:mpsid} gives $C$
+This completely determines the problem. One more equation is used in practice to solve the problem. Combining one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and \cref{algs:mpsid} gives $C$
 \begin{equation}\label{algs:vumpsenvc}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -677,13 +669,13 @@ Then  \cref{algs:mpslayermpo} is solved
                             1,1,1,1,1,1,1}} }}.
     \end{split}
 \end{equation}
-Contracting a 2D tensor network is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle needs to be solved:
+Contracting a 2D \Gls{TN} is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle needs to be solved:
 \begin{itemize}
     \item  $A_c,C  \rightarrow A_l,A_r  $  \cref{algs:ACC}
     \item  $A_l,A_r  \rightarrow Gl,Gr  $ \cref{algs:vumpsenv}
     \item  $ Gl,Gr   \rightarrow A_c,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
-The calculated environment can now be used to solve the original problem. Due to symmetry, the same MPS can be applied from below. \Cref{algs:biggrid} now becomes
+The calculated environment (i.e\ the tensor $GL$m $Gr$ and \Gls{MPS} A) can now be used to solve the original problem. The same \Gls{MPS}  \footnote{this will not be always the case, see \cref{subsec:vumps_below_alt} }. \Cref{algs:biggrid} now becomes
 \begin{equation}\label{vumps_Below}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -715,15 +707,14 @@ As always, the identity \eqref{algs:mpsid} can be used to simplify the equation 
 \end{equation}
 
 \subsubsection{The derivation}\label{vumps_Deriv}
-While the above derivation is reasonable, it is not very rigorous. The algorithm finds its origins  in tangent space methods, such as explained in \cite{Vanderstraeten2019}. Not every state in the many body Hilbert space can be represented by an MPS. By carefully constructing the tangent space and making use of the available gauge freedom, a compact expression can be found for the tangent space projector $\mathcal{P}_A$. This projects a state from the many body Hilbert space to the tangent space of an MPS A. For an optimal MPS approximation A, the error made in the approximation should be orthogonal to the tangent space. For \cref{algs:mpslayermpo} this means that the application of the projection of the error on the tangent space should be zero, i.e. the MPS is at a variational minimum   \cite{Nietner2020}. Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
+While the above derivation is reasonable, it is not very rigorous. The algorithm finds its origins  in tangent space methods, as explained in \cite{Vanderstraeten2019}. Not every state in the many body Hilbert space can be represented by an \Gls{MPS}. By carefully constructing the tangent space and making use of the available gauge freedom, a compact expression can be found for the tangent space projector $\mathcal{P}_A$. This projects a state from the many body Hilbert space onto the tangent space of an \Gls{MPS} A. For an optimal MPS approximation A, the error made in the approximation should be orthogonal to the tangent space. For \cref{algs:mpslayermpo} this means that the application of the projection of the error on the tangent space should be zero, i.e. the \Gls{MPS} is at a variational minimum   \cite{Nietner2020}. Applying the projector $\mathcal{P}_A$ to \cref{algs:mpslayermpo} exactly gives rise to the equations stated earlier.
 
 \subsubsection{Multisite}
-In \cite{Nietner2020}, a version of VUMPS is proposed that can compute the environment of an m by n unit cell with only a linear increase in computation cost. Larger unit cells might be needed for ground states with a non-trivial unit cell.
+In \cite{Nietner2020}, a version of \Gls{VUMPS} is proposed that can compute the environment of an m by n unit cell with only a linear increase in computation cost. Larger unit cells might be needed for ground states with a non-trivial unit cell.
 
 \subsubsection{Calculating the MPS from below}\label{subsec:vumps_below_alt}
 
-One question, which does not seem to be answered in literature, is which tensor $B$ to use to complete the contraction from below for a complete general MPO:
-
+One question, which does not seem to be answered in literature, is which tensor $B$ to use to complete the contraction from below for a complete general \Gls{MPO}
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -736,10 +727,9 @@ One question, which does not seem to be answered in literature, is which tensor 
                         "-","-"}}{{
                         1,4,16,4,1,
                         1,4,12,4,1,
-                        1,5, 9  ,1,1}} }}
+                        1,5, 9  ,1,1}} }} .
 \end{equation}
-
-The reason for this doubt will be explained in \cref{subsec:results:loops_and_ext}. A method suggested to me, and used throughout this thesis, is finding the largest eigenvalue from below (similar to \cref{algs:AC}):
+We will get back to this question in \cref{subsec:results:loops_and_ext}. A method suggested to me, and used throughout this thesis, is finding the largest eigenvalue from below (similar to \cref{algs:AC}):
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",
@@ -761,9 +751,7 @@ The reason for this doubt will be explained in \cref{subsec:results:loops_and_ex
                         4,16,4,
                         4,4,4}} }}
 \end{equation}
-The idea is to use the same environments $Gl$ and $Gr$, but find the fixed point from below. This has some problems: $B$ can not be brought into a canonical form according to \cref{algs:ACC} (in combination with the analogue of \cref{algs:vumpsenvc}), and hence does not represent a fixed point MPS as was the case from above. This also doesn't work in the multisite setting.
-
-It is not completely surprising, suppose we have a fixed point MPS $B$ (denoted in bold) from below (for instance obtained by performing the VUMPS algorithm on an MPO rotated by 180 degrees), then contracting the upper half plane and the lower half plane amounts to:
+This has some problems: $B$ can not be brought into a canonical form according to \cref{algs:ACC} (in combination with the analogue of \cref{algs:vumpsenvc}), and hence does not represent a fixed point \Gls{MPS} as was the case from above. This also doesn't work in the multisite setting. This finding is not completely surprising, suppose we have a fixed point \Gls{MPS} $B$ (denoted by bold tensors) from below (for instance obtained by performing the \Gls{VUMPS} algorithm on an \Gls{MPO} rotated by 180 degrees), then contracting the upper half plane and the lower half plane amounts to:
 
 \begin{equation}
     \vcenter{ \hbox{   \pepob{5}{3}{{
@@ -812,7 +800,7 @@ Then (with $Fr$ the analogous fixed point from the right side) the problem becom
                         1,4,12,4,1,
                         1,5, 9  ,1,1}} }}
 \end{equation}
-Of course both methods could also be equal, if the following holds (up to a factor)
+Both methods could be equal, if the following holds (up to a constant factor)
 \begin{equation}
     \vcenter{ \hbox{  \pepob{3}{2}{{
                         "","",
@@ -834,5 +822,5 @@ Of course both methods could also be equal, if the following holds (up to a fact
                         1,1, 4,1,1,
                         1,1, 1  ,1,1}} }}.
 \end{equation}
-Some numerical investigation is needed to test whether or not this method gives a more correct result.
+Some numerical investigation is needed to test whether or not this method gives a correct result.
 

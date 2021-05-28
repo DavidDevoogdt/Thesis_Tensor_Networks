@@ -53,14 +53,14 @@ For the last step, only $d^2$ non-zero singular values need to be kept. With the
         \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \\
     \end{split}
 \end{equation}
-Then the MPO doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
+Then the \Gls{MPO} doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
 \begin{equation}
     \begin{split}
         S=A^{n} A^{n}  \\
         T=A^{n} B^{n+1} .
     \end{split}
 \end{equation}
-This can be used to decrease the bond dimension of the MPO. Matrices with optimal bond dimension can be calculated with generalised SVD. Generalised SVD decomposes 2 matrices as
+This can be used to decrease the bond dimension of the \Gls{MPO}. Matrices with optimal bond dimension can be calculated with generalised \Gls{SVD}. Generalised \Gls{SVD} decomposes 2 matrices as
 \begin{equation}
     \begin{split}
         S^{\dagger} = (U \Sigma_1) Q^{\dagger} \\
@@ -70,11 +70,11 @@ This can be used to decrease the bond dimension of the MPO. Matrices with optima
 Identification gives $A^m = Q$ The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  This is higher than the dimension of type A.
 
 \subsubsection{Discussion}
-The bond dimension is larger than type A, but the long chains from type A are absent. The left inverse is always well-defined and doesn't need any computation, because Hermitian matrix U can be inverted easily. One major drawback is that for long chains, the virtual bonds are very large before they can be shrunk with the Generalised SVD procedure.
+The bond dimension is larger than type A, but the long chains from type A are absent. The left inverse is always well-defined and doesn't need any computation, because Hermitian matrix U can be inverted easily. One major drawback is that for long chains, the virtual bonds are very large before they can be shrunk with the Generalised \Gls{SVD} procedure.
 
 \subsection{Type C}
 
-This type implements the same strict type as Type B, but in a different way. No calculation is involved, except the calculation of the exponentiated Hamiltonian to certain order. The following kind of MPO strings are allowed:
+This type implements the same strict type as Type B, but in a different way. No calculation is involved, except the calculation of the exponentiated Hamiltonian to certain order. The following kind of \Gls{MPO} strings are allowed:
 
 \begin{equation}
     \begin{split}
@@ -85,7 +85,7 @@ This type implements the same strict type as Type B, but in a different way. No 
         &\mpob{5}{ {,"1'''","2'''","3'''","4'''",}  }{}{}{}{{,,,,,}}\\
     \end{split}
 \end{equation}
-and so forth. The primed indices have no special meaning, and could also be numbered starting from the largest index of the previous block +1. All but one MPO elements are chosen to be the identity matrix. The middle one is the exponentiated Hamiltonian with reshaped legs.
+and so forth. The primed indices have no special meaning, and could also be numbered starting from the largest index of the previous block +1. All but one \Gls{MPO} elements are chosen to be the identity matrix. The middle one is the exponentiated Hamiltonian with reshaped legs.
 
 \subsubsection{Discussion}
 As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B.
@@ -155,7 +155,7 @@ The idea behind this type is very similar to type D. The blocks look as follows:
     \end{split}
 \end{equation}
 
-The  blocks $O^{n-1,n}$ and $O^{n,n-1}$ are unitary matrices from the SVD decomposition, scaled by the largest singular value. The blocks $O^{n-1,n'}$ and $O^{n',n-1}$ are then used to actually solve the problem for the given chain. In the next step, $O^{n,n}$ is added as usual. The idea here is once again to keep this block small, in order to not cause any divergences.
+The  blocks $O^{n-1,n}$ and $O^{n,n-1}$ are unitary matrices from the \Gls{SVD} decomposition, scaled by the largest singular value. The blocks $O^{n-1,n'}$ and $O^{n',n-1}$ are then used to actually solve the problem for the given chain. In the next step, $O^{n,n}$ is added as usual. The idea here is once again to keep this block small, in order to not cause any divergences.
 
 \subsection{Conclusion}
 

@@ -1,9 +1,9 @@
 
 \subsection{Graphical notation}
 
-Before explaining tensor networks, some graphical notation should be introduced. This really is a way to conveniently write vectors, matrices and in general tensors without the need to introduce many labels. A tensor T is represented by a circle with a number of external legs, according to the number of external indices. Connected legs are summed. Some examples are shown in \cref{tab:grafical_not}. Every leg which is connected to multiple tensors, is contracted.
+Before explaining \glspl{TN}, some graphical notation should be introduced. This really is a way to conveniently write vectors, matrices and in general tensors without the need to introduce many labels. A tensor T is represented by a circle with a number of external legs, according to the number of external indices. Connected legs are summed over, similar to matrix multiplication. Some examples are shown in \cref{tab:grafical_not}.
 
-\begin{table}[]
+\begin{table}[!h]
     \centering
     \caption{Examples of graphical notation. }
     \begin{tabular}{l|l|l}
@@ -42,9 +42,9 @@ Before explaining tensor networks, some graphical notation should be introduced.
 
 \subsection{Representing a quantum state}
 
-Tensor networks come in many shapes and forms. They are really used to represent a tensor with many legs. A general quantum state with N sites can be described in a given basis $\ket{i}$ in the following way:
+\Glspl{TN} come in many shapes and forms. They are used to represent a tensor with many legs. A general quantum state with N sites can be described in a given basis $\ket{i}$ in the following way:
 \begin{equation}
-    \ket{\Psi} = \sum_{i_1 i_2 \cdots i_n } C^{i_1 i_2 \cdots i_n} \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
+    \ket{\Psi} = \sum_{i_1 i_2 \cdots i_n } C^{i_1 i_2 \cdots i_n} \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n} .
 \end{equation}
 Here the tensor $C$ holds all the information of the quantum state. The graphical representation can be seen in \cref{fig:tens:intro:C}.
 \begin{figure}[h!]
@@ -69,7 +69,7 @@ Here the tensor $C$ holds all the information of the quantum state. The graphica
     \caption{Exmple of a tensor C with multiple physical legs.}
     \label{fig:tens:intro:C}
 \end{figure}
-
+\noindent
 This requires an exponential number $d^n$ of coefficients C where d is the dimension of basis $\ket{i}$. In order to make the problem tractable, the following form is proposed as wave function:
 \begin{equation}
     C^{i_1 i_2 \cdots i_n} = {C^{1}}_{\alpha_1}^{ i_1} {C^{2}}_{\alpha_1 \alpha_2}^{i_2} \cdots  {C^{n}}_{\alpha_{n-1} }^{i_n}
@@ -78,25 +78,22 @@ This requires an exponential number $d^n$ of coefficients C where d is the dimen
 \begin{equation}
     \mpo{4}{{"-",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"$C^1$", "$C^2$",,"$C^n$", }}
 \end{equation}
-where summation over shared indices is implied. It is always possible to find such a representation by means of matrix decomposition (see \cref{sec:mpomath}). The summation over $\alpha_i$ is called a virtual bond and their dimension is denoted by $\chi$. At this point, this is not yet an improvement because the bond dimension needs to be exponentially large in order to represent the tensor C exactly.
-
-To make the chain translation invariant, all the tensors $C^i_{\alpha \beta }$ are the same tensor $C$. The chain is closed by a matrix M which contains the boundary conditions. Setting $\alpha_n = \alpha_0$. We can now write this as a Trace over matrix products:
-
+where summation over shared indices is implied. It is always possible to find such a representation by means of matrix decomposition (see \cref{sec:mpomath}). The summation bond $\alpha_i$ is called a virtual bond and their dimension is denoted by $\chi$. At this point, this is not yet an improvement because the bond dimension needs to be exponentially large in order to represent the tensor C exactly. To make the chain translation invariant, all the tensors $C^i_{\alpha \beta }$ are the same tensor $C$. The chain is closed by a matrix M which contains the boundary conditions. Setting $\alpha_n = \alpha_0$. We can now write this as a trace over matrix products
 \begin{equation}
-    \ket{\Psi} = \Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M  ) \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}
+    \ket{\Psi} = \Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M  ) \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n},
 \end{equation}
-
+or in graphical notation
 \begin{equation}\label{eq:general_mps}
-    \mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }}
+    \mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }} \; .
 \end{equation}
 
 \subsection{Classification}
 
-Tensor networks come in many shapes and many forms. During this thesis, we will mainly encounter the types explained here.
+\Glspl{TN} come in many shapes and many forms. During this thesis, we will mainly encounter the types explained here.
 
-\subsubsection{MPS}
+\subsubsection{\Gls{MPS}}
 
-A general MPS is of the form \cref{eq:general_mps}. For an infinite extended chain with translation invariance, it is logical to assume a unit cell:
+A general \gls{MPS} is of the form \cref{eq:general_mps}. For an infinite extended chain with translation invariance, it is logical to assume a unit cell:
 \begin{equation}\label{mps:uni}
     \pepob{5}{2}{{
                 "-","-", "-","-",
@@ -109,11 +106,11 @@ A general MPS is of the form \cref{eq:general_mps}. For an infinite extended cha
                 4,4,4,4,4,
                 13,0,0,0,13}}
 \end{equation}
-This will be the form we will work with in this thesis. Of course, larger unit cells are also possible. MPS are dense. This means that (with a bond dimension exponential in the system size) the MPS can represent every state in the full Hilbert space \cite{Orus2014}. However, the low energy states can typically be represented by a much lower bond dimension. This can be explained in terms of the so-called 'area law': the entropy low energy states often scale with the boundary area of volume. MPS's exactly follow this area law.
+This will be the form we will work with in this thesis. Of course, larger unit cells are also possible. \Glspl{MPS} are dense. This means that (with a bond dimension exponential in the system size) the \Gls{MPS} can represent every state in the full Hilbert space \cite{Orus2014}. However, the low energy states can typically be represented by a much lower bond dimension. This can be explained in terms of the so-called 'area law': the entropy low energy states often scale with the boundary area of volume. \Glspl{MPS} exactly follow this area law.
 
-\subsubsection{MPO} \label{mpo_hamil}
+\subsubsection{\Gls{MPO}} \label{mpo_hamil}
 
-Similar to an MPS, a Matrix Product Operator (MPO) is defined by
+Similar to an MPS, a Matrix Product Operator (\Gls{MPO}) is defined by
 \begin{equation} \label{def_mpo}
     \begin{split}
         \hat{O} &= \sum Tr(A^{i_1 j_1} A^{i_2 j_2} \cdots A^{i_n j_n} M) \\
@@ -121,7 +118,7 @@ Similar to an MPS, a Matrix Product Operator (MPO) is defined by
         &\mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"$j_1$","$j_2$",,"$j_n$","-"}}{{0,0,1,0,0}}{{"A", "A",,"A","M" }}.
     \end{split}
 \end{equation}
-The matrix M contains the boundary conditions of the operator. It's clear that this can again be made translationally invariant. Acting with an MPS on a MPO $\hat{O} \ket{\Psi} $ again results in an MPS, as expected.\ todo{figuur mps mpo} A uniform MPO is denoted by
+The matrix M contains the boundary conditions of the operator. It's clear that this can again be made translationally invariant A uniform \Gls{MPO} is denoted by
 \begin{equation}
     \pepob{5}{3}{{
                 "-","-", "-","-",
@@ -136,14 +133,38 @@ The matrix M contains the boundary conditions of the operator. It's clear that t
                 13,0,0,0,13,
                 4,4,4,4,4,}}.
 \end{equation}
-This can also be reinterpreted as an MPS with physical bond dimension $D^2$, by grouping the i and j indices together per site.
+This can also be reinterpreted as an \Gls{MPS} with physical bond dimension $D^2$, by grouping the i and j indices together per site. Acting with an \Gls{MPS} on a \Gls{MPO} $\hat{O} \ket{\Psi} $ again results in an \Gls{MPS}
+\begin{equation}\label{algs:mpslayermpo}
+    \pepob{5}{3}{{
+                "-","-", "-","-",
+                "","","","",
+                "","","","",}}{{
+                "-", "-",
+                "", "",
+                "", "",
+                "", "",
+                "-", "-",}}{{
+                4,4,4,4,4,
+                13,0,0,0,13,
+                13,0,0,0,13}}  \approx  \pepob{5}{2}{{
+                "-","-", "-","-",
+                "","","",""}}{{
+                "-",
+                "",
+                "",
+                "",
+                "-"}}{{
+                4,4,4,4,4,
+                13,0,0,0,13}}.
+\end{equation}
+The new MPS has the same physical dimension, but the bond dimension is increased from $\chi$ to $\chi^2$.
 
-\paragraph{Examples of MPO Hamiltonians}
+\paragraph{Examples of \Gls{MPO} Hamiltonians}
 
-\todo{MPO examples}
+\todo{\Gls{MPO} examples}
 
-\subsubsection{PEPS}
-Projected entangled pair states (PEPS) are the 2D equivalent of MPS. In the visualisation, the physical indices come out of the plane.
+\subsubsection{\Gls{PEPS}}
+Projected entangled pair states (\Gls{PEPS}) are the 2D equivalent of \Gls{MPS}. In the visualisation, the physical indices come out of the plane.
 \begin{equation}
     \vcenter{ \hbox{ \pepob{5}{5}{{
                         "-","-", "-","-",
@@ -163,10 +184,11 @@ Projected entangled pair states (PEPS) are the 2D equivalent of MPS. In the visu
                         1,13,13,13,1,
                     }} }}
 \end{equation}
+\Glspl{PEPS} also obey the area law, making them efficient parametrisations of the relevant corner of the full Hilbert space.
 
 \subsubsection{PEPO}
 
-The operator version of PEPS is called PEPO. The depiction looks as follows:
+The operator version of \Gls{PEPS} is called PEPO. The depiction looks as follows:
 \begin{equation}
     \vcenter{ \hbox{ \pepob{5}{5}{{
                         "-","-", "-","-",
@@ -189,7 +211,7 @@ The operator version of PEPS is called PEPO. The depiction looks as follows:
 
 \subsubsection{Others}
 
-To show there exist many more tensor networks beside the ones treated in this thesis, 2 examples are shown in \cref{fig:tnalgs:ttn_mera}. Two Tree tensor networks (TTNs)  are shown. The red indices are physical. MERA (c) is also shown. These tensor networks are special because they can be contracted exactly, as opposed to for instance PEPS.
+To show there exist many more \Glspl{TN} beside the ones treated in this thesis, 2 examples are shown in \cref{fig:tnalgs:ttn_mera}. Two Tree Tensor Networks (TTNs)  are shown. The red indices are physical. multi-scale entanglement renormalization ansatz (MERA) (c) is also shown. These \Glspl{TN} are special because they can be contracted exactly, as opposed to for instance \Gls{PEPS}.
 
 \begin{figure}[h!]
     \center

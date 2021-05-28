@@ -240,7 +240,7 @@ While this method is very quick and scales well, in practice it results in an un
 
 \subsubsection{Sparse full inverse}
 
-Luckily the problem can be resolved by first performing an SVD decomposition of $A^m_{ I^m \alpha^m } = U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the Hermitian transpose to the corresponding leg m of B. The tensor $S = S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be (pseudo)-inverted at once. For a full rank construction, $S$  is already diagonal. For truncated constructions (or inverses involving loops), this is no longer the case.
+Luckily the problem can be resolved by first performing an \Gls{SVD} decomposition of $A^m_{ I^m \alpha^m } = U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the Hermitian transpose to the corresponding leg m of B. The tensor $S = S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be (pseudo)-inverted at once. For a full rank construction, $S$  is already diagonal. For truncated constructions (or inverses involving loops), this is no longer the case.
 The last step consist of applying all the matrices $V^m$ to the right-hand side. This is shown in this equation
 \begin{alignat}{1}
     A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j } & =  B_{  I_1  I_2 \cdots I_m   j }               \\%%%%%%%%%%%%%%%%%%
@@ -252,12 +252,12 @@ The last step consist of applying all the matrices $V^m$ to the right-hand side.
     V^{1\dagger}_{\gamma^1 \alpha^1}   V^{2\dagger}_{\gamma^2 \alpha^2}  \cdots  V^{m\dagger}_{\gamma^m \alpha^m}           & \nonumber                                       \\
     X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B'_{  \beta_1  \beta_2 \cdots \beta_m   j }.
 \end{alignat}
-The complexity is determined by the SVD decomposition of the individual legs. Due to its sparsity, S does not take much space to construct and is quite fast to pseudoinvert. Doing the pseudoinverse at once means that it has the same precision as the full pseudoinverse, as desired.
+The complexity is determined by the \Gls{SVD} decomposition of the individual legs. Due to its sparsity, S does not take much space to construct and is quite fast to pseudoinvert. Doing the pseudoinverse at once means that it has the same precision as the full pseudoinverse, as desired.
 
 It is also possible to take a pseudoinverse of a matrix with a QR-decomposition, which is faster \cite{Moylan2016}. The Q could be inverted directly, and the $R = R^1 \otimes R^2 \cdots \otimes R^m$  matrix is still upper triangular, allowing for back-substitution. This method is not used because of the memory requirements to store this matrix are larger, and the triangular matrix $R$ is not in the correct form for the pseudoinversion algorithm.
 
 \subsection{Extension}
-The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map, such as 2 neighbouring sites. These sites are split using an SVD decomposition. \todo{figure}  Another example is the following corner block, which can perfectly be solved with the linear solver.
+The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map, such as 2 neighbouring sites. These sites are split using an \Gls{SVD} decomposition. \todo{figure}  Another example is the following corner block, which can perfectly be solved with the linear solver.
 \begin{equation}
     \pepob{5}{3}{{
                 "-","-", "-",     "-",
@@ -281,7 +281,7 @@ In some cases, the above solver does not return the best possible solution to a 
 In essence, the nonlinear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$, and if possible also the Jacobian, i.e.\ $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. This info is used to choose a direction and a step size, minimising the error. An improved point x is chosen by the algorithm, until some convergence criterium is reached. The implementation uses MATLAB's fsolve routine, which uses the Levenberg-Marquardt algorithm under the hood.
 
 \subsubsection{Automatic differentiation}
-With some care, the Jacobian can be calculated for a general tensor network in an automated way. It amounts to  contracting the network with the tensor $x_J$ removed, and treating the non-contracted indices as external ones. This becomes clearer upon inspection of \cref{extract_x}. $  \frac{ \partial B_{I^1 I^2 \cdots I^m  j } }{  \partial X_{\alpha_1 \alpha_2 \cdots \alpha_m j } } =  A_{I^1 I^2 \cdots I^m  \alpha_1 \alpha_2 \cdots \alpha_m }{}$. If a tensor appears in multiple places, the sum rule for derivatives has to be used.
+With some care, the Jacobian can be calculated for a general \Gls{TN} in an automated way. It amounts to  contracting the network with the tensor $x_J$ removed, and treating the non-contracted indices as external ones. This becomes clearer upon inspection of \cref{extract_x}. $  \frac{ \partial B_{I^1 I^2 \cdots I^m  j } }{  \partial X_{\alpha_1 \alpha_2 \cdots \alpha_m j } } =  A_{I^1 I^2 \cdots I^m  \alpha_1 \alpha_2 \cdots \alpha_m }{}$. If a tensor appears in multiple places, the sum rule for derivatives has to be used.
 
 % Suppose we want to differentiate the contracted tensor $T^{i_1  \cdots i_n  }$ with respect to one of the PEPO blocks $x_n = O^{i_n }_{\alpha \beta \gamma \delta}$. Denote $I=(i_1 \cdots i_n )$ and $J=(i_m  \alpha \beta \gamma \delta)$, and this block only occurs once. Then $  J_{I J}  = \frac{\partial T^{i_1  \cdots i_n  } }{  \partial O^{i_m }_{\alpha \beta \gamma \delta} } = T^{i_1 \cdots i_n } _{ i_m  \alpha \beta \gamma \delta}  \delta^{i_n}_{i_m}   $  
 
@@ -321,7 +321,7 @@ One important aspect of programming these general solvers is to devise a scheme 
 \subsection{Fast contraction}
 
 One particular task is to determine all the possible combinations of virtual levels for a given geometry. Simply looping over all possible combinations scales as $n^m$, with the number of virtual levels and m the number of internal legs. This quickly becomes a bottleneck.
-This problem can be restated as a PEPS contraction in the following way: for each site make a tensor $ T^{i}_{  \alpha \beta \gamma \delta } $ where i encodes all the non-empty combinations of legs $(\alpha \beta \gamma \delta)$. On each site, the right boundary conditions need to be applied to get the right geometry. After setting the boundary conditions, the sparse PEPS network can be contracted and the resulting tensor gives, after decoding, all the possible contractions. Due to its sparsity, this performs quite fast.
+This problem can be restated as a \Gls{PEPS} contraction in the following way: for each site make a tensor $ T^{i}_{  \alpha \beta \gamma \delta } $ where i encodes all the non-empty combinations of legs $(\alpha \beta \gamma \delta)$. On each site, the right boundary conditions need to be applied to get the right geometry. After setting the boundary conditions, the sparse \Gls{PEPS} network can be contracted and the resulting tensor gives, after decoding, all the possible contractions. Due to its sparsity, this performs quite fast.
 As an added bonus, removing a tensor from T gives all contractions without this tensor. As both results are sorted, the subset of contractions containing a given tensor can also be found fast.
 
 \subsection{Normalisation}\label{subsec:nf}
@@ -339,7 +339,7 @@ With $I$ the unit matrix. Next to a global normalisation factor, every block cal
 
 \subsection{Internal representation}
 
-Two main internal representations are used to construct the given MPO. Either, the MPO is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that MATLAB doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this}\cite{Matt} library is used.
+Two main internal representations are used to construct the given \Gls{MPO}. Either, the \Gls{MPO} is stored as a cell of matrices, or as one big matrix where the blocks are added to during the construction. The output type can be chosen. For some types, sparse matrices are used during the construction. Given that MATLAB doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this}\cite{Matt} library is used.
 
 \subsection{Even faster inverses}
 
@@ -356,7 +356,7 @@ Two main internal representations are used to construct the given MPO. Either, t
 %     \label{eq_mpoinvdef}
 % \end{equation}
 
-While the inversion procedure above states how to make use of pseudoinverses, it was not yet clear in the 1D case it was needed. The 1D implementation uses a trick to get all the inverses for free from the SVD decomposition. Take the MPO which corresponds to a unitary matrix:
+While the inversion procedure above states how to make use of pseudoinverses, it was not yet clear in the 1D case it was needed. The 1D implementation uses a trick to get all the inverses for free from the \Gls{SVD} decomposition. Take the \Gls{MPO} which corresponds to a unitary matrix:
 
 % \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
@@ -370,12 +370,12 @@ While the inversion procedure above states how to make use of pseudoinverses, it
 %         &A_{\delta \gamma} =   U^{ n\dagger}_{\delta (\alpha i j)} B_{\alpha i j \gamma}
 %     \end{split}
 % \end{equation}
-% If we now define the MPO $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
+% If we now define the \Gls{MPO} $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
 
 \begin{equation}
     \mpo{1}{ {"$\alpha$","$\beta$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O_n$",} } \cong U^{n}_{\alpha (i j \beta)}
 \end{equation}
-Then the inverse MPO can be calculated by taking its Hermitian conjugate and reshaping.
+Then the inverse \Gls{MPO} can be calculated by taking its Hermitian conjugate and reshaping.
 \begin{equation}
     \mpo{1}{ {"$\beta$","$\gamma$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{ (i j \beta)  \gamma }
 \end{equation}
@@ -408,7 +408,7 @@ This concerns the problem which temperatures to select to calculate the phase di
 
 \subsection{Storing the information}
 
-Each run has a template with all the common model info. For each point 2 files are stored. One file contains the info and results, such as temperature, magnetisation, correlation length, etc. The other file is much larger and contains the PEPO tensor, the calculated VUMPS environments, \dots
+Each run has a template with all the common model info. For each point 2 files are stored. One file contains the info and results, such as temperature, magnetisation, correlation length, etc. The other file is much larger and contains the PEPO tensor, the calculated \Gls{VUMPS} environments, \dots
 The files of the first kind are used in other calculations, such as the fitting procedure.  Reassembling the files into one structure happens in a central function. Another function is able to reprocess already calculated points. The sampling can be continued from where it was last stopped.
 
 \subsection{Fitting}\label{subsec:qphasediag}

@@ -49,6 +49,7 @@
             "name": "pdflatex ➞ bibtex ➞ pdflatex × 2",
             "tools": [
                 "pdflatex",
+                "makeglossaries",
                 "bibtex",
                 "pdflatex",
                 "pdflatex"
@@ -160,6 +161,13 @@
                 "%DOC%.tex"
             ],
             "env": {}
+        },
+        {
+            "name": "makeglossaries",
+            "command": "makeglossaries",
+            "args": [
+                "%DOCFILE%"
+            ]
         }
     ],
     "ltex.language": "en-GB",

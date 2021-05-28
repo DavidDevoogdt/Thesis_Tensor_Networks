@@ -1,7 +1,7 @@
 
 \subsection{Exact tensor matrix exponential } \label{chap_bench}
 
-The performance of the MPO construction can be compared with the exact diagonalisation of the Hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A rough estimation of the amount of RAM $R$ needed to store this complex array is
+The performance of the \Gls{MPO} construction can be compared with the exact diagonalisation of the Hamiltonian for a given number of sites. To obtain a faithful results, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A rough estimation of the amount of RAM $R$ needed to store this complex array is
 \begin{equation}
     R = d^{2 n} \times 16 \; \text{bytes}
 \end{equation}
@@ -19,7 +19,7 @@ The Schatten 2 norm is used in the following analysis, denoted by ${\| \cdot \|}
 
 This norm can only be calculated for a finite number of sites. The influence of the number of sites for a linear  and cyclic \cref{benchmarking:systemsize}. As expected, the cyclic norm represents large systems better for the same number of sites. The linear norm keeps increasing with every added site.
 
-Calculating the cyclic norm comes at the extra cost of contracting a cyclic tensor network. In this chapter, the cyclic norm will be given for M=11 sites.
+Calculating the cyclic norm comes at the extra cost of contracting a cyclic \Gls{TN}. In this chapter, the cyclic norm will be given for M=11 sites.
 
 \begin{figure}[h!]
     \begin{subfigure}[]{\linewidth}

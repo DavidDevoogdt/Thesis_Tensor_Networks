@@ -1,5 +1,5 @@
 
-While it is often possible to find exact MPO representation to represent a wide class of Hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate $i$ is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called “imaginary” time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world observations of these systems at finite temperature.
+While it is often possible to find exact \Gls{MPO} representation to represent a wide class of Hamiltonians (see \cref{mpo_hamil}), it is much harder to do the same for exponentiated operators. These operators play an important role: they act as time evolution operators for quantum systems $ \ket{\Psi(t)} = \exp( -i \hat{H} t ) \ket{\Psi(0)}$. A very similar operator governs the partition function in statistical mechanics: the probability of finding a system at inverse temperature $\beta = \frac{1}{T}$ in a microstate $i$ is given by $p_i = \exp(  - \beta \hat{H_i} )$. This is often called “imaginary” time, due to the substitution $\beta = i t$. The ability to calculate these operators is essential for understanding the dynamics of a given quantum model, and making contact with real world observations of these systems at finite temperature.
 
 \subsection{Statistical mechanics}\label{subsec:statmech}
 
@@ -48,15 +48,15 @@ One practical way of finding the ground state $ \ket{E_0}$ is to cool down a giv
     \ket{E_0} = \lim_{\beta \rightarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } ,\quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)} .
 \end{equation}
 
-\subsection{Tensor network methods}\label{rt_tn_methods}
-In the following section I will give a very short review of the current tensor network methods to simulate real or imaginary time evolution. This overview is mainly based on the review paper \cite{Paeckel2019}.
+\subsection{\Gls{TN} methods}\label{rt_tn_methods}
+In the following section I will give a very short review of the current \Gls{TN} methods to simulate real or imaginary time evolution. This overview is mainly based on the review paper \cite{Paeckel2019}.
 
 % https://arxiv.org/pdf/1901.05824.pdf
 
 \subsubsection{Approximations to \texorpdfstring{$ \hat{U}(\delta)$}{U}}
-The goal is to approximately make a MPO for a small timestep $\delta$ which gives a new MPS at time $t+\delta$.
-\paragraph{TEBD}
-Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
+The goal is to approximately make a \Gls{MPO} for a small timestep $\delta$ which gives a new \Gls{MPS} at time $t+\delta$.
+\paragraph{\Gls{TEBD}}
+Time-evolving block decimation (\Gls{TEBD})  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
 \begin{equation}
     \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
 \end{equation}
@@ -69,25 +69,25 @@ Time-evolving block decimation (TEBD)  uses the Trotter-Suzuki decomposition. Su
 \end{equation}
 This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalised to higher order schemes.
 
-\paragraph{ MPO $W^{I,II}$}
-These methods directly use the MPO representation of a certain Hamiltonian
+\paragraph{ \Gls{MPO} $W^{I,II}$}
+These methods directly use the \Gls{MPO} representation of a certain Hamiltonian
 %https://tensornetwork.org/mps/algorithms/timeevo/
-This is a more recent method (2015) to construct an MPO first detailed in \cite{Zaletel2015}. The idea is to generalise
+This is a more recent method (2015) to construct an \Gls{MPO} first detailed in \cite{Zaletel2015}. The idea is to generalise
 \begin{equation}
     1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
 \end{equation}
-The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lay in the fact that the form above has an efficient representation as an MPO. MPO $W^I$ and $W^{II}$ are capable of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}.
+The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lay in the fact that the form above has an efficient representation as an \Gls{MPO}. \Gls{MPO} $W^I$ and $W^{II}$ are capable of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}.
 
 \subsubsection{Global Krylov method}
 
-Krylov methods are widely used in linear algebra to calculate eigenvectors. An example is the Lanczos algorithm. These methods are applied to MPS's, but do not fully make use of its structure. For this method, only a MPO representation is needed.
+Krylov methods are widely used in linear algebra to calculate eigenvectors. An example is the Lanczos algorithm. These methods are applied to \Glspl{MPS}, but do not fully make use of its structure. For this method, only a \Gls{MPO} representation is needed.
 
 \subsubsection{MPS-local methods}
 
 \paragraph{Local Krylov}
 The Krylov methods from the previous paragraph can be adapted to work on a reduced basis.
 
-\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method. Its also been formulated in as a tangent space algorithm, similar to the VUMPS derivation (\cref{vumps_Deriv}). The Schrödinger equation becomes
+\paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method. Its also been formulated in as a tangent space algorithm, similar to the \Gls{VUMPS} derivation (\cref{vumps_Deriv}). The Schrödinger equation becomes
 \begin{equation}
     i \frac{\partial \ket{ \Psi( A(t) ) }}{\partial t} = \mathcal{P}_{ A ( t) }  H  \ket{ \Psi( A (t) ) } .
 \end{equation}

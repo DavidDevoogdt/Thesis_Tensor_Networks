@@ -3,7 +3,7 @@ All the code needed to generate all the results from this dissertation is availa
 
 \subsection{Source code structure 1D}
 
-The implementation of the different MPO types can be found under \path{src_1D/generateMPO.m}. It bundles some helper functions such as contracting a chain or cycle of MPO's or construction of an exponentiated Hamiltonian for the given input Hamiltonian. Another example is constructing the inverse by sequential inverse MPO contraction, ...
+The implementation of the different \Gls{MPO} types can be found under \path{src_1D/generateMPO.m}. It bundles some helper functions such as contracting a chain or cycle of  \Glspl{MPO} or construction of an exponentiated Hamiltonian for the given input Hamiltonian. Another example is constructing the inverse by sequential inverse \Gls{MPO} contraction, ...
 
 \path{src_1D/test_old.m} contains the code to create the plots to compare different types and orders.
 
@@ -19,5 +19,5 @@ Ising2D_par(8, 2.5, 'g', struct('testing',0,'unit_cell',1,
 \end{verbatim}
 and visualised with \verb#proces_Ising2D.m# Finally, fitting the curves happens with \verb#dofit.m#
 
-\subsection{VUMPS code}
-One external package is not checked in on git: MatlabTrack. This is used in  \verb#src_2D/process_PEPO/PEPO_vumps.m# to calculate the VUMPS environment. This proprietary code was written by the QuantumGroup@UGent. To obtain the code, go to \path{https://quantumghent.github.io/software/}
+\subsection{\Gls{VUMPS} code}
+One external package is not checked in on git: MatlabTrack. This is used in  \verb#src_2D/process_PEPO/PEPO_vumps.m# to calculate the \Gls{VUMPS} environment. This proprietary code was written by the QuantumGroup@UGent. To obtain the code, go to \path{https://quantumghent.github.io/software/}

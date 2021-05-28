@@ -1,6 +1,9 @@
 \documentclass{book}
-%\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
+
+%% tikz stuff
 \usepackage{tikz}
 \usetikzlibrary{external}
 \usetikzlibrary{shapes}
@@ -8,23 +11,25 @@
 
 \newcounter{a}
 \newcounter{b}
+\usepackage{etoolbox} %for if empty functionality
+\usepackage{ifthen}
+\usepackage{leftidx}
 
+
+%%equation stuff
 \usepackage{braket}
-
-\usepackage{subcaption} % Subfigure environment 
-\usepackage{gensymb}
-
 \usepackage{amsmath} % Mathematical symbols
 \usepackage{amssymb} % Symbols
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{physics} %thing s.a. \Tr 
 
-\usepackage{caption}% Captions onder figuur gecentreerd
-%\usepackage[toc,page]{appendix}
+
+%%plot stuff
 \usepackage{subcaption} % Subfigure environment 
+\usepackage{caption}% Captions onder figuur gecentreerd
 \usepackage{float}
-
-\usepackage{etoolbox} %for if empty functionality
-
-\usepackage{ifthen}
+\usepackage{graphicx}
 
 %break long urls at a - and not only at . or /
 \usepackage{url}
@@ -32,54 +37,40 @@
 \usepackage{breakurl}
 \usepackage[hidelinks,breaklinks]{hyperref}
 
+%environments
 \usepackage{verbatim}
-\usepackage{siunitx} % Elegant eenheden zetten
-\usepackage[version=3]{mhchem} % ingeven van chemische fomules
-\usepackage{cleveref} % Paragraaf tekens
-\usepackage{longtable}
-%\usepackage{lscape}
-\usepackage[T1]{fontenc}
-\usepackage{fontenc}
-\usepackage{amsfonts}
-\usepackage{mathtools}
-\usepackage{grffile}%double dot in figure name
-\usepackage{lipsum}
-\usepackage{siunitx}
-\usepackage{xcolor}
-\usepackage{sectsty}
-\usepackage{booktabs}
-\usepackage{physics}
-\usepackage{leftidx}
-\usepackage[utf8]{inputenc}
-\usepackage{gensymb} % /textdegree
+\usepackage{fancyvrb} %inline verbatim
+\usepackage{cleveref} 
 
-\usepackage{acronym}
-
-
-\usepackage{fancyvrb}
-
-\usepackage{epigraph}
-
+\usepackage[acronym]{glossaries}
 \usepackage[toc,page]{appendix}
+%\usepackage{acronym}
 
+%random
+\usepackage{booktabs}
+\usepackage{lipsum}
+\usepackage{epigraph}
 \usepackage{pdfpages}
-
-
-
-
-%\usepackage[backend=biber]{biblatex}
-
-% \tikzexternalize[prefix=tikz/]
-% \tikzexternaldisable
-
-%\setcounter{tocdepth}{4}
-\setcounter{secnumdepth}{4}
-
-\usepackage{graphicx}
-
 \usepackage{todonotes}
 
-%\usepackage[nottoc]{tocbibind}
+ \makeglossaries
+
+
+
+\newacronym{MPS}{MPS}{Matrix Product State}
+\newacronym{MPO}{MPO}{Matrix Product Operator}
+\newacronym{PEPS}{PEPS}{Projected Entangled Pairs State}
+\newacronym{PEPO}{PEPO}{Projected Entangled Pairs Operator}
+\newacronym{VUMPS}{VUMPS}{variational uniform Matrix Product State algorithm}
+\newacronym{TEBD}{TEBD}{Time Evolving Block Decimation}
+\newacronym{SVD}{SVD}{Singular Value Decomposition}
+\newacronym{CFT}{CFT}{Conformal Field Theory}
+\newacronym{TN}{TN}{Tensor Network}
+
+
+
+\setcounter{secnumdepth}{4}
+
 
 \title{Thesis}
 
@@ -88,46 +79,18 @@
 \begin{document}
 
 \input{macros.tex}
-
-% \begin{titlepage}
-%   \begin{center}
-
-%     \pagenumbering{gobble}
-%     \includegraphics[width=4cm]{Figuren/UGent.png} \\[0.5cm]    %Logo UGENT	
-
-%     \Large{\textsc{Master Engineering Physics}} \\[0.5cm]  %Vakgroep	
-
-%     \normalsize{Year 2020-2021} \\[3cm]  %Academiejaar
-
-%     \huge{\textsc{Master desertation}} \\[0.25cm]   %Titel
-
-%     \Large{\textsc{Thesis Tensor networks}}\\[0.25cm]
-
-%     \large \textnormal{October 2020} \\[2.5cm]   %Extra informatie
-
-%     %\small      %Namen
-
-%     David Devoogdt \\       [2.5cm]
-
-%     Academic supervisor: prof.
-
-%     \vfill
-
-%   \end{center}
-% \end{titlepage}
+\input{tikzsetup}
 
 \frontmatter
 
-%https://www.ugent.be/ea/nl/faculteit/studentenadministratie/masterproef/vorm1920.pdf
-
-\includepdf[page={1}]{ titelblad.pdf }
+\includepdf[pages={1}]{ titelblad.pdf }
 
 \newpage
 \thispagestyle{empty}
 \mbox{}
 \newpage
 
-\includepdf[page={1}]{ titelblad.pdf }
+\includepdf[pages={1}]{ titelblad.pdf }
 
 \newpage
 \listoftodos
@@ -135,18 +98,15 @@
 
 %\twocolumn
 
-\input{tikzsetup}
-
 \addcontentsline{toc}{chapter}{Foreword}
 \section*{Foreword}
 \lipsum{20}
 
-\section*{Permission of use on loan }
+\newpage
+\section*{Permission of use on loan}
 The author(s) gives (give) permission to make this master dissertation available for consultation and to copy parts of this master dissertation for personal use. In all cases of other use, the copyright terms have to be respected, in particular with regard to the obligation to state explicitly the source when quoting results from this master dissertation.
 
-\today
-
-\todo{date}
+David Devoogdt, May 2021
 
 \newpage
 
@@ -201,18 +161,21 @@ Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transvers
 
 \newpage
 
-\addcontentsline{toc}{chapter}{List of Acronyms}
-\section*{List of Acronyms}
-\begin{acronym}
-    \acro{MPS}{Matrix Product State}
-    \acro{MPO}{Matrix Product Operator}
-    \acro{PEPS}{Projected Entangled Pairs State}
-    \acro{PEPO}{Projected Entangled Pairs Operator}
-    \acro{VUMPS}{variational uniform Matrix Product State algorithm}
-    \acro{TEBD}{Time Evolving Block Decimation}
-    \acro{SVD}{Singular Value Decomposition}
-    \acro{CFT}{Conformal Field Theory}
-\end{acronym}
+\addcontentsline{toc}{chapter}{Glossaries}
+
+\printglossary[type=\acronymtype]
+
+% \newglossaryentry{MPS}
+% {
+%     name=MPS,
+%     description={Matrix Product State}
+% }
+
+% \newglossaryentry{MPO}
+% {
+%     name=MPO,
+%     description={Matrix Product Operator}
+% }
 
 % \listoffigures
 
@@ -234,10 +197,10 @@ Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transvers
 \section{Tensor networks}
 \input{H2_TN.tex}
 
-\section{Tensor network manipulations}\label{sec:mpomath}
+\section{\Gls{TN} manipulations}\label{sec:mpomath}
 \input{H2_TN_math}
 
-%\section{Tensor network algorithms}
+%\section{\Gls{TN} algorithms}
 \input{H2_TN_algs.tex}
 
 \section{Conclusion}
