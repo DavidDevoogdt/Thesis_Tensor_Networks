@@ -67,7 +67,7 @@ Time-evolving block decimation (\Gls{TEBD})  uses the Trotter-Suzuki decompositi
         \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
     \end{split}
 \end{equation}
-This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made small. This can be generalised to higher order schemes.
+This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made arbitrarily small. This can be generalised to higher order schemes.
 
 \paragraph{ \Gls{MPO} $W^{I,II}$}
 These methods directly use the \Gls{MPO} representation of a certain Hamiltonian
