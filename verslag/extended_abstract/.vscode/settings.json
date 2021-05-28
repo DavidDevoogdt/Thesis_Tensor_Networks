@@ -171,7 +171,7 @@
     },
     "ltex.dictionary": {
         "en-GN": [
-            ":../ltex.dictionary.en-GB.txt",
+            ":ltex.dictionary.en-GB.txt",
         ],
     }
 }

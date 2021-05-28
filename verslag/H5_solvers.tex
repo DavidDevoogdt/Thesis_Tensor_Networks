@@ -205,7 +205,7 @@ An example of this procedure is
     \pepobt                 \; & =  \;\blockbt                                     \\
     \vcenter{\hbox{ \pepoct }} & =\vcenter{\hbox{  \blockct }} . \label{extract_x}
 \end{align}
-On the first line, the original problem is shown. Block X is the newly introduced block. The right-hand side $B$ is the residual error, i.e. the exponentiated Hamiltonian minus all possible contractions in the network. The second line reorders and groups the physical indices in legs, and transforms the right-hand side accordingly. The third line shows the tensors in the form of \cref{axb}, including the matching labels.
+On the first line, the original problem is shown. Block X is the newly introduced block. The right-hand side $B$ is the residual error, i.e.\ the exponentiated Hamiltonian minus all possible contractions in the network. The second line reorders and groups the physical indices in legs, and transforms the right-hand side accordingly. The third line shows the tensors in the form of \cref{axb}, including the matching labels.
 
 \subsubsection{Full inverse}
 
@@ -222,7 +222,7 @@ The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
     A     & = U \Sigma V^{\dagger}      \\
     A^{+} & = V \Sigma^{+} U^{\dagger},
 \end{align}
-where for $\Sigma^{+}$ all the non-zero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g. $\sigma_0 = 10^{-12}$ is set to zero. The problem with this full inverse is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this method still becomes com putatioonally infeasible for large systems.
+where for $\Sigma^{+}$ all the non-zero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g.\ $\sigma_0 = 10^{-12}$ is set to zero. The problem with this full inverse is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this method still becomes computationally infeasible for large systems.
 
 \subsubsection{Sequential inverse}
 
@@ -278,7 +278,7 @@ The algorithm will split this problem in $m=2$ legs, treating the loop as one.
 
 In some cases, the above solver does not return the best possible solution to a given problem. The reason is that it is not able to incorporate symmetries or solve problems where the new blocks appear more than once. A new solver is needed which does not rely on methods from linear algebra, but on more general nonlinear least squares solvers.
 
-In essence, the nonlinear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$, and if possible also the Jacobian, i.e. $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. This info is used to choose a direction and a step size, minimising the error. An improved point x is chosen by the algorithm, until some convergence criterium is reached. The implementation uses MATLAB's fsolve routine, which uses the Levenberg-Marquardt algorithm under the hood.
+In essence, the nonlinear least squares solver needs as input a vector with the error values $\vec{f}( \vec{x} )$, and if possible also the Jacobian, i.e.\ $ J_{I,J}  = \frac{ \partial f_I }{ \partial x_J } $. This info is used to choose a direction and a step size, minimising the error. An improved point x is chosen by the algorithm, until some convergence criterium is reached. The implementation uses MATLAB's fsolve routine, which uses the Levenberg-Marquardt algorithm under the hood.
 
 \subsubsection{Automatic differentiation}
 With some care, the Jacobian can be calculated for a general tensor network in an automated way. It amounts to  contracting the network with the tensor $x_J$ removed, and treating the non-contracted indices as external ones. This becomes clearer upon inspection of \cref{extract_x}. $  \frac{ \partial B_{I^1 I^2 \cdots I^m  j } }{  \partial X_{\alpha_1 \alpha_2 \cdots \alpha_m j } } =  A_{I^1 I^2 \cdots I^m  \alpha_1 \alpha_2 \cdots \alpha_m }{}$. If a tensor appears in multiple places, the sum rule for derivatives has to be used.
@@ -308,7 +308,7 @@ The framework is equipped with 3 different solvers, designed to solve different 
 [obj, ln_prefact, err] = solve_non_lin_and_assign(obj, {map}, {pattern}, 
                 ln_prefact, struct, {rot_90});
 \end{verbatim}
-They only need a map, which is the geometry of the problem, and a pattern, i.e. the new block to add. \verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as will be discussed in the next \cref{subsec:nf}.
+They only need a map, which is the geometry of the problem, and a pattern, i.e.\ the new block to add. \verb#rot_90# is an optional argument, listing all the permutations (such as rotation symmetry over 90 degrees). For completeness, \verb#ln_prefact# is the normalisation factor as will be discussed in the next \cref{subsec:nf}.
 
 Whenever the linear solver can be used, it is the solver of choice. The sparse full inverse procedure is fast and handles the ill-conditioned inverses very well. The sequential linear solver builds on this solver to handle the introduction of multiple new tensors, possibly related to each other through a permutation. The nonlinear solver is at the moment only the fastest for small highly nonlinear problems, such as solving \cref{tikzfig:plaquetter} in a rotation invariant manner. The nonlinear solver can optimise multiple problems at once, and could be extended to fully use internal symmetries of the model.
 
