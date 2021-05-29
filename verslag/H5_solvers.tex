@@ -12,6 +12,10 @@ The linear solver is a general purpose block solver which reduces the problem to
 
 Here $i^M_N$ has the following meaning: M numbers the different legs or branches of the tree, N number of sites of the leg and i numbers the bra and ket states and has dimension $d^2$. Hence, the bond dimension of $I_n= d^{2 n_m }$.
 
+% \begingroup
+% \allowdisplaybreaks
+%\endgroup
+
 \def \pepoat {\begin{tikzpicture}[baseline=0.5]
 
         \def \legLength { 0.8}
@@ -198,14 +202,11 @@ Here $i^M_N$ has the following meaning: M numbers the different legs or branches
 
 \noindent
 An example of this procedure is
-\begingroup
-\allowdisplaybreaks
 \begin{align}
     \pepoat                 \; & =  \;\blockat                                     \\
     \pepobt                 \; & =  \;\blockbt                                     \\
     \vcenter{\hbox{ \pepoct }} & =\vcenter{\hbox{  \blockct }} . \label{extract_x}
 \end{align}
-\endgroup
 On the first line, the original problem is shown. Block X is the newly introduced block. The right-hand side $B$ is the residual error, i.e.\ the exponentiated Hamiltonian minus all possible contractions in the network. The second line reorders and groups the physical indices in legs, and transforms the right-hand side accordingly. The third line shows the tensors in the form of \cref{axb}, including the matching labels.
 
 \subsubsection{Full inverse}
