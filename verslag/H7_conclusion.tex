@@ -1,27 +1,27 @@
 \section{Conclusion}
 
-In \cref{chap1} the quantum many-body problem was introduced as one of the challenges faced by modern physics. The problem is not related to the theory, but to the practical difficulty of calculating and simulating the properties of strongly correlated matter. A macroscopic overview of one class of techniques, \Glspl{TN}, was given.
-In \cref{chap2}, a brief introduction to \Glspl{TN} was given. The focus was mainly to provide some insight in the algorithm using the graphical \Gls{TN} notation. In particular, the \Gls{VUMPS} algorithm was explained. Also, a technique was suggested to close the environment from below, because the current procedure only seems to work in specific cases.
-\Cref{chap3} explains some concepts related to phases and phase transitions. The critical exponents associated with continuous phase transitions are discussed, together with a practical way, called finite-size scaling, to obtain them from simulations. This chapter also gives an overview of 2 important models in the field: the Heisenberg model and the Ising model in different dimensions. Finally, the need for operator exponentials and \Gls{TN} methods to simulate time evolution are discussed.
+In \cref{chap1} the quantum many-body problem was introduced as one of the challenges faced by modern physics. The problem is not related to the theory, but to the practical difficulty of calculating and simulating the properties of strongly correlated matter. A macroscopic overview of one class of techniques, namely \Glspl{TN}, was given.
+In \cref{chap2}, a brief introduction to \Glspl{TN} was given. The focus was mainly to provide some insight in the algorithms using the graphical \Gls{TN} notation. In particular, the \Gls{VUMPS} algorithm was explained. Also, a technique was suggested to close the environment from below, because the current procedure only seems to work only in specific cases.
+\Cref{chap3} explains some concepts related to phases and phase transitions. The critical exponents associated with continuous phase transitions are discussed, together with a practical way, called finite-size scaling, to obtain them from simulations. This chapter also gives an overview of 2 important models in the field: the Heisenberg model and the \Gls{TFI} model in different dimensions. Finally, the need for operator exponentials and some \Gls{TN} methods to simulate time evolution are discussed.
 \Cref{chap4} is the center point of this dissertation: it explains how the cluster expansions are made. This is written down in a very compact way, making abstraction of all implementation details and results.
-\Cref{chap5} details the working of the 3 different solvers: a linear solver, a nonlinear solver and a sequential linear solver. The linear solver must be implemented with great care in order to handle the ill conditioned inverses. This is done by calculating the pseudoinverse instead of a full inverse. This can be done at the cost of an \Gls{SVD} decomposition per leg, while maintaining the accuracy of inverting all the legs at once. Also, an algorithm for determining all possible virtual indices of a given map using \Gls{PEPS} contraction is given.  A starting point for exploring the source code is given.
-\Cref{chap:results} finally quantifies the quality of the cluster expansions. This is done with respect to the exact solution in 1D and 2D. As a second test, the thermal phase diagram of the transversal field Ising model is calculated. The numerical temperatures of the phase transition at a constant transversal field correspond to the values in literature. A clear path is set out to calculate the quantum critical point.
+\Cref{chap5} details the working of the 3 different solvers: a linear solver, a nonlinear solver and a sequential linear solver. The linear solver must be implemented with great care in order to handle the ill-conditioned inverses. This is done by calculating the pseudoinverse instead of a full inverse. This can be done at the cost of an \Gls{SVD} decomposition per leg, while maintaining the accuracy of inverting all the legs at once. Also, an algorithm for determining all possible virtual indices of a given map using \Gls{PEPS} contraction is given.  A starting point for exploring the source code is given.
+\Cref{chap:results} finally quantifies the quality of the cluster expansions. This is done with respect to the exact solution in 1D and 2D. As a second test, the thermal phase diagram of the \Gls{TFI} model is calculated. The numerical temperatures of the phase transition at a constant transversal field correspond well to the values in literature. A clear path is set out to calculate the tricritical point.
 
 \section{Outlook}
 
-The cluster expansions have a lot of potential. In the course of one master dissertation, it is not possible to look into every possibility because a lot of groundwork need to be covered. Here are some interesting prospects:
+The cluster expansions have a lot of potential. In the course of one Master's dissertation, it is not possible to look into every possibility. Here are some interesting prospects:
 
 \subsection*{Real time evolution}
 
-Some first results in 1D (\cref{subsec_rt_evo}) show that the method also works for real time evolution. \Cref{rt_tn_methods} introduced some methods to calculate time evolutions with \Glspl{TN}. Crucially, all these methods come with a detailed error analysis. For instance, some methods have a proven error per step of $O \left( \frac{t}{N}^2  \right)$, resulting in an error of $O \left( \frac{t^2}{N}  \right)$ at time t. This can be made arbitrarily small.
+Some first results in 1D (\cref{subsec_rt_evo}) show that the method also works for real time evolution. \Cref{rt_tn_methods} introduced some methods to calculate time evolutions with \Glspl{TN}. Crucially, all these methods come with a detailed error analysis. For instance, some methods have a proven error per step of $O \left( (t/N)^2  \right)$, resulting in an error of $O \left( t^2/N  \right)$ at time t. This can be made arbitrarily small. A similar analysis of this method is not yet performed.
 
 \subsection*{Quantum critical point}
 
-As stated in \cref{subsec:tricrit}, it should be possible to calculate the quantum critical point of the transverse Ising model using the current methods. This would allow to make a better comparison of this method better with other methods in literature.
+As stated in \cref{subsec:tricrit}, it should be possible to calculate the quantum critical point of the \Gls{TFI} model using the current methods. This would allow to make a better comparison of this method better with other methods in literature.
 
 \subsection*{Lattices}
 
-The whole thesis, a square lattice was used. This is definitely not the only choice. Other lattices could potentially result in even lower errors. Due to the generality of the solvers, this should be within reach given more time.
+During this thesis, a square lattice was used. This is definitely not the only choice. Other lattices could potentially result in even lower errors. Due to the generality of the solvers, changing the lattice should be within reach given more time.
 
 \subsection*{Higher dimensions}
 
