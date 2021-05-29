@@ -51,7 +51,7 @@
 \usepackage{lipsum}
 \usepackage{epigraph}
 \usepackage{pdfpages}
-\usepackage{todonotes}
+%\usepackage{todonotes}
 
  \makeglossaries
 
@@ -93,15 +93,15 @@
 
 \includepdf[pages={1}]{ titelblad.pdf }
 
-\newpage
-\listoftodos
+%\newpage
+%\listoftodos
 \newpage
 
 %\twocolumn
 
 \addcontentsline{toc}{chapter}{Foreword}
 \section*{Foreword}
-\lipsum{20}
+\input{foreword.tex}
 
 \newpage
 \section*{Permission of use on loan}
@@ -149,7 +149,7 @@ David Devoogdt, May 2021
 
 \section*{Keywords}
 
-Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transverse Field Ising model
+Tensor networks, Thermal States, Cluster Expansions, Phase transitions, Transverse Field Ising model
 
 \newpage
 
@@ -164,7 +164,7 @@ Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transvers
 
 \addcontentsline{toc}{chapter}{Glossaries}
 
-\printglossary[type=\acronymtype]
+\printglossary[type=\acronymtype,nonumberlist,nogroupskip]
 
 % \newglossaryentry{MPS}
 % {
@@ -200,7 +200,7 @@ Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transvers
 \section{Tensor networks}
 \input{H2_TN.tex}
 
-\section{\Gls{TN} manipulations}\label{sec:mpomath}
+\section{TN manipulations}\label{sec:mpomath}
 \input{H2_TN_math}
 
 %\section{\Gls{TN} algorithms}
@@ -287,7 +287,7 @@ Tensor networks, Thermal States, Cluster Expansions, Phase transition, Transvers
 \section{Conclusion}
 \input{H6_conclusion.tex}
 
-\chapter{Conclusion and lookout}
+\chapter{Conclusion and lookout}\label{Chap7}
 \input{H7_conclusion.tex}
 
 \bibliographystyle{elsarticle-num}

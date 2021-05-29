@@ -1,4 +1,4 @@
-\section{\Gls{MPS} algorithms}
+\section{MPS algorithms}
 
 This section and the following one, will introduce some different \Gls{TN} algorithms. The goal is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, see  \cite{Vanderstraeten2019} .
 
@@ -166,7 +166,7 @@ One property of \Gls{MPS} is that expectation values can be calculated exactly. 
 \end{equation}
 where we made use of \cref{algs:mpsid}. Similar techniques allow for the calculation of correlation functions, energies, ...
 
-\section{\Gls{TN} contraction}
+\section{TN contraction}
 
 Suppose we have an \Gls{MPO} $\hat{O}$that represents a probability of finding encountering a given state: $ \hat{O} \ket{\Psi_i} = p_i \ket{\Psi_i} $. The average value of a local measurement X is given by $ \sum_i \braket{ \Psi_i | \hat{X} \hat{O} | \Psi_i} = \Tr( \hat{X} \hat{O})$. This will be needed in \cref{subsec:statmech}. This section explains how to do this with tensor networks for infinite system sizes.
 
@@ -564,7 +564,7 @@ where the $ Ar  $ tensor was connected from below on both sides and \cref{algs:m
                             1,1,1,5,2,2,13}}}} \; .
     \end{split}
 \end{equation}
-The left and right zipper can now move towards each other, until they meet at the center. One more condiiton is needed to fullful \cref{algs:mpslayermpo}:
+The left and right zipper can now move towards each other, until they meet at the center. One more condition is needed to fullfil \cref{algs:mpslayermpo}:
 \begin{equation} \label{algs:AC}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",

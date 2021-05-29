@@ -15,7 +15,7 @@ One of the most basic manipulations is to group some legs of a tensor into one l
 The dimension of the new leg is the product of the dimension of the individual legs. Contracting legs separately or in merged form gives the same result. The 4 leg tensor and matrix contain exactly the same information. Manipulating this in memory requires both permute and reshape commands. This requires some time as the internal representation of the matrix changes.
 
 \subsubsection{Virtual levels}
-A matrix can be split in smaller block matrices. Similarly, a leg of a tensor can be split in virtual levels. Each virtual level has its own dimension. Contracting a common leg means summing over all the virtual levels, and performing a normal contraction for each virtual level. These virtual level will be usefull in \cref{chap4}.
+A matrix can be split in smaller block matrices. Similarly, a leg of a tensor can be split in virtual levels. Each virtual level has its own dimension. Contracting a common leg means summing over all the virtual levels, and performing a normal contraction for each virtual level. These virtual level will be useful in \cref{chap4}.
 
 \subsubsection{Decomposition} \label{decompMPO}
 \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}

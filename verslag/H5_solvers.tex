@@ -255,7 +255,7 @@ The last step consist of applying all the matrices $V^m$ to the right-hand side.
 The complexity is determined by the \Gls{SVD} decomposition of the individual legs. Due to its sparsity, S does not take much space to construct and is quite fast to pseudoinvert. Doing the pseudoinverse at once means that it has the same precision as the full pseudoinverse, as desired.  It is also possible to take a pseudoinverse of a matrix with a QR-decomposition, which is faster \cite{Moylan2016}. The matrices $Q^i$ could be inverted directly, and the $R = R^1 \otimes R^2 \cdots \otimes R^m$  matrix is still upper triangular, allowing for back-substitution. This method is not used because of the memory requirements to store this matrix are larger, and the triangular matrix $R$ is not in the correct form for the linear pseudoinversion solver.
 
 \subsubsection{Extension}
-The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map, such as 2 neighbouring sites. These sites are split using an \Gls{SVD} decomposition.  A problem could e.g.\ be defined as
+The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map \footnote{Gives tensor X with   }, such as 2 neighbouring sites. These sites are split using an \Gls{SVD} decomposition.  A problem could e.g.\ be defined as
 \begin{equation}
     \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
 
