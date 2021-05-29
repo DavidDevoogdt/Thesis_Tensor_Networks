@@ -3,17 +3,17 @@ In short, all components are in place in the framework to generate easily and ef
 
 \subsection{Implementation}
 
-By far the largest amount of time invested in this thesis was creating and testing this framework from the ground up (except the fitting code). Implementation of the maps and solvers in its full generality is a very error-prone problem. In hindsight, the 1D framework may seem unneeded, given that the 2D framework is even better. This is not the case. Constructing the 2D framework was only possible due to the lessons learned (and mistakes made) in the 1D code.
+By far the largest amount of time invested in this thesis was creating and testing this framework. Everything (except the fitting code) was written from scratch. Implementation of the maps and solvers in its full generality is a very error-prone problem. In hindsight, the 1D framework may seem unneeded, given that the 2D framework is even better. This is not the case. Constructing the 2D framework was only possible due to the lessons learned (and mistakes made) in the 1D code.
 
-\subsection{Code quality}
-The first and most important goal of writing numerical code is of course that it compiles and that the results are as correct. But this is only the first step. The 2D framework neatly orders the different task is functions to avoid as much code duplication as possible. For instance, there are functions generating and manipulating maps, which depends on the geometry of the problem. Other functions only use the bonds and contractions listed in that map object, and hence another lattice can be used without changing the other components too much.
+\subsection*{Code quality}
+The first and most important goal of writing numerical code is of course that it compiles and that the results are as correct. But this is only the first step. The 2D framework neatly orders the different task is functions to avoid as much code duplication as possible. This improves readability and decreases the number of errors as every component is used in many ways.
 
-\subsection{Size limitation}
-The main bottleneck is, as expected, calculating the matrix exponential for large systems (N>14). For large maps, contracting the PEPO network is an equally expensive operation. The other components are efficient enough to not cause any troubles. In particular the solvers, which aren't a limiting factor.
+\subsection*{Size limitation}
+The main bottleneck is, as expected, calculating the matrix exponential for large systems (N>14). For large maps, contracting the PEPO network is an equally expensive operation. The other components are efficient enough to not cause any troubles. In particular, the solvers aren't a limiting factor at this point to go further.
 
-\subsection{Lattices}
-The models studied were all on a square lattice. The universal physics does not depend on the details of the model, such as the lattice. It would be beneficial to be able to simulate other lattices, but also higher dimensions could be included. In essence all the information of the lattice is contained in the maps generated for each calculation, such as all the connected sites, how to contract them, etc. Although undoubtedly many details will need to be changed to use it in practice, the solvers can stay almost the same.
+\subsection*{Lattices}
+The models studied were all on a square lattice. It would be beneficial to be able to simulate other lattices, but also higher dimensions could be included. In essence all the information of the lattice is contained in the maps generated for each calculation, such as all the connected sites, how to contract them, etc. Although undoubtedly many details will need to be changed to use it in practice, the solvers can stay almost the same.
 
-\subsection{Symmetries}
+\subsection*{Symmetries}
 
-At the moment rotation and permutation symmetries can be included in the construction of the blocks. Internal symmetries are not yet included at the moment. Including them could push the computational boundaries further.
+At the moment rotation and permutation symmetries can be included in the construction of the blocks. Internal symmetries are not yet included at the moment. This could push computational boundaries further.

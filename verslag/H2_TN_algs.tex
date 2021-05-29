@@ -363,7 +363,7 @@ As 2D contraction is a difficult task, and often the bottleneck in simulations, 
 
 The general idea behind these methods is to course grain the \Gls{TN}. The first  algorithm in this group of methods was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an \Gls{SVD} in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the \Gls{SVD} step.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/TRG.png}
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
@@ -373,7 +373,7 @@ Many other variants exist, such as Tensor Network Renormalisation (TNR), which w
 
 \subsubsection{Corner transfer matrix  methods}
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
     \centering
     \begin{subfigure}[b]{0.8\textwidth}
         \centering
@@ -428,7 +428,7 @@ Time-evolving block decimation was introduced as a method to calculate thermal s
 
 % \todo{explain this}
 
-% \begin{figure}[h!]
+% \begin{figure}[!htbp]
 %     \center
 %     \includegraphics[width=1 \textwidth]{Figuren/tnalgs/tn_con_TEBD.png}
 %     \caption{  Figure taken from \cite{Ran2020}.  }
