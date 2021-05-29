@@ -1,10 +1,15 @@
 function test
-    compare_models(["random"], 10.^(-3:0.2:1.5), [2, 3, 4], [3, 4, 5, 6, 7])
+
+    %compare_models(["t_ising"], 1i*10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5,
+    %6],1) %imaginary
+    
+    compare_models(["t_ising"], 10.^(-3:0.1:1.5), [2, 3, 4], [3, 5, 7],0)
+    
     %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
 end
 
-function compare_models(simulatiemodellen, beta_arr, types, order)
+function compare_models(simulatiemodellen, beta_arr, types, order,time)
     models_len = size(simulatiemodellen, 2);
 
     for round = 1:models_len
@@ -36,12 +41,24 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
         plot_counter = 1;
         %hold off
         figure();
-        x_width = 15;
-        y_width = 10;
+        
+        small = 1;
+        
+        if small == 0
+            ncols =2;
+            x_width = 15;
+            y_width = 10;
+        else
+            ncols =1;
+            x_width = 10;
+            y_width = 8;
+        end
+        
         set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
         %%%
 
-        opts = struct('max_bond_dim', 20);
+        opts = struct('max_bond_dim', 64,'complex', false);
+        %opts = struct('complex', false);
         opts.inv_eps = 1e-12;
         %opts = struct;
 
@@ -54,7 +71,12 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
             for i = 1:beta_len
                 opts.beta = simul.beta_arr(i);
 
-                fprintf("M %d beta %.4e order %d", simul.M, opts.beta, opts.order);
+                 if time == 1
+                     fprintf("M %d time %.4e order %d", simul.M, imag(opts.beta), opts.order)
+                 else
+                     
+                    fprintf("M %d beta %.4e order %d", simul.M, opts.beta, opts.order);
+                 end
 
                 %loop of simulation types
                 for t = 1:size(simul.types, 2)
@@ -97,27 +119,29 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
 
             end
 
+            x_axis = abs(simul.beta_arr);
+            
             %plotting loop for current order
             for t = 1:size(simul.types, 2)
                 switch simul.types(t)
                     case 2
                         colour = colors{1};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(cell2mat(plot_structure(2, :))), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(x_axis, abs(cell2mat(plot_structure(2, :))), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("A:%d", opts.order);
                         plot_counter = plot_counter + 1;
                         hold on
                     case 3
                         colour = colors{2};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(cell2mat(plot_structure(3, :))), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(x_axis, abs(cell2mat(plot_structure(3, :))), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("E:%d", opts.order);
                         plot_counter = plot_counter + 1;
                         hold on
                     case 4
                         colour = colors{3};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(cell2mat(plot_structure(4, :))), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(x_axis, abs(cell2mat(plot_structure(4, :))), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("F:%d", opts.order);
                         plot_counter = plot_counter + 1;
                         hold on
@@ -125,7 +149,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
                     case 5
                         colour = colors{4};
                         colour(4) = alphas(j);
-                        loglog(simul.beta_arr, abs(cell2mat(plot_structure(5, :))), "LineStyle", line_spec(j), "Color", colour);
+                        loglog(x_axis, abs(cell2mat(plot_structure(5, :))), "LineStyle", line_spec(j), "Color", colour);
                         legend_Arr{plot_counter} = sprintf("D:%d", opts.order);
                         plot_counter = plot_counter + 1;
                         hold on
@@ -135,9 +159,14 @@ function compare_models(simulatiemodellen, beta_arr, types, order)
             end
 
             title(model.title)
-            xlabel('$  \beta \cdot J$', 'Interpreter', 'latex', 'FontSize', 11)
+            if time == 1
+                xlabel('$  t \cdot J$', 'Interpreter', 'latex', 'FontSize', 11)
+            else
+                xlabel('$  \beta \cdot J$', 'Interpreter', 'latex', 'FontSize', 11)
+            end
+            
             ylabel('$  \epsilon $', 'Interpreter', 'latex', 'FontSize', 11)
-            legend(legend_Arr, 'Location', 'northwest', 'NumColumns', 2)
+            legend(legend_Arr, 'Location', 'northwest', 'NumColumns', ncols)
 
             ylim([0, 10])
 

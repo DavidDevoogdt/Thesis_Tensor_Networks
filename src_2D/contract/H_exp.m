@@ -16,7 +16,7 @@ function [H_exp, lnprefact] = H_exp(obj, map, lnprefact, improve_ln_pre_factor)
 
     d_log_nf = 1;
 
-    while abs(d_log_nf) > 0.1
+    while abs(d_log_nf) > 0.01
         H_matrix_2 = H_mat - eye(d^(map.N)) * map.N * lnprefact;
 
         H_expo = expm(H_matrix_2);

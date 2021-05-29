@@ -1,4 +1,5 @@
 function map = make_cross_loop(pat, m)
+    %make array 1loop and 2 legs with given legth
 
     a = pat;
     a(m == 1) = 1;

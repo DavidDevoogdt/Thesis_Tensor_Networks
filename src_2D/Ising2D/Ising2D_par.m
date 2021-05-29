@@ -2,6 +2,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
     %routine to calculate a phase diagram for transversal ising model in 2D
     %samples in batch points along m-T / m-g graph such that arc length between points is small
     %example: Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
+    %Ising2D_par(8, 0.7, 'T', struct('testing',0,'unit_cell',1,'par',1,'order',6,'max_bond_dim',20 ,'do_loops',1 ));
 
     %parse opts
     p = inputParser;
@@ -14,11 +15,12 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
     addParameter(p, 'testing', 0)
     addParameter(p, 'do_loops', 1)
     addParameter(p, 'loop_extension', 0)
+     addParameter(p, 'complex', false)
     parse(p, opts)
 
     %for chi arr: round(2.^(3:0.5:7))
 
-    maxit = 5;
+    maxit = 4;
     w = 0.1;
 
     switch fixed_var
@@ -51,9 +53,11 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
                 case 1.2737
                     x_min = 2.3;
                     x_max = 2.7;
-
+                case 1
+                    x_min = 2.3;
+                    x_max = 2.7;
                 case 0.7
-                    x_min = 2.6;
+                    x_min = 2.7;
                     x_max = 2.9;
                 case 0.5
                     x_min = 2;
@@ -75,7 +79,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
         case "david"
             nsammple = 4;
         otherwise
-            nsammple = 30;
+            nsammple = 20;
     end
 
     %parallel preferences
@@ -91,7 +95,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
 
         %template setup
         if ~isempty(p.Results.template_name) %load from file
-            [~, template] = fetch_matfiles(p.Results.template_name{i}, struct);
+            [~, template] = fetch_matfiles(p.Results.template_name, struct);
             chi = chi_arr(i);
 
             first = 0;
@@ -115,7 +119,7 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
 
             fprintf("\n");
 
-            nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, p.Results.order,chi,  p.Results.max_bond_dim, p.Results.sym, dt);
+            nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, p.Results.order, chi, p.Results.max_bond_dim, p.Results.sym, dt);
 
             template.name = nn;
             template.name_prefix = sprintf("%s/%s", fold2, nn);
@@ -153,9 +157,9 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
             template.vumps_opts = vumps_opts;
 
             if p.Results.sym == 1
-                template.handle = @make_PEPO_2D_A;
+                template.handle = @make_PEPO_2D_sym;
             else
-                template.handle = @make_PEPO_2D_E;
+                template.handle = @make_PEPO_2D_asym;
             end
 
             template.dir_name = dir_name;
@@ -168,8 +172,9 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
                 'testing', p.Results.testing, ...
                 'order', p.Results.order, ...
                 'max_bond_dim', p.Results.max_bond_dim, ...
-                'do_loops', p.Results.do_loops,...
-                'loop_extension',p.Results.loop_extension);
+                'do_loops', p.Results.do_loops, ...
+                'complex', p.Results.complex, ...
+                'loop_extension', p.Results.loop_extension);
 
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 
