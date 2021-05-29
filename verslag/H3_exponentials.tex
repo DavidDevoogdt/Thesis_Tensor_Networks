@@ -48,7 +48,7 @@ One practical way of finding the ground state $ \ket{E_0}$ is to cool down a giv
     \ket{E_0} = \lim_{\beta \rightarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } ,\quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)} .
 \end{equation}
 
-\subsection{\Gls{TN} methods}\label{rt_tn_methods}
+\subsection{ TN methods}\label{rt_tn_methods}
 In the following section I will give a very short review of the current \Gls{TN} methods to simulate real or imaginary time evolution. This overview is mainly based on the review paper \cite{Paeckel2019}.
 
 % https://arxiv.org/pdf/1901.05824.pdf
@@ -69,7 +69,7 @@ Time-evolving block decimation (\Gls{TEBD})  uses the Trotter-Suzuki decompositi
 \end{equation}
 This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made arbitrarily small. This can be generalised to higher order schemes.
 
-\paragraph{ \Gls{MPO} $W^{I,II}$}
+\paragraph{ MPO $W^{I,II}$}
 These methods directly use the \Gls{MPO} representation of a certain Hamiltonian
 %https://tensornetwork.org/mps/algorithms/timeevo/
 This is a more recent method (2015) to construct an \Gls{MPO} first detailed in \cite{Zaletel2015}. The idea is to generalise

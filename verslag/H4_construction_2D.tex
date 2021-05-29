@@ -3,7 +3,7 @@ While there were some interesting choices in the 1D construction, the number of 
 \subsection{Linear blocks}
 
 \begin{equation}
-    \mpob{1}{ {,}  }{}{}{}{{,,}} = \vcenter{ \hbox{ \pepob{4}{3}{{
+    O^{0 0 0 0 }= \mpob{1}{ {,}  }{}{}{}{{,,}} = \vcenter{ \hbox{ \pepob{4}{3}{{
                         "-","-","-",
                         "-","0","0",
                         "-","-","-"}}{{
@@ -15,9 +15,9 @@ While there were some interesting choices in the 1D construction, the number of 
                         1,4,12,4,
                         1,1,4,1}} }}
 \end{equation}
-This block now contains 2 physical indices (which will again be hid later on) and 4 virtual legs. Similar to 1D construction, the 0 legs and physical indices are hidden. The next blocks are:
+This block now contains 2 physical indices and 4 virtual legs. Similar to 1D construction, the 0 legs and physical indices are hidden. The next order 2 blocks are
 \begin{equation}\label{2dblocksorder2}
-    \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}}  \pepob{2}{2}{{,,}}{{"1",,}}{{0,1,0,1}}
+    \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}}  \pepob{2}{2}{{,,}}{{"1",,}}{{0,1,0,1}}.
 \end{equation}
 From 3 blocks onwards, the number of extra blocks start to increase:
 \begin{equation}
@@ -26,14 +26,14 @@ From 3 blocks onwards, the number of extra blocks start to increase:
         \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,1,1}} \; \pepob{2}{3}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,1,0,1,0,1}}
     \end{split}
 \end{equation}
-Of course, besides linear blocks also T and + shapes need to be constructed to fully capture the model.
+Of course, besides linear blocks also $\perp$ and + shapes need to be constructed to fully capture the model.
 \begin{equation}
     \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}}
 \end{equation}
 \begin{equation}
     \pepob{3}{3}{{"1","1","1","1","1","1",}}{{"1","1","1","1","1","1",}}{{1,0,1,0,0,0,1,0,1}}
 \end{equation}
-Here, and in the following, care has to be taken in which order the blocks are made. In general, every block which fits in the given block needs to be constructed earlier. The construction continues by introducing a 2 block as before:
+Here, and in the following, care has to be taken in which order the blocks are added. In general, every block which fits in the given block needs to be constructed earlier. The construction continues by introducing a virtual level 2 as before:
 \begin{equation}
     \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}
 \end{equation}
@@ -44,29 +44,29 @@ Again, 2 blocks are introduced. For other variations of the linear chain, only o
         &\pepob{3}{2}{{"2","1",,}}{{"1","1",,,}}{{0,0,0,0,1,1}}
     \end{split}
 \end{equation}
-Due to the way they are constructed, the error for every linear chain of a given length will be the same as in the 1D case. Once again, all possible T and + blocks are created. Some of these blocks are shown here:
+Due to the way they are constructed, the error for every linear chain of a given length will be the same as in the 1D case. Once again, all possible $\perp$  and + blocks are created. Some of these blocks are shown here:
 \begin{equation} \label{eq:cross_terms:order4}
-    \pepob{4}{3}{{
-                "-","-","-",
-                "1","2","1",
-                "-","-","-"}}{{
-                "-","-",
-                "-","-",
-                "1","-",
-                "-","-"}}{{
-                1,1,0,1,
-                0,0,0,0,
-                1,1,1,1}}  \pepob{4}{3}{{
-                "-","-","-",
-                "1","2","1",
-                "-","-","-"}}{{
-                "-","-",
-                "-","-",
-                "1","1",
-                "-","-"}}{{
-                1,1,0,1,
-                0,0,0,0,
-                1,1,0,1}}
+    \vcenter{\hbox{ \pepob{4}{3}{{
+                        "-","-","-",
+                        "1","2","1",
+                        "-","-","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "1","-",
+                        "-","-"}}{{
+                        1,1,0,1,
+                        0,0,0,0,
+                        1,1,1,1}}  \pepob{4}{3}{{
+                        "-","-","-",
+                        "1","2","1",
+                        "-","-","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "1","1",
+                        "-","-"}}{{
+                        1,1,0,1,
+                        0,0,0,0,
+                        1,1,0,1}} }}
 \end{equation}
 \begin{equation} \label{eq:cross_terms:order5}
     \begin{split}
@@ -135,13 +135,24 @@ Due to the way they are constructed, the error for every linear chain of a given
                     1,1,0,1,1,
                     0,0,0,0,0,
                     1,1,0,1,1,
-                    1,1,0,1,1}}
+                    1,1,0,1,1}} \; .
     \end{split}
-\end{equation}.
-
-For each block show, there are still multiple permutations of the legs possible. It is clear that a completely automated solver is needed to construct all these different blocks. From here on, the construction generalises easily to higher block numbers, and to higher dimensions.
-
-The difference between \cref{eq:cross_terms:order4} and the blocks in \cref{eq:cross_terms:order4} is in the larger chain. For \cref{eq:cross_terms:order4}, only chains of order 4 are present, while  \cref{eq:cross_terms:order5} has chains of length 5. It seems that when a virtual level is present, it is most advantageous to create both chains and all blocks, but this will not be the case when a virtual level is truncated.
+\end{equation}
+For each block shown, there are still multiple permutations of the legs possible. Due to the way the virtual level 1 blocks were added, all variations are captured, such as
+\begin{equation}
+    \vcenter{\hbox{ \pepob{4}{3}{{
+                        "-","-","-",
+                        "1","2","1",
+                        "-","-","-"}}{{
+                        "-","-",
+                        "-","1",
+                        "1","-",
+                        "-","-"}}{{
+                        1,1,0,1,
+                        1,0,0,0,
+                        1,0,1,1}} }} \; .
+\end{equation}
+It is clear that a completely automated solver is needed to construct all these different blocks. From here on, the construction generalises easily to higher block numbers, and to higher dimensions. The difference between \cref{eq:cross_terms:order4} and the blocks in \cref{eq:cross_terms:order4} is the longest chain that fit in the geometry. For \cref{eq:cross_terms:order4}, only chains of order 4 are present, while  \cref{eq:cross_terms:order5} has chains of length 5. It seems that when a virtual level is present, it is most advantageous to create both the even and odd order chains, but this will not be the case when a virtual level is truncated.
 
 \subsection{Loops}
 
@@ -149,7 +160,6 @@ While the blocks above certainly encode many finite-size patches, there are stil
 \begin{equation}
     {\pepob{2}{2}{{"","",}}{{"","",}}{{0,0,0,0}}}
 \end{equation}
-
 It is clear that this problem cannot be solved with the techniques from the previous section. The square loop needs a new virtual level $\alpha$. In general, all the loop levels will be named with Greek letters for convenience. The simplest choice for the loop is:
 \begin{equation}\label{tikzfig:plaquetter}
     {\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}}
@@ -187,68 +197,66 @@ With the given blocks, the following combination is also possible
                 1,0,0,0,1,
                 1,1,0,0,1}}
 \end{equation}
-This results in very large errors, and it would require many more blocks to be added in order to counteract this. Luckily, there are many options in 2D. One example is:
+This results in very large errors, and it would require many more blocks to be added in order to counteract this. Luckily, there are many possibilities in 2D. One example is
 \begin{equation}\label{eq:loop_1ext}
-    \pepob{5}{3}{{
-                "-","-", "-",     "-",
-                "-","1","$\beta$","-",
-                "-","-","$\alpha$","-"}}{{
-                "-","-",
-                "-","-",
-                "-","$\gamma$",
-                "-","$\alpha$",
-                "-","-"}}{{
-                1,1,1,1,1,
-                1,0,0,0,1,
-                1,1,0,0,1}}
+    \vcenter{\hbox{ \pepob{5}{3}{{
+                        "-","-", "-",     "-",
+                        "-","1","$\beta$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "-","$\gamma$",
+                        "-","$\alpha$",
+                        "-","-"}}{{
+                        1,1,1,1,1,
+                        1,0,0,0,1,
+                        1,1,0,0,1}}}} \; .
 \end{equation}
-No other combinations are possible, except a loop with on one corner an extension. Of course, there is no need to stop here, the following blocks can now be constructed easily.
-
+Different to the $\alpha$-cornerpiece, only a loop with on one corner an extension is possible. Of course, there is no need to stop here, the following blocks can now be constructed easily
 \begin{equation}\label{eq:s_loop_ext}
-    \pepob{5}{3}{{
-                "-","-", "-",     "-",
-                "1","2","$\beta$","-",
-                "-","-","$\alpha$","-"}}{{
-                "-","-",
-                "-","-",
-                "-","$\gamma$",
-                "-","$\alpha$",
-                "-","-"}}{{
-                1,1,1,1,1,
-                0,0,0,0,1,
-                1,1,0,0,1}} \; \pepob{5}{3}{{
-                "-","-", "-",     "-",
-                "-","1","$\beta$","-",
-                "-","-","$\alpha$","-"}}{{
-                "-","-",
-                "-","-",
-                "1","$\gamma$",
-                "-","$\alpha$",
-                "-","-"}}{{
-                1,1,0,1,1,
-                1,0,0,0,1,
-                1,1,0,0,1}}
+    \vcenter{\hbox{  \pepob{5}{3}{{
+                        "-","-", "-",     "-",
+                        "1","2","$\beta$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "-","$\gamma$",
+                        "-","$\alpha$",
+                        "-","-"}}{{
+                        1,1,1,1,1,
+                        0,0,0,0,1,
+                        1,1,0,0,1}} \quad \pepob{5}{3}{{
+                        "-","-", "-",     "-",
+                        "-","1","$\beta$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "1","$\gamma$",
+                        "-","$\alpha$",
+                        "-","-"}}{{
+                        1,1,0,1,1,
+                        1,0,0,0,1,
+                        1,1,0,0,1}} }} \; .
 \end{equation}
 
 \subsubsection{Double extensions}
 
-It seems as if one of the corner pieces can be used as follows:
+It seems as if one of the corner pieces can be used as follows
 \begin{equation}
-    \pepob{5}{3}{{
-                "-","-", "-",     "-",
-                "-","1","$\beta$","-",
-                "-","-","$\alpha$","-"}}{{
-                "-","-",
-                "-","-",
-                "-","$\gamma$",
-                "1","$\alpha$",
-                "-","-"}}{{
-                1,1,1,0,1,
-                1,0,0,0,1,
-                1,1,0,0,1}}
+    \vcenter{\hbox{  \pepob{5}{3}{{
+                        "-","-", "-",     "-",
+                        "-","1","$\beta$","-",
+                        "-","-","$\alpha$","-"}}{{
+                        "-","-",
+                        "-","-",
+                        "-","$\gamma$",
+                        "1","$\alpha$",
+                        "-","-"}}{{
+                        1,1,1,0,1,
+                        1,0,0,0,1,
+                        1,1,0,0,1}} }} \; ,
 \end{equation}
-
-But in other to make a meaningful change in the residual error, the bond dimension of both $\alpha$ and $\beta$ needs to be enlarged significantly. It is more advantageous to introduce yet another level $\delta$, which forms the link between the 2 parts. As both corner tensors can be optimised at once, the total bond dimension is lower than for the previous suggestion, but still larger than the dimensions of the other loop levels.
+But in order to make a meaningful change in the residual error, the bond dimension of both $\alpha$ and $\beta$ needs to be enlarged significantly. It is more advantageous to introduce yet another level $\delta$, which forms the link between the 2 parts. As both corner tensors can be optimised at once, the total bond dimension is lower than for the previous suggestion, but still larger than the dimensions of the other loop levels.
 
 \begin{equation}
     \pepob{5}{3}{{
@@ -266,32 +274,31 @@ But in other to make a meaningful change in the residual error, the bond dimensi
 \end{equation}
 
 \subsubsection{Larger loops}
-One question which comes to mind is where the focus should be for the construction. Making blocks for all possible single loop extensions comes at an increasing cost in total bond dimension. From a physics point of view, the model will be better approximated when the smallest non-solved patch is solved by introducing new blocks. On the other hand, the already included blocks may cause an error which was not present before the blocks were introduced. One example is a linear chain which closes upon itself, in for instance a 2 by 3 rectangle. Another example are + blocks which connect upon themselves in the following shape:
-
+One question which comes to mind is where the focus should be for the construction. Making blocks for all possible single loop extensions comes at an increasing cost in total bond dimension. From a physics point of view, the model will be better approximated when the smallest non-solved patch is solved by introducing new blocks. On the other hand, the already included blocks may cause an error which was not present before the blocks were introduced. One example is a linear chain which closes upon itself, in for instance a 2 by 3 rectangle. Another example are + blocks which connect upon themselves in the following shapes
 \begin{equation}
-    \pepob{5}{3}{{
-                "","","","",
-                "","","","",
-                "","","",""}}{{
-                "","",
-                "","",
-                "","",
-                "","",
-                "",""}}{{
-                1,0,0,1,1,
-                1,0,0,0,1,
-                1,1,0,0,1}}   \;    \pepob{5}{3}{{
-                "","","","",
-                "","","","",
-                "","","",""}}{{
-                "","",
-                "","",
-                "","",
-                "","",
-                "",""}}{{
-                1,1,0,0,1,
-                1,0,0,0,1,
-                1,0,0,1,1}}
+    \vcenter{\hbox{  \pepob{5}{3}{{
+                        "","","","",
+                        "","","","",
+                        "","","",""}}{{
+                        "","",
+                        "","",
+                        "","",
+                        "","",
+                        "",""}}{{
+                        1,0,0,1,1,
+                        1,0,0,0,1,
+                        1,1,0,0,1}}  }}  \quad   \vcenter{\hbox{   \pepob{5}{3}{{
+                        "","","","",
+                        "","","","",
+                        "","","",""}}{{
+                        "","",
+                        "","",
+                        "","",
+                        "","",
+                        "",""}}{{
+                        1,1,0,0,1,
+                        1,0,0,0,1,
+                        1,0,0,1,1}} }} .
 \end{equation}
 One way to solve this, without breaking the rotation pattern of $\beta$ and $\gamma$, is
 \begin{equation}
@@ -308,13 +315,22 @@ One way to solve this, without breaking the rotation pattern of $\beta$ and $\ga
                 1,0,0,0,1,
                 1,1,0,0,1}}
 \end{equation}
-But this block introduces an infinite tiling, corrupting the expansion.
-
-\subsubsection{Other ideas}
-
-Here it starts to get really tricky.
-
-\todo{Add more}
+Many more blocks were tried, such as blocks to solve
+\begin{equation}
+    \pepob{5}{3}{{
+                "","","","",
+                "","","","",
+                "","","",""}}{{
+                "","",
+                "","",
+                "","",
+                "","",
+                "",""}}{{
+                1,1,1,1,1,
+                1,0,0,0,1,
+                1,0,0,0,1}}.
+\end{equation}
+Many expansion were tried and failed, including the double extensions and larger loops discussed here. In \cref{subsec:results:loops_and_ext}, it is explained why the results of these additions were not very reliable.
 
 \subsubsection{Bond dimension}
 
