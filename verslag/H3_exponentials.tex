@@ -3,31 +3,31 @@ While it is often possible to find exact \Gls{MPO} representation to represent a
 
 \subsection{Statistical mechanics}\label{subsec:statmech}
 
-The physics of a system in thermodynamic equilibrium can be derived from its partition function Z. The classical formula generalises to a density matrix $\rho$ as follows:
+The physics of a system in thermodynamic equilibrium can be derived from its partition function Z. The classical formula generalises to a density matrix $\rho$ as follows
 \begin{equation}
-    \begin{split}
-        Z &= \sum e^{ - \beta E_n} \\
-        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
-        &= \Tr( e^{ - \beta \hat{H} } )
-    \end{split}
+  \begin{split}
+    Z &= \sum e^{ - \beta E_n} \\
+    &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
+    &= \Tr( e^{ - \beta \hat{H} } ).
+  \end{split}
 \end{equation}
 The first line is the partition function for classical discrete systems. The index n runs over all possible microstates. It is known that the probability to find the system in a given microstate is given by
 \begin{equation}
-    p_i = \frac{\sum e^{ - \beta E_i}}{Z} .
+  p_i = \frac{\sum e^{ - \beta E_i}}{Z} .
 \end{equation}
 A useful quantity is the density matrix $\rho$:
 \begin{equation}
-    \begin{split}
-        \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
-        &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j} .
-    \end{split}
+  \begin{split}
+    \rho &= \sum_j p_i  \Ket{ \Psi_j} \Bra{\Psi_j}   \\
+    &= \sum_j \frac{ e^{ - \beta \hat{H} } }{Z}  \Ket{ \Psi_j} \Bra{\Psi_j} .
+  \end{split}
 \end{equation}
 With this notation, the partition function Z and ensemble average of an operator $\hat{X}$ are given by:
 \begin{equation}
-    \begin{split}
-        Z &= \Tr( \rho) \\
-        \Braket{X} &= \Tr(\rho \hat{X}) .
-    \end{split}
+  \begin{split}
+    Z &= \Tr( \rho) \\
+    \Braket{X} &= \Tr(\rho \hat{X}) .
+  \end{split}
 \end{equation}
 
 \subsection{Applications}
@@ -35,17 +35,17 @@ With this notation, the partition function Z and ensemble average of an operator
 \subsubsection{Temporal correlation functions}
 The dynamical behaviour of a system can be captured by its dynamic correlation function:
 \begin{equation}
-    \begin{split}
-        C(r,t) &= \left<  \hat{X}(0,0) \hat{X}(r,t)  \right >\\
-        &=  \left<  \hat{X}(0)  e^{i \hat{H} t}  \hat{X}(r)  e^{-i \hat{H} t}   \right >
-    \end{split}
+  \begin{split}
+    C(r,t) &= \left<  \hat{X}(0,0) \hat{X}(r,t)  \right >\\
+    &=  \left<  \hat{X}(0)  e^{i \hat{H} t}  \hat{X}(r)  e^{-i \hat{H} t}   \right >
+  \end{split}
 \end{equation}
 This requires time evolution operators $e^{-i \hat{H} t}$.
 
 \subsubsection{Ground state}
 One practical way of finding the ground state $ \ket{E_0}$ is to cool down a given random state $ \ket{\Psi(0)}$ to very small T (large $\beta$) \cite{Orus2014}:
 \begin{equation}
-    \ket{E_0} = \lim_{\beta \rightarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } ,\quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)} .
+  \ket{E_0} = \lim_{\beta \rightarrow \infty} \frac{e^{-\beta \hat{H} } \ket{\Psi(0)}  }{  \Braket{ \Psi(\beta) | \Psi(\beta) }  } ,\quad  \ket{\Psi(\beta)} =  e^{-\beta \hat{H} } \ket{\Psi(0)} .
 \end{equation}
 
 \subsection{ TN methods}\label{rt_tn_methods}
@@ -55,26 +55,24 @@ In the following section I will give a very short review of the current \Gls{TN}
 
 \subsubsection{Approximations to \texorpdfstring{$ \hat{U}(\delta)$}{U}}
 The goal is to approximately make a \Gls{MPO} for a small timestep $\delta$ which gives a new \Gls{MPS} at time $t+\delta$.
-\paragraph{\Gls{TEBD}}
-Time-evolving block decimation (\Gls{TEBD})  uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
+\paragraph{TEBD}
+\Gls{TEBD} uses the Trotter-Suzuki decomposition. Suppose the chain is split in even and odd sites.
 \begin{equation}
-    \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
+  \hat{H} = \hat{H}_{\text{even}}+\hat{H}_{\text{even}}
 \end{equation}
 
 \begin{equation}\label{trotter_exp}
-    \begin{split}
-        \hat{U} = e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }e^{-i \delta \left[ \hat{H}_{\text{even}}, \hat{H}_{\text{odd}} \right] }\\
-        \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
-    \end{split}
+  \begin{split}
+    \hat{U} = e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }e^{-i \delta \left[ \hat{H}_{\text{even}}, \hat{H}_{\text{odd}} \right] }\\
+    \approx e^{-i \delta \hat{H}_{\text{even}}}  e^{-i \delta \hat{H}_{\text{even}} }
+  \end{split}
 \end{equation}
 This is now easy to solve: first apply $e^{-i \delta \hat{H}_{\text{even}}}$ for every even bond and afterwards  $e^{-i \delta \hat{H}_{\text{odd}}}$. The error is $O(\delta^2)$ and the number of steps to reach temperature $\beta$ is $\beta / \delta$. The error can be made arbitrarily small. This can be generalised to higher order schemes.
 
 \paragraph{ MPO $W^{I,II}$}
-These methods directly use the \Gls{MPO} representation of a certain Hamiltonian
-%https://tensornetwork.org/mps/algorithms/timeevo/
-This is a more recent method (2015) to construct an \Gls{MPO} first detailed in \cite{Zaletel2015}. The idea is to generalise
+These methods directly use the \Gls{MPO} representation of a certain Hamiltonian to construct the time step. This is a more recent method (2015) , and was first detailed in \cite{Zaletel2015}. The idea is to generalise
 \begin{equation}
-    1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
+  1+ \delta \sum_x H_x \rightarrow \prod_x (1+  \delta H_x)
 \end{equation}
 The error is formally still $O(\delta^2)$, but includes many more terms. The advantages lay in the fact that the form above has an efficient representation as an \Gls{MPO}. \Gls{MPO} $W^I$ and $W^{II}$ are capable of dealing with long-ranged interaction terms which makes it suitable to simulate 2D systems \cite{Paeckel2019}.
 
@@ -89,7 +87,7 @@ The Krylov methods from the previous paragraph can be adapted to work on a reduc
 
 \paragraph{TDVP} Time-dependent variational principle (TDVP) can be seen as a further development of the local Krylov method. Its also been formulated in as a tangent space algorithm, similar to the \Gls{VUMPS} derivation (\cref{vumps_Deriv}). The Schrödinger equation becomes
 \begin{equation}
-    i \frac{\partial \ket{ \Psi( A(t) ) }}{\partial t} = \mathcal{P}_{ A ( t) }  H  \ket{ \Psi( A (t) ) } .
+  i \frac{\partial \ket{ \Psi( A(t) ) }}{\partial t} = \mathcal{P}_{ A ( t) }  H  \ket{ \Psi( A (t) ) } .
 \end{equation}
 Where the right-hand side is projected on the tangent space, because the left-hand side is also a tangent vector. (See \cite{Vanderstraeten2019}).
 

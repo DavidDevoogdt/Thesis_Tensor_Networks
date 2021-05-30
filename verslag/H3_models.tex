@@ -10,7 +10,7 @@ The Ising model, in essence, assigns an energy contribution to neighbouring spin
 
 The classical Ising model is given by the Hamiltonian
 \begin{equation}
-    H = -J \left (  \sum_{\Braket{i j }} \sigma_i \sigma_j + h \sum_i \sigma_i \right ),
+  H = -J \left (  \sum_{\Braket{i j }} \sigma_i \sigma_j + h \sum_i \sigma_i \right ),
 \end{equation}
 where $  \Braket{i j }$ runs over all neighbouring lattice sites. The possible values of $\sigma$ depends on the spin dimension. For spin $1/2$ lattices $\sigma \in {-1,+1}$. g encodes the interaction strength of the external magnetic field. The sign J determines the low temperature ground state. A positive J will tend to align all neighbouring spins at low temperature. This is often called ferromagnetic, because all the aligned spins cause a macroscopic magnetisation. On the other hand, a negative J causes neighbouring spins to have an opposite sign. Depending on the sign of the longitudinal field h, the spins tend to align or antialign with this external field. This lifts the degeneracy of the ground state.
 
@@ -26,7 +26,7 @@ In 2D, it becomes important to define the lattice. Here, and in the simulations,
 
 As we all know, the real world behaves, certainly at small length and time scales, quantum mechanically. Therefore, it is important to understand how the \acrfull{TFI} model differs from the classical model. In the \Gls{TFI} model, the operators no longer commute with each other. An example is the \Gls{TFI} model given by the  Hamiltonian
 \begin{equation}
-    \hat{H} = -J \left (  \sum_{\Braket{i j }} \sigma^x_i \sigma^x_j + g \sum_i \sigma^z_i \right ) .
+  \hat{H} = -J \left (  \sum_{\Braket{i j }} \sigma^x_i \sigma^x_j + g \sum_i \sigma^z_i \right ) .
 \end{equation}
 In the case that $g=0$, this is the classical Ising model (in the $h=0$ case).
 
@@ -35,24 +35,24 @@ Different to the classical case, the 1D model contains a quantum phase transitio
 
 \paragraph{2D}
 
-The 2D phase diagram of the \Gls{TFI} model is shown in \cref{2dtisingphasediag}. The notation $\Gamma=g$ is taken in this figure. The classical phase transition is visible at $g=0$. The red dot is the quantum critical point, situated at $ G \approx 3.04  $. A part of this phase diagram will be reproduced in \cref{subsec:qphasediag}.
+The 2D phase diagram of the \Gls{TFI} model is shown in \cref{2dtisingphasediag}. The notation $\Gamma=g$ is taken in this figure. The classical phase transition is visible at $g=0$. The red dot is the quantum critical point, situated at $ g \approx 3.04  $. A part of this phase diagram will be reproduced in \cref{subsec:qphasediag}.
 
 \begin{figure}[!htbp]
-    \center
-    \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
-    \caption{Phase diagram for 2D \Gls{TFI} model. Figure taken from \cite{Hesselmann2016}.}
-    \label{2dtisingphasediag}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/phsyics/2disingphase.png}
+  \caption{Phase diagram for 2D \Gls{TFI} model. Figure taken from \cite{Hesselmann2016}.}
+  \label{2dtisingphasediag}
 \end{figure}
 
 \subsection{Heisenberg}
 
 The Heisenberg model is given by
 \begin{equation}
-    \hat{H} =  -\left( \sum_{\Braket{i j }} J_x \sigma^z_i \sigma^z_j + J_y \sigma^y_i \sigma^y_j+ J_z \sigma^z_i \sigma^z_j + h \sum_i \sigma^z_i \right ).
+  \hat{H} =  -\left( \sum_{\Braket{i j }} J_x \sigma^z_i \sigma^z_j + J_y \sigma^y_i \sigma^y_j+ J_z \sigma^z_i \sigma^z_j + h \sum_i \sigma^z_i \right ).
 \end{equation}
-This is a whole class of models, and they have different names depending on the values of $J_{\alpha} $ with $\alpha=x,y,z$. E.g. $J_x = J_y \neq J_z = \Delta$ is called the XXZ model, because the weight for $\sigma^z$ is different. The isotropic version or simply Heisenberg model in the remainder of this thesis, which will be simulated in \cref{chap:results}. The model is
+This is a whole class of models, and they have different names depending on the values of $J_{\alpha} $ with $\alpha=x,y,z$. E.g. $J_x = J_y \neq J_z = \Delta$ is called the XXZ model, because the weight for $\sigma^z$ is different. The isotropic version or simply Heisenberg model in the remainder of this thesis, will be simulated in \cref{chap:results}. The model is
 \begin{equation}
-    \hat{H} =  -J \left( \sum_{\Braket{i j }} \vec{\sigma} \cdot \vec{\sigma} \right ).
+  \hat{H} =  -J \left( \sum_{\Braket{i j }} \vec{\sigma} \cdot \vec{\sigma} \right ).
 \end{equation}
 
 \subsection{Random}\label{randhamexpl}
@@ -62,15 +62,13 @@ It's also possible to construct random Hamiltonians. This is a useful, because i
 
 In a certain sense, a quantum model in d dimensions can be mapped to a classical model in d+1 dimension. Due to the Lie product formula
 \begin{equation}
-    e^{A+B} = \lim_{M \to \infty } ( e^{A/M} e^{B/M}  )^M
+  e^{A+B} = \lim_{M \to \infty } ( e^{A/M} e^{B/M}  )^M
 \end{equation}
 we can rewrite the partition function as
-\begin{equation}
-    \begin{split}
-        Z &= \sum_n e^{ - \beta E_n} \\
-        &= \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \\
-        &= \sum_{n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
-        &= \sum_{  n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1} \\
-    \end{split}
-\end{equation}
-where completeness relations $ I = \sum_{n_i}  \ket{ n_i } \bra{ n_i}  $ inserted M times in line 3. This is similar to a path integral. The quantum imaginary time has become a spatial dimension. The quantum model of d dimensions now has the structure of a classical model in d+1 dimensions. In this way, the 2D \Gls{TFI} model can be mapped to the 3D classical Ising model \cite{Hsieh}.
+\begin{align}
+  Z & = \sum_n e^{ - \beta E_n} \nonumber                                                                                                                                                       \\
+    & = \sum_n \Braket{n | e^{ - \beta \hat{H} }  | n} \nonumber                                                                                                                                \\
+    & = \sum_{n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1}  \nonumber \\
+    & = \sum_{  n_1 \cdots n_M} \Braket{n_1 | e^{ - \beta \hat{H} /M}  | n_2}  \Braket{n_2 | e^{ - \beta \hat{H} /M }  | n_3} \cdots  \Braket{n_{M} | e^{ - \beta \hat{H} /M }  | n_1}          \\
+\end{align}
+where the completeness relation $ I = \sum_{n_i}  \ket{ n_i } \bra{ n_i}  $ is inserted M times on line 3. This is similar to a path integral. The quantum imaginary time has become a spatial dimension. The quantum model of d dimensions now has the structure of a classical model in d+1 dimensions. In this way, the 2D \Gls{TFI} model can be mapped to the 3D classical Ising model \cite{Hsieh}.

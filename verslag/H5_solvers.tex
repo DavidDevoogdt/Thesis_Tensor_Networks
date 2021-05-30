@@ -1,13 +1,13 @@
-Solving the blocks introduced in the previous sections need 2 different approaches. The graphs of the maps can be split in 2 groups. The first one, considers problems where there are no loops and at most one node with more than 2 legs Examples include:
+Solving the blocks introduced in the previous sections need 2 different approaches. The graphs of the maps can be split in 2 groups. The first one, considers problems where there are no loops and at most one node with more than 2 legs. Examples include:
 $ \vcenter{\hbox{ \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}} }} \text{and} \vcenter{\hbox{  \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}} }}$ (see \cref{subsec:lin_block_Def}).
 These will be reduced to a standard matrix problem, and solve with matrix (pseudo-) inversion. The other group, of course, constitutes the nonlinear problems. This includes every problem where a block (or rotated version) occurs more than once, problems which include loops, ...
 
 \subsection{Linear solver} \label{subsec:linear_solver}
 
-The linear solver is a general purpose block solver which reduces the problem to a set of linear matrix equations. The linear have a tree structure, where the new block is the root of the tree, and all the branches need to be inverted.  Let $ I^m = (i^1_1 i^1_2 \cdots i^1_{n_1})$ be all the physical indices of one leg m and $\alpha^m$ the index between leg m and unknown matrix X. Then the problem can in general, after some tedious tensor leg bookkeeping, be rewritten in the following form
+The linear solver is a general purpose block solver which reduces the problem to a set of linear matrix equations. The linear blocks have a tree structure, where the new block is the root of the tree, and all the branches need to be inverted.  Let $ I^m = (i^1_1 i^1_2 \cdots i^1_{n_1})$ be all the physical indices of one leg m and $\alpha^m$ the index between leg m and unknown matrix X. Then the problem can in general, after some tedious tensor leg bookkeeping, be rewritten in the following form
 
 \begin{equation}\label{axb}
-    A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }  =  B_{  I_1  I_2 \cdots I_m   j }
+  A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }  =  B_{  I_1  I_2 \cdots I_m   j }
 \end{equation}
 
 Here $i^M_N$ has the following meaning: M numbers the different legs or branches of the tree, N number of sites of the leg and i numbers the bra and ket states and has dimension $d^2$. Hence, the bond dimension of $I_n= d^{2 n_m }$.
@@ -18,194 +18,194 @@ Here $i^M_N$ has the following meaning: M numbers the different legs or branches
 
 \def \pepoat {\begin{tikzpicture}[baseline=0.5]
 
-        \def \legLength { 0.8}
-        \def \radius {0.1}
+    \def \legLength { 0.8}
+    \def \radius {0.1}
 
-        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+    \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+    \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-        \node[draw,minimum size=0.6cm] (O0) at (0,0) {X};
-        \draw (0.15,0.15) -- ++(0.3,0.3);
+    \node[draw,minimum size=0.6cm] (O0) at (0,0) {X};
+    \draw (0.15,0.15) -- ++(0.3,0.3);
 
-        \node[draw, circle,radius=\radius] (L1) at (-1,0) {};
-        \node[draw, circle,radius=\radius] (L2) at (-2,0) {};
-        \node[draw, circle,radius=\radius] (L3) at (-3,0) {};
+    \node[draw, circle,radius=\radius] (L1) at (-1,0) {};
+    \node[draw, circle,radius=\radius] (L2) at (-2,0) {};
+    \node[draw, circle,radius=\radius] (L3) at (-3,0) {};
 
-        \node[draw, circle,radius=\radius] (U1) at (0,1) {};
-        \node[draw, circle,radius=\radius] (U2) at (0,2) {};
+    \node[draw, circle,radius=\radius] (U1) at (0,1) {};
+    \node[draw, circle,radius=\radius] (U2) at (0,2) {};
 
-        \node[draw, circle,radius=\radius] (D1) at (0,-1) {};
+    \node[draw, circle,radius=\radius] (D1) at (0,-1) {};
 
-        \node[draw, circle,radius=\radius] (R1) at (1,0) {};
+    \node[draw, circle,radius=\radius] (R1) at (1,0) {};
 
-        \draw (O0) -- node [above] {3}  (L1);
-        \draw (L2) -- node [above] {2}  (L1);
-        \draw (L2) -- node [above] {1}  (L3);
+    \draw (O0) -- node [above] {3}  (L1);
+    \draw (L2) -- node [above] {2}  (L1);
+    \draw (L2) -- node [above] {1}  (L3);
 
-        \draw (O0) -- node [left] {2}  (U1);
-        \draw (U2) -- node [left] {1}  (U1);
+    \draw (O0) -- node [left] {2}  (U1);
+    \draw (U2) -- node [left] {1}  (U1);
 
-        \draw (O0) -- node [above] {1}  (R1);
+    \draw (O0) -- node [above] {1}  (R1);
 
-        \draw (O0) --  node [left] {1} (D1);
+    \draw (O0) --  node [left] {1} (D1);
 
-        \draw (L1.center) -- ++(0.2,0.2);
-        \draw (L2.center) -- ++(0.2,0.2);
-        \draw (L3.center) -- ++(0.2,0.2);
-        \draw (U1.center) -- ++(0.2,0.2);
-        \draw (U2.center) -- ++(0.2,0.2);
-        \draw (R1.center) -- ++(0.2,0.2);
-        \draw (D1.center) -- ++(0.2,0.2);
+    \draw (L1.center) -- ++(0.2,0.2);
+    \draw (L2.center) -- ++(0.2,0.2);
+    \draw (L3.center) -- ++(0.2,0.2);
+    \draw (U1.center) -- ++(0.2,0.2);
+    \draw (U2.center) -- ++(0.2,0.2);
+    \draw (R1.center) -- ++(0.2,0.2);
+    \draw (D1.center) -- ++(0.2,0.2);
 
-    \end{tikzpicture}}
+  \end{tikzpicture}}
 
 \def \blockat {  \begin{tikzpicture}[baseline=0.5]
 
-        \def \legLength { 0.8}
-        \def \radius {0.1}
+    \def \legLength { 0.8}
+    \def \radius {0.1}
 
-        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+    \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+    \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-        %\node[draw=none] (O0) at (0,0) {};
-        \node[draw=none,minimum size=0.6cm] (O0) at (0,0) {B};
-        \draw (0.15,0.15) -- ++(0.3,0.3);
+    %\node[draw=none] (O0) at (0,0) {};
+    \node[draw=none,minimum size=0.6cm] (O0) at (0,0) {B};
+    \draw (0.15,0.15) -- ++(0.3,0.3);
 
-        \node[draw=none] (L1) at (-1,0) {};
-        \node[draw=none] (L2) at (-2,0) {};
-        \node[draw=none] (L3) at (-3,0) {};
+    \node[draw=none] (L1) at (-1,0) {};
+    \node[draw=none] (L2) at (-2,0) {};
+    \node[draw=none] (L3) at (-3,0) {};
 
-        \node[draw=none] (U1) at (0,1) {};
-        \node[draw=none] (U2) at (0,2) {};
+    \node[draw=none] (U1) at (0,1) {};
+    \node[draw=none] (U2) at (0,2) {};
 
-        \node[draw=none] (D1) at (0,-1) {};
+    \node[draw=none] (D1) at (0,-1) {};
 
-        \node[draw=none] (R1) at (1,0) {};
+    \node[draw=none] (R1) at (1,0) {};
 
-        %\draw (O0.center) -- ++(0.45,0.45);
-        \draw (L1.center) -- ++(0.2,0.2);
-        \draw (L2.center) -- ++(0.2,0.2);
-        \draw (L3.center) -- ++(0.2,0.2);
-        \draw (U1.center) -- ++(0.2,0.2);
-        \draw (U2.center) -- ++(0.2,0.2);
-        \draw (R1.center) -- ++(0.2,0.2);
-        \draw (D1.center) -- ++(0.2,0.2);
+    %\draw (O0.center) -- ++(0.45,0.45);
+    \draw (L1.center) -- ++(0.2,0.2);
+    \draw (L2.center) -- ++(0.2,0.2);
+    \draw (L3.center) -- ++(0.2,0.2);
+    \draw (U1.center) -- ++(0.2,0.2);
+    \draw (U2.center) -- ++(0.2,0.2);
+    \draw (R1.center) -- ++(0.2,0.2);
+    \draw (D1.center) -- ++(0.2,0.2);
 
-        \draw (-3.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
-        -- (0.3,0.3) -- (1.3,0.3) -- (1.3,-0.3) -- (0.3,-0.3)
-        -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-3.3,-0.3) -- cycle;
+    \draw (-3.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
+    -- (0.3,0.3) -- (1.3,0.3) -- (1.3,-0.3) -- (0.3,-0.3)
+    -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-3.3,-0.3) -- cycle;
 
-    \end{tikzpicture}}
+  \end{tikzpicture}}
 
 \def \pepobt {\begin{tikzpicture}[baseline=0.5]
 
-        \def \legLength { 0.8}
-        \def \radius {0.1}
+    \def \legLength { 0.8}
+    \def \radius {0.1}
 
-        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+    \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+    \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-        %\node[draw, circle, radius=\radius] (O0) at (0,0) {};
-        \node[draw,minimum size=0.6cm] (O0) at (0,0) {X};
-        \draw (0.15,0.15) -- ++(0.3,0.3);
+    %\node[draw, circle, radius=\radius] (O0) at (0,0) {};
+    \node[draw,minimum size=0.6cm] (O0) at (0,0) {X};
+    \draw (0.15,0.15) -- ++(0.3,0.3);
 
-        \node[draw, minimum size=0.6cm] (L1) at (-1,0) {};
-        \node[draw, minimum size=0.6cm] (U1) at (0,1) {};
-        \node[draw, minimum size=0.6cm] (D1) at (0,-1) {};
-        \node[draw, minimum size=0.6cm] (R1) at (1,0) {};
+    \node[draw, minimum size=0.6cm] (L1) at (-1,0) {};
+    \node[draw, minimum size=0.6cm] (U1) at (0,1) {};
+    \node[draw, minimum size=0.6cm] (D1) at (0,-1) {};
+    \node[draw, minimum size=0.6cm] (R1) at (1,0) {};
 
-        \draw (O0) -- (L1);
-        \draw (O0) -- (U1);
-        \draw (O0) -- (R1);
-        \draw (O0) -- (D1);
+    \draw (O0) -- (L1);
+    \draw (O0) -- (U1);
+    \draw (O0) -- (R1);
+    \draw (O0) -- (D1);
 
-        %\draw(O0.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm]  (L1.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (U1.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (R1.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (D1.center) -- ++(0.2,0.2);
+    %\draw(O0.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm]  (L1.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (U1.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (R1.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (D1.center) -- ++(0.2,0.2);
 
-    \end{tikzpicture} }
+  \end{tikzpicture} }
 
 \def \blockbt {   \begin{tikzpicture}[baseline=0.5]
 
-        \def \legLength { 0.8}
-        \def \radius {0.1}
+    \def \legLength { 0.8}
+    \def \radius {0.1}
 
-        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+    \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+    \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-        %\node[draw=none] (O0) at (0,0) {};
-        \node[draw=none,minimum size=0.6cm] (O0) at (0,0) {B};
-        \draw (0.15,0.15) -- ++(0.3,0.3);
+    %\node[draw=none] (O0) at (0,0) {};
+    \node[draw=none,minimum size=0.6cm] (O0) at (0,0) {B};
+    \draw (0.15,0.15) -- ++(0.3,0.3);
 
-        \node[draw=none] (L1) at (-1,0) {};
-        \node[draw=none] (L2) at (-2,0) {};
-        \node[draw=none] (L3) at (-3,0) {};
+    \node[draw=none] (L1) at (-1,0) {};
+    \node[draw=none] (L2) at (-2,0) {};
+    \node[draw=none] (L3) at (-3,0) {};
 
-        \node[draw=none] (U1) at (0,1) {};
-        \node[draw=none] (U2) at (0,2) {};
+    \node[draw=none] (U1) at (0,1) {};
+    \node[draw=none] (U2) at (0,2) {};
 
-        \node[draw=none] (D1) at (0,-1) {};
+    \node[draw=none] (D1) at (0,-1) {};
 
-        \node[draw=none] (R1) at (1,0) {};
+    \node[draw=none] (R1) at (1,0) {};
 
-        %\draw (O0.center) -- ++(0.45,0.45);
-        \draw[line width=0.75mm] (L3.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (U2.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (R1.center) -- ++(0.2,0.2);
-        \draw[line width=0.75mm] (D1.center) -- ++(0.2,0.2);
+    %\draw (O0.center) -- ++(0.45,0.45);
+    \draw[line width=0.75mm] (L3.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (U2.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (R1.center) -- ++(0.2,0.2);
+    \draw[line width=0.75mm] (D1.center) -- ++(0.2,0.2);
 
-        \draw (-3.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
-        -- (0.3,0.3) -- (1.3,0.3) -- (1.3,-0.3) -- (0.3,-0.3)
-        -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-3.3,-0.3) -- cycle;
+    \draw (-3.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
+    -- (0.3,0.3) -- (1.3,0.3) -- (1.3,-0.3) -- (0.3,-0.3)
+    -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-3.3,-0.3) -- cycle;
 
-    \end{tikzpicture} }
+  \end{tikzpicture} }
 
 \def \pepoct { \begin{tikzpicture}[baseline=0.5]
-        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+    \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
 
-        \node[draw=none] (x)  at (0.5,0.5) {X};
+    \node[draw=none] (x)  at (0.5,0.5) {X};
 
-        \node[draw, minimum size=0.6cm] (n1)  at (-1,2) {$A^1$};
-        \node[draw, minimum size=0.6cm] (n2)  at (-1,1) {$A^2$};
-        \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
-        \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
+    \node[draw, minimum size=0.6cm] (n1)  at (-1,2) {$A^1$};
+    \node[draw, minimum size=0.6cm] (n2)  at (-1,1) {$A^2$};
+    \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
+    \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
 
-        \draw (n1) -- node [above] {$\alpha_1$} (0,2);
-        \draw (n2) -- node [above] {$\alpha_2$} (0,1);
-        \draw (n3) -- node [above] {$\alpha_3$} (0,0);
-        \draw (n4) -- node [above] {$\alpha_4$} (0,-1);
+    \draw (n1) -- node [above] {$\alpha_1$} (0,2);
+    \draw (n2) -- node [above] {$\alpha_2$} (0,1);
+    \draw (n3) -- node [above] {$\alpha_3$} (0,0);
+    \draw (n4) -- node [above] {$\alpha_4$} (0,-1);
 
-        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {$I^1$};
-        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {$I^2$};
-        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {$I^3$};
-        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {$I^4$};
+    \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {$I^1$};
+    \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {$I^2$};
+    \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {$I^3$};
+    \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {$I^4$};
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
+    \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
 
-    \end{tikzpicture} }
+  \end{tikzpicture} }
 
 \def \blockct { \begin{tikzpicture}[baseline=3]
-        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+    \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
 
-        \node[draw=none] (x)  at (0.5,0.5) {B};
+    \node[draw=none] (x)  at (0.5,0.5) {B};
 
-        \draw[line width=0.75mm] (-0.3,2)  node [left] {$I^1$}  -- (0,2) ;
-        \draw[line width=0.75mm] (-0.3,1)  node [left] {$I^2$} -- (0,1);
-        \draw[line width=0.75mm] (-0.3,0)  node [left] {$I^3$} -- (0,0);
-        \draw[line width=0.75mm] (-0.3,-1)  node [left] {$I^4$} -- (0,-1);
+    \draw[line width=0.75mm] (-0.3,2)  node [left] {$I^1$}  -- (0,2) ;
+    \draw[line width=0.75mm] (-0.3,1)  node [left] {$I^2$} -- (0,1);
+    \draw[line width=0.75mm] (-0.3,0)  node [left] {$I^3$} -- (0,0);
+    \draw[line width=0.75mm] (-0.3,-1)  node [left] {$I^4$} -- (0,-1);
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
+    \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
 
-    \end{tikzpicture} }
+  \end{tikzpicture} }
 
 \noindent
 An example of this procedure is
 \begin{align}
-    \pepoat                 \; & =  \;\blockat                                     \\
-    \pepobt                 \; & =  \;\blockbt                                     \\
-    \vcenter{\hbox{ \pepoct }} & =\vcenter{\hbox{  \blockct }} . \label{extract_x}
+  \pepoat                 \; & =  \;\blockat                                     \\
+  \pepobt                 \; & =  \;\blockbt                                     \\
+  \vcenter{\hbox{ \pepoct }} & =\vcenter{\hbox{  \blockct }} . \label{extract_x}
 \end{align}
 On the first line, the original problem is shown. Block X is the newly introduced block. The right-hand side $B$ is the residual error, i.e.\ the exponentiated Hamiltonian minus all possible contractions in the network. The second line reorders and groups the physical indices in legs, and transforms the right-hand side accordingly. The third line shows the tensors in the form of \cref{axb}, including the matching labels.
 
@@ -213,15 +213,15 @@ On the first line, the original problem is shown. Block X is the newly introduce
 
 One way of solving this equation is by performing by contracting the grouping the matrices $A^i$ to one matrix $A = A^1 \otimes A^2 \cdots \otimes A^m$. The equation to solve is
 \begin{equation}
-    \begin{split}
-        &A_{ I^1  I^2 \cdots I^n \alpha^1 \alpha^2 \cdots \alpha^m   } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } \\
-        = &B_{  I^1  I^2 \cdots I^m   j } .
-    \end{split}
+  \begin{split}
+    &A_{ I^1  I^2 \cdots I^n \alpha^1 \alpha^2 \cdots \alpha^m   } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } \\
+    = &B_{  I^1  I^2 \cdots I^m   j } .
+  \end{split}
 \end{equation}
-The fastest way to solve this system is by using a linear solver. This results in some numerical problems. This is a result of the potentially ill conditioned inverses of legs $A^ii$, inherent to the construction. A pseudoinverse of the full matrix can be easily obtained and resolves this issue (see for numerical example \cref{subsec:inversion_procedure}). The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
+The fastest way to solve this system is by using a linear solver. This results in some numerical problems. This is a result of the potentially ill conditioned inverses of legs $A^i$, inherent to the construction. A pseudoinverse of the full matrix can be easily obtained and resolves this issue (see for numerical example \cref{subsec:inversion_procedure}). The pseudoinverse $A^{+}$ of matrix A is calculated as follows:
 \begin{align}
-    A     & = U \Sigma V^{\dagger}      \\
-    A^{+} & = V \Sigma^{+} U^{\dagger},
+  A     & = U \Sigma V^{\dagger}      \\
+  A^{+} & = V \Sigma^{+} U^{\dagger},
 \end{align}
 where for $\Sigma^{+}$ all the non-zero diagonal elements are replaced by their inverse. In the numerical pseudoinverse, every singular value below a given threshold e.g.\ $\sigma_0 = 10^{-12}$ is set to zero. Linear solvers that perform a pseudoinverse also exist. The problem with this full inverse is that the bond dimension increases very fast: matrix A has dimension $d^ {2 \sum_m n_m } \cross d^ {2 \sum_m n_m } $. Although using a linear solver instead of full inversion is considerably faster, this method still becomes computationally infeasible for large systems.
 
@@ -229,12 +229,12 @@ where for $\Sigma^{+}$ all the non-zero diagonal elements are replaced by their 
 
 A second method consist of solving the following sequence of linear problems one leg at a time
 \begin{equation}
-    \begin{split}
-        A^1_{ I^1 \alpha^1 } X^1_{ \alpha^1  I^2 \cdots I^m j} &=  B_{  I_1  I_2 \cdots I_m   j }\\
-        A^2_{ I^2 \alpha^2 } X^2_{ \alpha^1   \alpha^2  I^3 \cdots I^m j} &=  B^1_{  \alpha^1  I_2 \cdots I_m   j }\\
-        &\vdots\\
-        A^m_{ I^m \alpha^m } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } &=  B^{m-1}_{ \alpha^1 \alpha^2 \cdots \alpha^{m-1} I_m   j } \;.\\
-    \end{split}
+  \begin{split}
+    A^1_{ I^1 \alpha^1 } X^1_{ \alpha^1  I^2 \cdots I^m j} &=  B_{  I_1  I_2 \cdots I_m   j }\\
+    A^2_{ I^2 \alpha^2 } X^2_{ \alpha^1   \alpha^2  I^3 \cdots I^m j} &=  B^1_{  \alpha^1  I_2 \cdots I_m   j }\\
+    &\vdots\\
+    A^m_{ I^m \alpha^m } X_{ \alpha^1 \alpha^2 \cdots \alpha^m j  } &=  B^{m-1}_{ \alpha^1 \alpha^2 \cdots \alpha^{m-1} I_m   j } \;.\\
+  \end{split}
 \end{equation}
 Here, $X^1$ is the contraction of tensor $X$ with legs $A^2$ till $A^m$. In the next step, leg $A^2$ is inverted. This continues till the last leg is inverted.
 While this method is very quick and scales well, in practice it results in an unstable scheme. Solving sequentially, the errors of the pseudoinverses (or worse full inverse) accumulate. If there are 4 legs, the threshold needs to be set at $ \sigma_0 = \sqrt[4]{ 10^{-12} } $. The inverse now becomes a bad approximation of the problem, rendering the results useless (but stable).
@@ -244,114 +244,114 @@ While this method is very quick and scales well, in practice it results in an un
 Luckily the problem can be resolved by first performing an \Gls{SVD} decomposition of $A^m_{ I^m \alpha^m } = U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}$ matrices, with S diagonal and U and V unitary. All the $U^m$ matrices can be inverted by applying the Hermitian transpose to the corresponding leg m of B. The tensor $S = S^1 \otimes S^2 \cdots \otimes S^m$ is very sparse and can be (pseudo)-inverted at once. For a full rank construction, $S$  is already diagonal. For truncated constructions (or inverses involving loops), this is no longer the case.
 The last step consist of applying all the matrices $V^m$ to the right-hand side. This is shown in this equation
 \begin{alignat}{1}
-    A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j } & =  B_{  I_1  I_2 \cdots I_m   j }                 \\%%%%%%%%%%%%%%%%%%
-    U^1_{ I_1 \beta^1 } S^1_{\beta^1 \gamma^1}  V^{1\dagger}_{\gamma^1 \alpha^1}                                            & \nonumber                                         \\
-    U^2_{ I_2 \beta^2 } S^2_{\beta^2 \gamma^2}  V^{2\dagger}_{\gamma^2 \alpha^2}                                            & \cdots  \nonumber                                 \\
-    U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}                                            & \nonumber                                         \\
-    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B_{  I_1  I_2 \cdots I_m   j }                 \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    S_{ (\beta^1 \beta^2 \cdots \beta^m) (\gamma^1  \gamma^2 \cdots \gamma^m)  }                                            & \nonumber                                         \\
-    V^{1\dagger}_{\gamma^1 \alpha^1}   V^{2\dagger}_{\gamma^2 \alpha^2}  \cdots  V^{m\dagger}_{\gamma^m \alpha^m}           & \nonumber                                         \\
-    X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B'_{  (\beta_1  \beta_2 \cdots \beta_m )  j }.
+  A^1_{ I^1 \alpha^1 }   A^2_{ I^2 \alpha^2 }  \cdots  A^m_{ I^m \alpha^m }   X_{ \alpha^1  \alpha^2  \cdots \alpha^m j } & =  B_{  I_1  I_2 \cdots I_m   j }                 \\%%%%%%%%%%%%%%%%%%
+  U^1_{ I_1 \beta^1 } S^1_{\beta^1 \gamma^1}  V^{1\dagger}_{\gamma^1 \alpha^1}                                            & \nonumber                                         \\
+  U^2_{ I_2 \beta^2 } S^2_{\beta^2 \gamma^2}  V^{2\dagger}_{\gamma^2 \alpha^2}                                            & \cdots  \nonumber                                 \\
+  U^m_{ I_m \beta^m } S^m_{\beta^m \gamma^m}  V^{m\dagger}_{\gamma^m \alpha^m}                                            & \nonumber                                         \\
+  X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B_{  I_1  I_2 \cdots I_m   j }                 \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  S_{ (\beta^1 \beta^2 \cdots \beta^m) (\gamma^1  \gamma^2 \cdots \gamma^m)  }                                            & \nonumber                                         \\
+  V^{1\dagger}_{\gamma^1 \alpha^1}   V^{2\dagger}_{\gamma^2 \alpha^2}  \cdots  V^{m\dagger}_{\gamma^m \alpha^m}           & \nonumber                                         \\
+  X_{ \alpha^1  \alpha^2  \cdots \alpha^m j }                                                                             & =  B'_{  (\beta_1  \beta_2 \cdots \beta_m )  j }.
 \end{alignat}
 The complexity is determined by the \Gls{SVD} decomposition of the individual legs. Due to its sparsity, S does not take much space to construct and is quite fast to pseudoinvert. Doing the pseudoinverse at once means that it has the same precision as the full pseudoinverse, as desired.  It is also possible to take a pseudoinverse of a matrix with a QR-decomposition, which is faster \cite{Moylan2016}. The matrices $Q^i$ could be inverted directly, and the $R = R^1 \otimes R^2 \cdots \otimes R^m$  matrix is still upper triangular, allowing for back-substitution. This method is not used because of the memory requirements to store this matrix are larger, and the triangular matrix $R$ is not in the correct form for the linear pseudoinversion solver.
 
 \subsubsection{Extension}
-The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map \footnote{Gives tensor X with   }, such as 2 neighbouring sites. These sites are split using an \Gls{SVD} decomposition.  A problem could e.g.\ be defined as
+The linear solver is made for linear problems. Nevertheless, it can solve every local patch appearing in a map, such as 2 neighbouring sites. These sites are split using an \Gls{SVD} decomposition.  A problem could e.g.\ be defined as
 \begin{equation}
-    \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
 
-                \def \legLength { 0.8}
-                \def \radius {0.1}
+        \def \legLength { 0.8}
+        \def \radius {0.1}
 
-                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-                \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
-                \node[draw, circle,radius=\radius] (L1) at (-1,1) {};
+        \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
+        \node[draw, circle,radius=\radius] (L1) at (-1,1) {};
 
-                \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
+        \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
 
-                \node[draw, circle,radius=\radius] (R0) at (1,0) {};
-                \node[draw, circle,radius=\radius] (R1) at (1,1) {};
+        \node[draw, circle,radius=\radius] (R0) at (1,0) {};
+        \node[draw, circle,radius=\radius] (R1) at (1,1) {};
 
-                \draw (L0) --   (L1);
-                \draw (R0) --   (R1);
+        \draw (L0) --   (L1);
+        \draw (R0) --   (R1);
 
-                \draw (L0) --   (-0.3,0);
-                \draw (L1) --   (-0.3,1);
+        \draw (L0) --   (-0.3,0);
+        \draw (L1) --   (-0.3,1);
 
-                \draw (R0) --   (0.3,0);
-                \draw (R1) --   (0.3,1);
+        \draw (R0) --   (0.3,0);
+        \draw (R1) --   (0.3,1);
 
-                \node[draw=none] (C0) at (0,0.5) {X};
-            \end{tikzpicture} }} .
+        \node[draw=none] (C0) at (0,0.5) {X};
+      \end{tikzpicture} }} .
 \end{equation}
 The solver treats this as a linear problem with 2 legs. After that block $X$ is solved, it is decomposed as
 \begin{equation}
-    \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
 
-                \def \legLength { 0.8}
-                \def \radius {0.1}
+        \def \legLength { 0.8}
+        \def \radius {0.1}
 
-                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-                \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
-                \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
+        \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
+        \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
 
-                \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
+        \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
 
-                \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
-                \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
+        \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
+        \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
 
-                \draw (L0) --   (-0.3,0);
-                \draw (L1) --   (-0.3,1);
+        \draw (L0) --   (-0.3,0);
+        \draw (L1) --   (-0.3,1);
 
-                \draw (R0) --   (0.3,0);
-                \draw (R1) --   (0.3,1);
+        \draw (R0) --   (0.3,0);
+        \draw (R1) --   (0.3,1);
 
-                \node[draw=none] (C0) at (0,0.5) {X};
-            \end{tikzpicture} }} =  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+        \node[draw=none] (C0) at (0,0.5) {X};
+      \end{tikzpicture} }} =  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
 
-                \def \legLength { 0.8}
-                \def \radius {0.1}
+        \def \legLength { 0.8}
+        \def \radius {0.1}
 
-                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
 
-                \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
-                \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
+        \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
+        \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
 
-                \node[draw, circle,radius=\radius] (C0) at (0,0) {};
-                \node[draw, circle,radius=\radius] (C1) at (0,1) {};
+        \node[draw, circle,radius=\radius] (C0) at (0,0) {};
+        \node[draw, circle,radius=\radius] (C1) at (0,1) {};
 
-                \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
-                \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
+        \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
+        \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
 
-                \draw (L0) --   (C0);
-                \draw (L1) --   (C1);
+        \draw (L0) --   (C0);
+        \draw (L1) --   (C1);
 
-                \draw (R0) --   (C0);
-                \draw (R1) --   (C1);
+        \draw (R0) --   (C0);
+        \draw (R1) --   (C1);
 
-                \draw (C1) --   (C0);
+        \draw (C1) --   (C0);
 
-            \end{tikzpicture} }} .
+      \end{tikzpicture} }} .
 \end{equation}
 Another example is the following corner block $O^{1 \gamma \beta 0}$. It may not seem like a linear problem, but it can be solved with the linear solver without any problem
 \begin{equation}
-    \vcenter{\hbox{   \pepob{5}{3}{{
-                        "-","-", "-",     "-",
-                        "-","1","$\beta$","-",
-                        "-","-","$\alpha$","-"}}{{
-                        "-","-",
-                        "-","-",
-                        "-","$\gamma$",
-                        "-","$\alpha$",
-                        "-","-"}}{{
-                        1,1,1,1,1,
-                        1,0,0,0,1,
-                        1,1,0,0,1}} }} .
+  \vcenter{\hbox{   \pepob{5}{3}{{
+            "-","-", "-",     "-",
+            "-","1","$\beta$","-",
+            "-","-","$\alpha$","-"}}{{
+            "-","-",
+            "-","-",
+            "-","$\gamma$",
+            "-","$\alpha$",
+            "-","-"}}{{
+            1,1,1,1,1,
+            1,0,0,0,1,
+            1,1,0,0,1}} }} .
 \end{equation}
 The algorithm will split this problem in $m=2$ legs, treating the loop as one.
 
@@ -407,20 +407,20 @@ As an added bonus, removing a tensor from T gives all contractions without this 
 
 \subsection{Normalisation}\label{subsec:nf}
 
-For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp( \hat{H})$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the Hamiltonian evaluated for a certain geometry. This is a Hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
+For many of the end results, the PEPO cells can be divided by a normalisation factor. Normalising the calculations is important, because $\exp - \beta \hat{H}$ scales exponentially in the number of sites. Luckily, the exponential can be calculated directly in normalised form. Suppose H is the matrisation of the Hamiltonian evaluated for a certain geometry. This is a Hermitian matrix and can be diagonalised $H= Q D Q^{\dagger}$ with Q unitary. Then
 \begin{align}
-    exp(  H_{d^N} - N \alpha I  ) & =  Q exp(  D- N \log(\alpha ) I    ) Q^{\dagger} \\
-                                  & =  Q \begin{bmatrix} exp(D_{1 1} - N \log(\alpha )) &        &                                     \\
+  exp(  H_{d^N} - N \alpha I  ) & =  Q exp(  D- N \log(\alpha ) I    ) Q^{\dagger} \\
+                                & =  Q \begin{bmatrix} exp(D_{1 1} - N \log(\alpha )) &        &                                     \\
                                                & \ddots &                                     \\
                                                &        & exp(D_{ d^N d^N} - N \log(\alpha )) \\
-    \end{bmatrix}  Q^{\dagger}     \\
-                                  & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }.
+  \end{bmatrix}  Q^{\dagger}     \\
+                                & = \frac{  exp(  H_{d^N} ) }{ \alpha^N }.
 \end{align}
-With $I$ the unit matrix. Next to a global normalisation factor, every block calculation calculates a specific normalisation factor such that the largest eigenvalue of $exp(H)$ is of the order 1. The cut-off for pseudoinversion $\sigma_0$ is applied on the normalised problem.
+With $I$ the unit matrix. Next to a global normalisation factor, a normalisation factor is calculated for every newly introduced block such that the largest eigenvalue of $exp(H)$ is of the order 1. The cut-off for pseudoinversion $\sigma_0$ is applied on the normalised problem.
 
 \subsection{Internal representation}
 
-Two main internal representations are used to construct the given \Gls{MPO}/ \Gls{PEPO}. Either, it is stored as a cell of tensor, one per combination of virtual levels, or as one big tensor where the blocks are added to during the construction. For sparse types, a multidimensional sparse tensor can be chosen as format. Given that MATLAB doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this}\cite{Matt} library is used.
+Two main internal representations are used to construct the given \Gls{MPO}/ \Gls{PEPO}. Either, it is stored as a cell of tensors, one per combination of virtual levels, or as one big tensor where the blocks are added to during the construction. For sparse types, a multidimensional sparse tensor can be chosen as format. Given that MATLAB doesn't support multidimensional matrices by default, \href{https://nl.mathworks.com/matlabcentral/fileexchange/29832-n-dimensional-sparse-arrays}{this} \cite{Matt} library is used.
 
 \subsection{Even faster inverses}
 
@@ -454,17 +454,17 @@ While the inversion procedure above states how to make use of pseudoinverses, it
 % If we now define the \Gls{MPO} $O^{-1}_n$ equal to $U^{n \dagger}$ with the second index split and permuted:
 
 \begin{equation}
-    \mpo{1}{ {"$\alpha$","$\beta$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O_n$",} } \cong U^{n}_{\alpha (i j \beta)}
+  \mpo{1}{ {"$\alpha$","$\beta$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O_n$",} } \cong U^{n}_{\alpha (i j \beta)}
 \end{equation}
 Then the inverse \Gls{MPO} can be calculated by taking its Hermitian conjugate and reshaping.
 \begin{equation}
-    \mpo{1}{ {"$\beta$","$\gamma$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{ (i j \beta)  \gamma }
+  \mpo{1}{ {"$\beta$","$\gamma$",}  }{ { "$i$",}}{ { "$j$",}}{}{ {"$O^{-1}_n$",} } \cong U^{n \dagger}_{ (i j \beta)  \gamma }
 \end{equation}
 % With the notation from \cref{eq_mpoinvdef} we have:
 % \def \OnBlock {\expH{4}{ $L_n^{-1} $  }{ {,,"...",} }{ {,,"...",} }{{"$\alpha$",0}} }
 The inverse of the chain can be computed with a tensor contraction
 \begin{equation}
-    \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }.
+  \mpo{4}{ {"$\alpha$",,,,0}  }{ {,,,,,}}{ { ,,,,,}}{{0,0,1,0}}{{"$O^{-1}_n$","$O^{-1}_m$",,"$O^{-1}_1$",} }.
 \end{equation}
 The physical indices need to be contracted with the corresponding indices of the tensor to apply the inverse to.
 
@@ -473,7 +473,7 @@ The physical indices need to be contracted with the corresponding indices of the
 Some calculations, such as calculating the matrix exponential, take some time. In 1D code, the same calculations were performed over and over again, and hence a buffer mechanism was written to store these results. In the 2D framework, this not necessary as the solvers only calculate the matrix exponential once and return the blocks together with the made error.
 
 \subsection{Profiling}
-To get a sense of the speed, constructing a 2D PEPO up till order 6 with level 3 truncated at bond dimension 20 with loop extensions takes about 25 seconds on my PC. The most time intensive processes involve performing the contractions. For larger systems, the time limiting factor is calculating the exponential of the Hamiltonian.
+To get a sense of the speed, constructing a 2D \Gls{PEPO} up till order 6 with level 3 truncated at bond dimension 20 with loop extensions takes about 25 seconds on my PC. The most time intensive processes involve performing the contractions. For larger systems, the time limiting factor is calculating the exponential of the Hamiltonian.
 
 \subsection{Calculating the error}
 
@@ -485,7 +485,7 @@ This section details how the phase diagrams are calculated, stored and the criti
 
 \subsection{Points sampling}
 
-This concerns the problem which temperatures to select to calculate the phase diagram. As  the transition between 2 phases is sharp, a uniform sampling in T is not the best option. A very fine grid is needed to capture the transition well, requiring high computation times. The sampling starts by calculating the magnetisation for N  uniformly distributed sample points between 2 temperatures. These calculations are performed in parallel on a multicore server. When they are all finished (or have run for a maximum amount of iterations), all the arch lengths are calculated, and a new T point is  repeatedly inserted in the largest interval until N new points are selected. The desired arch length $\Delta S ^2= \Delta m ^2 + r \Delta T ^2 $ between points in the m-T plane can be set, and calculations continue until the goal is reached.
+This concerns the problem which temperatures to select to calculate the phase diagram. As  the transition between 2 phases is sharp, a uniform sampling in T is not the best option. A very fine grid is needed to capture the transition well, requiring high computation times. The sampling starts by calculating the magnetisation for N  uniformly distributed points between 2 temperatures. These calculations are performed in parallel on a multicore server. When they are all finished (or have run for a maximum amount of iterations), all the arc lengths are calculated, and a new T point is  repeatedly inserted in the largest interval until N new points are selected. The desired maximum arc length $\Delta S ^2= \Delta m ^2 +  \Delta T ^2 $ between points in the m-T plane can be set, and calculations continue until the goal is reached.
 
 \subsection{Storing the information}
 

@@ -2,29 +2,29 @@
 \subsection{Type A}
 This type was originally proposed in \cite{Vanhecke2021}. The first few blocks in the expansion are
 \begin{equation}
-    \begin{split}
-        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-        &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
-        &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
-        &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} .
-    \end{split}
+  \begin{split}
+    &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+    &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+    &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
+    &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}\\
+    &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} .
+  \end{split}
 \end{equation}
 The following types of blocks appear in the cluster expansion:
 \begin{equation}
-    \mpo{1}{ {"m ","n"}  }{}{}{}{} , \mpo{1}{ {"n","m"}  }{}{}{}{} \text{and} \mpo{1}{ {"n","n"}  }{}{}{}{}
+  \mpo{1}{ {"m ","n"}  }{}{}{}{} , \mpo{1}{ {"n","m"}  }{}{}{}{} \text{and} \mpo{1}{ {"n","n"}  }{}{}{}{}
 \end{equation}
 with $n \in \mathbb{N}_0$ and $m=n-1$. The $O^{n n}$ block is in defined for a chain with an odd number of sites. The contraction of $O^{n m }$ and $O^{m n} $ is defined by a chain with even order. The decomposition is defined up to a gauge transformation.
 
-\subsubsection{Dimension}
+\subsubsection*{Dimension}
 
 In this scheme, virtual level n has dimension $d^{2 n}$.  This dimension can be truncated if some error is allowed for the longest chain.
 
-\subsubsection{Discussion}
+\subsubsection*{Discussion}
 
-Type A can form long chain, e.g.\
+Type A can form long chains, e.g.\
 \begin{equation}
-    \mpob{10}{ {0,1,1,1,1,1,0,1,1,1,1,0}  }{}{}{}{{"","","","","","","","","","","",}}.
+  \mpob{10}{ {0,1,1,1,1,1,0,1,1,1,1,0}  }{}{}{}{{"","","","","","","","","","","",}}.
 \end{equation}
 The block $O^{1 1}$ is only defined to solve the matrix exponential exactly for 3 neighbouring sites. Therefore, the question arises whether these long chains will improve the error or make it worse for cyclic systems.
 
@@ -32,46 +32,46 @@ The block $O^{1 1}$ is only defined to solve the matrix exponential exactly for 
 
 Type B only contains blocks of the following form; $O^{m n}$ and $O^{n 0}$. The first few blocks are
 \begin{equation}
-    \begin{split}
-        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-        &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
-        &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
-        &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}.
-    \end{split}
+  \begin{split}
+    &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+    &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+    &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
+    &\mpob{4}{ {,"1","2","3",}  }{}{}{}{{,,,,,}}\\
+    &\mpob{5}{ {,"1","2","3","4",}  }{}{}{}{{,,,,,}}.
+  \end{split}
 \end{equation}
 The following split is made: $O^{m n} \cong U^n$ and $O^{n 0} \cong  \Sigma V^{\dagger}$. In this way the left inverse exists and doesn't need any calculation: $O^{m n} = U^{\dagger}$.
 \def \rhs{\expH{2}{ $L_{m}^{-1}  M_{n+1} $ }{{"$i_n$","$i_{n+1}$"}}{{"$j_n$","$j_{n+1}$"}}{{"m","0"}}  }
 \begin{equation}
-    \begin{split}
-        \mpo{2}{ {"m","n","0"}  }{ { "$i_n$","$i_{n+1}$"}}{ { "$j_n$","$j_{n+1}$"}}{}{} =  U^n  \Sigma V^{\dagger}\\
-    \end{split}
+  \begin{split}
+    \mpo{2}{ {"m","n","0"}  }{ { "$i_n$","$i_{n+1}$"}}{ { "$j_n$","$j_{n+1}$"}}{}{} =  U^n  \Sigma V^{\dagger}\\
+  \end{split}
 \end{equation}
 
-\subsubsection{Dimension} From the construction the bond dimension grows from the left to the right. All steps add $d^2$ to the dimension. For the last step, there are only $d^2$ non-zero singular values. Introducing
+\subsubsection*{Dimension} From the construction the bond dimension grows from the left to the right. All steps add $d^2$ to the dimension. For the last step, there are only $d^2$ non-zero singular values. Introducing
 \begin{equation}
-    \begin{split}
-        \mpo{1}{ {"m","n"}  }{ { "\(i\)",}}{ { "$j$",}}{}{} &= A^m_{ (\alpha i j ) \beta} \\
-        \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \; .
-    \end{split}
+  \begin{split}
+    \mpo{1}{ {"m","n"}  }{ { "\(i\)",}}{ { "$j$",}}{}{} &= A^m_{ (\alpha i j ) \beta} \\
+    \mpo{1}{ {"n","0"}  }{ { "$i$",}}{ { "$j$",}}{}{} &= B^n_{ (\alpha i j ) \beta} \; .
+  \end{split}
 \end{equation}
 Then the \Gls{MPO} doesn't change if there are matrices $A'^{n}$, $A'^{n+1}$ and $B'^{n}$ such that
 \begin{equation}
-    \begin{split}
-        S=A^{n} A^{n+1} =  A'^{n} A'^{n+1}  \\
-        T=A^{n} B^{n+1} = A'^{n} B'^{n+1} .
-    \end{split}
+  \begin{split}
+    S=A^{n} A^{n+1} =  A'^{n} A'^{n+1}  \\
+    T=A^{n} B^{n+1} = A'^{n} B'^{n+1} .
+  \end{split}
 \end{equation}
 This can be used to decrease the bond dimension of the \Gls{MPO}. Matrices with optimal bond dimension can be calculated with generalised \Gls{SVD}. Generalised \Gls{SVD} decomposes 2 matrices as
 \begin{equation}
-    \begin{split}
-        S^{\dagger} = (U \Sigma_1) Q^{\dagger} \\
-        T^{\dagger} = (V \Sigma_2) Q^{\dagger}.
-    \end{split}
+  \begin{split}
+    S^{\dagger} = (U \Sigma_1) Q^{\dagger} \\
+    T^{\dagger} = (V \Sigma_2) Q^{\dagger}.
+  \end{split}
 \end{equation}
 Identification gives $A'^m = Q$ The new bond dimension is the $\dim{n'} =d^2 \cdot \min( \dim{n-1}, \dim (n+1) )$.  This is still higher than the dimension of type A.
 
-\subsubsection{Discussion}
+\subsubsection*{Discussion}
 The bond dimension is larger than type A, but the long chains from type A are absent. The left inverse is always well-defined and doesn't need any computation, because Hermitian matrix U can be inverted easily. One major drawback is that for long chains, the virtual bonds are very large before they can be shrunk with the Generalised \Gls{SVD} procedure.
 
 \subsection{Type C}
@@ -79,64 +79,64 @@ The bond dimension is larger than type A, but the long chains from type A are ab
 This type implements the same strict type as Type B, but in a different way. No calculation is involved, except the calculation of the exponentiated Hamiltonian to certain order. The following kind of \Gls{MPO} strings are allowed:
 
 \begin{equation}
-    \begin{split}
-        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-        &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
-        &\mpob{3}{ {,"1'","1'",}  }{}{}{}{{,,,}}\\
-        &\mpob{4}{ {,"1''","2''","3''",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1'''","2'''","3'''","4'''",}  }{}{}{}{{,,,,,}}\\
-    \end{split}
+  \begin{split}
+    &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+    &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+    &\mpob{3}{ {,"1'","1'",}  }{}{}{}{{,,,}}\\
+    &\mpob{4}{ {,"1''","2''","3''",}  }{}{}{}{{,,,,,}}\\
+    &\mpob{5}{ {,"1'''","2'''","3'''","4'''",}  }{}{}{}{{,,,,,}}\\
+  \end{split}
 \end{equation}
 and so forth. The primed indices have no special meaning, and could also be numbered starting from the largest index of the previous block +1. All but one \Gls{MPO} elements are chosen to be the identity matrix. The middle one is the exponentiated Hamiltonian with reshaped legs.
 
-\subsubsection{Discussion}
+\subsubsection*{Discussion}
 As can be expected from the construction, the bond dimension grows very fast. This type is just as precise as Type B.
 
 \subsection{Type D}
 
 \def \rhs{\expH{2}{ $L_{n}^{-1}  M_{2n+2}  R_{n}^{-1}$ }{}{}{{"n","n"}}  }
 
-This type uses a different setup which tries to capture the best of both Type A and B. Type A can handle long range correlation better because of the introduction of $O^{n n}$, but the inverse was not necessarily well-defined. Type B had well conditioned inverses, but performs worse. The blocks appearing in type D are as follows:
+This type uses a different setup which tries to capture the best of both Type A and B. Type A can handle long range correlation better because of the introduction of $O^{n n}$, but the inverse was not necessarily well-conditioned. Type B had well conditioned inverses, but performs worse. The blocks appearing in type D are as follows:
 \begin{equation}
-    \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{} ,
+  \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} and \mpo{1}{{"n","n"}}{}{}{}{} ,
 \end{equation}
 which is similar to type A. The idea is to keep $O^{m n}$ unitary up to a constant factor.
 \begin{equation}\label{eq_nmn_level}
-    \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} = U \Sigma V^{ \dagger}
+  \mpo{3}{{"m","n","n","m"}}{{,"-",}}{{,"-",}}{}{{"O","$D_n$","O"}} = U \Sigma V^{ \dagger}
 \end{equation}
 Matrix $D_n$ is the singular value diagonal matrix divided by a normalisation factor $\phi$. Both U and V are multiplied by $  \sqrt{\phi} $.
 
-\subsubsection{Discussion}
+\subsubsection*{Discussion}
 It's not completely clear what the values of $\phi$ should be.  If $\phi$ is too large, long chains are not suppressed. If phi is too small, the $O^{n n}$ blocks will become large and hence the chain will diverge again. A reasonable value is the sum of the singular values. Other combinations could be tried.
 
-\subsubsection{Matrisation}
+\subsubsection*{Matrisation}
 The cost of this type lies in the fact that it has no compact way of casting it to a matrix. The following works, but has quite a large dimension:
 
 \begin{tabular}{ccc|cc|cc|cc}
-    $O_{00}$               & $O_{01} $   &             & $-2  O_{01}$ &                & $ O_{01}$ &             & $ O_{01}  D_1^{1/2}$           &                                \\
-    ${O_{10}}$             &             & ${ O_{12}}$ &              & $-2 { O_{12}}$ &           & ${ O_{12}}$ &                                &                                \\
-                           & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
-    \hline
-    ${O_{10}}$             &             &             &              &                &           &             &                                &                                \\
-                           & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
-    \hline
-    ${ O_{10}}$            &             &             &              &                & $O_{11}$  &             &                                &                                \\
-                           & ${ O_{21}}$ &             &              &                &           & $O_{22}$    &                                &                                \\
-    \hline
-    $ D_1^{1/2} { O_{10}}$ &             &             &              &                &           &             &                                & $D_1^{-1/2} O_{12}  D_2^{1/2}$ \\
-                           &             &             &              &                &           &             & $ D_2^{1/2} O_{21} D_1^{-1/2}$                                  \\\end{tabular}
+  $O_{00}$               & $O_{01} $   &             & $-2  O_{01}$ &                & $ O_{01}$ &             & $ O_{01}  D_1^{1/2}$           &                                \\
+  ${O_{10}}$             &             & ${ O_{12}}$ &              & $-2 { O_{12}}$ &           & ${ O_{12}}$ &                                &                                \\
+                         & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
+  \hline
+  ${O_{10}}$             &             &             &              &                &           &             &                                &                                \\
+                         & ${ O_{21}}$ &             &              &                &           &             &                                &                                \\
+  \hline
+  ${ O_{10}}$            &             &             &              &                & $O_{11}$  &             &                                &                                \\
+                         & ${ O_{21}}$ &             &              &                &           & $O_{22}$    &                                &                                \\
+  \hline
+  $ D_1^{1/2} { O_{10}}$ &             &             &              &                &           &             &                                & $D_1^{-1/2} O_{12}  D_2^{1/2}$ \\
+                         &             &             &              &                &           &             & $ D_2^{1/2} O_{21} D_1^{-1/2}$                                  \\\end{tabular}
 
 \subsection{Type E}
 
 Again, this is a strict variant which needs exactly twice the bond dimension of type A. The idea is to split every chain in a left and a right part. For the left part, the numbers increase while the right part they decrease. This construction carries over well to higher dimensions. The first few blocks are:
 \begin{equation}
-    \begin{split}
-        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-        &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
-        &\mpob{3}{ {,"1","1'",}  }{}{}{}{{,,,}}\\
-        &\mpob{4}{ {,"1","2","1'",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","2'","1'",}  }{}{}{}{{,,,,,}}\\
-    \end{split}
+  \begin{split}
+    &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+    &\mpob{2}{ {,"1",}  }{}{}{}{{,,}}\\
+    &\mpob{3}{ {,"1","1'",}  }{}{}{}{{,,,}}\\
+    &\mpob{4}{ {,"1","2","1'",}  }{}{}{}{{,,,,,}}\\
+    &\mpob{5}{ {,"1","2","2'","1'",}  }{}{}{}{{,,,,,}}\\
+  \end{split}
 \end{equation}
 The construction is very similar to type A.
 
@@ -144,19 +144,19 @@ The construction is very similar to type A.
 
 The idea behind this type is very similar to type D. The blocks look as follows:
 \begin{equation}
-    \begin{split}
-        &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
-        &\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}+\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}\\
-        &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
-        &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}+\mpob{4}{ {,"1","2'","1",}  }{}{}{}{{,,,,,}}\\
-        &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}}\\
-    \end{split}
+  \begin{split}
+    &\mpob{1}{ {,}  }{}{}{}{{,,}} \\
+    &\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}+\mpob{2}{ {,"1'",}  }{}{}{}{{,,}}\\
+    &\mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}\\
+    &\mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}+\mpob{4}{ {,"1","2'","1",}  }{}{}{}{{,,,,,}}\\
+    &\mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}}\\
+  \end{split}
 \end{equation}
 
-The  blocks $O^{n-1,n}$ and $O^{n,n-1}$ are unitary matrices from the \Gls{SVD} decomposition, scaled by the largest singular value. The blocks $O^{n-1,n'}$ and $O^{n',n-1}$ are then used to actually solve the problem for the even length chains. In the next step, $O^{n,n}$ is added as usual. The idea here is once again to keep the inverses well-defined.
+The  blocks $O^{n-1,n}$ and $O^{n,n-1}$ are unitary matrices from the \Gls{SVD} decomposition, scaled by the largest singular value. The blocks $O^{n-1,n'}$ and $O^{n',n-1}$ are then used to actually solve the problem for the even length chains. In the next step, $O^{n,n}$ is added as usual. The idea here is once again to keep the inverses well-conditioned.
 
 \subsection{Conclusion}
 
-Some of the 1D constructions tried are discussed here. They can be roughly divided into 2 groups. B, C and E are strict variants, meaning only the explicitly constructed blocks will appear in the final expansion. As a consequence, they have exactly the same predictive power. While B has some advantageous properties such as its final bond dimension and well-defined inverses, type E will be used in the results chapter due to its simplicity and scalability. It also generalises well to 2D, in contrast to type B.
+Some of the 1D constructions tried are discussed here. They can be roughly divided into 2 groups. B, C and E are strict variants, meaning only the explicitly constructed blocks will appear in the final expansion. As a consequence, they have exactly the same predictive power. While B has some advantageous properties such as its final bond dimension and well-conditioned inverses, type E will be used in the results chapter due to its simplicity and scalability. It also generalises well to 2D, in contrast to type B.
 The second category are the unstrict types. Type A has the lowest possible bond dimension to exactly represent a chain of a given length. One hurdle to overcome is the badly conditioned inverses, when implemented naively. Types D and F try to remedy this. D scales very badly with the maximum number of sites, and has a construction which doesn't fit in with the simple diagrams. The construction was only implemented in 1D code due to this. This type won't be reported, because it has  a similar performance to type F.
 In short, type A, E and F will be reported in \cref{sec:results1d}.

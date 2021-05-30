@@ -2,61 +2,60 @@ This is the key chapter of the whole thesis. Here, the novel \GLS{TN} method to 
 
 \subsection{Notation}
 
-First, some extra clarification on the notation is needed in order to avoid confusion. In the following, the external legs and virtual level 0 will be omitted. Also, all the physical indices will not be shown. This should not be confused with the diagram earlier.
-
+First, some extra clarification on the notation is needed in order to avoid confusion. In the following, the external legs and virtual level 0 will be omitted. Also, all the physical indices will not be shown. This should not be confused with the diagrams from earlier.
 \begin{equation}
-    O^{0 0} = \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
+  O^{0 0} = \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
 \end{equation}
 Each virtual level has its own bond dimension. The bond dimension of level 0 is 0. Two neighbouring sites connected through virtual level 1 are similarly denoted by
 \begin{equation}
-    O^{0 1} O^{1 0} = \mpo{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_2$",}}{}{{"",}} =\mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}.
+  O^{0 1} O^{1 0} = \mpo{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_2$",}}{}{{"",}} =\mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}.
 \end{equation}
 As a reminder, unlabeled incdices such as in
 \begin{equation}
-    \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
+  \mpo{3}{ {0,,,0}  }{ {"$i_1$","$i_2$","$i_3$"}  }{ {"$j_1$","$j_2$","$j_3$"}}{}{{"",,}} =\mpob{3}{ {0,,,0}  }{}{}{}{{"",,}}
 \end{equation}
 implies a summation over all possible virtual levels. A combination is valid if all the separate tensors were defined previously. The goal is capture the exponential of a Hamiltonian operator $\hat{H}$ with local interactions
 \begin{equation}
-    \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right ) .
+  \hat{H} = \left (  \sum_{<i j>} H^i_2 H^j_2 + \sum_i H^i_1 \right ) .
 \end{equation}
 This Hamiltonian consists of 1 and 2 site operators. More general Hamiltonians can be used. The notation for the contraction of the \Gls{TN} will also be used to denote the Hamiltonian evaluated on the given geometry
 \begin{alignat}{3}
-    H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
-    +                                                      & 1   &  & \otimes H_1 &  & \otimes 1 \nonumber   \\
-    +                                                      & 1   &  & \otimes 1   &  & \otimes H_1 \nonumber \\
-    +                                                      & H_2 &  & \otimes H_2 &  & \otimes 1   \nonumber \\
-    +                                                      & 1   &  & \otimes H_2 &  & \otimes H_2 \nonumber \\.
+  H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
+  +                                                      & 1   &  & \otimes H_1 &  & \otimes 1 \nonumber   \\
+  +                                                      & 1   &  & \otimes 1   &  & \otimes H_1 \nonumber \\
+  +                                                      & H_2 &  & \otimes H_2 &  & \otimes 1   \nonumber \\
+  +                                                      & 1   &  & \otimes H_2 &  & \otimes H_2 \nonumber \\.
 \end{alignat}
 
 \subsection{Idea}
-This chapter shows the main construction of this dissertation. A cluster expansion is used to approximate $\exp{ \hat{H} }$ for every possible geometry. The goal is to make a \Gls{MPO}/PEPO which captures the tensor exponential in the thermodynamic limit. The main idea is to make an extensive expansion by adding blocks which solve the model exactly on a local patch. Crucially, the expansion is not in the inverse temperature $\beta$ but in the size of the patches. The local patches are separated by a virtual level 0 bond. To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that Hamiltonian
+This chapter shows the main construction of this dissertation. A cluster expansion is used to approximate $\exp -\beta \hat{H} $ for every possible geometry. The goal is to make a \Gls{MPO}/PEPO which captures the tensor exponential in the thermodynamic limit. The main idea is to make an extensive expansion by adding blocks which solve the model exactly on a local patch. Crucially, the expansion is not in the inverse temperature $\beta$ but in the size of the patches. The local patches are separated by a virtual level 0 bond. To make this somewhat more precise, the first steps of the expansion are shown here. The smallest patch, i.e. 1 site,  encodes the exponential of that Hamiltonian
 \begin{equation}
-    \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right).
+  \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right).
 \end{equation}
 If there were no 2 site interactions, this already captures the full diagonalisation. Of course, such a model wouldn't be useful. The next step is to introduce 2 site interactions, where the one site interactions are subtracted from the diagonalised Hamiltonian.
 \begin{equation} \label{eq:lev1}
-    \begin{split}
-        \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}})  \\
-        - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
-    \end{split}
+  \begin{split}
+    \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}})  \\
+    - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+  \end{split}
 \end{equation}
 The 2 site patch includes all orders in $\beta$, and not just second order terms. This is somewhat similar to the MPO $W$ methods explained in \cref{rt_tn_methods}. Contraction of larger network lead to many terms, such as
 \begin{equation}
-    \mpob{10}{ {0,1,0,0,0,1,0,1,0,0,1,0}  }{}{}{}{{"","","","","","","","","","","",}} .
+  \mpob{10}{ {0,1,0,0,0,1,0,1,0,0,1,0}  }{}{}{}{{"","","","","","","","","","","",}} .
 \end{equation}
 The beauty of this lays in the fact that disconnected regions (regions separated by level 0) combine in exactly the right way to capture the terms appearing in the series expansion of the exact tensor exponential. Only the terms of the exponential which acts on 3 or more neighbouring sites at once, are not accounted for. Notice that in \cref{eq:lev1}, 2  new blocks are introduced $\mpo{1}{ {0,1}  }{ {"$i$",}}{ {"$j$",}}{}{{"",}} \text{and }  \mpo{1}{ {1,0}}{ {"$i$",}}{ {"$j$",}}{}{{"",}} $. As can be seen, the dimension of virtual level 1 needs to be $d^2$ (\cref{decompMPO}), with d the dimension of physical level. Although different possible constructions already differ in the next step, one more step is added to make te construction and notation clear.
 \begin{equation}\label{constr:intro:gen}
-    \begin{split}
-        \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
-        - \;&\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
-        - \; &\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
-        - \; &\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}\\
-        =\exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})\\
-        - \; &\mpob{3}{ {,,,}  }{}{}{}{{,,,}}\\
-    \end{split}
+  \begin{split}
+    \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+    - \;&\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+    - \; &\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+    - \; &\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}\\
+    =\exp  -\beta H( &\mpob{3}{ {,,,} }{}{}{}{{,,}})\\
+    - \; &\mpob{3}{ {,,,}  }{}{}{}{{,,,}}\\
+  \end{split}
 \end{equation}
 This is a cluster expansion of order $p=3$, because the (longest) chain has  3 connected sites solved exactly. The error is of $O\left(  \beta^{p-1}  \right)$. The right-hand side of \cref{constr:intro:gen} can be ommited, as it is just evaluating the exponentiated Hamiltonian on the same geometry as the left hand side and substructing all possible contractions of the blocks which were added previously. This very compact notation will be able to capture the essence of the different constructions. Because it is important for the remainder of the chapter, it is stressed that for an equation similar to
 \begin{equation}
-    \boxed{\mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}} },
+  \boxed{\mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}} },
 \end{equation}
 the right-hand side of \cref{constr:intro:gen} is implied. In the following section, different types will be discussed. For every chain lenght, a new block is defined. This could be done in numerous ways. The different types list some ways to do this.

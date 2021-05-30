@@ -3,23 +3,23 @@
 
 The performance of the \Gls{MPO} construction can be compared with the exact diagonalisation of the Hamiltonian for a given number of sites. To obtain a faithful result, the number of sites should be as high as possible. In practice, diagonalisation of large matrices becomes slow and memory consuming. The size grows exponentially in the number of sites: $d^{n} \times d^{n} $. A double takes 8 bytes of memory. A rough estimation of the amount of RAM $R$ needed to store this complex array is
 \begin{equation}
-    R = d^{2 n} \times 16 \; \text{bytes}
+  R = d^{2 n} \times 16 \; \text{bytes}
 \end{equation}
-which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.  State-of-the-art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites. \cite{Wietek2018}
+which means a 14 site chain already takes up more than 4 GB of RAM. The complexity to calculate a matrix exponential scales as $O(n^3)$ \cite{Moler2003}. In practice this means that, without any tricks, the matrix exponential can be calculated for 12 sites.  State-of-the-art algorithm for exact diagonalisation, which include all symmetries and are optimised for parallelisation, can calculate up to 50 sites \cite{Wietek2018}.
 
 \subsubsection{Norms} \label{mponormdef}
 
 \begin{figure}[!htbp]
-    \begin{subfigure}[]{\linewidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/comp_M_cycl.pdf}
-        \subcaption{Cyclic error}
-    \end{subfigure}
-    \begin{subfigure}[]{\linewidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/Comp_M_lin.pdf}
-        \subcaption{Linear error}
-    \end{subfigure}
-    \caption{ Different error measures for 1D \Gls{TFI} model }
-    \label{benchmarking:systemsize}
+  \begin{subfigure}[]{\linewidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/comp_M_cycl.pdf}
+    \subcaption{Cyclic error}
+  \end{subfigure}
+  \begin{subfigure}[]{\linewidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/Comp_M_lin.pdf}
+    \subcaption{Linear error}
+  \end{subfigure}
+  \caption{ Different error measures for 1D \Gls{TFI} model }
+  \label{benchmarking:systemsize}
 \end{figure}
 
 \def \expHBlock {\expH{4}{ $e^{- \beta \hat{H}_{n}}$   }{ {,,"...",} }{ {,,"...",} }{}{} }
@@ -27,7 +27,7 @@ which means a 14 site chain already takes up more than 4 GB of RAM. The complexi
 
 The Schatten 2 norm is used in the following analysis, denoted by ${\| \cdot \|} _{2}$. In the figures the relative error $\epsilon$ is reported.
 \begin{equation}
-    \epsilon = \frac{  {  \left \|  \expHBlock - \Mn  \right \|} _{2}  }{ {  \left\|  \expHBlock \right \|}_2}
+  \epsilon = \frac{  {  \left \|  \expHBlock - \Mn  \right \|} _{2}  }{ {  \left\|  \expHBlock \right \|}_2}
 \end{equation}
 This norm can only be calculated for a finite number of sites. The influence of the number of sites for a linear  and cyclic chain are shown in \cref{benchmarking:systemsize}. As expected, the cyclic norm represents large systems better for the same number of sites. The linear norm keeps increasing with every added site. Calculating the cyclic norm comes at the extra cost. In this chapter, the cyclic norm will be given for M=11 sites.
 
@@ -36,13 +36,13 @@ This norm can only be calculated for a finite number of sites. The influence of 
 \subsubsection{Full pseudoinversion}
 
 \begin{figure}[!htbp]
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising_full_inverse.pdf }
-    \caption{Error for \Gls{TFI}, computed with full inversion }
-    \label{benc:fig:fullinv}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising_full_inverse.pdf }
+  \caption{Error for \Gls{TFI}, computed with full inversion }
+  \label{benc:fig:fullinv}
 \end{figure}
 
-The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for \Gls{TFI} models is shown in \cref{benc:fig:fullinv}. The pseudoinversion has 1 parameter $\sigma_0$, the cut-off below which the singular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
+The procedure for inversion of the linear blocks was detailed in \cref{subsec:linear_solver}. To demonstrate the need for a pseudoinverse, the error for \Gls{TFI} model is shown in \cref{benc:fig:fullinv}. The pseudoinversion has 1 parameter $\sigma_0$, the cut-off below which the singular values are set to zero. A value of $10^{-12}$ seems optimal in the sense that it doesn't introduce large fluctuations, but still is able to produce good inverses.
 
 \paragraph{Truncation}
 
@@ -55,41 +55,41 @@ With these basic definitions and findings out of the way, the different cluster 
 \subsubsection{Ising}
 
 \begin{figure}[!htbp]
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising.pdf}
-    \caption{Comparison type A, E and F for \Gls{TFI} model. }
-    \label{fig:benchmark:tising}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_ising.pdf}
+  \caption{Comparison type A, E and F for \Gls{TFI} model. }
+  \label{fig:benchmark:tising}
 \end{figure}
 
-The results for the different types are bundled in \cref{fig:benchmark:tising}. The vertical axis shows the logarithm of the relative error $\epsilon$, horizontal axis the normalised inverse $\beta= \frac{J}{T}$. The most surprising finding is the fact that the strict type E performs worse than the others. For low $\beta$, the difference is more than 5 orders of magnitude. This will generalise: the strict variants are not the best choice.
+The results for the different types are bundled in \cref{fig:benchmark:tising}. The vertical axis shows the logarithm of the relative error $\epsilon$, horizontal axis the normalised inverse $\beta J = \frac{J}{T}$. The most surprising finding is the fact that the strict type E performs worse than the others. For low $\beta$, the difference is more than 5 orders of magnitude. This will generalise: the strict variants are not the best choice.
 Now lets focus on the 2 other variants. Type A clearly outperforms type F for all $\beta<2$ by quite some margin. Only for large $\beta$, type F has the upper hand. While not completely clear in the picture, type A has quite a large error for some orders at $\beta \in (2,10) $, but higher orders seem to solve the problem. The construction of type F requires twice the bond dimension, and hence type A performs clearly better overall.
 
 \subsubsection{Heisenberg}
 
 \begin{figure}[!htbp]
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/t_heis_XXX.pdf}
-    \caption{Comparison type A, E and F for Heisenberg model.}
-    \label{fig:benchmark:tHeisenberg}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/t_heis_XXX.pdf}
+  \caption{Comparison type A, E and F for Heisenberg model.}
+  \label{fig:benchmark:tHeisenberg}
 \end{figure}
 
-Now we focus on the spin 1/2 Heisenberg model on a chain. The results are again displayed in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have a divergent error.
+Now we focus on the spin 1/2 Heisenberg model on a chain. The results are displayed in \cref{fig:benchmark:tHeisenberg}. The exact type seems to perform a lot better here, but still has consistently the largest error of the 3 methods for a given order. For low $\beta$, type A again performs better than type F. At $\beta \approx 1$ and larger, F starts to improve upon the result of A, and doesn't have a divergent error.
 
 \subsubsection{Random}
 
 \begin{figure}[!htbp]
-    \begin{subfigure}[]{\textwidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_Raand.pdf}
-        \subcaption{}
-    \end{subfigure}
+  \begin{subfigure}[]{\textwidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_Raand.pdf}
+    \subcaption{}
+  \end{subfigure}
 
-    \begin{subfigure}[]{\textwidth}
-        \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_Raand_2.pdf}
-        \subcaption{}
-    \end{subfigure}
+  \begin{subfigure}[]{\textwidth}
+    \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_Raand_2.pdf}
+    \subcaption{}
+  \end{subfigure}
 
-    \caption{Comparison type A, E and F for 2 random generated Hamiltonians.}
-    \label{fig:benchmark:trand}
+  \caption{Comparison type A, E and F for 2 random generated Hamiltonians.}
+  \label{fig:benchmark:trand}
 \end{figure}
 
 To give a representative overview for random Hamiltonians, 2 simulations were run. The construction for the random Hamiltonians was explained in \cref{randhamexpl}. \Cref{fig:benchmark:trand} shows the results. The results show once again that the strict variant performs worse than the other 2. In comparison to the previous models, type F performs very well, especially at high $\beta$.  These Hamiltonians were included to ensure that the chosen models are not too 'simple'.
@@ -97,12 +97,13 @@ To give a representative overview for random Hamiltonians, 2 simulations were ru
 \subsection{Real time evolution} \label{subsec_rt_evo}
 
 \begin{figure}[!htbp]
-    \center
-    \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_t_ising_time.pdf}
-    \caption{Comparison type A, E and F for \Gls{TFI} model. The horizontal axis represents the time step, not the inverse temperature. Virtual level 3 is truncated to $\chi=20$.  }
-    \label{fig:benchmark:tising_time}
+  \center
+  \includegraphics[width=\textwidth]{Figuren/benchmarking/1D_t_ising_time.pdf}
+  \caption{Comparison type A, E and F for \Gls{TFI} model. The horizontal axis represents the time step, not the inverse temperature. Virtual level 3 is truncated to $\chi=20$.  }
+  \label{fig:benchmark:tising_time}
 \end{figure}
 
+\noindent
 The method can also be used to construct real time evolution. \Cref{fig:benchmark:tising_time} shows the error of the matrix exponential in function of the time step $t = -i \beta $. Also here, the results are promising. The construction handles complex matrices well. Similar to the previous conclusion, type A performs better than type F, which performs better than type E. The error of type A becomes quite large for high temperatures (not visible on figure), while type F keeps the errors low. This is not by any means a complete analysis of the real time evolution operator, but just a numeric example.
 
 \subsection{Conclusion}
