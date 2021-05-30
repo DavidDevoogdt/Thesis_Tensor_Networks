@@ -1,6 +1,6 @@
 \section{MPS algorithms}
 
-This section and the following one, will introduce some different \Gls{TN} algorithms. The goal is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, see  \cite{Vanderstraeten2019} .
+This section and the following one, will introduce some different \Gls{TN} algorithms. The goal is to provide an intuitive explanation on how these algorithms work. For rigorous derivations and mathematical details, see e.g.\  \cite{Vanderstraeten2019}.
 
 \subsection{Canonical form}
 
@@ -64,7 +64,7 @@ and
                 4,4,4,4,4,4,
                 13,2,2,6,3,13}} .
 \end{equation}
-Introducing one more tensor
+Define
 \begin{equation}\label{algs:ACC}
     A_c = \pepob{3}{2}{{
                 "-","-",
@@ -168,11 +168,11 @@ where we made use of \cref{algs:mpsid}. Similar techniques allow for the calcula
 
 \section{TN contraction}
 
-Suppose we have an \Gls{MPO} $\hat{O}$that represents a probability of finding encountering a given state: $ \hat{O} \ket{\Psi_i} = p_i \ket{\Psi_i} $. The average value of a local measurement X is given by $ \sum_i \braket{ \Psi_i | \hat{X} \hat{O} | \Psi_i} = \Tr( \hat{X} \hat{O})$. This will be needed in \cref{subsec:statmech}. This section explains how to do this with tensor networks for infinite system sizes.
+Suppose we have an \Gls{MPO} $\hat{O}$ that represents a probability of encountering a given state: $ \hat{O} \ket{\Psi_i} = p_i \ket{\Psi_i} $. The average value of a local measurement X is given by $ \sum_i \Braket{ \Psi_i | \hat{X} \hat{O} | \Psi_i} = \Tr( \hat{X} \hat{O})$. This will be needed in \cref{subsec:statmech}. This section explains how to calculate this with \Glspl{TN} for infinite systems.
 
 \subsection{1D problem}
 
-The normalised probability is given by
+The normalised expectation value of an observable $ \Braket{X}$ measuring several neighbouring sites is given by
 \begin{equation}
     \Braket{X} = \frac{
         \begin{tikzpicture} [   ]
@@ -181,13 +181,15 @@ The normalised probability is given by
             \node[] (N0) at (-1,0) {...};
             \node[circle, draw] (N1) at (0,0) {O};
             \node[circle, draw] (N2) at (1,0) {O};
-            \node[circle, draw] (X2) at (1,1) {X};
+            \node[circle, draw=none] (X2) at (1,1) {X};
 
             \node[] (N3) at (2 ,0) {...};
             \node[] (X3) at (2,1) {...};
 
+            \draw  (0.5,0.65) rectangle (3.5,1.35);
+
             \node[circle, draw] (N4) at (3 ,0) {O};
-            \node[circle, draw] (X4) at (3,1) {X};
+            \node[circle, draw=none] (X4) at (3,1) {X};
 
             \node[circle, draw] (N5) at (4 ,0) {O};
             \node[] (N6) at (5 ,0) {...};
@@ -200,8 +202,8 @@ The normalised probability is given by
             \draw  (N4) -- (N5) ;
             \draw  (N5) -- (N6) ;
 
-            \draw  (X2) -- (X3) ;
-            \draw  (X3) -- (X4) ;
+            %\draw  (X2) -- (X3) ;
+            %\draw  (X3) -- (X4) ;
 
             \draw  (N2) -- (X2) ;
             \draw  (N4) -- (X4) ;
@@ -211,6 +213,7 @@ The normalised probability is given by
 
             \draw (N1.north)   .. controls +(0.4,1.4) and +(0.4,-1.4) .. (N1.south);
             \draw (N5.north)   ..  controls +(0.4,1.4) and +(0.4,-1.4)  .. (N5.south);
+
         \end{tikzpicture}
     }{
         \begin{tikzpicture} [   ]
@@ -244,7 +247,7 @@ The normalised probability is given by
     }.
     \label{sm:expecatation_X}
 \end{equation}
-In the thermodynamic limit there are an infinite number of A to the left and the right. This can be solved by taking the left and right fixed points $Gl$ and $Gr$ of the traced \Gls{MPO} A corresponding to the largest eigenvector $\lambda$.
+In the thermodynamic limit there are an infinite number of traced O to the left and the right. This can be solved by taking the left and right fixed points $Gl$ and $Gr$ of the traced \Gls{MPO} O corresponding to the largest eigenvector $\lambda$.
 \begin{equation}\label{algs:exp}
     \begin{split}
         \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} , scale=0.9]
@@ -289,13 +292,15 @@ Equation \cref{sm:expecatation_X} can now be easily calculated
 
             \node[] (N1) at (0,0) {$Gl$};
             \node[circle, draw] (N2) at (1,0) {O};
-            \node[circle, draw] (X2) at (1,1) {X};
+            \node[circle, draw=none] (X2) at (1,1) {X};
 
             \node[] (N3) at (2 ,0) {...};
             \node[] (X3) at (2,1) {...};
 
             \node[circle, draw] (N4) at (3 ,0) {O};
-            \node[circle, draw] (X4) at (3,1) {X};
+            \node[circle, draw=none] (X4) at (3,1) {X};
+
+            \draw  (0.5,0.65) rectangle (3.5,1.35);
 
             \node[] (N5) at (4 ,0) {$Gr$};
 
@@ -304,8 +309,8 @@ Equation \cref{sm:expecatation_X} can now be easily calculated
             \draw  (N3) -- (N4) ;
             \draw  (N4) -- (N5) ;
 
-            \draw  (X2) -- (X3) ;
-            \draw  (X3) -- (X4) ;
+            %\draw  (X2) -- (X3) ;
+            %\draw  (X3) -- (X4) ;
 
             \draw  (N2) -- (X2) ;
             \draw  (N4) -- (X4) ;
@@ -361,17 +366,17 @@ As 2D contraction is a difficult task, and often the bottleneck in simulations, 
 
 \subsubsection{Real-space renormalisation-group methods}
 
-The general idea behind these methods is to course grain the \Gls{TN}. The first  algorithm in this group of methods was Tensor renormalisation group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step i, the tensor are split with an \Gls{SVD} in 2 different ways, depending on the position on the lattice. Step ii recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the \Gls{SVD} step.
-
 \begin{figure}[!htbp]
     \center
     \includegraphics[width=0.8 \textwidth]{Figuren/tnalgs/TRG.png}
     \caption{ Steps in TRG procedure. Figure taken from \cite{Hauru}.  }
     \label{fig:tnalgs:trg}
 \end{figure}
+
+The general idea behind these methods is to course grain the \Gls{TN}. The first  algorithm in this group of methods was Tensor Renormalisation Group (TRG)  \cite{Hauru}, shown in \cref{fig:tnalgs:trg}. In the first step $(i)$, the tensors are split with an \Gls{SVD} in 2 different ways, depending on the position on the lattice. Step $(ii)$ recombines 4 halves of the decomposition into 1 new tensor. The result is a rotated grid, with side length $\sqrt{2}$. The bond dimension is truncated during the \Gls{SVD} step.
 Many other variants exist, such as Tensor Network Renormalisation (TNR), which will not be discussed here.
 
-\subsubsection{Corner transfer matrix  methods}
+\subsubsection{Corner Transfer Matrix methods}
 
 \begin{figure}[!htbp]
     \centering
@@ -392,7 +397,8 @@ Many other variants exist, such as Tensor Network Renormalisation (TNR), which w
     \label{fig:tnalgs:ctmrg}
 \end{figure}
 
-Another method goes by the name Corner transfer matrix renormalisation group (CTMRG), as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known. Note that many important details are not written down here, and this is merely to give some intuition about \Gls{TN} contraction algorithms.
+\noindent
+Another method goes by the name \Gls{CTMRG}, as described in \cite{orus}. The full network is approximated by 4 corner matrices C and 4 half row transfer matrices T as shown in \cref{fig:tnalgs:ctmrg:a}. The idea is to find matrices such that inserting a row and truncating it again results in the same tensors. This is shown in \cref{fig:tnalgs:ctmrg:b}. First, a new row is inserted. From \cref{fig:tnalgs:ctmrg:a} it can be seen that this should not change the environment. Some tensors are taken together in step 2. As a final step, the tensors are suitably truncated. Once this cycle converges, the environment is known. Note that many important details are not written down here, and this is merely to give some intuition about \Gls{TN} contraction algorithms.
 
 \subsubsection{Boundary methods}
 
@@ -424,7 +430,7 @@ The goal of these methods is to find an \Gls{MPS} fixed point for the infinite l
 
 \paragraph{Time-evolving block decimation}
 
-Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{rt_tn_methods}). It can also be used as a power method for contraction. The boundary \Gls{MPS} is applied to the MPO, and afterwards truncated the enlarged MPO is truncated. This is done by performing a truncation between all the even and odd sites, and afterwards between all odd and even sites. When this procedure is applied enough times, a fixed point is reached.
+Time-evolving block decimation was introduced as a method to calculate thermal states (this will also be encountered later on in \cref{rt_tn_methods}). It can also be used as a power method for contraction. The boundary \Gls{MPS} is applied to the MPO, and afterwards the enlarged MPO is truncated. This is done between all the even and odd sites, and afterwards between all odd and even sites. When this procedure is applied enough times, a fixed point is reached.
 
 % \todo{explain this}
 
@@ -437,7 +443,7 @@ Time-evolving block decimation was introduced as a method to calculate thermal s
 
 \subsection{VUMPS}
 
-The purpose of this section is to give some intuition on the variational uniform Matrix Product State  (\Gls{VUMPS}) algorithm, which will be used later on in this thesis. The goal is to find an \Gls{MPS} layer for the \Gls{MPO} (see \cref{algs:exp}). The expression holds approximately, because the \Gls{MPS} on the left-hand side has a larger bond dimension than on the right-hand side.
+The purpose of this section is to give some intuition on the \Gls{VUMPS} algorithm, which will be used later on in this thesis. The goal is to find an \Gls{MPS} layer for the \Gls{MPO} (see \cref{algs:exp}). The expression holds approximately, because the \Gls{MPS} on the left-hand side has a larger bond dimension than on the right-hand side.
 
 \subsubsection{The equations}
 The method looks for tensors $Gl$ and $Gr$ which fulfil the conditions
@@ -586,7 +592,7 @@ The left and right zipper can now move towards each other, until they meet at th
                 4,4,4,
                 4,7,4}} \; .
 \end{equation}
-This completely determines the problem. One more equation is used in practice to solve the problem. Combining one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and \cref{algs:mpsid} gives $C$
+This completely determines the problem. One more equation is used in practice to solve the equations. Combining one of the equations in \ref{algs:vumpsenv}, the definition of $A_c$ \cref{algs:AC} and \cref{algs:mpsid} gives $C$
 \begin{equation}\label{algs:vumpsenvc}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "-","-", "-","-",
@@ -669,13 +675,13 @@ Then  \cref{algs:mpslayermpo} is solved
                             1,1,1,1,1,1,1}} }}.
     \end{split}
 \end{equation}
-Contracting a 2D \Gls{TN} is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle needs to be solved:
+Contracting a 2D \Gls{TN} is thus reduced to solving the  \cref{algs:ACC}, \cref{algs:vumpsenv}, \cref{algs:AC} and \cref{algs:vumpsenvc} simultaneously. Inspection of the equations shows that the following cycle occurs:
 \begin{itemize}
     \item  $A_c,C  \rightarrow A_l,A_r  $  \cref{algs:ACC}
     \item  $A_l,A_r  \rightarrow Gl,Gr  $ \cref{algs:vumpsenv}
     \item  $ Gl,Gr   \rightarrow A_c,C $ \cref{algs:AC} and  \cref{algs:vumpsenvc}
 \end{itemize}
-The calculated environment (i.e\ the tensor $GL$m $Gr$ and \Gls{MPS} A) can now be used to solve the original problem. The same \Gls{MPS}  \footnote{this will not be always the case, see \cref{subsec:vumps_below_alt} }. \Cref{algs:biggrid} now becomes
+The calculated environment (i.e\ the tensor $GL$,$Gr$ and \Gls{MPS} A) can now be used to solve the original problem. The same \Gls{MPS}  \footnote{this will not be always the case, see \cref{subsec:vumps_below_alt} } is applied to contract the \Gls{TN} from below. \Cref{algs:biggrid} now becomes
 \begin{equation}\label{vumps_Below}
     \vcenter{ \hbox{   \pepob{5}{3}{{
                         "","", "","",

@@ -48,6 +48,9 @@
 \usepackage{braket}
 \usepackage{pdfpages}
 
+\usepackage{physics}
+
+
 \title{Cluster Expansion of Thermal States using Tensor
 Networks}
 \author{David Devoogdt}
@@ -120,9 +123,9 @@ If M is the identity matrix, the chain is closed cyclically. Tensor networks are
 \end{table}
 \Cref{c_split} is in this graphical notation becomes
 \begin{equation}\label{eq:general_mps}
-    \mpo{5}{{"Tr",,,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }}.
+    \mpo{5}{{"Tr","$\chi$",,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }}.
 \end{equation}
-An MPS has 2 dimension, the physical dimension of the particles $d$ and the dimension $\chi$ of the bonds between the tensors. The cluster expansion will rely on "virtual levels". This is the division of the MPS in blocks, analogous to dividing a matrix into block matrices. Every virtual level has its own associated dimension. The dimensions sum up to the total bond dimension $\chi$.
+An MPS has 2 dimension, the physical dimension of the particles $d$ and the dimension $\chi$ of the bonds between the tensors. The cluster expansion will rely on virtual levels. This is the division of the MPS into blocks, analogous to dividing a matrix into block matrices. Every virtual level has its own associated dimension. The dimensions sum up to the total bond dimension $\chi$.
 \subsection{MPO}
 A matrix procuct operator (MPO), is similar to an MPS but has 2 physical legs $i$ and $j$. The following compact notation is used in this paper
 \begin{equation}
@@ -160,9 +163,9 @@ while contraction over all possible virtual levels on 3 sites is denoted by
 
 The novel method to construct the operator $e^{-\beta \hat{H}}$ with cluster expansions was first introduced in \cite{Vanhecke2021}. The goal is capture the exponential of a Hamiltonian operator $\hat{H}$ of the form
 \begin{equation}\label{H_eq}
-    \hat{H} = -J \left (  \sum_{  \braket{i j }} H^i_2 H^j_2 + \sum_i H^i_1 \right ) .
+    \hat{H} = -J \left (  \sum_{  \Braket{i j }} H^i_2 H^j_2 + \sum_i H^i_1 \right ) .
 \end{equation}
-This Hamiltonian consists of 1 and 2 site operators. The first summation $\braket{i j }$ runs over all neighbouring sites. The precise form of the Hamiltonian is not important. The notation for the contraction of the tensor network will also be used to denote the Hamiltonian evaluated on the given geometry
+This Hamiltonian consists of 1 and 2 site operators. The first summation $\Braket{i j }$ runs over all neighbouring sites. The precise form of the Hamiltonian is not important. The notation for the contraction of the tensor network will also be used to denote the Hamiltonian evaluated on the given geometry
 \begin{alignat}{3}
     H \left( \mpob{3}{ {0,,,0}  }{}{}{}{{"",,}} \right ) = & H_1 &  & \otimes 1   &  & \otimes 1  \nonumber  \\
     +                                                      & 1   &  & \otimes H_1 &  & \otimes 1 \nonumber   \\
@@ -188,7 +191,7 @@ Contraction of larger network lead to many terms, such as
 \begin{equation}
     \mpob{7}{ {0,1,0,0,0,1,0,1,0,0,1,0}  }{}{}{}{{"","","","","","","","","","","",}} \;.
 \end{equation}
-The beauty of this lays in the fact that disconnected regions(regions separated by level 0) combine in exactly the right way to capture all the terms appearing in the series expansion of the exact tensor exponential with as largest patch 2. In other words it is exact up to order 2 in $\beta$ \cite{Vanhecke2021}. Only the terms of the exponential which acts on 3 or more neighbouring sites at once, are not accounted for.
+The beauty of this lays in the fact that disconnected regions(regions separated by level 0) combine in exactly the right way to capture all the terms appearing in the series expansion of the exact tensor exponential with as largest patch 2\cite{Vanhecke2021}. Only the terms of the exponential which acts on 3 or more neighbouring sites at once, are not accounted for.
 
 Notice that in \cref{eq:lev1}, 2 new blocks are introduced. The dimension of virtual level 1 needs to be $d^2$, with d the dimension of physical level. Although the types already differ in the next step, one more blocks is shown to make the notation clear:
 \begin{equation}\label{constr:intro:gen}
@@ -205,7 +208,7 @@ This is called a cluster expansion of order 3, because there are 3 connected sit
 \begin{equation}
     \boxed{\mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}} },
 \end{equation}
-the right-hand side of \cref{constr:intro:gen} is implied. This fully defines one new block as in \cref{constr:intro:gen}, or the contraction of 2 blocks as in \cref{eq:lev1}. In the following section, different types will be discussed. For every geometry, one or multiple new blocks are defined.
+the right-hand side of \cref{constr:intro:gen} is implied. This defines one new block as in \cref{constr:intro:gen}, or the contraction of 2 blocks as in \cref{eq:lev1}. In the following section, different types will be discussed.
 
 \subsection{1D}
 \subsubsection{Type A}
@@ -219,11 +222,11 @@ The first few blocks in the cluster expansion are
          & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \; .
     \end{align}
 \end{subequations}
-Virtual level $l$ needs a bond dimension of $d^{2 l}$ to solve the equations exactly.  The introduction of $O^{n n}$ blocks could lead to long chains in the contraction, e.g.\
+Virtual level $l$ needs a bond dimension of $d^{2 l}$ to solve the equations exactly.  The combination of these blocks could lead to long chains in the contraction, e.g.\
 \mpob{7}{ {0,1,2,2,1,2,1,1,0,0,1,0}  }{}{}{}{{"","","","","","","","","","","",}}. The results of this will be discussed in \cref{subsec:exexp}.
 
 \subsubsection{Type E}
-To remedy this behaviour, type E only has these blocks
+To remedy this behaviour, the type E blocks are
 \begin{subequations}
     \begin{align}
          & \mpob{1}{ {,}  }{}{}{}{{,,}}                          \\
@@ -247,7 +250,7 @@ Both type A and F have potentially ill conditioned inverses. The blocks of type 
          & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \;.
     \end{align}
 \end{subequations}
-The blocks $O^{n n+1}$ are chosen unitary up to a constant factor. The primed blocks solve the chains of even order. This requires twice the bond dimension of type A, but is guaranteed to have well conditioned inverses.
+The blocks $O^{n n+1}$ are unitary up to a constant factor, and form the least squares solution to the problem. The primed blocks solve the chains of even order. This requires twice the bond dimension of type A, but is guaranteed to have well conditioned inverses.
 
 \subsection{2D}
 In hindsight of the results, the construction in 2D is a generalisation of type A. The linear blocks, for which the defining equation is described by a tree graph, will resemble the blocks previously introduced. The non-linear blocks are used to account for loops.
@@ -275,7 +278,7 @@ For the order 3 blocks, 6 different options are possible. They are
     \vcenter{\hbox{  \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,0,0,1}} }}\;
     \vcenter{\hbox{  \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,1,1}} }}
 \end{equation}
-and their rotations over 90 degrees. Solving all blocks, imposing rotation symmetry over 90 degrees
+and their rotations over 90 degrees. Solving all blocks while imposing rotation symmetry over 90 degrees
 \begin{equation}
     \vcenter{ \hbox{ \pepob{4}{3}{{
                         "-","-","-",
@@ -297,7 +300,7 @@ and their rotations over 90 degrees. Solving all blocks, imposing rotation symme
                         "-","-"}}{{
                         1,1,4,1,
                         1,4,12,4,
-                        1,1,4,1}} }}
+                        1,1,4,1}} }} ,
 \end{equation}
 reduces the number of blocks that need to be solved significantly.  Also, $\bot$  and $+$ blocks should be added
 \begin{equation}\label{crosssolve}
@@ -332,7 +335,7 @@ Not all finite size patches are covered with the blocks introduced in the previo
 \end{minipage} \vspace{10px}
 
 \noindent
-These are nonlinear equations, and will be treated separately in \cref{sec:solv}. All virtual levels for solving loops are denoted by Greek letters. For $d=2$, the bond dimension of $\alpha$ can be as low as 6. To connect the loops to the linear blocks, corner pieces similar to \cref{eq:loop_1ext} are used. Directly connecting virtual level 1 to the loops with $O^{ \alpha \alpha 0 1 }$ also solves the local patch, but cause diverging results when 2 or more corner pieces with extensions connect. One corner can connect to 2 chains, with for each chain a maximum length equal to the order of the linear blocks. Going further is possible, but comes at an ever-increasing bond dimension cost.
+These are nonlinear equations, and will be treated separately in \cref{sec:solv}. All virtual levels for solving loops are denoted by Greek letters. For $d=2$, the bond dimension of $\alpha$ can be as low as 6. To connect the loops to the linear blocks, corner pieces similar to \cref{eq:loop_1ext} are used. Directly connecting virtual level 1 to the loops with $O^{ \alpha \alpha 0 1 }$ also solves the local patch, but cause diverging results when 2 or more corner pieces with extensions connect. One corner can connect up to 2 chains, with for each chain a maximum length equal to the order of the linear blocks. Going further is possible, but comes at an ever-increasing bond dimension cost.
 
 \subsection{Solvers} \label{sec:solv}
 
@@ -376,14 +379,16 @@ These are nonlinear equations, and will be treated separately in \cref{sec:solv}
 
     \end{tikzpicture} }
 
-Now that it is clear how  the construction works, we focus on how to solve them numerically. Take as example  $X=O^{1 1 1 1}$ from \cref{crosssolve}. The involved tensors are reshaped and reordered to bring it in the following standard form
+Now that it is clear how  the construction works, we focus on how to solve them numerically. Take as example  $X=O^{1 1 1 1}$ from \cref{crosssolve}. The involved tensors are reshaped and reordered to bring them in the following standard form
 \begin{equation} \label{extract_x}
-    \epsilon =  \vcenter{\hbox{  \scalebox{0.9}{ \pepoct }} } - \vcenter{\hbox{  \scalebox{0.9}{ \blockct } }} .
+    \eta =  \vcenter{\hbox{  \scalebox{0.9}{ \pepoct }} } - \vcenter{\hbox{  \scalebox{0.9}{ \blockct } }} .
 \end{equation}
-Here $B$ is the exponentiated Hamiltonian on the $+$ geometry minus the contraction of all previous added blocks. $\epsilon$ is the residual error, and should be zero up to machine precision when the solver is finished. Solving this equation by inverting the matrices $A^i$ separately results in numerical unstable results, due to the ill-conditioned blocks $A^i$ inherent to the construction. In practice this instability starts happening at virtual level 2. Taking the pseudoinverse (with all singular values $\sigma_0<10^{-12}$ taken to be exactly zero) of the tensor product  $A = A^1 \otimes A^2 \otimes A^3 \otimes A^4$  resolves the problem, but is  computationally too expensive for long side chains. The problem is resolved by taking the SVD decomposition of each matrix $A^i = U^i \Sigma^i V^{i \dagger}$. The unitary matrices are inverted by taking the Hermitian transpose, and the matrix $\Sigma = \Sigma^1 \otimes \Sigma^2 \otimes \Sigma^3 \otimes \Sigma^4$ is pseudoinverted. This is fast because $\Sigma$ is very sparse. The procedure also works for e.g.\ the corner pieces of \cref{eq:loop_1ext}, and by extension every connected patch. When the patch contains 2 tensors such as \cref{2sitepatch}, it is split with an SVD decomposition.
+Here $B$ is the exponentiated Hamiltonian on the $+$ geometry minus the contraction of all previous added blocks. $\eta$ is the residual error, and should be zero up to machine precision when the solver is finished.
+
+Solving this equation by inverting the matrices $A^i$ separately results in numerical unstable results, due to the ill-conditioned blocks $A^i$ inherent to the construction. In practice this instability starts happening at virtual level 2. Taking the pseudoinverse (with all singular values $\sigma_0<10^{-12}$ taken to be exactly zero) of the tensor product  $A = A^1 \otimes A^2 \otimes A^3 \otimes A^4$  resolves the problem, but is  computationally too expensive for long side chains. The problem is resolved by taking the SVD decomposition of each matrix $A^i = U^i \Sigma^i V^{i \dagger}$. The unitary matrices are inverted by taking the Hermitian transpose, and the matrix $\Sigma = \Sigma^1 \otimes \Sigma^2 \otimes \Sigma^3 \otimes \Sigma^4$ is pseudoinverted. This is fast because $\Sigma$ is very sparse. The procedure also works for e.g.\ the corner pieces of \cref{eq:loop_1ext}, and by extension every connected patch. When the patch contains 2 tensors such as \cref{2sitepatch}, it is split with an SVD decomposition.
 
 \subsubsection{Nonlinear Solver}
-A nonlinear solver takes steps in the direction that lowers the residual error $\epsilon$. This procedure can be sped up if the gradient is known. Inspection of \cref{extract_x} shows that the derivative  $\frac{\partial  \epsilon_{ (I^1 I^2 I^3 I^4) j }  }  { X_{ (\alpha_1 \alpha_2 \alpha_3 \alpha_1)  j } }   = A_{ (I^1 I^2 I^3 I^4) (\alpha_1 \alpha_2 \alpha_3 \alpha_4) } $. Or more simply put, the contraction of the network but with X removed. This is extended to more complex situation with the chain rule for derivatives. The solver handles multiple blocks which are identical up to a permutation.
+A nonlinear solver takes steps in to lower the residual error $\eta$. This procedure can be sped up if the gradient is known. Inspection of \cref{extract_x} shows that the Jacobian is $\frac{\partial  \eta_{ (I^1 I^2 I^3 I^4) j }  }  { \partial X_{ (\alpha_1 \alpha_2 \alpha_3 \alpha_1)  j } }   = A_{ (I^1 I^2 I^3 I^4) (\alpha_1 \alpha_2 \alpha_3 \alpha_4) } $. Or more simply put, the contraction of the network but with X removed. This is extended to more complex situation with the chain rule for derivatives. The solver can handle multiple blocks in one geometry which are identical up to a permutation.
 
 \subsubsection{Sequential Linear Solver}
 Another useful way to solve the nonlinear equations is by employing the linear solver described before, where each appearing tensor is solved individually. The algorithm keeps sweeping over all tensors until convergence is reached. It's necessary to choose a suitable step size.
@@ -402,10 +407,10 @@ The cluster expansions are tested in 2 ways. In 1D and 2D, the error $\epsilon$ 
     \label{fig:benchmark:tising}
 \end{figure}
 
-In 1D, the error is calculated on a cyclic system of 11 sites. The results are shown in \cref{fig:benchmark:tising}. All the cluster expansion get better with increasing order. Type A outperforms the other 2 types by quite some margin. This conclusion is also true for the Heisenberg model and random 2 site Hamiltonians (not shown here). The results in 2D show a similar trend. The error in 2D is of the same order of magnitude. A plaquette term \cref{tikzfig:plaquetter} is needed, the extensions \cref{eq:loop_1ext}  are optional. The results show that real time evolution ($t = - i \beta$) also performs well.
+In 1D, the relative error $\epsilon = \| \Tr( O^n ) -  \exp  -\beta \hat{H}  \|  /  \| \exp  -\beta \hat{H}  \| $ is calculated on a cyclic system of $n=11$ sites. The results are shown in \cref{fig:benchmark:tising}. All the cluster expansion get better with increasing order. Type A outperforms the other 2 types by quite some margin. This conclusion is also true for the Heisenberg model and random 2 site Hamiltonians (not shown here). The results in 2D show a similar trend. The error in 2D is of the same order of magnitude. A plaquette term \cref{tikzfig:plaquetter} is needed, the extensions \cref{eq:loop_1ext}  are optional. The results show that real time evolution ($t = - i \beta$) also performs well.
 
 \subsection{2D TFI model}
-The TFI model is of the form \cref{H_eq}, with $H_1=g  \sigma ^x$ and $H_2= \sigma^z$. For low temperature, the spins tend to align forming a ferromagnet. For high T, the magnetisation disappears. The transversal field $g$ causes the spins to align in the direction of the transversal field. A cluster expansion of order 5 with loops is used to simulate the phase transition of the TFI model at g=0 (classical Ising) and g=2.5. The simulated magnetisation $ \braket{m^z}$ and the data collapse of m, entropy $S$ and correlation length $\xi$ for g=2.5 is shown in \cref{fig:phase:g25:zoomed}. $\delta$ is a measure for the (inverse) size of the system. \Cref{fig:phase:g25:zoomed} shows a very clear data collapse. For g=0, the fitted critical temperature is $T_c = 2.691(9)$, in agreement with Onsager's analytical solution $T_c = 2.69185$. For $g=2.5$, the fitted value $T_c=1.2736(6)$ agrees well with values from literature, e.g. $T_c=1.2737(2)$ obtained with a competing tensor network technique and $T_c=1.2737(6)$ obtained with quantum Monte Carlo. \cite{Czarnik2019} Higher precision can be achieved with cluster expansions of higher order. The properties were calculated for infinite lattices using VUMPS.
+The TFI model is of the form \cref{H_eq}, with $H_1=g  \sigma ^x$ and $H_2= \sigma^z$. A cluster expansion of order 5 with loops is used to simulate the phase transition of the TFI model at g=0 (classical Ising) and g=2.5. The simulated magnetisation $ \Braket{m^z}$ and the data collapse of m, entropy $S$ and correlation length $\xi$ for g=2.5 is shown in \cref{fig:phase:g25:zoomed}. $\delta$ is a measure for the (inverse) size of the system. \Cref{fig:phase:g25:zoomed} shows a very clear data collapse. For g=0, the fitted critical temperature is $T_c = 2.691(9)$, in agreement with Onsager's analytical solution $T_c = 2.69185$. For $g=2.5$, the fitted value $T_c=1.2736(6)$ agrees well with values from literature, e.g. $T_c=1.2737(2)$ obtained with a competing Tensor Network technique and $T_c=1.2737(6)$ obtained with quantum Monte Carlo. \cite{Czarnik2019} Higher precision can be achieved with cluster expansions of higher order. The properties were calculated for infinite lattices using VUMPS.
 
 \begin{figure}[h!]
     \center

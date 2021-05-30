@@ -5,13 +5,11 @@ The \Glspl{MPS} are processed by transforming the tensor into a matrix, performi
 
 \subsubsection{Grouping legs}
 One of the most basic manipulations is to group some legs of a tensor into one leg:
-\begin{equation}
-    \begin{split}
-        T^{i_1 i_2 j_1 j_2} &=  \expH{2}{$T$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{} \\
-        & \cong \expH{2}{$T$}{{"-","-"}}{{"-","-"}}{{"$(i_1 j_1 )$","$(i_2 j_2)$"}} \\
-        &= T^{ (i_1 j_1 ) (i_2 j_2) } \\
-    \end{split}
-\end{equation}
+\begin{align}
+    T^{i_1 i_2 j_1 j_2} & =  \expH{2}{$T$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}  \nonumber                  \\
+                        & \cong \expH{2}{$T$}{{"-","-"}}{{"-","-"}}{{"$(i_1 j_1 )$","$(i_2 j_2)$"}}  \nonumber \\
+                        & = T^{ (i_1 j_1 ) (i_2 j_2) }        .
+\end{align}
 The dimension of the new leg is the product of the dimension of the individual legs. Contracting legs separately or in merged form gives the same result. The 4 leg tensor and matrix contain exactly the same information. Manipulating this in memory requires both permute and reshape commands. This requires some time as the internal representation of the matrix changes.
 
 \subsubsection{Virtual levels}
@@ -21,14 +19,12 @@ A matrix can be split in smaller block matrices. Similarly, a leg of a tensor ca
 \def \figone {\expH{2}{$O^{u v,v w}$}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{{"u","w"}}}
 
 The grouping above can be applied to decompose a tensor into 2 tensors with matrix techniques. An example is
-\begin{equation}
-    \begin{split}
-        \figone &= O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w} \\
-        &\cong O^{u w}_{ (\alpha_u i_1 j_1) (\gamma_w i_2 j_2) } \\
-        &= O^{u v}_{(\alpha_u i_1 j_1) \alpha_v } O^{v w}_{ \alpha_v (\alpha_w i_2 j_2) } \\
-        &\cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}.
-    \end{split}
-\end{equation}
+\begin{align}
+    \figone & = O^{i_1 i_2 j_1 j_2 }_{\alpha_u \gamma_w}                                    \nonumber     \\
+            & \cong O^{u w}_{ (\alpha_u i_1 j_1) (\gamma_w i_2 j_2) }               \nonumber             \\
+            & = O^{u v}_{(\alpha_u i_1 j_1) \alpha_v } O^{v w}_{ \alpha_v (\alpha_w i_2 j_2) }  \nonumber \\
+            & \cong \mpo{2}{{"u","v","w"}}{{"$i_1$","$i_2$"}}{{"$j_1$","$j_1$"}}{}{}.
+\end{align}
 The indices U, V and W represent virtual levels. Step 2 reshapes and groups the indices into one index on the left and one on the right. The dimension of this index is the product of the separate dimensions. Step 3 decomposes the matrix into a product of 2 matrices. The last step transforms the indices back to separate legs. The rank of the original matrix is kept the same if
 \begin{equation}
     \dim{v} = \min( \dim{u}, \dim{w}) \cdot d ^2 .
@@ -37,7 +33,7 @@ Here, d is the physical dimension. Many different matrix decompositions exist. S
 
 \subsubsection{Truncation}
 
-The above procedure also gives a way to truncate the bond dimension: first take together 2 neighbouring sites, then perform an \Gls{SVD} Decomposition: $T = U \Sigma V^{\dagger}$. Split as
+The above procedure also gives a way to truncate the bond dimension: first take together 2 neighbouring sites, then perform an \Gls{SVD}: $T = U \Sigma V^{\dagger}$. Thr matrices are split as
 \begin{equation}
     T = \begin{bmatrix}
         U_1 & U_2 \\
@@ -47,9 +43,9 @@ The above procedure also gives a way to truncate the bond dimension: first take 
     \end{bmatrix} \begin{bmatrix}
         V_1 & V_2\\\end{bmatrix}^{\dagger},
 \end{equation}
-where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor.
+where $\Sigma_1$ contains the n largest singular values. Then $\hat{T} = U_1 \Sigma_1 V_1^{\dagger}$ is the best rank n approximation to the original tensor in the following sense
 \begin{equation}
-    min_{rank(A) \leq n } \| T-A  \|  = \| T- \hat{T}  \|
+    min_{rank(A) \leq n } \| T-A  \|  = \| T- \hat{T}  \| .
 \end{equation}
 
 \subsubsection{Inversion}
@@ -70,7 +66,7 @@ This is a standard matrix equation and can hence be solved with linear algebra p
 
 \subsubsection{Contraction order}
 
-\Gls{TN} diagrams determine unambiguously the result of a contraction. This does not mean all contraction orders are equivalent. The number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two contraction schemes with different time complexity are shown in \cref{fig:tnalgs:cont_ord}.
+\Gls{TN} diagrams determine unambiguously the result of a contraction. This does not mean all contraction orders are equivalent. Suppose the number of operations needed to contract 2 vectors is D. Each additional leg multiplies the number of operations by the bond dimension. Two contraction schemes with different time complexity are shown in \cref{fig:tnalgs:cont_ord}.
 
 \begin{figure}[!htbp]
     \center
