@@ -66,9 +66,9 @@ There is no known analytical expression for the critical temperature. With quant
 Up until now, the phase diagram in \cref{2dtisingphasediag2} was explored at constant g in function of T, but of course there is also a transition at constant T and varying g.  T = 0.7 is chosen. The results are shown in \cref{fig:phase:t07:full}. Clearly, the results do not collapse as well as for the other models. The reason is that the order of the expansion is not high enough.
 A more accurate version is shown in \cref{fig:phase:t07:full2}. This expansion is of order 6, where virtual level 3 is truncated to dimension 20. The others are order 5. Both include loop contributions, as opposed to the previous results. The fitted critical temperature moves from $T_c = 2.817$ to $T_c = 2.854$. The total bond dimension is ($D = 1+4+16+20 +6$) instead of ($D = 1+4+16 +6 $). The results, are both fitted without $\chi=8$ due to obvious finite-size effects.
 
-\subsection{Tricritical point}\label{subsec:tricrit}
+\subsection{Quantum critical point}\label{subsec:tricrit}
 
-Now that we know the critical transversal field can be determined, all the tools are present to extrapolate the tricritical point, indicated by a red dot in \cref{2dtisingphasediag2}. To achieve this, the following scaling relation can be used
+Now that we know the critical transversal field can be determined, all the tools are present to extrapolate the quantum critical point, indicated by a red dot in \cref{2dtisingphasediag2}. To achieve this, the following scaling relation can be used
 \begin{equation}
   T_c = \left| g_c-g_{c,q} \right|^{z \nu_{3D}} .
 \end{equation}
@@ -151,4 +151,4 @@ Different choices of $c_i$ in \cref{eq:cit_delta} are possible to construct $\de
 \subsection{Conclusion}
 
 The conclusion from the direct results in \cref{sec:results2d} seems to carry over to a lattice in the thermodynamic limit very well. Comparison with the critical temperatures from literature confirmed that this method is able to approximate the operator $\exp -\beta \hat{H}$ accurately, even for a cluster expansion of order 5 without loops. This has only a bond dimension of 21, enabling the use of larger \Gls{VUMPS} bond dimensions $\chi$.
-The path for determining a value for the tricritical point, an important test  to compare this method to the literature, is clear and mostly requires more precise data. With this data, and careful analysis of the end results, the techniques of \cref{sssec:better_Extrap} could be used to improve  the results further. The results also indicate that the current procedure to determine the magnetisation with \Gls{VUMPS}, and in particular the question of how to close the \Gls{VUMPS} environment from below as introduced in \cref{subsec:vumps_below_alt}, deserves some closer attention in the future.
+The path for determining a value for the quantum critical point, an important test  to compare this method to the literature, is clear and mostly requires more precise data. With this data, and careful analysis of the end results, the techniques of \cref{sssec:better_Extrap} could be used to improve  the results further. The results also indicate that the current procedure to determine the magnetisation with \Gls{VUMPS}, and in particular the question of how to close the \Gls{VUMPS} environment from below as introduced in \cref{subsec:vumps_below_alt}, deserves some closer attention in the future.
