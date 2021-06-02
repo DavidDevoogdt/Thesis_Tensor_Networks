@@ -124,7 +124,7 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
             if n == 2
                 [obj, ln_prefact, err02] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
             else
-                [obj, ln_prefact, err02] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 2);
+                [obj, ln_prefact, err02] = add_lin(obj, [m - 1, 0, m, 0], ln_prefact, 1);
             end
 
         else

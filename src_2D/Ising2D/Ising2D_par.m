@@ -42,8 +42,8 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts)
                     x_min = Tk - w;
                     x_max = Tk + w;
                 case 2.9
-                    x_min = 0.4;
-                    x_max = 1.0;
+                    x_min = 0.3;
+                    x_max = 0.8;
 
                 otherwise
                     error('provide T bounds');
