@@ -1,4 +1,4 @@
-function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact,split_opts , full_inverse)
+function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_cells, target, lnprefact,split_opts , inv_opts)
     %code to calculate fast pseudoinverses for a block. use solve_lin_and_assign
 
     if nargin < 6
@@ -6,7 +6,8 @@ function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_c
     end
 
     if nargin < 8
-        full_inverse = 0;
+        inv_opts.full_inverse = 0;
+        inv_opts.sigma = 1e-14;
     end
 
     %bring all parts without the PEPO cells to solve to the target
@@ -55,7 +56,7 @@ function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_c
 
     [dims, dim_arr, bond_pairs, ext_dims] = removed_elems_dims(obj, num_pats, map, rem_map, pattern, nums);
 
-    if full_inverse == 0 %invert leg per leg, faster
+    if inv_opts.full_inverse == 0 %invert leg per leg, faster
 
         tensors = fetch_PEPO_cells(obj, map, cc{1}, lnprefact);
 
@@ -125,7 +126,7 @@ function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_c
             target_rot = reshape(target_rot, perm_dims);
 
             %perfor inversion
-            x = lin_solver_core(A_list, target_rot, obj.copts.inv_eps);
+            x = lin_solver_core(A_list, target_rot, inv_opts.inv_eps);
 
             %reorder external indices
             [~, order_idx] = sort(-order_pattern_externsions);
@@ -152,7 +153,7 @@ function [x_cell, residual_target, res_con] = solve_lin(obj, pattern, map, con_c
         A_res = reshape(A, dd, []);
         %works always,but potentially slow
 
-        dA = decomposition(A_res, 'qr', 'RankTolerance', obj.copts.inv_eps, 'CheckCondition', false);
+        dA = decomposition(A_res, 'qr', 'RankTolerance', inv_opts.inv_eps, 'CheckCondition', false);
         x = dA \ target_rot;
 
         x = reshape(x, [dim_arr, dimension_vector(obj.dim^2, num_pats)]);

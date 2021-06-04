@@ -3,7 +3,7 @@ function test
     %compare_models(["t_ising"], 1i*10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5,
     %6],1) %imaginary
     
-    compare_models(["t_ising"], 10.^(-3:0.1:1.5), [2, 3, 4], [3, 5, 7],0)
+    compare_models(["t_ising"], 10.^(-3:0.2:1.5), [2], [3,5,7],0)
     
     %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
@@ -21,7 +21,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
         simul.Order_arr = order;
         simul.types = types;
 
-        simul.M = 11;
+        simul.M = 10;
         simul.beta_arr = beta_arr;
         simul.cyclic = 1;
 
@@ -57,7 +57,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
         set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
         %%%
 
-        opts = struct('max_bond_dim', 64,'complex', false);
+        opts = struct('max_bond_dim',40,'complex', false);
         %opts = struct('complex', false);
         opts.inv_eps = 1e-12;
         %opts = struct;
