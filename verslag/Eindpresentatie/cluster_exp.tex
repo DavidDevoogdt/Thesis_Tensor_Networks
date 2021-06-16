@@ -1,0 +1,100 @@
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}}) \\
+            - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \begin{split}
+            \only<1> { \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp -\beta H( &   \mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+                - \; &\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+                - \;&\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+                - \; &\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}}
+            \only<2> {  \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}    = \exp -\beta H( &   \mpob{3}{ {,,,} }{}{}{}{{,,}})  \\[10pt]
+                - \; &\mpob{3}{ {,,,}  }{}{}{}{{,,,}}}
+            \only<3> {  \boxed{ \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}} } }
+        \end{split}
+    \end{equation}
+\end{frame}
+
+\subsection{1D}
+\begin{frame}{1D: Variant A}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                                      \\
+             & \mpob{2}{ {,"1",}  }{}{}{}{{,,}}                                  \\
+             & \mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}                             \\
+             & \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}    \label{2sitepatch} \\
+             & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \; .
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{1D: Variant E}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                          \\
+             & \mpob{2}{ {,"1",}  }{}{}{}{{,,}}                      \\
+             & \mpob{3}{ {,"1","1'",}  }{}{}{}{{,,,}}                \\
+             & \mpob{4}{ {,"1","2","1'",}  }{}{}{}{{,,,,,}}          \\
+             & \mpob{5}{ {,"1","2","2'","1'",}  }{}{}{}{{,,,,,}} \;.
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{1D: Variant F}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                                         \\
+             & \mpob{2}{ {,"1'",}  }{}{}{}{{,,}}+  \mpob{2}{ {,"1",}  }{}{}{}{{,,}} \\
+             & \mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}                                \\
+             & \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}} \; +  \nonumber          \\
+             & \mpob{4}{ {,"1","2'","1",}  }{}{}{}{{,,,,,}}                         \\
+             & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \;.
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\subsection{2D}
+
+\begin{frame}{2D: Linear Blocks}
+    \begin{subequations}
+        \begin{align}
+             & \vcenter{\hbox{ \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}} }}                                                                                                                                   \\[0.5cm]
+             & \vcenter{\hbox{  \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,0,0,1}} }}\;
+            \vcenter{\hbox{  \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,1,1}} }}                                                                                                          \\[0.5cm]
+             & \vcenter{\hbox{  \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}} \quad   \pepob{3}{3}{{"1","1","1","1","1","1",}}{{"1","1","1","1","1","1",}}{{1,0,1,0,0,0,1,0,1}}  }} \;
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{2D: Nonlinear Blocks}
+    \begin{equation}
+        \vcenter{\hbox{   {\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}} }}
+    \end{equation}
+
+    \begin{equation}
+        \vcenter{\hbox{     \pepob{5}{3}{{
+                            "-","-", "-",     "-",
+                            "-","1","$\beta$","-",
+                            "-","-","$\alpha$","-"}}{{
+                            "-","-",
+                            "-","-",
+                            "-","$\gamma$",
+                            "-","$\alpha$",
+                            "-","-"}}{{
+                            1,1,1,1,1,
+                            1,0,0,0,1,
+                            1,1,0,0,1}} }} \; .
+    \end{equation}
+\end{frame}

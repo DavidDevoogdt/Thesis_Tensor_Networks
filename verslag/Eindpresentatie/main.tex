@@ -1,0 +1,143 @@
+\documentclass[aspectratio=169]{beamer}
+%\usetheme{Simple}
+
+\usepackage{listings}
+\usepackage{lmodern}
+ \setbeamercovered{transparent}
+ \usetheme[width=4\baselineskip,hideothersubsections]{Berkeley}
+
+ \setbeamerfont{section in sidebar}{size=\scriptsize}
+ \setbeamerfont{subsection in sidebar}{size=\tiny}
+
+
+
+
+%% tikz stuff
+\usepackage{tikz}
+\usetikzlibrary{external}
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+
+\newcounter{a}
+\newcounter{b}
+\usepackage{etoolbox} %for if empty functionality
+\usepackage{ifthen}
+\usepackage{leftidx}
+
+
+%%equation stuff
+\usepackage{braket}
+\usepackage{amsmath} % Mathematical symbols
+\usepackage{amssymb} % Symbols
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{physics} %thing s.a. \Tr 
+
+
+%%plot stuff
+\usepackage{subcaption} % Subfigure environment 
+\usepackage{caption}% Captions onder figuur gecentreerd
+\usepackage{float}
+\usepackage{graphicx}
+
+%break long urls at a - and not only at . or /
+\usepackage{url}
+% \def\UrlBreaks{\do\/\do-}
+% \usepackage{breakurl}
+\usepackage{hyperref}
+
+%environments
+\usepackage{verbatim}
+\usepackage{fancyvrb} %inline verbatim
+\usepackage{cleveref} 
+
+\usepackage[acronym]{glossaries}
+\usepackage[toc,page]{appendix}
+%\usepackage{acronym}
+
+%random
+\usepackage{booktabs}
+\usepackage{lipsum}
+\usepackage{epigraph}
+\usepackage{pdfpages}
+%\usepackage{todonotes}
+
+
+\allowdisplaybreaks %break multiline equations
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+% The title
+\title[]{  Cluster Expansion of Thermal States using Tensor Networks  }
+
+\author[] {David Devoogdt}
+\institute[UGent] % Your institution may be shorthand to save space
+{
+    % Your institution for the title page
+    Faculty of Engineering and Architecture \\
+    Ghent University 
+    \vskip 3pt
+}
+\date{\today} % Date, can be changed to a custom date
+
+
+\input{../macros.tex}
+\input{../tikzsetup}
+
+\setbeamertemplate{footline}[frame number]
+
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\AtBeginSection[]
+{
+    \begin{frame}<beamer>{Table of Contents}
+        \tableofcontents[currentsection,currentsubsection,
+            hideothersubsections,
+            sectionstyle=show/shaded,
+        ]
+    \end{frame}
+}
+
+\AtBeginSection[]{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\section{Introduction}
+\input{Introduction.tex}
+
+% \section{Strongly Correlated Physics}
+% \input{corr_phys.tex}
+
+\section{Cluster Expansion}
+\input{cluster_exp.tex}
+
+\section{Solvers}
+\input{implementation.tex}
+
+\section{Results}
+\input{results.tex}
+
+\section{Conclusion}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{References}
+    \bibliographystyle{elsarticle-num}
+    \bibliography{../bib}
+\end{frame}
+
+\end{document}
