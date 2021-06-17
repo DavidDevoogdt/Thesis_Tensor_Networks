@@ -24,7 +24,7 @@
     "latex-workshop.chktex.enabled": false,
     "editor.formatOnSave": true,
     "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 80,
+    "editor.wordWrapColumn": 100,
     "latex-workshop.latex.recipe.default": "pdflatex ➞ bibtex ➞ pdflatex × 2",
     "latex-workshop.latex.recipes": [
         {

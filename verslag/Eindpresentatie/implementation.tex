@@ -269,97 +269,109 @@
     \end{equation}
 \end{frame}
 
+\def \figa { \vcenter{\hbox{ \pepob{5}{3}{{
+                        "","","","",
+                        "","","","",
+                        "","","",""}}{{
+                        "","",
+                        "","",
+                        "","",
+                        "","",
+                        "",""}}{{
+                        1,1,1,1,1,
+                        1,0,0,0,1,
+                        1,0,0,0,1}} } }}
+
+\def \figb { \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+
+                \def \legLength { 0.8}
+                \def \radius {0.1}
+
+                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+
+                \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
+                \node[draw, circle,radius=\radius] (L1) at (-1,1) {};
+
+                \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
+
+                \node[draw, circle,radius=\radius] (R0) at (1,0) {};
+                \node[draw, circle,radius=\radius] (R1) at (1,1) {};
+
+                \draw (L0) --   (L1);
+                \draw (R0) --   (R1);
+
+                \draw (L0) --   (-0.3,0);
+                \draw (L1) --   (-0.3,1);
+
+                \draw (R0) --   (0.3,0);
+                \draw (R1) --   (0.3,1);
+
+                \node[draw=none] (C0) at (0,0.5) {X};
+            \end{tikzpicture}}}}
+
+\def \figc {\vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+
+                \def \legLength { 0.8}
+                \def \radius {0.1}
+
+                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+
+                \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
+                \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
+
+                \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
+
+                \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
+                \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
+
+                \draw (L0) --   (-0.3,0);
+                \draw (L1) --   (-0.3,1);
+
+                \draw (R0) --   (0.3,0);
+                \draw (R1) --   (0.3,1);
+
+                \node[draw=none] (C0) at (0,0.5) {X};
+            \end{tikzpicture} }} }
+
+\def \figd {\vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+
+                \def \legLength { 0.8}
+                \def \radius {0.1}
+
+                \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+                \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+
+                \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
+                \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
+
+                \node[draw, circle,radius=\radius] (C0) at (0,0) {};
+                \node[draw, circle,radius=\radius] (C1) at (0,1) {};
+
+                \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
+                \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
+
+                \draw (L0) --   (C0);
+                \draw (L1) --   (C1);
+
+                \draw (R0) --   (C0);
+                \draw (R1) --   (C1);
+
+                \draw (C1) --   (C0);
+            \end{tikzpicture} }}}
+
 \begin{frame}{Linear Solver: Applicability}
     \begin{equation}
-        \only<1>{  \vcenter{\hbox{ \pepob{5}{3}{{
-                                "","","","",
-                                "","","","",
-                                "","","",""}}{{
-                                "","",
-                                "","",
-                                "","",
-                                "","",
-                                "",""}}{{
-                                1,1,1,1,1,
-                                1,0,0,0,1,
-                                1,0,0,0,1}} } }}
-        \only<2>{        \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
-
-                        \def \legLength { 0.8}
-                        \def \radius {0.1}
-
-                        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
-
-                        \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
-                        \node[draw, circle,radius=\radius] (L1) at (-1,1) {};
-
-                        \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
-
-                        \node[draw, circle,radius=\radius] (R0) at (1,0) {};
-                        \node[draw, circle,radius=\radius] (R1) at (1,1) {};
-
-                        \draw (L0) --   (L1);
-                        \draw (R0) --   (R1);
-
-                        \draw (L0) --   (-0.3,0);
-                        \draw (L1) --   (-0.3,1);
-
-                        \draw (R0) --   (0.3,0);
-                        \draw (R1) --   (0.3,1);
-
-                        \node[draw=none] (C0) at (0,0.5) {X};
-                    \end{tikzpicture} }} }
-        \only<3>{  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
-
-                        \def \legLength { 0.8}
-                        \def \radius {0.1}
-
-                        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
-
-                        \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
-                        \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
-
-                        \draw (-0.3,1.3) -- (0.3,1.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
-
-                        \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
-                        \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
-
-                        \draw (L0) --   (-0.3,0);
-                        \draw (L1) --   (-0.3,1);
-
-                        \draw (R0) --   (0.3,0);
-                        \draw (R1) --   (0.3,1);
-
-                        \node[draw=none] (C0) at (0,0.5) {X};
-                    \end{tikzpicture} }} =  \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
-
-                        \def \legLength { 0.8}
-                        \def \radius {0.1}
-
-                        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
-
-                        \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
-                        \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
-
-                        \node[draw, circle,radius=\radius] (C0) at (0,0) {};
-                        \node[draw, circle,radius=\radius] (C1) at (0,1) {};
-
-                        \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
-                        \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
-
-                        \draw (L0) --   (C0);
-                        \draw (L1) --   (C1);
-
-                        \draw (R0) --   (C0);
-                        \draw (R1) --   (C1);
-
-                        \draw (C1) --   (C0);
-
-                    \end{tikzpicture} }}}
+        \figa
     \end{equation}
+
+    \begin{subequations}
+        \begin{align}
+             & \figb          \\
+             & \figc =  \figd
+        \end{align}
+    \end{subequations}
 \end{frame}
 
 \subsection{Nonlinear Solver}
