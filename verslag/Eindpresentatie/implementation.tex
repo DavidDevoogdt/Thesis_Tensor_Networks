@@ -156,17 +156,17 @@
         \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
         \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
 
-        \draw (n1) -- node [above] {$\alpha_1$} (0,2);
-        \draw (n2) -- node [above] {$\alpha_2$} (0,1);
-        \draw (n3) -- node [above] {$\alpha_3$} (0,0);
-        \draw (n4) -- node [above] {$\alpha_4$} (0,-1);
+        \draw (n1) -- node [above] {} (0,2);
+        \draw (n2) -- node [above] {} (0,1);
+        \draw (n3) -- node [above] {} (0,0);
+        \draw (n4) -- node [above] {} (0,-1);
 
-        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {$I^1$};
-        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {$I^2$};
-        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {$I^3$};
-        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {$I^4$};
+        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
+        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
 
     \end{tikzpicture} }
 
@@ -175,99 +175,264 @@
 
         \node[draw=none] (x)  at (0.5,0.5) {B};
 
-        \draw[line width=0.75mm] (-0.3,2)  node [left] {$I^1$}  -- (0,2) ;
-        \draw[line width=0.75mm] (-0.3,1)  node [left] {$I^2$} -- (0,1);
-        \draw[line width=0.75mm] (-0.3,0)  node [left] {$I^3$} -- (0,0);
-        \draw[line width=0.75mm] (-0.3,-1)  node [left] {$I^4$} -- (0,-1);
+        \draw[line width=0.75mm] (-0.3,2)  node [left] {}  -- (0,2) ;
+        \draw[line width=0.75mm] (-0.3,1)  node [left] {} -- (0,1);
+        \draw[line width=0.75mm] (-0.3,0)  node [left] {} -- (0,0);
+        \draw[line width=0.75mm] (-0.3,-1)  node [left] {} -- (0,-1);
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {$j$} ;
+        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+
+    \end{tikzpicture} }
+
+\def \pepocta { \begin{tikzpicture}[baseline=0.5]
+
+        \path[draw, fill=yellow!40,color=yellow!40] (-1.5,2.4) -- (-0.5,2.4)--(-0.5,1.6)--(-1.5,1.6)-- cycle;
+
+        \path[draw, fill=green!40,color=green!40] (-1.5,1.4) -- (-0.3,1.4)--(-0.3,2.8)--(1.3,2.8)-- (1.3,-1.8) -- (-1.5 ,-1.8) -- cycle;
+
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {X};
+
+        \node[draw, minimum size=0.6cm] (n1)  at (-1,2) {$A^1$};
+        \node[draw, minimum size=0.6cm] (n2)  at (-1,1) {$A^2$};
+        \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
+        \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
+
+        \draw (n1) -- node [above] {} (0,2);
+        \draw (n2) -- node [above] {} (0,1);
+        \draw (n3) -- node [above] {} (0,0);
+        \draw (n4) -- node [above] {} (0,-1);
+
+        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+
+        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+
+    \end{tikzpicture} }
+
+\def \blockcta { \begin{tikzpicture}[baseline=3]
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {B};
+
+        \draw[line width=0.75mm] (-0.3,2)   -- (0,2) ;
+        \draw[line width=0.75mm] (-0.3,1)  -- (0,1);
+        \draw[line width=0.75mm] (-0.3,0)   -- (0,0);
+        \draw[line width=0.75mm] (-0.3,-1)  -- (0,-1);
+
+        \draw (1,0.5) -- (1.3,0.5)   ;
+
+    \end{tikzpicture} }
+
+\def \pepoctb { \begin{tikzpicture}[baseline=0.5]
+
+        \path[draw, fill=yellow!40,color=yellow!40] (-1.5,1.4) -- (-0.5,1.4)--(-0.5,0.6)--(-1.5,0.6)-- cycle;
+
+        \path[draw, fill=green!40,color=green!40] (-1.5,0.4) -- (-0.3,0.4)--(-0.3,2.8)--(1.3,2.8)-- (1.3,-1.8) -- (-1.5 ,-1.8) -- cycle;
+
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {X};
+
+        \node[draw, minimum size=0.6cm] (n2)  at (-1,1) {$A^2$};
+        \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
+        \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
+
+        \draw (-0.3,2) -- node [above] {} (0,2);
+        \draw (n2) -- node [above] {} (0,1);
+        \draw (n3) -- node [above] {} (0,0);
+        \draw (n4) -- node [above] {} (0,-1);
+
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+
+        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+
+    \end{tikzpicture} }
+
+\def \blockctb { \begin{tikzpicture}[baseline=3]
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {B};
+
+        \draw (-0.3,2)    -- (0,2) ;
+        \draw[line width=0.75mm] (-0.3,1)   -- (0,1);
+        \draw[line width=0.75mm] (-0.3,0)   -- (0,0);
+        \draw[line width=0.75mm] (-0.3,-1)  -- (0,-1);
+
+        \draw (1,0.5) -- (1.3,0.5)  ;
+
+    \end{tikzpicture} }
+
+\def \pepoctc { \begin{tikzpicture}[baseline=0.5]
+
+        \path[draw, fill=yellow!40,color=yellow!40] (-1.5,2.4) -- (-0.5,2.4)--(-0.5,-1.4)--(-1.5,-1.4)-- cycle;
+
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {X};
+
+        \node[draw, minimum size=0.6cm] (n1)  at (-1,2) {$A^1$};
+        \node[draw, minimum size=0.6cm] (n2)  at (-1,1) {$A^2$};
+        \node[draw, minimum size=0.6cm] (n3)  at (-1,0) {$A^3$};
+        \node[draw, minimum size=0.6cm] (n4)  at (-1,-1) {$A^4$};
+
+        \draw (n1) -- node [above] {} (0,2);
+        \draw (n2) -- node [above] {} (0,1);
+        \draw (n3) -- node [above] {} (0,0);
+        \draw (n4) -- node [above] {} (0,-1);
+
+        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+
+        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+
+    \end{tikzpicture} }
+
+\def \pepoctd{ \begin{tikzpicture}[baseline=0.5]
+
+        \path[draw, fill=yellow!40,color=yellow!40] (-2.0,2.4) -- (-1.2,2.4)--(-1.2,-1.4)--(-2.0,-1.4)-- cycle;
+
+        \draw (0,2.5)-- (0,-1.5) -- (1,-1.5)-- (1,2.5) -- cycle;
+
+        \node[draw=none] (x)  at (0.5,0.5) {X};
+
+        \node[draw, minimum size=0.6cm] (n11)  at (-2.6,2) {$U^1$};
+        \node[draw, minimum size=0.6cm] (n12)  at (-1.6,2) {$\Sigma^1$};
+        \node[draw, minimum size=0.6cm] (n13)  at (-0.6,2) {$V^{1 \dagger}$};
+
+        \node[draw, minimum size=0.6cm] (n21)  at (-2.6,1) {$U^2$};
+        \node[draw, minimum size=0.6cm] (n22)  at (-1.6,1) {$\Sigma^2$};
+        \node[draw, minimum size=0.6cm] (n23)  at (-0.6,1) {$V^{2 \dagger}$};
+
+        \node[draw, minimum size=0.6cm] (n31)  at (-2.6,0) {$U^3$};
+        \node[draw, minimum size=0.6cm] (n32)  at (-1.6,0) {$\Sigma^3$};
+        \node[draw, minimum size=0.6cm] (n33)  at (-0.6,0) {$V^{3 \dagger}$};
+
+        \node[draw, minimum size=0.6cm] (n41)  at (-2.6,-1) {$U^4$};
+        \node[draw, minimum size=0.6cm] (n42)  at (-1.6,-1) {$\Sigma^4$};
+        \node[draw, minimum size=0.6cm] (n43)  at (-0.6,-1) {$V^{4 \dagger}$};
+
+        \draw (n12) --  (n13);
+        \draw (n11) --  (n12);
+
+        \draw (n22) --  (n23);
+        \draw (n21) --  (n22);
+
+        \draw (n32) --  (n33);
+        \draw (n31) --  (n32);
+
+        \draw (n42) --  (n43);
+        \draw (n41) --  (n42);
+
+        \draw (n13) -- node [above] {} (0,2);
+        \draw (n23) -- node [above] {} (0,1);
+        \draw (n33) -- node [above] {} (0,0);
+        \draw (n43) -- node [above] {} (0,-1);
+
+        \draw[line width=0.75mm] (n11) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n21) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n31) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n41) -- ++(-0.6,0) ;
+
+        \draw (1,0.5) -- (1.3,0.5)  ;
 
     \end{tikzpicture} }
 
 \begin{frame}{Linear Solver: Standard Form}
     \begin{equation}
-        \only<1>{ \vcenter{\hbox{ \pepob{5}{5}{{
-                                "-","-","-","-",
-                                "-","-","-","-",
-                                "1","2","3","1",
-                                "-","-","-","-",
-                                "-","-","-","-"}}{{
-                                "-","-","-","-",
-                                "-","-","-","-",
-                                "-","-","-","-",
-                                "-","1","2","1",
-                                "-","-","-","-"}}{{
-                                1,1,1,1,1,
-                                1,1,1,0,1,
-                                0,0,0,0,0,
-                                1,1,1,0,1,
-                                1,1,1,0,1}} }} }
-        \only<2>{  \pepoat \;  =  \;\blockat  }
-        \only<3>{ \pepobt \;  =  \;\blockbt }
-        \only<4>{ \vcenter{\hbox{ \pepoct }}  =\vcenter{\hbox{  \blockct }} }
+        % \only<1>{ \vcenter{\hbox{ \pepob{5}{5}{{
+        %                         "-","-","-","-",
+        %                         "-","-","-","-",
+        %                         "1","2","3","1",
+        %                         "-","-","-","-",
+        %                         "-","-","-","-"}}{{
+        %                         "-","-","-","-",
+        %                         "-","-","-","-",
+        %                         "-","-","-","-",
+        %                         "-","1","2","1",
+        %                         "-","-","-","-"}}{{
+        %                         1,1,1,1,1,
+        %                         1,1,1,0,1,
+        %                         0,0,0,0,0,
+        %                         1,1,1,0,1,
+        %                         1,1,1,0,1}} }} }
+        \only<1>{  \pepoat \;  =  \;\blockat  }
+        \only<2>{ \pepobt \;  =  \;\blockbt }
+        \only<3>{ \vcenter{\hbox{ \pepoct }}  =\vcenter{\hbox{  \blockct }} }
     \end{equation}
 \end{frame}
 
 \begin{frame}{Linear Solver: Inversion Scheme}
-    \begin{itemize}
-        \only<1-> {\item Invert $A^i$ separately }
-              \only<1>{
-                  \begin{itemize}
-                      \item Fast
-                      \item Numerically unstable
-                  \end{itemize}
-              }
-              \only<2-> { \item Full inversion $A = A^1 \otimes A^2 \cdots \otimes A^m$ }
-              \only<2>{
-                  \begin{itemize}
-                      \item Slow
-                      \item Stable for pseudoinverse
-                  \end{itemize}
-              }
-              \only<3-> { \item Sparse full inversion }
-              \only<3>{
-                  \begin{itemize}
-                      \item $A^i = U \Sigma V^{\dagger}$
-                      \item $S = S^1 \otimes S^2 \cdots \otimes S^m$
-                  \end{itemize}
-              }
-    \end{itemize}
+
+    \begin{minipage}{0.4\textwidth}
+        \begin{itemize}
+            \only<1-> {\item Invert $A^i$ separately }
+                  \only<1-2>{
+                      \begin{itemize}
+                          \item Fast
+                          \item Numerically unstable
+                      \end{itemize}
+                  }
+                  \only<3-> { \item Full inversion }
+                  \only<3>{
+                      \begin{itemize}
+                          \item Slow
+                          \item Stable for pseudoinverse
+                      \end{itemize}
+                  }
+                  \only<4-> { \item Sparse full inversion }
+                  \only<4>{
+                      \begin{itemize}
+                          \item $A^i = U^i \Sigma^i V^{i\dagger}$
+                      \end{itemize}
+                  }
+        \end{itemize}
+    \end{minipage}
+    \begin{minipage}{0.59\textwidth}
+        \begin{equation}
+            \only<1> { \vcenter{\hbox{ \pepocta }}  =\vcenter{\hbox{  \blockcta }}  }
+            \only<2> { \vcenter{\hbox{ \pepoctb }}  =\vcenter{\hbox{  \blockctb }}  }
+            \only<3> { \vcenter{\hbox{ \pepoctc }}  =\vcenter{\hbox{  \blockcta }}  }
+            \only<4> { \vcenter{\hbox{ \pepoctd }}  =\vcenter{\hbox{  \blockcta }}  }
+        \end{equation}
+    \end{minipage}
 
 \end{frame}
 
-\begin{frame}{Linear Solver: Applicability}
-    \begin{equation}
-        \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+% \begin{frame}{Linear Solver: Inversion Scheme}
 
-                    \def \legLength { 0.8}
-                    \def \radius {0.1}
+%     \begin{itemize}
+%         \only<1-> {\item Invert $A^i$ separately }
+%               \only<1>{
+%                   \begin{itemize}
+%                       \item Fast
+%                       \item Numerically unstable
+%                   \end{itemize}
+%               }
+%               \only<2-> { \item Full inversion $A = A^1 \otimes A^2 \cdots \otimes A^m$ }
+%               \only<2>{
+%                   \begin{itemize}
+%                       \item Slow
+%                       \item Stable for pseudoinverse
+%                   \end{itemize}
+%               }
+%               \only<3-> { \item Sparse full inversion }
+%               \only<3>{
+%                   \begin{itemize}
+%                       \item $A^i = U \Sigma V^{\dagger}$
+%                       \item $S = S^1 \otimes S^2 \cdots \otimes S^m$
+%                   \end{itemize}
+%               }
+%     \end{itemize}
 
-                    \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
-                    \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
-
-                    \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
-
-                    \draw (-0.3,0.3) -- (0.3,0.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
-
-                    \node[draw, circle,radius=\radius] (R0) at (1,0) {};
-                    \node[draw, circle,radius=\radius] (R1) at (1,1) {};
-
-                    \node[draw, circle,radius=\radius] (U) at (0,1) {};
-                    \node[draw, circle,radius=\radius] (D) at (0,-1) {};
-
-                    \draw (R0) --   (R1);
-
-                    \draw (L0) --   (-0.3,0);
-
-                    \draw (R0) --   (0.3,0);
-                    \draw (U) --   (0,0.3);
-                    \draw (D) --   (0,-0.3);
-                    \draw (R1) --   (U);
-
-                    \node[draw=none] (C0) at (0,0) {X};
-                \end{tikzpicture} }}
-    \end{equation}
-\end{frame}
+% \end{frame}
 
 \def \figa { \vcenter{\hbox{ \pepob{5}{3}{{
                         "","","","",
@@ -346,8 +511,8 @@
                 \node[draw=none, circle,radius=\radius] (L0) at (-1,0) {};
                 \node[draw=none, circle,radius=\radius] (L1) at (-1,1) {};
 
-                \node[draw, circle,radius=\radius] (C0) at (0,0) {};
-                \node[draw, circle,radius=\radius] (C1) at (0,1) {};
+                \node[draw] (C0) at (0,0) {$X_0$};
+                \node[draw] (C1) at (0,1) {$X_1$};
 
                 \node[draw=none, circle,radius=\radius] (R0) at (1,0) {};
                 \node[draw=none, circle,radius=\radius] (R1) at (1,1) {};
@@ -362,17 +527,67 @@
             \end{tikzpicture} }}}
 
 \begin{frame}{Linear Solver: Applicability}
-    \begin{equation}
-        \figa
-    \end{equation}
 
-    \begin{subequations}
-        \begin{align}
-             & \figb          \\
-             & \figc =  \figd
-        \end{align}
-    \end{subequations}
+    \begin{minipage}{.4\textwidth}
+        \begin{equation}
+            \vcenter{\hbox{  \begin{tikzpicture}[baseline=0.5]
+
+                        \def \legLength { 0.8}
+                        \def \radius {0.1}
+
+                        \pgfmathsetmacro{\step}{2*\radius+ \legLength} % 1
+                        \pgfmathsetmacro{\legpos}{\radius+\legLength} %0.9
+
+                        \node[draw, circle,radius=\radius] (L0) at (-1,0) {};
+
+                        \draw (-0.3,0.3) -- (0.3,0.3) -- (0.3,-0.3) -- (-0.3,-0.3) -- cycle;
+
+                        \node[draw, circle,radius=\radius] (R0) at (1,0) {};
+                        \node[draw, circle,radius=\radius] (R1) at (1,1) {};
+
+                        \node[draw, circle,radius=\radius] (U) at (0,1) {};
+                        \node[draw, circle,radius=\radius] (D) at (0,-1) {};
+
+                        \draw (R0) --   (R1);
+
+                        \draw (L0) --   (-0.3,0);
+
+                        \draw (R0) --   (0.3,0);
+                        \draw (U) --   (0,0.3);
+                        \draw (D) --   (0,-0.3);
+                        \draw (R1) --   (U);
+
+                        \node[draw=none] (C0) at (0,0) {X};
+                    \end{tikzpicture} }}
+        \end{equation}
+    \end{minipage}
+    \begin{minipage}{.59\textwidth}
+        % \begin{equation}
+        %     \figa
+        % \end{equation}
+
+        \begin{subequations}
+            \begin{align}
+                 & \figb          \\
+                 & \figc =  \figd
+            \end{align}
+        \end{subequations}
+    \end{minipage}
+
 \end{frame}
+
+% \begin{frame}{Linear Solver: Applicability}
+%     \begin{equation}
+%         \figa
+%     \end{equation}
+
+%     \begin{subequations}
+%         \begin{align}
+%              & \figb          \\
+%              & \figc =  \figd
+%         \end{align}
+%     \end{subequations}
+% \end{frame}
 
 \subsection{Nonlinear Solver}
 \begin{frame}{Nonlinear Solver}
