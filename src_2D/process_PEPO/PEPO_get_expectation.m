@@ -338,38 +338,11 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
         results.inv_corr_length = inv_corr_length;
 
     end
-    %partion into different contributions
-    %
-    %     h_size= save_vars.virtual_level_sizes_horiz;
-    %     v_size = save_vars.virtual_level_sizes_vert;
-    %
-    %     n_h_s = numel(h_size);
-    %     n_v_s = numel(v_size);
-    %
-    %     n_v = Ac.dims(2);
-    %     n_h = GL.dims(2);
-    %
-    %     Z_h = zeros( n_h,n_h_s,n_h);
-    %     Z_v = zeros( n_v,n_v_s,n_v);
-    %
-    %     start_h = [0,cumsum(h_size)];
-    %     start_v =  [0,cumsum(v_size)];
-    %
-    %     for a = 1:n_h_s
-    %       Z_h( start_h(a)+1:start_h(a+1)  ,a, start_h(a)+1:start_h(a+1) ) = eye( h_size(a) );
-    %     end
-    %     for a = 1:n_v_s
-    %       Z_v( start_v(a)+1:start_v(a+1)  ,a, start_v(a)+1:start_v(a+1) ) = eye( h_size(a) );
-    %     end
-    %
-    %
-    %     Z_virt= ncon({B.var, GL.var, Ac.var, m.var, GR.var, Z_h,Z_h,Z_v,Z_v }, ...
-    %         {[3, 8, 12], [3, 2, 1], [1, 5, 9], [6, 10, 7, 4], [12, 11, 9],[2,-1,4],[10,-3,11],[5,-2,6],[7,-4,8]  },[4,10,11,9,1,2,3,5,6,7,8,12]);
-
+ 
     %assign output
     save_vars.A = A;
     save_vars.G0 = G0;
-    save_vars.B = B;
+    %save_vars.B = B;
     save_vars.PEPO_matrix = T;
     %save_vars.level_p = level_p;
 

@@ -2,12 +2,12 @@ clear all; format long; close all
 
 %% load data
 
-[names, T_c_arr] = ising_names(2);
+[names, T_c_arr] = ising_names(5);
 
 
 T_c_noise = rand * 0.01;
 
-T_range = 0.08;
+T_range = 0.15;
 
 select = 1;
 Tc = T_c_arr(select);

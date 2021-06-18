@@ -1,9 +1,8 @@
 function test
 
-    %compare_models(["t_ising"], 1i*10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5,
-    %6],1) %imaginary
+    compare_models(["t_ising"], 1i*10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5, 6],1) %imaginary
     
-    compare_models(["t_ising"], 10.^(-3:0.2:1.5), [2], [3,5,7],0)
+    %compare_models(["t_ising"], 10.^(-3:0.2:1.5), [2], [3,5,7],0)
     
     %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
