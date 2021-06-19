@@ -3,6 +3,9 @@ This git repo shows some of the work done for my master thesis at UGent quantum 
 
 Report: https://github.com/DavidDevoogdt/Thesis_Tensor_Networks/blob/master/verslag/main.pdf
 
+Presentation: https://github.com/DavidDevoogdt/Thesis_Tensor_Networks/blob/master/verslag/Eindpresentatie/main.pdf
+
+
 
 ## How to use
 
