@@ -1,0 +1,174 @@
+
+\section{Linear Solver}
+
+\begin{frame}{Linear Solver: Inversion Scheme}
+
+    \begin{minipage}{0.4\textwidth}
+        \only<1-> { \begin{equation}
+                \scalebox{0.9}{ \pepoat } \;  =  \; \scalebox{0.9}{\blockat}
+            \end{equation}}
+        \only<2-> {
+            \begin{itemize}
+                \only<2-> {\item Invert $A^i$ separately }
+                      \only<2-3>{
+                          \begin{itemize}
+                              \item Fast
+                              \item Numerically unstable
+                          \end{itemize}
+                      }
+                      \only<4-> { \item Full inversion }
+                      \only<4>{
+                          \begin{itemize}
+                              \item Slow
+                              \item Stable for pseudoinverse
+                          \end{itemize}
+                      }
+                      \only<5-> { \item Sparse full inversion }
+                      \only<5>{
+                          \begin{itemize}
+                              \item $A^i = U^i \Sigma^i V^{i\dagger}$
+                          \end{itemize}
+                      }
+            \end{itemize}
+        }
+    \end{minipage}
+    \begin{minipage}{0.59\textwidth}
+        \begin{equation}
+            \only<1>  {  \vcenter{\hbox{   \scalebox{0.9}{  \pepoct }} } = \vcenter{\hbox{ \scalebox{0.9}{ \blockcta} }} }
+            \only<2> { \vcenter{\hbox{  \scalebox{0.9}{  \pepocta } }}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} }  }
+            \only<3> { \vcenter{\hbox{ \scalebox{0.9}{  \pepoctb }}}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockctb }} } }
+            \only<4> { \vcenter{\hbox{ \scalebox{0.9}{  \pepoctc } }}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} } }
+            \only<5> { \vcenter{\hbox{\scalebox{0.9}{  \pepoctd }}}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} } }
+        \end{equation}
+    \end{minipage}
+
+\end{frame}
+
+\section{Construction}
+
+\begin{frame}{Notation}
+    \begin{equation}
+        O^{0 0} = \mpo{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}} = \mpob{1}{ {0,0}  }{ {"$i$",}  }{ {"$j$",}}{}{{"",}}
+    \end{equation}
+
+    \begin{equation}
+        O^{0 1} O^{1 0} = \mpob{2}{ {0,1,0}  }{ {"$i_1$","$i_2$"}  }{ {"$j_1$","$j_1$",}}{}{{"",}}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \mpob{1}{ {0,0}  }{}{}{}{{"",}} = \exp \left( -\beta H(\mpob{1}{}{}{}{}{{"",}})   \right)
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            \mpob{2}{ {0,1,0}  }{}{}{}{{"",}}  = \exp -\beta H( & \mpob{2}{ {,,} }{}{}{}{{"",}}) \\
+            - &\mpob{2}{ {0,0,0}  }{}{}{}{{"",}}
+        \end{split}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{General idea}
+    \begin{equation}
+        \begin{split}
+            \only<1> { \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}  = \exp -\beta H( &   \mpob{3}{ {,,,} }{}{}{}{{,,}})  \\
+                - \; &\mpob{3}{ {0,0,0,0}  }{}{}{}{{,,,}}\\
+                - \;&\mpob{3}{ {0,1,0,0}  }{}{}{}{{,,,}}\\
+                - \; &\mpob{3}{ {0,0,1,0}  }{}{}{}{{,,,}}}
+            \only<2> {  \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}}    = \exp -\beta H( &   \mpob{3}{ {,,,} }{}{}{}{{,,}})  \\[10pt]
+                - \; &\mpob{3}{ {,,,}  }{}{}{}{{,,,}}}
+            \only<3> {  \boxed{ \mpob{3}{ {0,1,1,0}  }{}{}{}{{,,,}} } }
+        \end{split}
+    \end{equation}
+\end{frame}
+
+\subsection{1D}
+\begin{frame}{1D: Variant A}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                                      \\
+             & \mpob{2}{ {,"1",}  }{}{}{}{{,,}}                                  \\
+             & \mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}                             \\
+             & \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}}    \label{2sitepatch} \\
+             & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \; .
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{1D: Variant E}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                          \\
+             & \mpob{2}{ {,"1",}  }{}{}{}{{,,}}                      \\
+             & \mpob{3}{ {,"1","1'",}  }{}{}{}{{,,,}}                \\
+             & \mpob{4}{ {,"1","2","1'",}  }{}{}{}{{,,,,,}}          \\
+             & \mpob{5}{ {,"1","2","2'","1'",}  }{}{}{}{{,,,,,}} \;.
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{1D: Variant F}
+    \begin{subequations}
+        \begin{align}
+             & \mpob{1}{ {,}  }{}{}{}{{,,}}                                         \\
+             & \mpob{2}{ {,"1'",}  }{}{}{}{{,,}}+  \mpob{2}{ {,"1",}  }{}{}{}{{,,}} \\
+             & \mpob{3}{ {,"1","1",}  }{}{}{}{{,,,}}                                \\
+             & \mpob{4}{ {,"1","2","1",}  }{}{}{}{{,,,,,}} \; +  \nonumber          \\
+             & \mpob{4}{ {,"1","2'","1",}  }{}{}{}{{,,,,,}}                         \\
+             & \mpob{5}{ {,"1","2","2","1",}  }{}{}{}{{,,,,,}} \;.
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\subsection{2D}
+
+\begin{frame}
+    \begin{equation}
+        O^{0000} =  \vcenter{ \hbox{ \pepob{4}{3}{{
+                            "-","-","-",
+                            "-","0","0",
+                            "-","-","-"}}{{
+                            "-","-",
+                            "-","-",
+                            "0","0",
+                            "-","-"}}{{
+                            1,1,4,1,
+                            1,4,12,4,
+                            1,1,4,1}} }} = \mpob{1}{ {,}  }{}{}{}{{,,}}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{2D: Linear Blocks}
+    \begin{subequations}
+        \begin{align}
+             & \vcenter{\hbox{ \pepob{2}{2}{{"1",,}}{{,,}}{{0,0,1,1}} }}                                                                                                                                   \\[0.5cm]
+             & \vcenter{\hbox{  \pepob{2}{2}{{"1","1",}}{{"1","1",}}{{0,0,0,1}} }}\;
+            \vcenter{\hbox{  \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,1,1}} }}                                                                                                          \\[0.5cm]
+             & \vcenter{\hbox{  \pepob{3}{2}{{"1","1","1","1"}}{{"1","1","1","1"}}{{0,0,0,1,0,1}} \quad   \pepob{3}{3}{{"1","1","1","1","1","1",}}{{"1","1","1","1","1","1",}}{{1,0,1,0,0,0,1,0,1}}  }} \;
+        \end{align}
+    \end{subequations}
+\end{frame}
+
+\begin{frame}{2D: Nonlinear Blocks}
+    \begin{equation}
+        \vcenter{\hbox{   {\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}} }}
+    \end{equation}
+
+    \begin{equation}
+        \vcenter{\hbox{     \pepob{5}{3}{{
+                            "-","-", "-",     "-",
+                            "-","1","$\beta$","-",
+                            "-","-","$\alpha$","-"}}{{
+                            "-","-",
+                            "-","-",
+                            "-","$\gamma$",
+                            "-","$\alpha$",
+                            "-","-"}}{{
+                            1,1,1,1,1,
+                            1,0,0,0,1,
+                            1,1,0,0,1}} }} \; .
+    \end{equation}
+\end{frame}

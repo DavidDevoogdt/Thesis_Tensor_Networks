@@ -84,25 +84,7 @@
     \end{table}
 \end{frame}
 
-\def \mpograph {\mpo{5}{{"Tr","$\chi$",,,,}}{{"$i_1$","$i_2$",,"$i_n$","-"}}{{"-","-",,"-","-"}}{{0,0,1,0,0}}{{"C", "C",,"C","M" }}}
-
-\def \ctens { \begin{tikzpicture}[baseline={0.5cm-0.5*height("$=$")}]
-
-        \draw (-3,-0) rectangle (1,1)  [add reference=C]   ;
-        \node  at (C center) {C};
-
-        \node (N1)  at  (-2.5,1.6) {$i_1$};
-        \node (N2)  at  (-1.5,1.6) {$i_2$};
-        \node  at  (-.5,1.25) {...};
-        \node  (N3) at  (.5,1.6) {$i_n$};
-
-        \draw    (N1) -- (N1 |-  C north);
-        \draw    (N2) -- (N2 |-  C north);
-        \draw    (N3) -- (N3 |-  C north);
-
-    \end{tikzpicture} }
-
-\begin{frame}
+\begin{frame}{Tensor Networks: MPS}
 
     \begin{equation}
         C^{i_1 i_2 \cdots i_n} = Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M )
@@ -159,7 +141,7 @@
 
 \begin{frame}{Operator exponential}
     \begin{itemize}
-        \item (Real) Time eveolution: $\hat{O} = e^{ - i \hat{H} t }  $
+        \item (Real) Time evolution: $\hat{O} = e^{ - i \hat{H} t }  $
         \item Statistical ensembles: $\hat{O} = e^{ - \beta \hat{H}   }$
     \end{itemize}
 \end{frame}

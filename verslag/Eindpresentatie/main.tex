@@ -89,6 +89,8 @@
 \input{../macros.tex}
 \input{../tikzsetup}
 
+\input{tikz_drawings.tex}
+
 \setbeamertemplate{footline}[frame number]
 
 
@@ -119,6 +121,14 @@
     \end{frame}
 }
 
+\newcommand{\backupbegin}{
+    \newcounter{finalframe}
+    \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+    \setcounter{framenumber}{\value{finalframe}}
+}
+
 \section{Introduction}
 \input{Introduction.tex}
 
@@ -142,5 +152,12 @@
     \bibliographystyle{elsarticle-num}
     \bibliography{../bib}
 \end{frame}
+
+\appendix
+\backupbegin
+
+\input{backupslides.tex}
+
+\backupend
 
 \end{document}
