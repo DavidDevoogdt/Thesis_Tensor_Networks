@@ -1,27 +1,41 @@
 \subsection{1D exact}
 
-\begin{frame}{1D: Transverse Field Ising}
+\begin{frame}{1D: Cluster expansions}
+    \begin{minipage}{.6\textwidth}
 
-    \begin{minipage}{.75\textwidth}
-
-        \begin{figure}
-            \center
-            \includegraphics[width=\textwidth]{../Figuren/benchmarking/t_ising.pdf}
-        \end{figure}
+        \begin{itemize}
+            \item Relative error $\epsilon$
+            \item Different encodings blocks
+                  \begin{itemize}
+                      \item A: small bond dimension
+                      \item E: no spurious blocks
+                      \item F: well conditioned
+                  \end{itemize}
+        \end{itemize}
 
     \end{minipage}
-    \begin{minipage}{.14\textwidth}
+    \begin{minipage}{.39\textwidth}
+
         \begin{table}[]
-            \caption{$\chi$}
-            \begin{tabular}{l|l l }
-                  & A  & E/F \\
+            \caption*{$\chi$}
+            \begin{tabular}{l l|l l }
+                                                       &   & \multicolumn{2}{c}{Encoding}       \\
+                                                       &   & A                            & E/F \\
                 \hline
-                3 & 5  & 10  \\
-                5 & 21 & 42  \\
-                7 & 85 & 170 \\
+                \multirow{3}{*}{\rotatebox{90}{Order}} & 3 & 5                            & 10  \\
+                                                       & 5 & 21                           & 42  \\
+                                                       & 7 & 85                           & 170 \\
             \end{tabular}
         \end{table}
     \end{minipage}
+\end{frame}
+
+\begin{frame}{1D: Transverse Field Ising}
+
+    \begin{figure}
+        \center
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_ising.pdf}
+    \end{figure}
 
 \end{frame}
 
@@ -29,41 +43,93 @@
 
     \begin{figure}
         \center
-        \includegraphics[width=0.75\textwidth]{../Figuren/benchmarking/t_heis_XXX.pdf}
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_heis_XXX.pdf}
     \end{figure}
 
 \end{frame}
 
 \subsection{2D exact}
 
-\begin{frame}{2D: TFI}
+\begin{frame}{2D: Cluster expansions}
 
-    \begin{minipage}{.75\textwidth}
-        \begin{figure}
-            \center
-            \includegraphics[width=\textwidth]{../Figuren/benchmarking/2D_Err01_t_sing.pdf}
-        \end{figure}
+    \begin{minipage}{.6\textwidth}
+        \begin{itemize}
+            \item Relative error $\epsilon$
+            \item Encodings based on A (order 5)
+                  \begin{itemize}
+                      \item \makebox[2.07cm]{No loops\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
+                                                    "-","-", "-",     "-",
+                                                    "","","","",
+                                                    "","-","",""}}{{
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-",""}}{{
+                                                    1,1,1,1,1,
+                                                    1,0,0,0,0,
+                                                    1,1,0,1,1}} }} $
+                      \item \makebox[2cm]{+Plaquette\hfill}$\vcenter{\hbox{{\pepob{2}{2}{{
+                                                            "","",}}{{
+                                                            "","",}}{{
+                                                            0,0,
+                                                            0,0}}} }}$
+                      \item \makebox[2cm]{+Extensions\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
+                                                    "-","-", "-","-",
+                                                    "","","","",
+                                                    "","","",""}}{{
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-",""}}{{
+                                                    1,1,1,1,1,
+                                                    1,1,0,0,0,
+                                                    1,1,0,0,1}} }} $
+                  \end{itemize}
+        \end{itemize}
+
     \end{minipage}
-    \begin{minipage}{.24\textwidth}
+    \begin{minipage}{.39\textwidth}
         \begin{table}[]
-            \caption{$\chi$}
             \begin{tabular}{l|l }
-                no loops   & 21 \\
-                loops      & 27 \\
-                extensions & 43 \\
+                           & $\chi$ \\
+                \hline              \\
+                no loops   & 21     \\
+                loops      & 27     \\
+                extensions & 43     \\
             \end{tabular}
         \end{table}
+
     \end{minipage}
+
+\end{frame}
+
+\begin{frame}{2D: TFI}
+
+    \begin{figure}
+        \center
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/2D_Err01_t_sing.pdf}
+    \end{figure}
+
 \end{frame}
 
 \subsection{2D Transverse Ising model}
 
-\begin{frame}{2D: TFI}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.75 \linewidth]{../Figuren/phsyics/2disingphase.png}
-        \caption{Figure taken from \cite{Hesselmann2016}  }
-    \end{figure}
+\begin{frame}{TFI: Phase Diagram}
+    \begin{minipage}{0.25\textwidth}
+        \begin{itemize}
+            \item Criticality
+            \item $\Gamma=0$ and $\Gamma=2.5$
+        \end{itemize}
+    \end{minipage}
+    \begin{minipage}{0.74\textwidth}
+        \begin{figure}
+            \centering
+            \includegraphics[width=\linewidth]{../Figuren/phsyics/2disingphase.png}
+            \caption*{Figure taken from \cite{Hesselmann2016}  }
+        \end{figure}
+    \end{minipage}
 \end{frame}
 
 \begin{frame}{2D: Classical Ising}
@@ -91,7 +157,7 @@
     \end{minipage}
 \end{frame}
 
-\begin{frame}{2D: TFI $g=2.5$}
+\begin{frame}{2D: TFI $\Gamma=2.5$}
     \begin{minipage}{.75\textwidth}
         \begin{figure}
             \center
@@ -100,7 +166,7 @@
     \end{minipage}
     \begin{minipage}{.24\textwidth}
         \begin{table}[]
-            \caption{Data from  \cite{Czarnik2019} }
+
             \begin{tabular}{l|l }
                     & $T_c$     \\
                 \hline          \\
@@ -108,6 +174,7 @@
                 QMC & 1.2737(6) \\
                 TN  & 1.2737(2) \\
             \end{tabular}
+            \caption*{Data from  \cite{Czarnik2019} }
         \end{table}
     \end{minipage}
 \end{frame}

@@ -12,8 +12,8 @@
         \draw (0.15,0.15) -- ++(0.3,0.3);
 
         \node[draw, circle,radius=\radius] (L1) at (-1,0) {};
-        \node[draw, circle,radius=\radius] (L2) at (-2,0) {};
-        \node[draw, circle,radius=\radius] (L3) at (-3,0) {};
+        %\node[draw, circle,radius=\radius] (L2) at (-2,0) {};
+        %\node[draw, circle,radius=\radius] (L3) at (-3,0) {};
 
         \node[draw, circle,radius=\radius] (U1) at (0,1) {};
         \node[draw, circle,radius=\radius] (U2) at (0,2) {};
@@ -22,9 +22,9 @@
 
         \node[draw, circle,radius=\radius] (R1) at (1,0) {};
 
-        \draw (O0) -- node [above] {3}  (L1);
-        \draw (L2) -- node [above] {2}  (L1);
-        \draw (L2) -- node [above] {1}  (L3);
+        \draw (O0) -- node [above] {1}  (L1);
+        %\draw (L2) -- node [above] {2}  (L1);
+        %\draw (L2) -- node [above] {1}  (L3);
 
         \draw (O0) -- node [left] {2}  (U1);
         \draw (U2) -- node [left] {1}  (U1);
@@ -34,8 +34,8 @@
         \draw (O0) --  node [left] {1} (D1);
 
         \draw (L1.center) -- ++(0.2,0.2);
-        \draw (L2.center) -- ++(0.2,0.2);
-        \draw (L3.center) -- ++(0.2,0.2);
+        %\draw (L2.center) -- ++(0.2,0.2);
+        %\draw (L3.center) -- ++(0.2,0.2);
         \draw (U1.center) -- ++(0.2,0.2);
         \draw (U2.center) -- ++(0.2,0.2);
         \draw (R1.center) -- ++(0.2,0.2);
@@ -56,8 +56,8 @@
         \draw (0.15,0.15) -- ++(0.3,0.3);
 
         \node[draw=none] (L1) at (-1,0) {};
-        \node[draw=none] (L2) at (-2,0) {};
-        \node[draw=none] (L3) at (-3,0) {};
+        %\node[draw=none] (L2) at (-2,0) {};
+        %\node[draw=none] (L3) at (-3,0) {};
 
         \node[draw=none] (U1) at (0,1) {};
         \node[draw=none] (U2) at (0,2) {};
@@ -68,16 +68,16 @@
 
         %\draw (O0.center) -- ++(0.45,0.45);
         \draw (L1.center) -- ++(0.2,0.2);
-        \draw (L2.center) -- ++(0.2,0.2);
-        \draw (L3.center) -- ++(0.2,0.2);
+        %\draw (L2.center) -- ++(0.2,0.2);
+        %\draw (L3.center) -- ++(0.2,0.2);
         \draw (U1.center) -- ++(0.2,0.2);
         \draw (U2.center) -- ++(0.2,0.2);
         \draw (R1.center) -- ++(0.2,0.2);
         \draw (D1.center) -- ++(0.2,0.2);
 
-        \draw (-3.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
+        \draw (-1.3,0.3)--(-0.3,0.3) -- (-0.3,2.3)--(0.3,2.3)
         -- (0.3,0.3) -- (1.3,0.3) -- (1.3,-0.3) -- (0.3,-0.3)
-        -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-3.3,-0.3) -- cycle;
+        -- (0.3,-1.3) -- (-0.3, -1.3) -- (-0.3,-0.3) -- (-1.3,-0.3) -- cycle;
 
     \end{tikzpicture}}
 
@@ -161,12 +161,12 @@
         \draw (n3) -- node [above] {} (0,0);
         \draw (n4) -- node [above] {} (0,-1);
 
-        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0);
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+        \draw (1,0.5) -- (1.3,0.5)  ;
 
     \end{tikzpicture} }
 
@@ -209,7 +209,7 @@
         \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
         \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+        \draw (1,0.5) -- (1.3,0.5)  ;
 
     \end{tikzpicture} }
 
@@ -246,11 +246,11 @@
         \draw (n3) -- node [above] {} (0,0);
         \draw (n4) -- node [above] {} (0,-1);
 
-        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) ;
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+        \draw (1,0.5) -- (1.3,0.5)  ;
 
     \end{tikzpicture} }
 
@@ -286,12 +286,12 @@
         \draw (n3) -- node [above] {} (0,0);
         \draw (n4) -- node [above] {} (0,-1);
 
-        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) node [left] {};
-        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) node [left] {};
+        \draw[line width=0.75mm] (n1) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n2) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n3) -- ++(-0.6,0) ;
+        \draw[line width=0.75mm] (n4) -- ++(-0.6,0) ;
 
-        \draw (1,0.5) -- (1.3,0.5)  node [right] {} ;
+        \draw (1,0.5) -- (1.3,0.5)  ;
 
     \end{tikzpicture} }
 
@@ -345,62 +345,80 @@
 
     \end{tikzpicture} }
 
-\begin{frame}{Linear Solver: Standard Form}
-    \begin{equation}
-        % \only<1>{ \vcenter{\hbox{ \pepob{5}{5}{{
-        %                         "-","-","-","-",
-        %                         "-","-","-","-",
-        %                         "1","2","3","1",
-        %                         "-","-","-","-",
-        %                         "-","-","-","-"}}{{
-        %                         "-","-","-","-",
-        %                         "-","-","-","-",
-        %                         "-","-","-","-",
-        %                         "-","1","2","1",
-        %                         "-","-","-","-"}}{{
-        %                         1,1,1,1,1,
-        %                         1,1,1,0,1,
-        %                         0,0,0,0,0,
-        %                         1,1,1,0,1,
-        %                         1,1,1,0,1}} }} }
-        \only<1>{  \pepoat \;  =  \;\blockat  }
-        \only<2>{ \pepobt \;  =  \;\blockbt }
-        \only<3>{ \vcenter{\hbox{ \pepoct }}  =\vcenter{\hbox{  \blockct }} }
-    \end{equation}
-\end{frame}
+% \begin{frame}{Linear Solver: Standard Form}
+
+%     \begin{minipage}{0.4\textwidth}
+%         \begin{equation}
+%             \scalebox{0.9}{ \pepoat } \;  =  \; \scalebox{0.9}{\blockat}
+%         \end{equation}
+%     \end{minipage}
+%     \begin{minipage}{0.59\textwidth}
+%         \begin{equation}
+
+%         \end{equation}
+%     \end{minipage}
+
+%     % \begin{equation}
+%     %     % \only<1>{ \vcenter{\hbox{ \pepob{5}{5}{{
+%     %     %                         "-","-","-","-",
+%     %     %                         "-","-","-","-",
+%     %     %                         "1","2","3","1",
+%     %     %                         "-","-","-","-",
+%     %     %                         "-","-","-","-"}}{{
+%     %     %                         "-","-","-","-",
+%     %     %                         "-","-","-","-",
+%     %     %                         "-","-","-","-",
+%     %     %                         "-","1","2","1",
+%     %     %                         "-","-","-","-"}}{{
+%     %     %                         1,1,1,1,1,
+%     %     %                         1,1,1,0,1,
+%     %     %                         0,0,0,0,0,
+%     %     %                         1,1,1,0,1,
+%     %     %                         1,1,1,0,1}} }} }
+%     %     \only<1>{  \pepoat \;  =  \;\blockat  }
+%     %     %\only<2>{ \pepobt \;  =  \;\blockbt }
+%     %     \only<2>{ \vcenter{\hbox{ \pepoct }}  =\vcenter{\hbox{  \blockct }} }
+%     % \end{equation}
+% \end{frame}
 
 \begin{frame}{Linear Solver: Inversion Scheme}
 
     \begin{minipage}{0.4\textwidth}
-        \begin{itemize}
-            \only<1-> {\item Invert $A^i$ separately }
-                  \only<1-2>{
-                      \begin{itemize}
-                          \item Fast
-                          \item Numerically unstable
-                      \end{itemize}
-                  }
-                  \only<3-> { \item Full inversion }
-                  \only<3>{
-                      \begin{itemize}
-                          \item Slow
-                          \item Stable for pseudoinverse
-                      \end{itemize}
-                  }
-                  \only<4-> { \item Sparse full inversion }
-                  \only<4>{
-                      \begin{itemize}
-                          \item $A^i = U^i \Sigma^i V^{i\dagger}$
-                      \end{itemize}
-                  }
-        \end{itemize}
+        \only<1> { \begin{equation}
+                \scalebox{0.9}{ \pepoat } \;  =  \; \scalebox{0.9}{\blockat}
+            \end{equation}}
+        \only<2-> {
+            \begin{itemize}
+                \only<2-> {\item Invert $A^i$ separately }
+                      \only<2-3>{
+                          \begin{itemize}
+                              \item Fast
+                              \item Numerically unstable
+                          \end{itemize}
+                      }
+                      \only<4-> { \item Full inversion }
+                      \only<4>{
+                          \begin{itemize}
+                              \item Slow
+                              \item Stable for pseudoinverse
+                          \end{itemize}
+                      }
+                      \only<5-> { \item Sparse full inversion }
+                      \only<5>{
+                          \begin{itemize}
+                              \item $A^i = U^i \Sigma^i V^{i\dagger}$
+                          \end{itemize}
+                      }
+            \end{itemize}
+        }
     \end{minipage}
     \begin{minipage}{0.59\textwidth}
         \begin{equation}
-            \only<1> { \vcenter{\hbox{ \pepocta }}  =\vcenter{\hbox{  \blockcta }}  }
-            \only<2> { \vcenter{\hbox{ \pepoctb }}  =\vcenter{\hbox{  \blockctb }}  }
-            \only<3> { \vcenter{\hbox{ \pepoctc }}  =\vcenter{\hbox{  \blockcta }}  }
-            \only<4> { \vcenter{\hbox{ \pepoctd }}  =\vcenter{\hbox{  \blockcta }}  }
+            \only<1>  {  \vcenter{\hbox{   \scalebox{0.9}{  \pepoct }} } = \vcenter{\hbox{ \scalebox{0.9}{ \blockcta} }} }
+            \only<2> { \vcenter{\hbox{  \scalebox{0.9}{  \pepocta } }}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} }  }
+            \only<3> { \vcenter{\hbox{ \scalebox{0.9}{  \pepoctb }}}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockctb }} } }
+            \only<4> { \vcenter{\hbox{ \scalebox{0.9}{  \pepoctc } }}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} } }
+            \only<5> { \vcenter{\hbox{\scalebox{0.9}{  \pepoctd }}}  =\vcenter{\hbox{ \scalebox{0.9}{  \blockcta }} } }
         \end{equation}
     \end{minipage}
 
@@ -591,11 +609,20 @@
 
 \subsection{Nonlinear Solver}
 \begin{frame}{Nonlinear Solver}
-    \begin{itemize}
-        \item Nonlinear least squares
-        \item Jacobian
-        \item Permutations
-    \end{itemize}
+
+    \begin{minipage}{0.5\textwidth}
+        \begin{itemize}
+            \item Nonlinear least squares
+            \item Jacobian
+            \item Permutations
+        \end{itemize}
+    \end{minipage}
+    \begin{minipage}{0.49\textwidth}
+        \begin{equation}
+            \vcenter{\hbox{   {\pepob{2}{2}{{"$\alpha$","$\alpha$",}}{{"$\alpha$","$\alpha$",}}{{0,0,0,0}}} }}
+        \end{equation}
+    \end{minipage}
+
 \end{frame}
 
 \subsection{Sequential Linear Solver}

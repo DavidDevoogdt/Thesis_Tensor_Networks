@@ -3,63 +3,71 @@
 
     \begin{minipage}{0.5\textwidth}
 
-        \begin{tikzpicture}[clust/.style = {rounded corners= 0.2 cm, fill=gray!10}]
+        \only<1-2> { \begin{tikzpicture}[clust/.style = {rounded corners= 0.2 cm, fill=gray!10}]
 
-            \def \e {0.40}
+                \def \e {0.40}
 
-            \draw[clust] (1-\e,1-\e)--(1-\e,1+\e)--(1+\e,1+\e)--(1+\e,1-\e)--cycle;
-            %\draw (,)--(,)--(,)--(,)--cycle;
-            \draw[clust ] (3-\e,2+\e) -- (5+\e,2+\e) -- (5+\e,1-\e) -- (4-\e, 1-\e) -- (4-\e, 2-\e)-- (3-\e, 2-\e)--cycle;
-            \draw[clust ] (1-\e,3+\e)--(1+\e, 3+\e)-- (1+\e,2+\e) -- (2+\e,2+\e) -- (2+\e,1+\e)--(3+\e,1+\e)-- (3+\e,1-\e)--(2-\e,1-\e)--(2-\e,2-\e) -- (1-\e,2-\e)--cycle;
-            \draw[clust] (2-\e, 4-\e) -- (2-\e,4+ \e) -- (3-\e, 4+\e) -- (3-\e,6+ \e) -- (4+\e,6+ \e) -- (4+\e, 6-\e) -- (3+\e, 6-\e) -- (3+\e,4+ \e) -- (5+\e,4+ \e) -- (5+\e,3- \e) -- (5-\e,3- \e) -- (5-\e, 4-\e) -- (3+\e, 4-\e) -- (3+\e,3- \e) -- (3-\e, 3-\e)-- (3-\e, 4-\e) --cycle;
-            \draw[clust] (4-\e,5-\e)--(4-\e,5+\e)--(5-\e,5+\e)--(5-\e,6+\e)--(5+\e,6+\e)--(5+\e,5-\e)--cycle;
-            \draw[clust] (2-\e,3-\e)--(2-\e,3+\e)--(2+\e,3+\e)--(2+\e,3-\e)--cycle;
-            \draw[clust] (4-\e,3-\e)--(4-\e,3+\e)--(4+\e,3+\e)--(4+\e,3-\e)--cycle;
-            \draw[clust] (1-\e,4- \e)--(1-\e, 5+ \e)--(1+\e, 5+\e)--(1+\e, 4-\e)--cycle;
-            \draw[clust] (1-\e, 6-\e)--(1-\e,6+ \e)--(2+\e, 6+ \e)--(2+\e,5- \e)--(2-\e, 5- \e)--(2-\e,6- \e)--cycle;
+                \draw[clust] (1-\e,1-\e)--(1-\e,1+\e)--(1+\e,1+\e)--(1+\e,1-\e)--cycle;
+                %\draw (,)--(,)--(,)--(,)--cycle;
+                \draw[clust ] (3-\e,2+\e) -- (5+\e,2+\e) -- (5+\e,1-\e) -- (4-\e, 1-\e) -- (4-\e, 2-\e)-- (3-\e, 2-\e)--cycle;
+                \draw[clust ] (1-\e,3+\e)--(1+\e, 3+\e)-- (1+\e,2+\e) -- (2+\e,2+\e) -- (2+\e,1+\e)--(3+\e,1+\e)-- (3+\e,1-\e)--(2-\e,1-\e)--(2-\e,2-\e) -- (1-\e,2-\e)--cycle;
+                \draw[clust] (2-\e, 4-\e) -- (2-\e,4+ \e) -- (3-\e, 4+\e) -- (3-\e,6+ \e) -- (4+\e,6+ \e) -- (4+\e, 6-\e) -- (3+\e, 6-\e) -- (3+\e,4+ \e) -- (5+\e,4+ \e) -- (5+\e,3- \e) -- (5-\e,3- \e) -- (5-\e, 4-\e) -- (3+\e, 4-\e) -- (3+\e,3- \e) -- (3-\e, 3-\e)-- (3-\e, 4-\e) --cycle;
+                \draw[clust] (4-\e,5-\e)--(4-\e,5+\e)--(5-\e,5+\e)--(5-\e,6+\e)--(5+\e,6+\e)--(5+\e,5-\e)--cycle;
+                \draw[clust] (2-\e,3-\e)--(2-\e,3+\e)--(2+\e,3+\e)--(2+\e,3-\e)--cycle;
+                \draw[clust] (4-\e,3-\e)--(4-\e,3+\e)--(4+\e,3+\e)--(4+\e,3-\e)--cycle;
+                \draw[clust] (1-\e,4- \e)--(1-\e, 5+ \e)--(1+\e, 5+\e)--(1+\e, 4-\e)--cycle;
+                \draw[clust] (1-\e, 6-\e)--(1-\e,6+ \e)--(2+\e, 6+ \e)--(2+\e,5- \e)--(2-\e, 5- \e)--(2-\e,6- \e)--cycle;
 
-            \def \sz {5};
+                \def \sz {5};
 
-            \def \radius {0.1}
-            \def \ll {0.35}
+                \def \radius {0.1}
+                \def \ll {0.35}
 
-            \foreach \x in {1,2,..., 5}
-                {
-                    \foreach \y in {1,2,..., 6}
-                        {
-                            \pgfmathtruncatemacro{\s}{\x*10+\y   }
+                \foreach \x in {1,2,..., 5}
+                    {
+                        \foreach \y in {1,2,..., 6}
+                            {
+                                \pgfmathtruncatemacro{\s}{\x*10+\y   }
 
-                            \fill (\x,\y) circle (0.05cm);
+                                \fill (\x,\y) circle (0.05cm);
 
-                            %\node[draw=none] (O\s) at (\x,\y) {};
+                                %\node[draw=none] (O\s) at (\x,\y) {};
 
-                            \pgfmathsetmacro{\pp}{   \x+\ll }
-                            \pgfmathsetmacro{\pm}{   \x-\ll  }
+                                \pgfmathsetmacro{\pp}{   \x+\ll }
+                                \pgfmathsetmacro{\pm}{   \x-\ll  }
 
-                            \pgfmathsetmacro{\kp}{   \y+\ll  }
-                            \pgfmathsetmacro{\km}{   \y-\ll  }
+                                \pgfmathsetmacro{\kp}{   \y+\ll  }
+                                \pgfmathsetmacro{\km}{   \y-\ll  }
 
-                            \node (Op\s) at (\pp,\kp) {};
-                            \node (Om\s) at (\pm,\km) {};
+                                \node (Op\s) at (\pp,\kp) {};
+                                \node (Om\s) at (\pm,\km) {};
 
-                            \draw (\x,\y)  --  (Op\s);
-                            \draw  (\x,\y) --  (Om\s);
+                                \draw (\x,\y)  --  (Op\s);
+                                \draw  (\x,\y) --  (Om\s);
 
-                        }
-                }
+                            }
+                    }
 
-        \end{tikzpicture}
+            \end{tikzpicture}}
+        \only<3>{
+            \begin{itemize}
+                \item Multiple choices for encoding
+                \item Spurious blocks
+                \item Doesn't break symmetry
+                \item Thermodynamic limit
+                \item Tensor Network toolbox
+            \end{itemize}
+        }
     \end{minipage}
     \begin{minipage}{0.49\textwidth}
 
         \only<1> {
 
             \begin{itemize}
-                \item $\sum_{ \{B_i\} } \bigotimes_i B_i =  e^{-\beta \hat{H}} $
+                \item $ e^{-\beta \hat{H}} = \sum_{ \{B_i\} } \bigotimes_i B_i  $
+                \item Solves local patch exactly
                 \item Increase size patches
-                \item Thermodynamic limit
-                \item Patches encoded by 1 tensor:
-
+                \item Encoded by 1 tensor
                       \begin{equation}
                           \vcenter{ \hbox{ \pepob{4}{3}{{
                                               "-","-","-",
@@ -78,7 +86,7 @@
 
         }
 
-        \only<2> {
+        \only<2-3> {
             \begin{tikzpicture}[clust/.style = {rounded corners= 0.2 cm,  ,fill=gray!10, color=gray!10 }]
 
                 \def \e {0.40}
