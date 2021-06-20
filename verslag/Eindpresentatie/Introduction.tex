@@ -1,18 +1,36 @@
 
-\subsection{Problem Statement}
+\subsection{Overview}
 
 \begin{frame}{Introduction}
     \begin{itemize}
         \item Overview condensed matter physics
-              %   \only<1>{    \begin{itemize}
-              %           \item a \todo{test}
-              %       \end{itemize} }
+              \only<1>{    \begin{itemize}
+                      \item  Macroscopic and microscopic physical properties of matter
+                            \begin{itemize}
+                                \item Metals
+                                \item semiconductors
+                                \item Liquids
+                                \item Bose-Einstein Condensates
+                                \item Magnets
+                            \end{itemize}
+                      \item Different disciplines
+                            \begin{itemize}
+                                \item Experimental
+                                \item Theoretical
+                                \item Engineering
+                                      %       \begin{itemize}
+                                      %           \item Quantum mechanics
+                                      %           \item Electromagnetism
+                                      %           \item Statistical physics
+                                      %       \end{itemize}
+                            \end{itemize}
+                  \end{itemize} }
               \only<2->{ \item Strongly correlated materials } \only<2>{ \cite{Alexandradinata2020}
                   \begin{itemize}
                       \item Superconductors
                       \item Quantum  spin  liquids
                       \item Strange metals
-                      \item Quantum Criticality
+                            %\item Quantum Criticality
                       \item Correlated topological matter
                   \end{itemize}
               }
@@ -20,129 +38,94 @@
               \only<3>{
                   \begin{itemize}
                       \item Material synthesis and discovery
-                      \item Numerical methods
                       \item Analytical methods
+                      \item Numerical methods
                   \end{itemize}
               }
     \end{itemize}
 \end{frame}
 
+\subsection{Simulation}
+
 \begin{frame}{Simulating Quantum Many-body Systems}
     \begin{itemize}
         \item Equations are known
         \item Curse of dimensionality
-        \item Tensor networks
+        \item Numerical methods
+              \begin{itemize}
+                  \item Exact diagonalisation
+                  \item (post-) Hartree Fock methods, DFT methods
+                  \item Monte Carlo methods
+                  \item Tensor Networks
+              \end{itemize}
     \end{itemize}
 \end{frame}
 
-\subsection{Tensor Networks}
+%7min 20
 
-\begin{frame}{Tensor Networks: Introduction}
+\begin{frame}{Tensor Networks}
 
     \begin{equation}
         \ket{\Psi} = \sum_{i_1 i_2 \cdots i_n } C^{i_1 i_2 \cdots i_n} \ket{i_1} \otimes \ket{i_2} \otimes \cdots \otimes \ket{i_n}.
     \end{equation}
-    \begin{equation} \label{c_split}
-        C^{i_1 i_2 \cdots i_n} = Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M  ).
-    \end{equation}
-
-\end{frame}
-
-\begin{frame}{Tensor Networks: Graphical Notation}
-    \begin{table}[]
-        \centering
-        \begin{tabular}{l|l|l}
-            conventional            & Einstein                & tensor notation           \\
-            \hline
-            $\Vec{x}$               & $x_{\alpha}$            &
-
-            \begin{tikzpicture}[baseline=({N2.base}) ]
-                \clip (-0.5,-0.5) rectangle (1,0.5);
-                \node[circle, draw] (N2) at (0,0) {$x$};
-                \node[] (N1) at (1,0) {};
-                \draw  (N1) -- (N2) ;
-            \end{tikzpicture}                                                     \\
-            M                       & $M_{\alpha \beta}$      & \begin{tikzpicture}[baseline={0cm-0.5*height("$=$")} ]
-                \clip (-1,-0.5) rectangle (1,0.5);
-
-                \node[circle, draw] (N2) at (0,0) {$M$};
-                \node[] (N0) at (-1,0) {};
-                \node[] (N1) at (1,0) {};
-
-                \draw  (N1) -- (N2) ;
-                \draw  (N0) -- (N2) ;
-
-            \end{tikzpicture} \\
-
-            $\Vec{x} \cdot \Vec{y}$ & $x_{\alpha} y_{\alpha}$ & \begin{tikzpicture}[baseline=({N2.base}) ]
-                \clip (-0.5,-0.5) rectangle (1.5,0.5);
-                \node[circle, draw] (N2) at (0,0) {$x$};
-                \node[circle, draw] (N1) at (1,0) {$y$};
-                \draw  (N1) -- (N2) ;
-            \end{tikzpicture} \\
-        \end{tabular}
-    \end{table}
-\end{frame}
-
-\begin{frame}{Tensor Networks: MPS}
-
     \begin{equation}
-        C^{i_1 i_2 \cdots i_n} = Tr( C^{i_1} C^{i_2} \cdots C^{i_n} M )
+        \begin{split}
+            C^{i_1 i_2 \cdots i_n} &= w_l C^{i_1} C^{i_2} \cdots C^{i_n} w_r \\
+            &=  \vcenter{ \hbox{ \pepob{4}{3}{{
+                                "-","-","-",
+                                "","","",
+                                "-","-","-"}}{{
+                                "-","-",
+                                "-","-",
+                                "d","b",
+                                "-","-"}}{{
+                                1,1,1,1,
+                                15,15,13,15,
+                                1,1,1,1}} }}
+        \end{split}
     \end{equation}
-    \begin{equation}
-        \ctens  \; = \mpograph
-    \end{equation}
+
+    \begin{itemize}
+        \item MPS
+        \item Relevant corner Hilbert space
+    \end{itemize}
 \end{frame}
-
-\begin{frame}{Tensor Networks: Operators}
-
-    \begin{equation}
-        \hat{O} =   \vcenter{\hbox{ \pepob{5}{3}{{
-                            "-","-", "-","-",
-                            "","","","",
-                            "-","-", "-","-",}}{{
-                            "-","-",
-                            "","",
-                            "","",
-                            "","",
-                            "-","-",}}{{
-                            4,4,4,4,4,
-                            13,0,0,0,13,
-                            4,4,4,4,4,}} }}
-    \end{equation}
-
-    \begin{equation}
-        \hat{O} \ket{\Psi} =  \vcenter{\hbox{ \pepob{5}{3}{{
-                            "-","-", "-","-",
-                            "","$\chi$","","",
-                            "","$\chi$","","",}}{{
-                            "-", "-",
-                            "", "",
-                            "", "",
-                            "", "",
-                            "-", "-",}}{{
-                            4,4,4,4,4,
-                            13,0,0,0,13,
-                            13,0,0,0,13}}  }} =   \vcenter{\hbox{ \pepob{5}{2}{{
-                            "-","-", "-","-",
-                            "","$\chi^2$","",""}}{{
-                            "-",
-                            "",
-                            "",
-                            "",
-                            "-"}}{{
-                            4,4,4,4,4,
-                            13,0,0,0,13}} }}
-    \end{equation}
-
-\end{frame}
-
-\subsection{Overview Thesis}
 
 \begin{frame}{Operator exponential}
-    \begin{itemize}
-        \item (Real) Time evolution: $\hat{O} = e^{ - i \hat{H} t }  $
-        \item Statistical ensembles: $\hat{O} = e^{ - \beta \hat{H}   }$
-    \end{itemize}
+
+    \begin{minipage} {0.39\textwidth}
+        \begin{itemize}
+            \item (Real) Time evolution:
+                  \begin{equation}
+                      \hat{O} = e^{ -  \frac{  i \hat{H} t }{\hbar} }
+                  \end{equation}
+            \item Statistical ensembles:
+                  \begin{equation}
+                      \hat{O} = \frac{ e^{ - \beta \hat{H}   } } { \Tr(  e^{ - \beta \hat{H}   })  }
+                  \end{equation}
+        \end{itemize}
+    \end{minipage}
+    \begin{minipage}{0.6 \textwidth}
+        \begin{equation}
+            \hat{O} =  \vcenter{ \hbox{ \pepob{5}{5}{{
+                                "-","-", "-","-",
+                                "",  "", "","",
+                                "",  "", "","",
+                                "",  "", "","",
+                                "-", "-", "-","-",}}{{
+                                "-","-", "-","-",
+                                "","", "","",
+                                "","", "","",
+                                "","", "","",
+                                "-","-", "-","-",}}{{
+                                1,13,13,13,1,
+                                13,14,14,14,13,
+                                13,14,14,14,13,
+                                13,14,14,14,13,
+                                1,13,13,13,1,
+                            }} }}
+        \end{equation}
+    \end{minipage}
+
 \end{frame}
 
