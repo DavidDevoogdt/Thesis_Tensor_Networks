@@ -1,12 +1,6 @@
 
 \begin{frame}{Cluser Exapansion}
 
-    \only<1> {
-        \begin{equation}
-            e^{ \hat{H} } = \sum_{ \{B\} }  \bigotimes_i B_i
-        \end{equation}
-    }
-
     \begin{minipage}{0.5\textwidth}
 
         \only<1> {
@@ -26,9 +20,12 @@
         \only<4>{
             \begin{itemize}
                 \item Multiple choices for encoding
-                \item Doesn't break symmetry
-                \item Thermodynamic limit
-                \item Tensor Network toolbox
+                \item Solvers
+                      \begin{itemize}
+                          \item Linear
+                          \item Nonlinear
+                      \end{itemize}
+
             \end{itemize}
         }
     \end{minipage}
@@ -49,6 +46,7 @@
         \only<2> {
 
             \begin{itemize}
+                \item   $e^{ \hat{H} } = \sum_{ \{B\} }  \bigotimes_i B_i $
                 \item Finite number of blocks
                 \item Encoded by 1 tensor
                       \begin{equation}
@@ -64,19 +62,19 @@
                                               1,4,12,4,
                                               1,1,4,1}} }}
                       \end{equation}
-                      \begin{equation}
-                          O^{0010} = \vcenter{ \hbox{ \pepob{4}{3}{{
-                                              "-","-","-",
-                                              "-","","1",
-                                              "-","-","-"}}{{
-                                              "-","-",
-                                              "-","-",
-                                              "d","b",
-                                              "-","-"}}{{
-                                              1,1,1,1,
-                                              1,1,14,4,
-                                              1,1,1,1}} }}
-                      \end{equation}
+                      %   \begin{equation}
+                      %       O^{0010} = \vcenter{ \hbox{ \pepob{4}{3}{{
+                      %                           "-","-","-",
+                      %                           "-","","1",
+                      %                           "-","-","-"}}{{
+                      %                           "-","-",
+                      %                           "-","-",
+                      %                           "d","b",
+                      %                           "-","-"}}{{
+                      %                           1,1,1,1,
+                      %                           1,1,14,4,
+                      %                           1,1,1,1}} }}
+                      %   \end{equation}
 
             \end{itemize}
 
@@ -87,5 +85,13 @@
         }
 
     \end{minipage}
+\end{frame}
+
+\begin{frame}{Advantages}
+    \begin{itemize}
+        \item Doesn't break symmetry
+        \item Thermodynamic limit
+        \item Tensor Network toolbox
+    \end{itemize}
 \end{frame}
 

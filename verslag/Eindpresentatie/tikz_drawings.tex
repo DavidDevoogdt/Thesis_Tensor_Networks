@@ -763,7 +763,7 @@
 
     \end{tikzpicture} }
 
-\def \clustFullB {\begin{tikzpicture}[clust/.style = {rounded corners= 0.2 cm,  ,fill=gray!10, color=gray!10 }]
+\def \clustFullB {\begin{tikzpicture}[clust/.style = {rounded corners= 0.2 cm,  ,fill=gray!10, color=gray!10 },zer/.style = {color=red!30 }]
 
         \def \e {0.40}
 
@@ -840,6 +840,47 @@
 
         \draw (O16) -- node [above] {\footnotesize 1} (O26);
         \draw (O36) -- node [above] {\footnotesize 1} (O46);
+
+        % zero levels horizontal
+
+        \draw[zer](O11) -- node [above] {\footnotesize 0} (O21);
+        \draw[zer](O31) -- node [above] {\footnotesize 0} (O41);
+
+        \draw[zer](O22) -- node [above] {\footnotesize 0} (O32);
+
+        \draw[zer](O13) -- node [above] {\footnotesize 0} (O23);
+        \draw[zer](O23) -- node [above] {\footnotesize 0} (O33);
+        \draw[zer](O33) -- node [above] {\footnotesize 0} (O43);
+        \draw[zer](O43) -- node [above] {\footnotesize 0} (O53);
+
+        \draw[zer](O14) -- node [above] {\footnotesize 0} (O24);
+
+        \draw[zer](O15) -- node [above] {\footnotesize 0} (O25);
+        \draw[zer](O25) -- node [above] {\footnotesize 0} (O35);
+        \draw[zer](O35) -- node [above] {\footnotesize 0} (O45);
+
+        \draw[zer](O26) -- node [above] {\footnotesize 0} (O36);
+        \draw[zer](O46) -- node [above] {\footnotesize 0} (O56);
+
+        %zero levels vertical
+        \draw[zer](O11) -- node [left] {\footnotesize 0} (O12);
+        \draw[zer](O13) -- node [left] {\footnotesize 0} (O14);
+        \draw[zer](O15) -- node [left] {\footnotesize 0} (O16);
+
+        \draw[zer](O22) -- node [left] {\footnotesize 0} (O23);
+        \draw[zer](O23) -- node [left] {\footnotesize 0} (O24);
+        \draw[zer](O24) -- node [left] {\footnotesize 0} (O25);
+
+        \draw[zer](O31) -- node [left] {\footnotesize 0} (O32);
+        \draw[zer](O32) -- node [left] {\footnotesize 0} (O33);
+
+        \draw[zer](O42) -- node [left] {\footnotesize 0} (O43);
+        \draw[zer](O43) -- node [left] {\footnotesize 0} (O44);
+        \draw[zer](O44) -- node [left] {\footnotesize 0} (O45);
+        \draw[zer](O45) -- node [left] {\footnotesize 0} (O46);
+
+        \draw[zer](O52) -- node [left] {\footnotesize 0} (O53);
+        \draw[zer](O54) -- node [left] {\footnotesize 0} (O55);
 
     \end{tikzpicture}}
 
