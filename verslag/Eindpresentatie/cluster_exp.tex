@@ -1,22 +1,22 @@
 
-\begin{frame}{Cluser Exapansion}
+\begin{frame}{Cluser Exapansions}
 
     \begin{minipage}{0.5\textwidth}
 
-        \only<1> {
-            \begin{equation}
-                e^{H(1)} =  \vcenter{ \hbox{ \paa  }}
-            \end{equation}
-            \begin{equation}
-                \begin{split}
-                    e^{H(2)} =&  \vcenter{ \hbox{ \pa }} \\
-                    +&  \vcenter{ \hbox{ \pb }}
-                \end{split}
-            \end{equation}
+        % \only<1> {
+        %     \begin{equation}
+        %         e^{H(1)} =  \vcenter{ \hbox{ \paa  }}
+        %     \end{equation}
+        %     \begin{equation}
+        %         \begin{split}
+        %             e^{H(2)} =&  \vcenter{ \hbox{ \pa }} \\
+        %             +&  \vcenter{ \hbox{ \pb }}
+        %         \end{split}
+        %     \end{equation}
 
-        }
+        % }
 
-        \only<2-3> { \clustFullA }
+        \only<1-3> { \clustFullA }
         \only<4>{
             \begin{itemize}
                 \item Multiple choices for encoding
@@ -31,22 +31,37 @@
     \end{minipage}
     \begin{minipage}{0.49\textwidth}
 
-        \only<1> {
+        % \only<1> {
 
-            \begin{equation}
-                \begin{split}
-                    e^{H(3) } =&  \vcenter{ \hbox{ \pcc }} \\
-                    +&  \vcenter{ \hbox{ \pca }} \\
-                    +&  \vcenter{ \hbox{ \pcb }} \\
-                    +&  \vcenter{ \hbox{ \pc }}
-                \end{split}
-            \end{equation}
-        }
+        %     \begin{equation}
+        %         \begin{split}
+        %             e^{H(3) } =&  \vcenter{ \hbox{ \pcc }} \\
+        %             +&  \vcenter{ \hbox{ \pca }} \\
+        %             +&  \vcenter{ \hbox{ \pcb }} \\
+        %             +&  \vcenter{ \hbox{ \pc }}
+        %         \end{split}
+        %     \end{equation}
+        % }
 
-        \only<2> {
+        \only<1-2> {
 
             \begin{itemize}
                 \item   $e^{ \hat{H} } = \sum_{ \{B\} }  \bigotimes_i B_i $
+                      \only<1>{
+
+                          \begin{equation}
+                              e^{H(1)} =  \vcenter{ \hbox{ \paa  }}
+                          \end{equation}
+
+                          \begin{equation}
+                              \begin{split}
+                                  e^{H(2)} =&  \vcenter{ \hbox{ \pa }} \\
+                                  +&  \vcenter{ \hbox{ \pb }}
+                              \end{split}
+                          \end{equation}
+
+                      }
+                      \only<2>{
                 \item Finite number of blocks
                 \item Encoded by 1 tensor
                       \begin{equation}
@@ -75,7 +90,7 @@
                       %                           1,1,14,4,
                       %                           1,1,1,1}} }}
                       %   \end{equation}
-
+                      }
             \end{itemize}
 
         }

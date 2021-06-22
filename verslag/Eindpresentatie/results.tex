@@ -1,116 +1,60 @@
-\subsection{1D exact}
+\subsection{1D Exact}
 
-\begin{frame}{1D: Encodings + Error Measure}
+% \begin{frame}{1D: Encodings + Error Measure}
+%     % \begin{minipage}{.6\textwidth}
+
+%     % \end{minipage}
+%     % \begin{minipage}{.39\textwidth}
+
+%     %     \begin{table}[]
+%     %         \caption*{$\chi$}
+%     %         \begin{tabular}{l l|l l }
+%     %                                                    &   & \multicolumn{2}{c}{Encoding}       \\
+%     %                                                    &   & A                            & E/F \\
+%     %             \hline
+%     %             \multirow{3}{*}{\rotatebox{90}{Order}} & 3 & 5                            & 10  \\
+%     %                                                    & 5 & 21                           & 42  \\
+%     %                                                    & 7 & 85                           & 170 \\
+%     %         \end{tabular}
+%     %     \end{table}
+%     % \end{minipage}
+% \end{frame}
+
+\begin{frame}{1D: Transverse Field Ising (TFI) }
+
     \begin{minipage}{.6\textwidth}
+        \begin{figure}
+            \center
+            \includegraphics[height=0.9\textheight]{../Figuren/benchmarking/t_ising_small.pdf}
+        \end{figure}
+    \end{minipage}
+    \begin{minipage}{.39\textwidth}
 
         \begin{itemize}
             \item Relative error $\epsilon$
-            \item Different encodings blocks
+            \item Different encodings:
                   \begin{itemize}
-                      \item A: small bond dimension
-                      \item E: no spurious blocks
-                      \item F: well conditioned
+                      \item A: Small
+                      \item E: Strict
+                      \item F: well-conditioned
                   \end{itemize}
+
+            \item bond dimension
+
+                  \begin{table}[]
+                      %\caption*{$\chi$}
+                      \begin{tabular}{l l|l l }
+                                                                 &   & \multicolumn{2}{c}{Encoding}       \\
+                                                                 &   & A                            & E/F \\
+                          \hline
+                          \multirow{3}{*}{\rotatebox{90}{Order}} & 3 & 5                            & 10  \\
+                                                                 & 5 & 21                           & 42  \\
+                                                                 & 7 & 85                           & 170 \\
+                      \end{tabular}
+                  \end{table}
+
         \end{itemize}
-
     \end{minipage}
-    \begin{minipage}{.39\textwidth}
-
-        \begin{table}[]
-            \caption*{$\chi$}
-            \begin{tabular}{l l|l l }
-                                                       &   & \multicolumn{2}{c}{Encoding}       \\
-                                                       &   & A                            & E/F \\
-                \hline
-                \multirow{3}{*}{\rotatebox{90}{Order}} & 3 & 5                            & 10  \\
-                                                       & 5 & 21                           & 42  \\
-                                                       & 7 & 85                           & 170 \\
-            \end{tabular}
-        \end{table}
-    \end{minipage}
-\end{frame}
-
-\begin{frame}{1D: Transverse Field Ising}
-
-    \begin{figure}
-        \center
-        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_ising.pdf}
-    \end{figure}
-
-\end{frame}
-
-\begin{frame}{1D: Heisenberg XXX}
-
-    \begin{figure}
-        \center
-        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_heis_XXX.pdf}
-    \end{figure}
-
-\end{frame}
-
-\subsection{2D exact}
-
-\begin{frame}{2D: Encodings + Error Measure}
-
-    \begin{minipage}{.6\textwidth}
-        \begin{itemize}
-            \item Relative error $\epsilon$ more challenging
-            \item Encodings based on A (order 5)
-                  \begin{itemize}
-                      \item \makebox[2.07cm]{No loops\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
-                                                    "-","-", "-",     "-",
-                                                    "","","","",
-                                                    "","-","",""}}{{
-                                                    "-","",
-                                                    "-","",
-                                                    "-","",
-                                                    "-","",
-                                                    "-",""}}{{
-                                                    1,1,1,1,1,
-                                                    1,0,0,0,0,
-                                                    1,1,0,1,1}} }} $
-                      \item \makebox[2cm]{+Plaquette\hfill}$\vcenter{\hbox{{\pepob{2}{2}{{
-                                                            "","",}}{{
-                                                            "","",}}{{
-                                                            0,0,
-                                                            0,0}}} }}$
-                      \item \makebox[2cm]{+Extensions\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
-                                                    "-","-", "-","-",
-                                                    "","","","",
-                                                    "","","",""}}{{
-                                                    "-","",
-                                                    "-","",
-                                                    "-","",
-                                                    "-","",
-                                                    "-",""}}{{
-                                                    1,1,1,1,1,
-                                                    1,1,0,0,0,
-                                                    1,1,0,0,1}} }} $
-                  \end{itemize}
-        \end{itemize}
-
-    \end{minipage}
-    \begin{minipage}{.39\textwidth}
-        \begin{table}[]
-            \begin{tabular}{l|l }
-                           & $\chi$ \\
-                \hline              \\
-                no loops   & 21     \\
-                plaquette  & 27     \\
-                extensions & 43     \\
-            \end{tabular}
-        \end{table}
-
-    \end{minipage}
-
-\end{frame}
-
-\begin{frame}{2D: TFI}
-
-    \begin{figure}
-        \center
-        \includegraphics[height=\textheight]{../Figuren/benchmarking/2D_Err01_t_sing.pdf}
-    \end{figure}
 
 \end{frame}
 
@@ -123,7 +67,7 @@
     \end{itemize}
 \end{frame}
 
-\subsection{2D Transverse Ising model}
+\subsection{TFI Phase Diagram}
 
 \begin{frame}{2D TFI: Introduction}
     \begin{minipage}{0.35\textwidth}
@@ -139,7 +83,7 @@
 
                             $T_c$, exponents
                   \end{itemize}
-            \item $\Gamma=2.5$ and $\Gamma=0$
+            \item $\Gamma=2.5$
             \item VUMPS ($\chi$,$\delta^{-1}$)
         \end{itemize}
     \end{minipage}
@@ -152,7 +96,7 @@
     \end{minipage}
 \end{frame}
 
-\begin{frame}{2D TFI: $\Gamma=2.5$}
+\begin{frame}{TFI Phase Diagram: $\Gamma=2.5$}
     \begin{minipage}{.75\textwidth}
         \begin{figure}
             \center
@@ -174,22 +118,3 @@
     \end{minipage}
 \end{frame}
 
-\begin{frame}{2D TFI: Classical Ising}
-    \begin{minipage}{.75\textwidth}
-        \begin{figure}
-            \center
-            \includegraphics[height=\textheight]{../Figuren/phasediag/g0/zoomed_small.pdf}
-        \end{figure}
-    \end{minipage}
-    \begin{minipage}{.24\textwidth}
-        \begin{table}[]
-            \begin{tabular}{l|l }
-                      & $T_c$    \\
-                \hline           \\
-                Fit   & 2.691(9) \\
-                Exact & 2.691853 \\
-
-            \end{tabular}
-        \end{table}
-    \end{minipage}
-\end{frame}

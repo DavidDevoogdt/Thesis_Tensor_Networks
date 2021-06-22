@@ -275,7 +275,31 @@
     \end{equation}
 \end{frame}
 
-\section{$\Gamma = 2.9$}
+\section{TFI Collapses}
+
+\subsection{$g=0.0$}
+
+\begin{frame}{TFI Phase Diagram: Classical Ising}
+    \begin{minipage}{.75\textwidth}
+        \begin{figure}
+            \center
+            \includegraphics[height=\textheight]{../Figuren/phasediag/g0/zoomed_small.pdf}
+        \end{figure}
+    \end{minipage}
+    \begin{minipage}{.24\textwidth}
+        \begin{table}[]
+            \begin{tabular}{l|l }
+                      & $T_c$    \\
+                \hline           \\
+                Fit   & 2.691(9) \\
+                Exact & 2.691853 \\
+
+            \end{tabular}
+        \end{table}
+    \end{minipage}
+\end{frame}
+
+\subsection{$g=2.9$}
 
 \begin{frame}
     \begin{figure}
@@ -283,3 +307,90 @@
         \includegraphics[height=\textheight]{../Figuren/phasediag/g29/a.pdf}
     \end{figure}
 \end{frame}
+
+\section{Direct Results}
+
+\begin{frame}{1D: Transverse Field Ising (TFI): full }
+
+    \begin{figure}
+        \center
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_ising.pdf}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{1D: Heisenberg XXX}
+
+    \begin{figure}
+        \center
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/t_heis_XXX.pdf}
+    \end{figure}
+
+\end{frame}
+
+\subsection{2D Exact}
+
+\begin{frame}{2D: Encodings + Error Measure}
+
+    \begin{minipage}{.6\textwidth}
+        \begin{itemize}
+            \item Relative error $\epsilon$ more challenging
+            \item Encodings based on A (order 5)
+                  \begin{itemize}
+                      \item \makebox[2.07cm]{No loops\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
+                                                    "-","-", "-",     "-",
+                                                    "","","","",
+                                                    "","-","",""}}{{
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-",""}}{{
+                                                    1,1,1,1,1,
+                                                    1,0,0,0,0,
+                                                    1,1,0,1,1}} }} $
+                      \item \makebox[2cm]{+Plaquette\hfill}$\vcenter{\hbox{{\pepob{2}{2}{{
+                                                            "","",}}{{
+                                                            "","",}}{{
+                                                            0,0,
+                                                            0,0}}} }}$
+                      \item \makebox[2cm]{+Extensions\hfill}$\vcenter{\hbox{\pepob{5}{3}{{
+                                                    "-","-", "-","-",
+                                                    "","","","",
+                                                    "","","",""}}{{
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-","",
+                                                    "-",""}}{{
+                                                    1,1,1,1,1,
+                                                    1,1,0,0,0,
+                                                    1,1,0,0,1}} }} $
+                  \end{itemize}
+        \end{itemize}
+
+    \end{minipage}
+    \begin{minipage}{.39\textwidth}
+        \begin{table}[]
+            \begin{tabular}{l|l }
+                           & $\chi$ \\
+                \hline              \\
+                no loops   & 21     \\
+                plaquette  & 27     \\
+                extensions & 43     \\
+            \end{tabular}
+        \end{table}
+
+    \end{minipage}
+
+\end{frame}
+
+\begin{frame}{2D: Transverse Field Ising}
+
+    \begin{figure}
+        \center
+        \includegraphics[height=\textheight]{../Figuren/benchmarking/2D_err_presentation}
+    \end{figure}
+
+\end{frame}
+
