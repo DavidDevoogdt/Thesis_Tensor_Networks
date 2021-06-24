@@ -25,9 +25,9 @@
                                       %       \end{itemize}
                             \end{itemize}
                   \end{itemize} }
-              \only<2->{ \item Strongly correlated materials } \only<2>{ \cite{Alexandradinata2020}
+              \only<2->{ \item Strongly correlated materials } \only<2>{ %\cite{Alexandradinata2020}
                   \begin{itemize}
-                      \item Superconductors
+                      \item High $T_c$ Superconductors
                       \item Quantum  spin  liquids
                       \item Strange metals
                             %\item Quantum Criticality
@@ -87,30 +87,34 @@
     \end{equation}
 
     \begin{itemize}
-        \item MPS
+        \item Matrix Product State
         \item Relevant corner Hilbert space
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Operator Exponential}
 
-    \begin{minipage} {0.39\textwidth}
+    \begin{minipage} {0.49\textwidth}
         \begin{itemize}
-            \item (Real) Time evolution:
+            \item Time evolution:
                   \begin{equation}
-                      \hat{O} = e^{ -    i \hat{H} t  }
+                      \hat{H} \ket{ \Psi(t)} = i \frac{d}{d t} \ket{\Psi(t)}
                   \end{equation}
+                  \begin{equation}
+                      \ket{ \Psi(t)} =e^{ -    i \hat{H} t  }  \ket{\Psi(0)}
+                  \end{equation}
+                  %   \begin{equation}
+                  %       \hat{U} = e^{ -  i \hat{H} t  }
+                  %   \end{equation}
             \item Statistical ensembles:
                   \begin{equation}
-                      \hat{O} = \frac{ e^{ - \beta \hat{H}   } } { \Tr(  e^{ - \beta \hat{H}   })  }
+                      \hat{\rho} = \frac{ e^{ - \beta \hat{H}   } } { \Tr(  e^{ - \beta \hat{H}   })  }
                   \end{equation}
-
-                  Imaginary time ($\beta = i t $)
         \end{itemize}
     \end{minipage}
-    \begin{minipage}{0.6 \textwidth}
-        \begin{equation}
-            \hat{O} =  \vcenter{ \hbox{ \pepob{5}{5}{{
+    \begin{minipage}{0.5 \textwidth}
+        \begin{equation*}
+            \vcenter{ \hbox{ \pepob{5}{5}{{
                                 "-","-", "-","-",
                                 "",  "", "","",
                                 "",  "", "","",
@@ -127,7 +131,7 @@
                                 13,14,14,14,13,
                                 1,13,13,13,1,
                             }} }}
-        \end{equation}
+        \end{equation*}
     \end{minipage}
 
 \end{frame}
