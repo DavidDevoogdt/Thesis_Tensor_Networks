@@ -110,7 +110,11 @@ function [names, T_c_arr] = ising_names(n)
             }};
         
             T_c_arr = [0.605];
-            
+        case 6
+            names={{
+            'TIM_g=0.0_order_5_chi=5_sym=1_30_July_2021_10:45';
+            }};
+            T_c_arr = [2.2691859];
     end
 
 end

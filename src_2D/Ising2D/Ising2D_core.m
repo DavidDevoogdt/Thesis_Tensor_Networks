@@ -1,4 +1,4 @@
-function Ising2D_core(save_vars, template, x, results, get_exp_opts)
+function succes_string = Ising2D_core(save_vars, template, x, results, get_exp_opts)
     %core routine: calculates pepo according to template and temperature/transversal field x,
     %calculates environment with PEPO and saves to disk in 2 files: results (llightweight) and savevars (Vumps environment,...)
     %depending on save_vars, just recalculates the expectation value with previous environment and PEPO
@@ -51,5 +51,6 @@ function Ising2D_core(save_vars, template, x, results, get_exp_opts)
     saveboy(save_vars.results_name, 'results', results);
     saveboy(save_vars.save_vars_name, 'save_vars', save_vars);
 
-    fprintf("%s %3d:%s %s:%.4e <X>:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':'), template.free_var, x, results.m, 1 / results.inv_corr_length, results.marek, results.ctr, results.err);
+    succes_string = sprintf("%s %3d:%s %s:%.4e <X>:%.4e xi:%.4e marek gap:%.4f ctr:%3d err:%.4e\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':'), template.free_var, x, results.m, 1 / results.inv_corr_length, results.marek, results.ctr, results.err);
+
 end
