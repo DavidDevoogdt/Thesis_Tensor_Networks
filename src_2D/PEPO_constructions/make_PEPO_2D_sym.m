@@ -224,7 +224,22 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
     %obj.max_index = e;
 
     %dd = [8, 8, 6];
-    dd = [6, 8 8, 10];
+    
+    dd = [];
+    
+    if obj.copts.do_loops == 1
+       dd = [dd,6]; 
+    end
+    
+    if obj.copts.loop_extension == 1
+        dd = [dd,8 8];
+    end 
+    
+    if obj.copts.double_extension == 1
+        dd = [dd,10];
+    end
+    
+    %dd = [6, 8 8, 10];
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
     obj.virtual_level_sizes_vert = [obj.virtual_level_sizes_vert, dd];

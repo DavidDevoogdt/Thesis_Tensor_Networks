@@ -1,9 +1,9 @@
-function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
+function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
     %routine to calculate a phase diagram for transversal ising model in 2D
     %samples in batch points along m-T / m-g graph such that arc length between points is small
-    %example: Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
-    %Ising2D_par(8, 0.7, 'T', struct('testing',0,'unit_cell',1,'par',1,) , struct('order',6,'max_bond_dim',20 ,'do_loops',1 ));
-    %Ising2D_par(6, [], [],
+    %example: Ising2D(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
+    %Ising2D(8, 0.7, 'T', struct('testing',0,'unit_cell',1,'par',1,) , struct('order',6,'max_bond_dim',20 ,'do_loops',1 ));
+    %Ising2D(6, [], [],
     %struct('template_name','TIM_g=2.5_order_5_chi=6_sym=1_02_August_2021_15:36'))
     %(continue with exsisting set of data points)
     %for PEPO_opts, see PEPO.m
@@ -57,6 +57,11 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             [~, template] = sampling_fetch(p.Results.template_name, struct);
             chi = chi_arr(i);
             first = 0;
+            
+            if ~isfield(template,'iter')
+                template.iter = 1;
+            end
+            
         else %make template
             first = 1;
             template = [];
@@ -186,6 +191,12 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             %
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 
+        end
+
+        if ~isfield(template,'iter')
+            template.iter = 1;
+        else
+            template.iter = template.iter + 1;
         end
 
         disp(template.name_prefix)

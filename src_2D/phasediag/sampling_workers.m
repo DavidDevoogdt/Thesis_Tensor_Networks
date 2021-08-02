@@ -15,7 +15,7 @@ function sampling_workers(aim_dx, aim_dy, nsample, template, npoints, first, par
         fprintf(v);
 
         save_vars = [];
-        save_vars.fname = sprintf('%2d:%2d', 1, 2);
+        save_vars.fname = sprintf('%2d:%2d', template.iter, 2);
         v = sampling_core(save_vars, template, x_max);
         fprintf(v);
 
@@ -29,7 +29,7 @@ function sampling_workers(aim_dx, aim_dy, nsample, template, npoints, first, par
             x0 = get_new_point(data.(template.free_var), data.m, [], ratio);
 
             save_vars = [];
-            save_vars.fname = sprintf('%2d:%2d', 1, counter);
+            save_vars.fname = sprintf('%2d:%2d', template.iter, counter);
 
             v = sampling_core(save_vars, template, x0, 1);
             fprintf(v);
@@ -47,7 +47,7 @@ function sampling_workers(aim_dx, aim_dy, nsample, template, npoints, first, par
 
             for j = 1:nsample
                 save_vars = [];
-                save_vars.fname = sprintf('%2d:%2d', 1, j);
+                save_vars.fname = sprintf('%2d:%2d', template.iter, j);
 
                 f(j) = parfeval(@ () sampling_core(save_vars, template, x0(j)), 1);
             end
@@ -82,7 +82,7 @@ function [f, x0] = add_new_point(template, idx, f, ratio, x0, number)
     x0(idx) = get_new_point(data.(template.free_var), data.m, z0, ratio);
 
     save_vars = [];
-    save_vars.fname = sprintf('%2d:%2d', 1, number);
+    save_vars.fname = sprintf('%2d:%2d', template.iter, number);
 
     f(idx) = parfeval(@ () sampling_core(save_vars, template, x0(idx)), 1);
 end

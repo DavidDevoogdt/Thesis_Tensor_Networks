@@ -112,8 +112,6 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
 
     if vumps_opts.cell_size == 1
         
-        
-       
         GL = G0{1};
         GR = G0{2};
         Ac = A{4};
