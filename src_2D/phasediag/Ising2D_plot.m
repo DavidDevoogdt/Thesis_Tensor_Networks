@@ -3,11 +3,15 @@ close all
 %sizes: 20*1.2.^(1:9)
 
 filterPoints = 1;
-[names, X_crit_arr] = ising_names(6);
+
+%names = {{'TIM_g=2.5_order_5_chi=6_sym=1_02_August_2021_15:36'}};
+%X_crit_arr = 1.2737;
+
+[names, X_crit_arr] = Ising2D_names(6);
 
 skip = [0, 1, 0];
 
-tbound = 2;
+tbound = 1.0;
 
 %close all
 
@@ -32,8 +36,8 @@ for j = 1:numel(names)
 
         for i = 1:numel(names{j})
 
-            data = fetch_matfiles(names{j}{i}, struct);
-            data = filter_ising_results(data, struct('tol', 1e-10, 'Tbound', [X_crit - tbound, X_crit + tbound]));
+            data = sampling_fetch(names{j}{i}, struct);
+            data = sampling_filter(data, struct('tol', 1e-10, 'Tbound', [X_crit - tbound, X_crit + tbound]));
             copts = critopts.(data.free_var);
             marek_arr = real(data.eps_i(:, 2) - data.eps_i(:, 1));
 

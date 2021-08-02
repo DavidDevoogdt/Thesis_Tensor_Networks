@@ -1,4 +1,4 @@
-function data = filter_ising_results(data, opts)
+function data = sampling_filter(data, opts)
     %filter out bad points and return the data
 
     if ~isfield(opts, 'tol')
@@ -10,7 +10,7 @@ function data = filter_ising_results(data, opts)
     end
 
     free_var = data.free_var;
-    
+
     mask = (data.(free_var) > opts.Tbound(1)) & (data.(free_var) < opts.Tbound(2)) & (data.err < opts.tol) & (data.err ~= 0);
 
     [~, idx] = sort(data.(free_var)(mask));

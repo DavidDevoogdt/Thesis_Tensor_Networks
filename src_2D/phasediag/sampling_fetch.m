@@ -1,4 +1,4 @@
-function [data, template] = fetch_matfiles(file_name, opts)
+function [data, template] = sampling_fetch(file_name, opts)
     %helper function to read save files with a given name
 
     if ~isfield(opts, 'save_vars')
@@ -95,11 +95,11 @@ function [data, template] = fetch_matfiles(file_name, opts)
     end
 
     %complete incomplete files
-    
+
     if ~isfield(data, 'free_var')
         data.free_var = 'T';
         data.fixed_var = 'g';
         data.fixed_val = data.model_params.g;
     end
-    
+
 end
