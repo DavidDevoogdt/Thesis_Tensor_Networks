@@ -3,6 +3,9 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
     %samples in batch points along m-T / m-g graph such that arc length between points is small
     %example: Ising2D_par(8, 2.5, 'g', struct('testing',1,'unit_cell',1,'par',0 ))
     %Ising2D_par(8, 0.7, 'T', struct('testing',0,'unit_cell',1,'par',1,) , struct('order',6,'max_bond_dim',20 ,'do_loops',1 ));
+    %Ising2D_par(6, [], [],
+    %struct('template_name','TIM_g=2.5_order_5_chi=6_sym=1_02_August_2021_15:36'))
+    %(continue with exsisting set of data points)
     %for PEPO_opts, see PEPO.m
 
     if nargin < 5
@@ -14,13 +17,13 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
     %parse opts
     p = inputParser;
     addParameter(p, 'template_name', [])
-    addParameter(p, 'par', 0)
+    addParameter(p, 'par', 1)
     addParameter(p, 'sym', 1)
     addParameter(p, 'unit_cell', 1)
     addParameter(p, 'testing', 0)
     addParameter(p, 'x_bounds', [])
     addParameter(p, 'nsample', -1)
-    addParameter(p, 'maxit', 4)
+    addParameter(p, 'npoints', 70)
     parse(p, opts)
 
     %parallel preferences
@@ -33,6 +36,10 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
         end
     else
         nsample = p.results.nsmaple;
+    end
+
+    if p.Results.par == 0
+        nsample = 1;
     end
 
     %cluster = parcluster('local');
@@ -130,14 +137,6 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             else
                 template.handle = @make_PEPO_2D_asym;
             end
-            %
-            %             template.pepo_opts = struct(...
-            %                 'testing', p.Results.testing, ...
-                %                 'order', p.Results.order, ...
-                %                 'max_bond_dim', p.Results.max_bond_dim, ...
-                %                 'do_loops', p.Results.do_loops, ...
-                %                 'complex', p.Results.complex, ...
-                %                 'loop_extension', p.Results.loop_extension);
 
             template.pepo_opts = pepo_opts;
 
@@ -192,76 +191,97 @@ function Ising2D_par(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
         disp(template.name_prefix)
 
         template.vumps_opts.chi_max = chi;
-        calc_ising_2d(0.01, 0.01, nsample, template, p.Results.maxit, first, p.Results.par);
+        calc_ising_2d(0.01, 0.01, nsample, template, p.Results.npoints, first, p.Results.par);
     end
 end
 
-function calc_ising_2d(aim_dx, aim_dy, nsample, template, maxit, first, par)
+function calc_ising_2d(aim_dx, aim_dy, nsample, template, npoints, first, par)
 
     if nargin < 7
         par = 1;
     end
 
-    f(1:nsample) = parallel.FevalFuture;
+    x_min = template.x_bounds(1);
+    x_max = template.x_bounds(2);
 
-    if first == 1
-        x_min = template.x_bounds(1);
-        x_max = template.x_bounds(2);
-
-        x0 = (x_max - x_min) / (nsample - 1) * (0:nsample - 1) + x_min;
-        y0 = x0 .* 0;
-
-        first = 0;
-
-        for j = 1:nsample
-            save_vars = [];
-            save_vars.fname = sprintf('%2d:%2d', 1, j);
-
-            f(j) = parfeval(@ () Ising2D_core(save_vars, template, x0(j)), 1);
-        end
-    end
-
-    counter = nsample + 1;
-    ratio = aim_dx / aim_dy;
-
-    while counter < maxit * nsample
-        [idx, v] = fetchNext(f);
-
-        fprintf(v);
-
-        data = fetch_matfiles(template.name, struct);
-        data = filter_ising_results(data, struct);
-
-        %determine new point
-        z0 = x0;
-        z0(idx) = [];
-
-        x0(idx) = get_new_point(data.(template.free_var), data.m, z0, ratio);
+    if par == 0
 
         save_vars = [];
-        save_vars.fname = sprintf('%2d:%2d', 1, counter);
+        save_vars.fname = sprintf('%2d:%2d', 1, 1);
+        v = Ising2D_core(save_vars, template, x_min);
+        fprintf(v);
 
-        f(idx) = parfeval(@ () Ising2D_core(save_vars, template, x0(idx)), 1);
-        counter = counter + 1;
+        save_vars = [];
+        save_vars.fname = sprintf('%2d:%2d', 1, 2);
+        v = Ising2D_core(save_vars, template, x_max);
+        fprintf(v);
+
+        counter = 3;
+
+        while counter < npoints
+
+            data = fetch_matfiles(template.name, struct);
+            data = filter_ising_results(data, struct);
+            %determine new point
+            x0 = get_new_point(data.(template.free_var), data.m, [], ratio);
+
+            save_vars = [];
+            save_vars.fname = sprintf('%2d:%2d', 1, counter);
+
+            v = Ising2D_core(save_vars, template, x0, 1);
+            fprintf(v);
+
+            counter = counter + 1;
+        end
+    else
+        f(1:nsample) = parallel.FevalFuture;
+
+        counter = nsample + 1;
+        ratio = aim_dx / aim_dy;
+
+        if first == 1
+            x0 = (x_max - x_min) / (nsample - 1) * (0:nsample - 1) + x_min;
+
+            for j = 1:nsample
+                save_vars = [];
+                save_vars.fname = sprintf('%2d:%2d', 1, j);
+
+                f(j) = parfeval(@ () Ising2D_core(save_vars, template, x0(j)), 1);
+            end
+        else
+            x0 = [];
+            for j = 1:nsample
+                x0 = [x0, 0];
+                [f, x0] = add_new_point(template, j, f, ratio, x0, j);
+            end
+        end
+
+        while counter < npoints
+            [idx, v] = fetchNext(f);
+            fprintf(v);
+
+            if counter < npoints - nsample
+                [f, x0] = add_new_point(template, idx, f, ratio, x0, counter);
+                counter = counter + 1;
+            end
+        end
     end
+end
 
-    %         if par == 1
-    %             parfor j = 1:numel(x0)
-    %                 save_vars = [];
-    %                 save_vars.fname = sprintf('%2d:%2d', i, j);
-    %
-    %                 Ising2D_core(save_vars, template, x0(j));
-    %             end
-    %         else
-    %             for j = 1:numel(x0)
-    %                 save_vars = [];
-    %                 save_vars.fname = sprintf('%2d:%2d', i, j);
-    %
-    %                 Ising2D_core(save_vars, template, x0(j));
-    %             end
-    %         end
-    %     end
+function [f, x0] = add_new_point(template, idx, f, ratio, x0, number)
+    data = fetch_matfiles(template.name, struct);
+    data = filter_ising_results(data, struct);
 
+    %determine new point
+    z0 = x0;
+    z0(idx) = [];
+
+    x0(idx) = get_new_point(data.(template.free_var), data.m, z0, ratio);
+
+    save_vars = [];
+    save_vars.fname = sprintf('%2d:%2d', 1, number);
+
+    f(idx) = parfeval(@ () Ising2D_core(save_vars, template, x0(idx)), 1);
 end
 
 function x = get_new_point(x, y, x0, ratio)
@@ -280,16 +300,15 @@ function x = get_new_point(x, y, x0, ratio)
     dx_arr = diff(x_arr);
     dy_arr = diff(y_arr);
 
-    %     if sum(abs(dx_arr) > aim_dx) == 0 && sum(abs(dy_arr) > aim_dy) == 0
-    %         break;
-    %     end
-
     ds = (dx_arr.^2 + (ratio .* dy_arr).^2).^(0.5);
     [~, idx] = max(ds);
     x = x_arr(idx) + dx_arr(idx) / 2;
 end
 
 function x0 = get_new_points(data, aim_dx, aim_dy, template)
+
+    error('check this function')
+
     data = fetch_matfiles(template.name, struct);
     data = filter_ising_results(data, struct);
 
@@ -298,10 +317,6 @@ function x0 = get_new_points(data, aim_dx, aim_dy, template)
 
     dx_arr = diff(x_arr);
     dy_arr = diff(y_arr);
-
-    %     if sum(abs(dx_arr) > aim_dx) == 0 && sum(abs(dy_arr) > aim_dy) == 0
-    %         break;
-    %     end
 
     ds = (dx_arr.^2 + ((aim_dx / aim_dy) .* dy_arr).^2).^(0.5);
 

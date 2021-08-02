@@ -45,7 +45,7 @@ classdef PEPO
             addParameter(p, 'inv_eps', 1e-12) %value for pseudo inverse
             addParameter(p, 'err_tol', 1e-13) %check whether constructed blocks are good enough
             addParameter(p, 'max_bond_dim', 20); %truncate bonds larger than this value
-            addParameter(p, 'do_loops', 0); %parameters for 2D construction
+            addParameter(p, 'do_loops', 1); %parameters for 2D construction
             addParameter(p, 'loop_extension', 0);
             addParameter(p, 'double_extension', 0);
             addParameter(p, 'offset_loops', 0);
@@ -84,10 +84,6 @@ classdef PEPO
 
             ncells = 15; %make large enough for all possible simulations
             obj.PEPO_cell = cell(ncells, ncells, ncells, ncells);
-            %obj.boundary_matrix_x = cell(max_index + 1, max_index + 2);
-            %obj.boundary_matrix_y = cell(max_index + 1, max_index + 2);
-            %obj.boundary_matrix_x{1, 1} = reshape(1, 1, 1);
-            %obj.boundary_matrix_y{1, 1} = reshape(1, 1, 1);
 
             obj.virtual_level_sizes_horiz = 1;
             obj.virtual_level_sizes_vert = 1;

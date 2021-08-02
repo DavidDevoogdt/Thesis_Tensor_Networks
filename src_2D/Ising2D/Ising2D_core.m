@@ -1,6 +1,6 @@
 function succes_string = Ising2D_core(save_vars, template, x, results, get_exp_opts)
     %core routine: calculates pepo according to template and temperature/transversal field x,
-    %calculates environment with PEPO and saves to disk in 2 files: results (llightweight) and savevars (Vumps environment,...)
+    %calculates environment with PEPO and saves to disk in 2 files: results (lightweight) and save_vars (Vumps environment,...)
     %depending on save_vars, just recalculates the expectation value with previous environment and PEPO
 
     if nargin < 5
@@ -8,7 +8,7 @@ function succes_string = Ising2D_core(save_vars, template, x, results, get_exp_o
     end
 
     if nargin < 4
-        results = [];
+        results = struct;
     end
 
     switch template.fixed_var
@@ -25,14 +25,13 @@ function succes_string = Ising2D_core(save_vars, template, x, results, get_exp_o
         popts = template.pepo_opts;
         popts.beta = beta;
 
-        %pepo = PEPO(save_vars.model_params.d, -beta * save_vars.model_params.H_1_tensor, -beta * save_vars.model_params.H_2_tensor, 6, template.handle, template.pepo_opts);
         pepo = PEPO(save_vars.model_params, popts, template.handle);
 
         if pepo.error_code ~= 0
             fprintf("%s %3d:%s %s:%.4e: construction failed\n", datestr(now, 'HH:MM:SS'), template.vumps_opts.chi_max, strrep(save_vars.fname, '_', ':'), template.free_var, x)
             return;
         end
-        %save_vars = [];
+
         save_vars.PEPO_matrix = pepo.PEPO_matrix;
 
         save_vars.virtual_level_sizes_horiz = pepo.virtual_level_sizes_horiz;
