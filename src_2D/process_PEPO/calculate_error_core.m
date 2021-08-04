@@ -18,7 +18,7 @@ function err = calculate_error(a, b)
 
         err = sum_1 / sum_2;
     catch
-       err = Inf; 
+        err = Inf;
     end
 
 end

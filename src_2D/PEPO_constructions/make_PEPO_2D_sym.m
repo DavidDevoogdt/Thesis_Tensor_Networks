@@ -65,8 +65,8 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
 
         %err = calculate_error(obj, map1, [], 1);
 
-        obj.copts.inv_eps = max( obj.copts.inv_eps,  10* err);
-        
+        obj.copts.inv_eps = max(obj.copts.inv_eps, 10 * err);
+
         if obj.testing == 1
             if err > obj.copts.err_tol
                 disp(err);
@@ -89,8 +89,8 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
         obj = assign_perm(obj, pat, [0, 0, 1, 1]);
 
         %err = calculate_error(obj, map1, [], 1);
-        
-        obj.copts.inv_eps = max( obj.copts.inv_eps,  10* err);
+
+        obj.copts.inv_eps = max(obj.copts.inv_eps, 10 * err);
 
         if obj.testing == 1
             if err > obj.copts.err_tol
@@ -198,7 +198,6 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
 
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 0], ln_prefact);
                 [obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 1], ln_prefact);
-                
 
                 %works but slow and high ram consumptio
                 %[obj, ln_prefact, ~] = add_lin(obj, [3, 3, 3, 2], ln_prefact);
@@ -224,21 +223,21 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
     %obj.max_index = e;
 
     %dd = [8, 8, 6];
-    
+
     dd = [];
-    
+
     if obj.copts.do_loops == 1
-       dd = [dd,6]; 
+        dd = [dd, 6];
     end
-    
+
     if obj.copts.loop_extension == 1
-        dd = [dd,8 8];
-    end 
-    
-    if obj.copts.double_extension == 1
-        dd = [dd,10];
+        dd = [dd, 8 8];
     end
-    
+
+    if obj.copts.double_extension == 1
+        dd = [dd, 10];
+    end
+
     %dd = [6, 8 8, 10];
 
     obj.virtual_level_sizes_horiz = [obj.virtual_level_sizes_horiz, dd];
@@ -281,8 +280,8 @@ function [obj, error_code] = make_PEPO_2D_sym(obj)
         obj = assign_perm(obj, [0, b, a, 0], [0, 1, 1, 0]);
 
         err1 = calculate_error(obj, map, [], 1);
-        
-        obj.copts.inv_eps = max( obj.copts.inv_eps,  10* err1);
+
+        obj.copts.inv_eps = max(obj.copts.inv_eps, 10 * err1);
 
         if obj.testing == 1
             if err1 > obj.copts.err_tol

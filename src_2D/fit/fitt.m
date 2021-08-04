@@ -1,4 +1,4 @@
-function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,fixed_params)
+function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit, free_Var, fixed_params)
 
     options = optimoptions('lsqnonlin', 'Display', 'iter');
     options.FunctionTolerance = 1e-12;
@@ -6,7 +6,7 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
     options.StepTolerance = 1e-12;
     options.MaxFunctionEvaluations = 1e8;
     options.MaxIterations = maxit;
-    
+
     if Fitparams.fitTc
         options.Display = 'iter';
     else
@@ -26,23 +26,22 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
     end
 
     teller = 0;
-    
-    
+
     [param, resnorm, residual, exitflag, output] = lsqnonlin(@(x)fun(x), initials, [], [], options);
 
     function res = fun(x)
-       
+
         teller = teller + 1;
 
-        [x0,data,Tc,nu,beta,c,ci] =  read_params(x,Fitparams,fixed_params);
-        
-        delta = Fitparams.Delta_fun( all_data.eps_i, ci);
+        [x0, data, Tc, nu, beta, c, ci] = read_params(x, Fitparams, fixed_params);
+
+        delta = Fitparams.Delta_fun(all_data.eps_i, ci);
 
         %% make scaling functions and derivatives of scaling functions
         [data.m.fit_f, data.m.fit_df, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr] = ScalingFunction(1, 1, x0, beta / nu, data.m.sfunparam, Fitparams.m.N, out_data.m.fl, out_data.m.fr, out_data.m.gl, out_data.m.gr);
         [data.xi.fit_f, data.xi.fit_df, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.xi.sfunparam, Fitparams.xi.N, out_data.xi.fl, out_data.xi.fr, out_data.xi.gl, out_data.xi.gr);
-        [data.S.fit_f, data.S.fit_df, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.S.sfunparam, Fitparams.S.N, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr);
 
+        [data.S.fit_f, data.S.fit_df, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr] = ScalingFunction(-1, 1, x0, 1 / nu, data.S.sfunparam, Fitparams.S.N, out_data.S.fl, out_data.S.fr, out_data.S.gl, out_data.S.gr);
 
         %% make dimensionless quantities
         X_free = all_data.(free_Var) - Tc;
@@ -51,6 +50,11 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
         mask = [];
 
         for ii = 1:3
+
+            if ~Fitparams.doFit(ii)
+                break;
+            end
+
             %Zz = m,S or xi
             Zz = Fitparams.names{ii};
 
@@ -124,6 +128,11 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
         end
         %apply mask to error measure
         for ii = 1:3
+
+            if ~Fitparams.doFit(ii)
+                break;
+            end
+
             Zz = Fitparams.names{ii};
             if Fitparams.doFit(ii)
 
@@ -140,7 +149,11 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
             clf
 
             for ii = 1:3
-                
+
+                if ~Fitparams.doFit(ii)
+                    break;
+                end
+
                 Zz = Fitparams.names{ii};
 
                 free_Varr_sorted = sort(data.(Zz).free_Varr);
@@ -184,6 +197,3 @@ function [param, resnorm] = fitt(all_data, Fitparams, initials, maxit,free_Var,f
         end
     end
 end
-
-
-

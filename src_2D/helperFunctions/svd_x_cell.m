@@ -1,18 +1,15 @@
-function [x_cell] = svd_x_cell(x, dims, bond_pairs, nums,split_opts)
-    
+function [x_cell] = svd_x_cell(x, dims, bond_pairs, nums, split_opts)
+
     p = inputParser;
     addParameter(p, 'svd_split_dim', -1) %-1: full, -2: according to sigma
     addParameter(p, 'remove_S', false)
     addParameter(p, 'remove_S_fact', 1)
-    addParameter(p, 'mul_factor_n', 1 )
-    addParameter(p, 'sigma', 1e-12 )
+    addParameter(p, 'mul_factor_n', 1)
+    addParameter(p, 'sigma', 1e-12)
     parse(p, split_opts)
 
-    
-   
     remove_S = p.Results.remove_S;
     remove_S_fact = p.Results.remove_S_fact;
-    
 
     %split x in different cells. SVD across bonds
 
@@ -53,39 +50,34 @@ function [x_cell] = svd_x_cell(x, dims, bond_pairs, nums,split_opts)
             %err = U*S_l*S_r*V'-x_res;
 
             DS = diag(S);
-            
-            
+
             %ds2 = DS / p.Results.mul_factor_n;
-            
+
             switch p.Results.svd_split_dim
-                case -1
-                    assert(d1==d2)
+                case - 1
+                    assert(d1 == d2)
                     split_dim = d1;
-                case -2
-                    
-                    ds2 = find(ds2<  p.Results.sigma );
+                case - 2
+
+                    ds2 = find(ds2 < p.Results.sigma);
                     split_dim = ds2 + 1;
-                    
+
                     error('todo');
                 otherwise
-                    split_dim =  p.Results.svd_split_dim;
+                    split_dim = p.Results.svd_split_dim;
             end
-                
-            
 
             PU = eye(size(U, 1), split_dim);
             PR = eye(split_dim, size(V, 1));
-            
-            
+
             if remove_S == 1
-                
+
                 m = max(DS);
-               
-                
-                DS( DS <  m/remove_S_fact   ) = m/remove_S_fact  ;
+
+                DS(DS < m / remove_S_fact) = m / remove_S_fact;
                 %DS = ones(size(DS));
             end
-            
+
             sqrt_S = diag(DS(1:split_dim).^0.5);
 
             L = U * PU * sqrt_S;

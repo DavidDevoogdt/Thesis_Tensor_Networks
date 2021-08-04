@@ -1,14 +1,14 @@
 function test
 
-    compare_models(["t_ising"], 1i*10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5, 6],1) %imaginary
-    
+    compare_models(["t_ising"], 1i * 10.^(-3:0.5:1.5), [2, 3, 4], [3, 4, 5, 6], 1) %imaginary
+
     %compare_models(["t_ising"], 10.^(-3:0.2:1.5), [2], [3,5,7],0)
-    
+
     %compare_M( ["t_ising","Heisenberg_2D"] , 10.^(-3:0.9:1),  [2,3,4,5,6,7,8,9] );
 
 end
 
-function compare_models(simulatiemodellen, beta_arr, types, order,time)
+function compare_models(simulatiemodellen, beta_arr, types, order, time)
     models_len = size(simulatiemodellen, 2);
 
     for round = 1:models_len
@@ -40,23 +40,23 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
         plot_counter = 1;
         %hold off
         figure();
-        
+
         small = 1;
-        
+
         if small == 0
-            ncols =2;
+            ncols = 2;
             x_width = 15;
             y_width = 10;
         else
-            ncols =1;
+            ncols = 1;
             x_width = 10;
             y_width = 8;
         end
-        
+
         set(gcf, 'PaperUnits', 'centimeters', 'PaperPosition', [0, 0, x_width, y_width], 'PaperSize', [x_width, y_width])
         %%%
 
-        opts = struct('max_bond_dim',40,'complex', false);
+        opts = struct('max_bond_dim', 40, 'complex', false);
         %opts = struct('complex', false);
         opts.inv_eps = 1e-12;
         %opts = struct;
@@ -70,12 +70,12 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
             for i = 1:beta_len
                 opts.beta = simul.beta_arr(i);
 
-                 if time == 1
-                     fprintf("M %d time %.4e order %d", simul.M, imag(opts.beta), opts.order)
-                 else
-                     
+                if time == 1
+                    fprintf("M %d time %.4e order %d", simul.M, imag(opts.beta), opts.order)
+                else
+
                     fprintf("M %d beta %.4e order %d", simul.M, opts.beta, opts.order);
-                 end
+                end
 
                 %loop of simulation types
                 for t = 1:size(simul.types, 2)
@@ -119,7 +119,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
             end
 
             x_axis = abs(simul.beta_arr);
-            
+
             %plotting loop for current order
             for t = 1:size(simul.types, 2)
                 switch simul.types(t)
@@ -163,7 +163,7 @@ function compare_models(simulatiemodellen, beta_arr, types, order,time)
             else
                 xlabel('$  \beta \cdot J$', 'Interpreter', 'latex', 'FontSize', 11)
             end
-            
+
             ylabel('$  \epsilon $', 'Interpreter', 'latex', 'FontSize', 11)
             legend(legend_Arr, 'Location', 'northwest', 'NumColumns', ncols)
 

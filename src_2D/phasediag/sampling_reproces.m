@@ -1,4 +1,4 @@
-function sampling_reproces(suffix)
+function sampling_reproces(name, suffix)
     %function to redo calculations
 
     fold = mfilename('fullpath');
@@ -6,9 +6,12 @@ function sampling_reproces(suffix)
     pathparts = [pathparts(1:end - 3), 'IsingMatFiles'];
     fold2 = strjoin(pathparts, '/');
 
-    filenames = {
-            'TIM_T=0.7_order_5_chi=8_trunc_20_sym=1_18_May_2021_19:41';
-            };
+    if ~ischar(name)
+        nn = Ising2D_names(name);
+        filenames = nn{1};
+    else
+        filenames = {name};
+    end
 
     reproces_opts = struct('doEpsi', 0, 'doVumps', 0);
     dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
@@ -37,7 +40,7 @@ function sampling_reproces(suffix)
         opts.call_back_fn = @(y, z, a) call_back_fn(y, z, a, template, reproces_opts);
         opts.save_vars = 1;
 
-        sampling_fetch(filenames{i}, opts)
+        sampling_fetch(filenames{i}, opts);
 
     end
 end
@@ -46,6 +49,7 @@ function call_back_fn(results, save_vars, baseFileName, template, reproces_opts)
     save_vars.fname = strrep (strrep(baseFileName, 'save_vars_', ''), '.mat', '');
     good_point = (results.T > 0) & (results.err < template.vumps_opts.tolfixed) & (results.err ~= 0) & (results.inv_corr_length > 1e-5);
     if good_point
-        sampling_core(save_vars, template, results.T, results, reproces_opts)
+        v = sampling_core(save_vars, template, results.T, results, reproces_opts);
+        fprintf(v);
     end
 end

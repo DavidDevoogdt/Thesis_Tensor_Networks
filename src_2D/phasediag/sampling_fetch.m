@@ -1,6 +1,5 @@
 function [data, template] = sampling_fetch(file_name, opts)
     %helper function to read save files with a given name
-
     if ~isfield(opts, 'save_vars')
         opts.save_vars = 0;
     end
@@ -92,14 +91,14 @@ function [data, template] = sampling_fetch(file_name, opts)
         else
             data.fields = fields;
         end
-    end
 
-    %complete incomplete files
+        %complete incomplete files
 
-    if ~isfield(data, 'free_var')
-        data.free_var = 'T';
-        data.fixed_var = 'g';
-        data.fixed_val = data.model_params.g;
+        if ~isfield(data, 'free_var')
+            data.free_var = 'T';
+            data.fixed_var = 'g';
+            data.fixed_val = data.model_params.g;
+        end
     end
 
 end

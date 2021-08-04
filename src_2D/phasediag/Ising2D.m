@@ -19,7 +19,7 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
     addParameter(p, 'template_name', [])
     addParameter(p, 'par', 1)
     addParameter(p, 'sym', 1)
-    addParameter(p, 'unit_cell', 1)
+    addParameter(p, 'unit_cell', [1, 1])
     addParameter(p, 'testing', 0)
     addParameter(p, 'x_bounds', [])
     addParameter(p, 'nsample', -1)
@@ -35,7 +35,7 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
                 nsample = 20;
         end
     else
-        nsample = p.results.nsmaple;
+        nsample = p.Results.nsample;
     end
 
     if p.Results.par == 0
@@ -57,11 +57,11 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             [~, template] = sampling_fetch(p.Results.template_name, struct);
             chi = chi_arr(i);
             first = 0;
-            
-            if ~isfield(template,'iter')
+
+            if ~isfield(template, 'iter')
                 template.iter = 1;
             end
-            
+
         else %make template
             first = 1;
             template = [];
@@ -178,6 +178,8 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
 
             vumps_opts.cell_size = p.Results.unit_cell;
 
+            vumps_opts.chi_max = chi;
+
             if ~p.Results.testing
                 vumps_opts.disp = 'None';
             else
@@ -188,12 +190,11 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             template.X = S_z; %observable
             template.vumps_opts = vumps_opts;
 
-            %
             saveboy(sprintf("%s/template.mat", template.name_prefix), 'template', template);
 
         end
 
-        if ~isfield(template,'iter')
+        if ~isfield(template, 'iter')
             template.iter = 1;
         else
             template.iter = template.iter + 1;
@@ -201,7 +202,6 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
 
         disp(template.name_prefix)
 
-        template.vumps_opts.chi_max = chi;
         sampling_workers(0.01, 0.01, nsample, template, p.Results.npoints, first, p.Results.par);
     end
 end

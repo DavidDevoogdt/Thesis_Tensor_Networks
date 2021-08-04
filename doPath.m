@@ -1,8 +1,10 @@
 function doPath()
 
-% add all subfolders to path
-% author: LV
+    % add all subfolders to path
+    % author: LV
 
-addpath(genpath(pwd));
+    warning('off', 'MATLAB:mpath:nameNonexistentOrNotADirectory')
+
+    addpath(genpath(pwd));
 
 end

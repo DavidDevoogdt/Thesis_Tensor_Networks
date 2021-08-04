@@ -59,11 +59,11 @@ function sampling_workers(aim_dx, aim_dy, nsample, template, npoints, first, par
             end
         end
 
-        while counter < npoints
+        while counter < npoints + nsample
             [idx, v] = fetchNext(f);
             fprintf(v);
 
-            if counter < npoints - nsample
+            if counter < npoints
                 [f, x0] = add_new_point(template, idx, f, ratio, x0, counter);
                 counter = counter + 1;
             end

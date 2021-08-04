@@ -1,4 +1,4 @@
-function [x0,data,Tc,nu,beta,c,ci] =  read_params(x,Fitparams,fixed_params)
+function [x0, data, Tc, nu, beta, c, ci] = read_params(x, Fitparams, fixed_params)
     x = real(x);
 
     if Fitparams.fitTc
@@ -26,20 +26,16 @@ function [x0,data,Tc,nu,beta,c,ci] =  read_params(x,Fitparams,fixed_params)
     data.xi.params = x(9:12);
     data.S.params = x(13:16);
 
-
-     if Fitparams.dodelta == 1
+    if Fitparams.dodelta == 1
 
         ci = x(end - 5:end);
         ci = [ci, -sum(ci)];
 
         ci = ci / sum(abs(ci));
 
-       
     else
-        
-        
-        ci=[];
-     end
-    
-    
+
+        ci = [];
+    end
+
 end
