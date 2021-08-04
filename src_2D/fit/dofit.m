@@ -23,7 +23,7 @@ all_data.eps_i = [];
 
 for i = 1:numel(names)
     data = sampling_fetch(names{i}, struct);
-    data = filter_ising_results(data, struct('Tbound', [Tc - T_range, Tc + T_range]));
+    data = sampling_filter(data, struct('Tbound', [Tc - T_range, Tc + T_range]));
 
     free_Var = data.free_var;
 
@@ -59,8 +59,8 @@ Fitparams = struct();
 Fitparams.fitTc = 1;
 Fitparams.fitexp = 0;
 Fitparams.orthdist = 1;
-Fitparams.subleading = 1; %https://arxiv.org/pdf/cond-mat/0505194.pdf
-Fitparams.doFit = [1, 1, 1];
+Fitparams.subleading = 0; %https://arxiv.org/pdf/cond-mat/0505194.pdf
+Fitparams.doFit = [1, 1, 0];
 Fitparams.names = {'m', 'xi', 'S'};
 Fitparams.logplot = [0, 0, 0];
 Fitparams.logfit = [0, 1, 1];

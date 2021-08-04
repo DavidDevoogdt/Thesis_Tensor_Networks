@@ -46,6 +46,7 @@ for j = 1:numel(names)
 
             plot_m_vs_t(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
             plot_m_vs_t_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
+            %plot_m_vs_t_cross(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
             plot_xi_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
             plot_S_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
 
@@ -130,8 +131,11 @@ function plot_S_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
     d = 0;
     phi = 1;
 
-    y_arr = log(exp(6 * data.S / c) .* marek_arr);
-    x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1)) + d * marek_arr.^phi / nu;
+    %y_arr = log( exp(6 * abs(data.S) / c) .*  marek_arr);
+    %x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1)) + d * marek_arr.^phi / nu;
+
+    y_arr = 6 * real(data.S) / c + log(marek_arr) / log(2);
+    x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1));
 
     if i == 1
         switch data.free_var
@@ -172,6 +176,44 @@ function plot_m_vs_t_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
 
     hold on
     plot(xarr, yarr, '*', 'MarkerSize', plot_opts.marker_size, 'DisplayName', sprintf("$ \\chi  = %d $", chi));
+    hold off
+
+end
+
+function plot_m_vs_t_cross(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
+    %subplot(2,2,4)
+    nexttile(3)
+    %nexttile
+    nu = 1;
+    c = 0;
+    omega = 0;
+    phi = 0;
+    d = 0;
+
+    yarr = data.m .* (marek_arr.^(- copts.crit)) ./ (1);
+    xarr = data.(data.free_var);
+
+    if i == 1
+        switch data.free_var
+            case 'T'
+                xlabel("$ T $", "Interpreter", "Latex");
+            case 'g'
+                xlabel("g", "Interpreter", "Latex");
+        end
+        ylabel(sprintf("$  m \\delta ^{-%s/\\nu}$  ", copts.name), "Interpreter", "Latex");
+    end
+
+    hold on
+    %plot(xarr, yarr, '*', 'MarkerSize', plot_opts.marker_size, 'DisplayName', sprintf("$ \\chi  = %d $", chi));
+
+    scatter(xarr, yarr, [], marek_arr);
+
+    %xarr2 = min(xarr):1e-5:max(xarr);
+
+    %yarr2 = interp1(xarr,yarr,xarr2,'pchip');
+
+    %plot(xarr2, yarr2, '-');
+
     hold off
 
 end
