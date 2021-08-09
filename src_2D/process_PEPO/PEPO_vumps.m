@@ -1,33 +1,23 @@
-function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts, save_vars)
+function vumpsObj = PEPO_vumps(pepo_matrix, vumps_opts, save_vars)
 
     if nargin < 3
         save_vars = [];
     end
 
-    %     opts.charges = 'regular';
-    %     opts.dynamical = 'off';
-    %     opts.dyncharges = 0;
-    %     opts.schmidtcut = 1e-10;
-    %     opts.chimax = 350;
-    %     opts.disp = vumps_opts.disp;
-    %     opts.tolmax = 1e-4;
-    %     opts.tolfactor = 1e4;
-    %     opts.minit = 10;
-    %     opts.dyniter = 5;
-    %     opts.truncate = 0;
-    %     opts.method = 'vumps';
-    %
-    %     opts.plot = 'on';
-    %     opts.maxit = vumps_opts.vumps_maxit;
-    %     opts.tolfixed = vumps_opts.tolfixed;
-
     options = struct;
-    options.verbosity = Verbosity.Concise;
+
+    if vumps_opts.disp == 1
+        options.verbosity = Verbosity.Concise;
+    else
+        options.verbosity = Verbosity.None;
+    end
+
     options.doPlot = true;
     options.doSave = false;
     options.tolInitial = 1e-4;
-    options.tolConvergence = 1e-5;
+    options.tolConvergence = vumps_opts.tolfixed;
     options.dynamical = false;
+    options.maxIterations = vumps_opts.vumps_maxit;
 
     options = VumpsOptions(options);
 
@@ -57,18 +47,17 @@ function [A, G1, lambda1, ctr, err] = PEPO_vumps(pepo_matrix, vumps_opts, save_v
     initialMPS = mps;
 
     if isfield(save_vars, 'G0')
-        error('todo');
+
+        error('todo, convert old format to new');
+
         [A, G1, lambda1, ctr, err] = Vumps(o, save_vars.A, save_vars.G0, opts);
+    elseif isfield(save_vars, 'vumpsObj')
+        vumpsObj = save_vars.vumpsObj;
     else
         initialConditions = struct('mps', initialMPS, 'environment', []);
         vumpsObj = Vumpser(o, initialConditions, options);
-        vumpsObj.DoVumps;
-
-        %[A, G1, lambda1, ctr, err] = Vumps(o, vumps_opts.chi_max, [], opts);
     end
 
-end
+    vumpsObj.DoVumps;
 
-function a = get_mps(dims)
-    a = TensorNone(rand(dims));
 end
