@@ -30,58 +30,62 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
 
         %construct central tensor
         m = get_tensor(T);
-        mx = get_tensor(T, X);
+        %mx = get_tensor(T, X);
 
-        %same but open
-        O2 = ncon({T}, {[-5, -6, -1, -2, -3, -4]});
-        o2.legs = 6;
-        o2.group = 'none';
-        o2.dims = size(O2);
-        o2.var = O2;
+        o2 = TensorNone(ncon({T}, {[-5, -6, -1, -2, -3, -4]}));
+
+        doSym = 1;
+        if doSym
+            B = vumpsObj.mps; %mps for rotated system is identical
+        else
+            error('check')
+
+        end
 
         
-        B = rotate_mps(vumpsObj.mps);
+        for i=1:vumpsObj.width
+            for j=1:vumpsObj.depth
         
-%         if vumps_opts.cell_size == 1
-% 
-%             [GL, Gr] = G0{:};
-%             [Al, Ar, Ca, Ac] = A{:};
-%             chi = Ar.dims(1);
+                [rho, f, lambda] = calculate_rho(vumpsObj, B, [o2],{j,i});
+                mag = abs(trace(rho * X))
+                
+                
+                [rho2,f2,l]= calculate_rho(vumpsObj, B, [m,o2;
+                                                         m,m ],{j,i-1});
+                mag = abs(trace(rho2 * X))
+                
+                [rho2,f2,l]= calculate_rho(vumpsObj, B, [m,o2;],{j,i-1});
+                mag = abs(trace(rho2 * X))
+                
+            end
+        end
+      
 
-%             doSym = 1;
-%             if doSym
-% 
-%             else
-%                 error('check')
-%                 [v, ~, ~] = TensorEigs(@(x) get_Bc(x, GL, GR), TensorConj(Ac), 1, 'lm', opts);
-%             end
+        
+        [rho2,f2,ll]= calculate_rho(vumpsObj, B, [o2,m]);
 
-            [rho, f] = calculate_rho(vumpsObj,[o2] ,B );
+        %[rho3,f3] = calculate_rho(A,B,G0,[o2,m,o2]);
 
-            %[rho2,f2]= calculate_rho(A,B,G0,[m,o2]);
+        %rho3 = calculate_rho(A,B,G0,F,[m; m],X); % too expensive
+        %rho4 = calculate_rho(A,B,G0,F,[m, o2;
+        %                               m, m],X);
 
-            %[rho3,f3] = calculate_rho(A,B,G0,[o2,m,o2]);
+        mag = abs(trace(rho * X));
 
-            %rho3 = calculate_rho(A,B,G0,F,[m; m],X); % too expensive
-            %rho4 = calculate_rho(A,B,G0,F,[m, o2;
-            %                               m, m],X);
+        %get entanglement entropy
 
-            mag = abs(trace(rho.var * X));
+        sv2 = MpsSchmidtValues(Ca).^2;
+        S = -sum(sv2 .* log(sv2));
 
-            %get entanglement entropy
-
-            sv2 = MpsSchmidtValues(Ca).^2;
-            S = -sum(sv2 .* log(sv2));
-
-            %S =  -trace( rho * logm(rho)) ; %doesn't work, not enough
-            %entanglement possible
-% 
-%         else
-%             %error('todo')
-%             mag = 0;
-%             S = 0;
-% 
-%         end
+        %S =  -trace( rho * logm(rho)) ; %doesn't work, not enough
+        %entanglement possible
+        %
+        %         else
+        %             %error('todo')
+        %             mag = 0;
+        %             S = 0;
+        %
+        %         end
 
         %     function x = get_Ac(x)
         %         x = TensorContract({GL, x, GR, m}, ...
@@ -155,7 +159,6 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
     results.S = S;
     results.chi = chi;
     results.ftime = now;
-    
 
 end
 
@@ -167,22 +170,6 @@ function m = get_tensor(T, X)
 
     M = ncon({T, X}, {[1, 2, -1, -2, -3, -4], [2, 1]});
 
-    m.legs = 4;
-    m.group = 'none';
-    m.dims = size(M);
-    m.var = M;
+    m = TensorNone(M);
+    
 end
-
-function B = rotate_mps(A)
-
-    B = A;
-    for d = 1:numel(B)
-        for w = 1: B(d).width
-             B(d).AL(w).var = conj( ncon({B(d).AL(w).var}, {[-3, -2, -1]}));
-             B(d).AR(w).var = conj( ncon({B(d).AR(w).var}, {[-3, -2, -1]}));
-             B(d).C(w).var = conj(ncon({B(d).C(w).var}, {[-2, -1]}));
-             B(d).AC(w).var = conj(ncon({B(d).AC(w).var}, {[-3, -2, -1]}));
-        end
-    end
-end
-

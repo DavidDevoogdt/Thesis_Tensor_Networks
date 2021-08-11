@@ -1,0 +1,3 @@
+[submodule "external_packages/MatlabTrack"]
+	path = external_packages/MatlabTrack
+	url = git@github.com:quantumghent/MatlabTrack.git
