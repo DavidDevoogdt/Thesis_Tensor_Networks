@@ -43,97 +43,107 @@ function [rho, f, lambda] = calculate_rho(vumpser, B, M, dw)
 
     s = size(M);
     x = s(2); y = s(1);
-    
+
     lru = ff(y + 1, m); %index mps lowes row M
     lrd = ff(-lru - 2, m); %index highest mps row from below
     lc = ff(x + 1, n); %index mps column end
 
     %circshift unit cell for vumps and B
-    vumpsObj = vumpsObj.RotateUnitCell(d0, w0);
-    B = B.RotateUnitCell(d0, w0);
+    vumpsObj = vumpsObj.ShiftUnitCell(d0, w0);
+    B = B.ShiftUnitCell(-d0, w0); %rotate in oposite direction
 
-    %% get left fixed point between upper and lower fixed point for column
+    
     A = vumpsObj.mps;
     B = B.Rotate180; %make ready for application from below
 
-    [lambda1, Fl] = TransferEigs(A(lru), B(lrd), [], 5, [], 'l_LL');
-    %get right fixed point between upper and lower fixed point for row,
-    %shift mps's
-
-    A2 = A.RotateUnitCell(0, -x);
-    B2 = B.RotateUnitCell(0, -x);
-    [lambda2, Fr] = TransferEigs(A2(lru), B2(lrd), [], 5, [], 'r_RR');
-
-    %svd(Fr{1}.var);%(unitary?)
-    %svd(Fl{1}.var);%(unitary?)
-    lambda = (lambda1 + lambda2)/2;
-     
-    %% create left and right tensor
-    %chain left and right environments
-    G = vumpsObj.environment;
+    %%calculate left and right fixed point for operator between mps layers
     
-    L =  Contract( {G.left(1, 1)}, {[-3,-2,-1]})  ;
-    R = G.right(1, lc);
-    
-    for  i=2:y
-        L = Contract( {L, G.left(i, 1)  }, { [-1:-1:-i,1], [-(i+2), -(i+1), 1]});
-        R = Contract( {R, G.right(i, lc)  }, { [-1:-1:-i,1], [1, -(i+1) , -(i+2)]});
+    method = 'env';
+
+    switch method
+        case 'vumps'
+
+            %get left fixed point between upper and lower fixed point for column
+            [lambda1, Fl] = TransferEigs(A(lru), B(lrd), [], 5, [], 'l_LL');
+            %get right fixed point between upper and lower fixed point for row,
+            %shift mps's
+
+            A2 = A.ShiftUnitCell(0, -x);
+            B2 = B.ShiftUnitCell(0, -x);
+            [lambda2, Fr] = TransferEigs(A2(lru), B2(lrd), [], 5, [], 'r_RR');
+
+            %svd(Fr{1}.var);%(unitary?)
+            %svd(Fl{1}.var);%(unitary?)
+            lambda = (lambda1 + lambda2) / 2;
+
+            %% create left and right tensor
+            %chain left and right environments, approximate environments
+            G = vumpsObj.environment;
+
+            L = Contract({G.left(1, 1)}, {[-3, -2, -1]});
+            R = G.right(1, lc);
+
+            for i = 2:y
+                L = Contract({L, G.left(ff(i, m), lc)}, {[-1:-1:-i, 1], [-(i + 2), -(i + 1), 1]});
+                R = Contract({R, G.right(ff(i, m), lc)}, {[-1:-1:-i, 1], [1, -(i + 1), -(i + 2)]});
+            end
+
+            %apply transfer matrices Fr/Fl and MPS C tensors
+            L = Contract({L, Fl{1}}, {[-1:-1:-(y + 1), 1], [-(y + 2), 1]});
+            R = Contract({R, Fr{1}, A(1).C(lc), B(lrd).C(lc).Conj}, {[2, -(2:y + 1), 1], [1, 3], [-1, 2], [-(y + 2), 3]});
+
+        case 'env'
+
+            %make operator with correct size: height of M and width of unit cell
+            op = TensorNone.empty(y, 0);
+            for i = 1:n
+                for j = 1:y
+                    op(j:m:end, i) = vumpsObj.operator.mpo(j, i);
+                end
+            end
+            op = TransferMpo(op);
+
+            env = op.Environment(A(1), B(lrd));
+            
+            %reorde legs and apply Ac
+            L = Contract(  { env.left(1) }, {[-(y+2):-1]});    
+            R = Contract(  {env.right(lc), A(1).C(lc), B(lrd).C(lc).Conj  }, {  [1, -2:-1:-(y+1),2], [-1, 1],[-(y+2),2]   }  ); 
+            
+        otherwise
+            error('unknown')
     end
-    
-    %apply transfer matrices Fr/Fl and MPS C tensors
-    L = Contract(  {L,Fl{1}},{ [-1:-1:-(y+1),1],[-(y+2),1]});
-    R = Contract({R, Fr{1}, A(1).C(lc) ,  B(lrd).C(lc)}, {[2, -(2:y+1) , 1], [1, 3], [-1, 2], [-(y+2), 3]});
 
     %% create sandwich layers and contract with left environment
     for i = 1:x
 
-        curr = (L.legs- (y+2) );
-        ext = curr + y*2; %make room for extra legs
-        
-        ii = ff(i,m);
-        
+        curr = (L.legs - (y + 2));
+        ext = curr + y * 2; %make room for extra legs
+
+        ii = ff(i, m);
+
         tensors = cell(1, y + 2);
         tensors{1} = A(1).AL(ii);
-        tensors{y + 2} = B(lrd).AL(ii);
+        tensors{y + 2} = B(lrd).AL(ii).Conj;
 
         ord = cell(1, y + 2);
 
-        %ord{1} = [-1, 1, -(y + 3)];
-        %ord{y + 2} = [-(y + 2), y + 1, -(2 * (y + 2))];
-        
-        ord{1} = [1, y+3, -(ext+1)];
-        ord{y + 2} = [y+2, y+2 + (y + 1), -(ext+y+2)  ];
+        ord{1} = [1, y + 3, -(ext + 1)];
+        ord{y + 2} = [y + 2, y + 2 + (y + 1), -(ext + y + 2)];
 
         for j = 1:y
-            ord{j + 1} = [(y+2)+j, -( j+1 + ext ), (y+2)+j + 1,  j+1  , - (curr+ 2*j-1 ), - (curr+ 2*j)];
-            %ord{j + 1} = [j, -(1 + j + (y + 2)), j + 1, -(1 + j), - (2 * (y + 2) + 2 * j - 1), - (2 * (y + 2) + 2 * j)];
+            ord{j + 1} = [(y + 2) + j, -(j + 1 + ext), (y + 2) + j + 1, j + 1, - (curr + 2 * j - 1), - (curr + 2 * j)];
             tensors{j + 1} = M(j, i);
         end
 
-        L = Contract(  [{L},tensors] , [   { [-(1:curr),1:(y+2)]}  ,ord]);
+        L = Contract([{L}, tensors], [{[-(1:curr), 1:(y + 2)]}, ord]);
     end
 
     %% contract right environment
-    
-    curr = (L.legs- (y+2) );
-    
-    rho2 = Contract( {L,R},{[-(1:curr), 1:y+2 ],[1:y+2]  } );
-    rho2 = rho2.Permute( [ 1:2:curr , 2:2:curr ]  );
-    
-    
-    %contract L, all S's and R together
 
-%     tensors = {L, S{:}, R};
-%     ord = cell(1, x + 2);
-% 
-%     ord{1} = [1:y + 2];
-%     ord{x + 2} = [x * (y + 2) + 1:(x + 1) * (y + 2)];
-% 
-%     for i = 1:x
-%         ord{i + 1} = [(i - 1) * (y + 2) + 1:i * (y + 2), i * (y + 2) + 1:(i + 1) * (y + 2), - (i - 1) * y , -(i + 1) * y - 1];
-%     end
-% 
-%     [rho2, ~] = Contract(tensors, ord);
+    curr = (L.legs - (y + 2));
+
+    rho2 = Contract({L, R}, {[-(1:curr), 1:y + 2], [1:y + 2]});
+    rho2 = rho2.Permute([1:2:curr, 2:2:curr]);
 
     %% reshape and provide handle to create operator matrix
     dd = numel(rho2.dims) / 2;
@@ -152,5 +162,5 @@ function [rho, f, lambda] = calculate_rho(vumpser, B, M, dw)
 end
 
 function a = ff(a, n)
-        a = mod(a - 1, n) + 1;
-    end
+    a = mod(a - 1, n) + 1;
+end

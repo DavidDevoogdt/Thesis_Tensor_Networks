@@ -153,10 +153,10 @@ function Ising2D(chi_arr, fixed_val, fixed_var, opts, pepo_opts)
             fold2 = strjoin(pathparts, '/');
 
             if ~isfield(pepo_opts, 'max_bond_dim')
-                nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_sym=%d_%s", fixed_var, fixed_val, pepo_opts.order, chi, p.Results.sym, dt);
+                nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_sym=%d_%s_%dx%d", fixed_var, fixed_val, pepo_opts.order, chi, p.Results.sym, dt,p.Results.unit_cell(1),p.Results.unit_cell(2));
 
             else
-                nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s", fixed_var, fixed_val, pepo_opts.order, chi, pepo_opts.order.max_bond_dim, p.Results.sym, dt);
+                nn = sprintf("TIM_%s=%.1f_order_%d_chi=%d_trunc_%d_sym=%d_%s_%dx%d", fixed_var, fixed_val, pepo_opts.order, chi, pepo_opts.order.max_bond_dim, p.Results.sym, dt,p.Results.unit_cell(1),p.Results.unit_cell(2));
 
             end
 

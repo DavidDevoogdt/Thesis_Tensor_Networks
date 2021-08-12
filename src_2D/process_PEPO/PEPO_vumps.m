@@ -18,6 +18,7 @@ function vumpsObj = PEPO_vumps(pepo_matrix, vumps_opts, save_vars)
     options.tolConvergence = vumps_opts.tolfixed;
     options.dynamical = false;
     options.maxIterations = vumps_opts.vumps_maxit;
+    options.schmidtCut = vumps_opts.tolfixed;
 
     options = VumpsOptions(options);
 

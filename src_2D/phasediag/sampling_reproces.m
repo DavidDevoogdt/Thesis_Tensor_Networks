@@ -47,7 +47,7 @@ end
 
 function call_back_fn(results, save_vars, baseFileName, template, reproces_opts)
     save_vars.fname = strrep (strrep(baseFileName, 'save_vars_', ''), '.mat', '');
-    good_point = (results.T > 0) & (results.err < template.vumps_opts.tolfixed) & (results.err ~= 0) ;
+    good_point = (results.T > 0) & (results.err < template.vumps_opts.tolfixed) & (results.err ~= 0);
     if good_point
         v = sampling_core(save_vars, template, results.T, results, reproces_opts);
         fprintf(v);

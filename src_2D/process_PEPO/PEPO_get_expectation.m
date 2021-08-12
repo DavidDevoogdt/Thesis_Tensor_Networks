@@ -1,5 +1,13 @@
 %function [mag, inv_corr_length, delta, ctr, err] = PEPO_get_expectation (obj, X, chimax, maxit, name, A, G0, T)
 
+
+% 1x1: sampling_reproces('TIM_g=2.5_order_5_chi=20_sym=1_11_August_2021_16:24','V2');
+% 2x2: sampling_reproces('TIM_g=2.5_order_5_chi=20_sym=1_11_August_2021_16:24','V2');
+% 2x1: sampling_reproces('TIM_g=2.5_order_5_chi=15_sym=1_09_August_2021_10:42','V2');
+% 1x2: sampling_reproces('TIM_g=2.5_order_5_chi=15_sym=1_12_August_2021_10:44_1x2','V2');
+% 2x2: sampling_reproces('TIM_g=2.5_order_5_chi=15_sym=1_09_August_2021_10:00','V2');
+% 2x2: sampling_reproces('TIM_g=2.5_order_5_chi=15_sym=1_12_August_2021_11:36_2x2','V2');  %(with extensions)
+
 function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, results, opts)
 
     if nargin < 5
@@ -24,7 +32,7 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
         vumpsObj = save_vars.vumpsObj;
     end
 
-    skip_res = 0;
+    skip_res = 0;%for debugging purposes
 
     if skip_res == 0
 
@@ -43,107 +51,63 @@ function [results, save_vars] = PEPO_get_expectation (X, save_vars, vumps_opts, 
         end
 
         
-        for i=1:vumpsObj.width
+        rho2 = calculate_rho(vumpsObj, B, [m,o2],{1,2});
+        mag2 = abs(trace(rho2 * X))
+
+        rho2 = calculate_rho(vumpsObj, B, [o2],{1,1});
+        mag2 = abs(trace(rho2 * X))
+       
+        %different
+        rho2 = calculate_rho(vumpsObj, B, [o2,m],{1,1});
+        mag2 = abs(trace(rho2 * X))
+        
+        
+        tmag = 0;
+        tmag2 = 0;
+        
+        for i = 1:vumpsObj.width
             for j=1:vumpsObj.depth
         
-                [rho, f, lambda] = calculate_rho(vumpsObj, B, [o2],{j,i});
+                rho = calculate_rho(vumpsObj, B, [o2,m;
+                                                  m, m; ],{j,i});
                 mag = abs(trace(rho * X))
+                tmag = tmag+mag;
                 
                 
-                [rho2,f2,l]= calculate_rho(vumpsObj, B, [m,o2;
-                                                         m,m ],{j,i-1});
-                mag = abs(trace(rho2 * X))
-                
-                [rho2,f2,l]= calculate_rho(vumpsObj, B, [m,o2;],{j,i-1});
-                mag = abs(trace(rho2 * X))
-                
+                rho2 = calculate_rho(vumpsObj, B, [o2],{j,i});
+                mag2 = abs(trace(rho2 * X))
+                tmag2 = tmag2+mag2;
             end
         end
-      
+        tmag = tmag/(vumpsObj.width*vumpsObj.width);
+        tmag2 = tmag2/(vumpsObj.width*vumpsObj.width);
 
-        
-        [rho2,f2,ll]= calculate_rho(vumpsObj, B, [o2,m]);
 
-        %[rho3,f3] = calculate_rho(A,B,G0,[o2,m,o2]);
-
-        %rho3 = calculate_rho(A,B,G0,F,[m; m],X); % too expensive
-        %rho4 = calculate_rho(A,B,G0,F,[m, o2;
-        %                               m, m],X);
-
-        mag = abs(trace(rho * X));
-
-        %get entanglement entropy
-
-        sv2 = MpsSchmidtValues(Ca).^2;
+        sv2 = MpsSchmidtValues( vumpsObj.mps(1).C(1)  ).^2;
         S = -sum(sv2 .* log(sv2));
 
-        %S =  -trace( rho * logm(rho)) ; %doesn't work, not enough
-        %entanglement possible
-        %
-        %         else
-        %             %error('todo')
-        %             mag = 0;
-        %             S = 0;
-        %
-        %         end
 
-        %     function x = get_Ac(x)
-        %         x = TensorContract({GL, x, GR, m}, ...
-        %             {[-1, 2, 1], [1, 3, 4], [4, 5, -3], [3, 5, -2, 2]});
-        %     end
-        %
-        %     function x = get_C(x)
-        %         x = TensorContract({GL, x, GR}, {[-1, 3, 1], [1, 2], [2, 3, -2]});
-        %     end
-        %
-        %     %
-        %     function x = get_Bc(x, GL, GR)
-        %         x = TensorContract({x, GL, m, GR}, ...
-        %             {[1, 2, 5], [1, 3, -1], [-2, 4, 2, 3], [-3, 4, 5]});
-        %     end
-        %
-        %     function x = get_C_down(x)
-        %         x = TensorContract({x, GL, GR}, ...
-        %             {[1, 3], [1, 2, -1], [-2, 2, 3]});
-        %     end
-        %
-        %        function a = overlap(G, A)
-        %         a = TensorContract({G{1}, A{3}, G{2}, TensorConj(A{3})}, ...
-        %             {[1, 4:A{1}.legs + 1, 2], [2, 3], [3, 4:A{1}.legs + 2], [1, A{1}.legs + 2]});
-        %     end
-        %
-        %
-        %     function x = MVumpsGL_ApplyFunction1(x, d, AL, cAL, O)
-        %         dd = mod(d, depth) + 1;
-        %         [~, width] = size(AL);
-        %         for ww = 1:width
-        %             x = TensorContract({cAL{dd, ww}, x, AL{d, ww}, O}, ...
-        %                 {[1, 2, -1], [1, 3, 4], [4, 5, -3], [5, -2, 2, 3]});
-        %         end
-        %     end
-        %
-        %
-        %     %calculate epsilon_i
-        %     if p.Results.doEpsi || p.Results.doVumps
-        %         opts = [];
-        %         opts.krylovdim = 100; opts.tol = 1e-14;
-        %         opts.level = 1;
-        %
-        %         %[~, f] = TensorEigs(@(x) get_Bc(x), B, 8, 'lm', opts);
-        %         [~, f] = TensorEigs(@(x) get_Ac(x), Ac, 8, 'lm', opts);
-        %         f2 = f(2:end) ./ f(1);
-        %
-        %         eps_i = -log(f2);
-        %         inv_corr_length = eps_i(1);
-        %
-        %         delta = eps_i(4) - eps_i(2);
-        %
-        %         results.marek = delta;
-        %         results.eps_i = eps_i;
-        %
-        %         results.inv_corr_length = inv_corr_length;
-        %
-        %     end
+            %calculate epsilon_i
+            if p.Results.doEpsi || p.Results.doVumps
+                opts = [];
+                opts.krylovdim = 100; opts.tol = 1e-14;
+                opts.level = 1;
+        
+                %[~, f] = TensorEigs(@(x) get_Bc(x), B, 8, 'lm', opts);
+                [~, f] = TensorEigs(@(x) get_Ac(x), Ac, 8, 'lm', opts);
+                f2 = f(2:end) ./ f(1);
+        
+                eps_i = -log(f2);
+                inv_corr_length = eps_i(1);
+        
+                delta = eps_i(4) - eps_i(2);
+        
+                results.marek = delta;
+                results.eps_i = eps_i;
+        
+                results.inv_corr_length = inv_corr_length;
+        
+            end
 
         %assign output
     else
