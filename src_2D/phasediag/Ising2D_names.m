@@ -119,8 +119,16 @@ function [names, T_c_arr] = Ising2D_names(n)
                 'TIM_g=2.5_order_5_chi=32_sym=1_31_July_2021_14:56';
                 'TIM_g=2.5_order_5_chi=45_sym=1_01_August_2021_14:01';
                 'TIM_g=2.5_order_5_chi=64_sym=1_01_August_2021_14:00';
-                'TIM_g=2.5_order_5_chi=91_sym=1_04_August_2021_09:38';
-                'TIM_g=2.5_order_5_chi=128_sym=1_04_August_2021_09:39';
+                }};
+            T_c_arr = [1.2736];
+        case 7 %6 but reprocessed
+            names = {{
+                'TIM_g=2.5_order_5_chi=11_sym=1_31_July_2021_10:08_1x1';
+                'TIM_g=2.5_order_5_chi=16_sym=1_31_July_2021_10:08_1x1';
+                'TIM_g=2.5_order_5_chi=23_sym=1_31_July_2021_12:14_1x1';
+                'TIM_g=2.5_order_5_chi=32_sym=1_31_July_2021_14:56_1x1';
+                'TIM_g=2.5_order_5_chi=45_sym=1_01_August_2021_14:01_1x1';
+                'TIM_g=2.5_order_5_chi=64_sym=1_01_August_2021_14:00_1x1';
                 }};
             T_c_arr = [1.2736];
     end

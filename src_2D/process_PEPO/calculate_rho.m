@@ -56,7 +56,7 @@ function [rho, f, lambda] = calculate_rho(vumpser, B, M, dw)
     A = vumpsObj.mps;
     B = B.Rotate180; %make ready for application from below
 
-    %%calculate left and right fixed point for operator between mps layers
+    %% calculate left and right fixed point for operator between mps layers
     
     method = 'env';
 
@@ -103,6 +103,7 @@ function [rho, f, lambda] = calculate_rho(vumpser, B, M, dw)
             end
             op = TransferMpo(op);
 
+            %calculate eigentensor for multisite vumps
             env = op.Environment(A(1), B(lrd));
             
             %reorde legs and apply Ac

@@ -7,11 +7,11 @@ filterPoints = 1;
 %names = {{'TIM_g=2.5_order_5_chi=6_sym=1_02_August_2021_15:36'}};
 %X_crit_arr = 1.2737;
 
-[names, X_crit_arr] = Ising2D_names(6);
+[names, X_crit_arr] = Ising2D_names(7);
 
 skip = [0, 1, 0];
 
-tbound = 1.0;
+tbound = 2;
 
 %close all
 
@@ -37,7 +37,7 @@ for j = 1:numel(names)
         for i = 1:numel(names{j})
 
             data = sampling_fetch(names{j}{i}, struct);
-            data = sampling_filter(data, struct('tol', 1e-10, 'Tbound', [X_crit - tbound, X_crit + tbound]));
+            data = sampling_filter(data, struct('tol', 1e-9, 'Tbound', [X_crit - tbound, X_crit + tbound]));
             copts = critopts.(data.free_var);
             marek_arr = real(data.eps_i(:, 2) - data.eps_i(:, 1));
 
@@ -131,11 +131,11 @@ function plot_S_marek(data, chi, marek_arr, i, j, X_crit, plot_opts, copts)
     d = 0;
     phi = 1;
 
-    %y_arr = log( exp(6 * abs(data.S) / c) .*  marek_arr);
-    %x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1)) + d * marek_arr.^phi / nu;
+    y_arr = log( exp(6 * abs(data.S) / c) .*  marek_arr);
+    x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1)) + d * marek_arr.^phi / nu;
 
-    y_arr = 6 * real(data.S) / c + log(marek_arr) / log(2);
-    x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1));
+    %y_arr = 6 * real(data.S) / c + log(marek_arr) / log(2);
+    %x_arr = (data.(data.free_var) - X_crit) .* (marek_arr.^(-1/1));
 
     if i == 1
         switch data.free_var

@@ -44,6 +44,9 @@ function succes_string = sampling_core(save_vars, template, x, results, get_exp_
     results.(template.fixed_var) = template.fixed_val;
     results.(template.free_var) = x;
 
+    %remove figure from savevars
+    save_vars.vumpsObj.progressFig = [];
+    
     save_vars.results_name = sprintf("%s/results_%s.mat", template.name_prefix, save_vars.fname);
     save_vars.save_vars_name = strrep(save_vars.results_name, '/results_', '/save_vars_');
 

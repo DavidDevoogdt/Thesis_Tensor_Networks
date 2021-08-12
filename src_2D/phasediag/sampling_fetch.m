@@ -38,14 +38,16 @@ function [data, template] = sampling_fetch(file_name, opts)
 
     mergestructs = @(x, y) cell2struct([struct2cell(x); struct2cell(y)], [fieldnames(x); fieldnames(y)]);
 
-    for k = 1:num_files
+    parfor k = 1:num_files
+
         baseFileName = myFiles(k).name;
         fullFileName = fullfile(folder, baseFileName);
         R = load(fullFileName, 'results');
         data_points{k} = R.results;
-
+            
         S = [];
         if opts.save_vars == 1
+            %baseFileName = myFiles(k).name;
             baseFileName = strrep(baseFileName, 'results', 'save_vars');
             fullFileName = fullfile(folder, baseFileName);
 
@@ -54,22 +56,34 @@ function [data, template] = sampling_fetch(file_name, opts)
             save_data_points{k} = S.save_vars;
         end
 
+       
+        
         if do_call_back
+            
             opts.call_back_fn(R.results, S.save_vars, baseFileName);
         end
-
     end
-
+    
     if nargout ~= 0
 
         fields = fieldnames(data_points{1});
 
         reordered_data = struct();
 
+        %valid = cell2mat(cellfun(@(x) x.err.', data_points, 'UniformOutput', false)) < template.vumps_opts.tolfixed;
+        %data_points = data_points(valid);
+        
+        
         for i = 1:numel(fields)
             fn = fields{i};
 
-            val = cellfun(@(x) x.(fn).', data_points, 'UniformOutput', false);
+            if fn== "eps_i"
+                val = cellfun(@(x) x.(fn)(1:6).', data_points, 'UniformOutput', false);
+            else
+                val = cellfun(@(x) x.(fn).', data_points, 'UniformOutput', false);
+            end
+            
+            
             reordered_data.(fn) = cell2mat(val);
         end
 

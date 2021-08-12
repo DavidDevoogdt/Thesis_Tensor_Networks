@@ -13,7 +13,7 @@ function sampling_reproces(name, suffix)
         filenames = {name};
     end
 
-    reproces_opts = struct('doEpsi', 0, 'doVumps', 0);
+    reproces_opts = struct; %('doEpsi', 1, 'doVumps', 0);
     dt = datestr(now, 'dd_mmmm_yyyy_HH:MM');
 
     for i = 1:numel(filenames)
@@ -27,6 +27,10 @@ function sampling_reproces(name, suffix)
             template.name_prefix = sprintf("%s/%s_%s", fold2, filenames{i}, suffix);
         end
 
+        template.vumps_opts.tolfixed = 1e-9;
+        template.vumps_opts.vumps_maxit = 5;
+        
+        
         dir_name = sprintf("%s/", template.name_prefix);
         if ~exist(dir_name, 'dir')
             mkdir(dir_name);
@@ -47,9 +51,11 @@ end
 
 function call_back_fn(results, save_vars, baseFileName, template, reproces_opts)
     save_vars.fname = strrep (strrep(baseFileName, 'save_vars_', ''), '.mat', '');
-    good_point = (results.T > 0) & (results.err < template.vumps_opts.tolfixed) & (results.err ~= 0);
+    good_point = (results.T > 0) & (results.err < 1e-10  ) & (results.err ~= 0);
+    
     if good_point
+        
         v = sampling_core(save_vars, template, results.T, results, reproces_opts);
-        fprintf(v);
+        fprintf("%s",v);
     end
 end
